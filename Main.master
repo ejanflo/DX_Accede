@@ -1,0 +1,114 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/Root.master" AutoEventWireup="true" CodeBehind="Main.master.cs" Inherits="DX_WebTemplate.MainMaster" %>
+
+<%-- DXCOMMENT: Page Main.master is a master page that contains central area layout --%>
+<asp:Content ID="Content2" ContentPlaceHolderID="Content" runat="server">
+    <script>
+        //function checkCookieExpiration(cookieName) {
+        //    var cookies = document.cookie.split(';');
+
+        //    for (var i = 0; i < cookies.length; i++) {
+        //        var cookie = cookies[i].trim();
+
+        //        if (cookie.indexOf(cookieName + '=') === 0) {
+        //            var cookieValue = cookie.substring(cookieName.length + 1);
+
+        //            // Handle URL encoding
+        //            var decryptedValue = decryptFormsAuthCookie(cookieValue, cookie);
+
+        //            var expirationDate = new Date(cookieValue);
+        //            var currentTime = new Date();
+        //            var timeDifference = expirationDate - currentTime;
+
+
+
+        //            if (timeDifference >= 120000) {
+        //                // Cookie will expire in 2 minutes or less, display warning popup
+        //                alert('Your cookie will expire soon!');
+        //            }
+        //            else { alert(decryptedValue); }
+
+        //            break;
+        //        }
+        //    }
+        //}
+
+        //function decryptFormsAuthCookie(cookieValue, encryptionKey) {
+        //    // Convert the encryption key to a WordArray
+        //    var key = CryptoJS.enc.Utf8.parse(encryptionKey);
+
+        //    // Extract the IV from the cookie value (first 16 bytes)
+        //    var iv = CryptoJS.enc.Hex.parse(cookieValue.substr(0, 32));
+
+        //    // Extract the encrypted cookie value (remaining bytes)
+        //    var encryptedValue = cookieValue.substr(32);
+
+        //    // Decrypt the cookie value using AES-256-CBC decryption
+        //    var decryptedValue = CryptoJS.AES.decrypt(encryptedValue, key, { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
+
+        //    // Convert the decrypted value to a UTF-8 string
+        //    var plaintext = CryptoJS.enc.Utf8.stringify(decryptedValue);
+
+        //    return plaintext;
+        //}
+
+        //// Call the function initially
+        //checkCookieExpiration('AppAuthCookie');
+
+        //// Schedule recurring call every 4 minutes (4 * 60,000 milliseconds)
+        //setInterval(function () {
+        //    checkCookieExpiration('AppAuthCookie');
+        //}, 4 * 600);
+
+    </script>
+    <style>
+/*        body {
+      background: url('../Content/Images/flat-mountains.svg') no-repeat center center fixed; 
+      background-size: cover; 
+        }*/
+        .conta {
+           display: flex;
+           flex-direction: column;
+           justify-content: center;
+           align-items: center;
+
+           background: url('../Content/Images/wave.svg') no-repeat center center fixed; 
+           /*background: url('../Content/Images/waveblue.svg') no-repeat center center fixed;*/ 
+           background-size: cover; 
+        }
+    </style>
+    <dx:ASPxSplitter ID="ContentSplitter" runat="server" Width="100%" Height="100%">
+                <ClientSideEvents PaneResized="function(s, e) { 
+            if(window.ASPxGridView1 && e.pane.name == 'ContentCenter')
+                ASPxGridView1.SetHeight(e.pane.GetClientHeight());
+            }" />
+        <Styles>
+            <Pane>
+                <Paddings Padding="0px" />
+                <Border BorderWidth="0px" />
+            </Pane>
+        </Styles>
+        <Panes>
+            <dx:SplitterPane Name="ContentCenter" ScrollBars="Auto" AutoWidth="True">
+                <PaneStyle CssClass="contentPane"></PaneStyle>
+                <Separator Visible="True">
+                    <SeparatorStyle>
+                        <Border BorderWidth="1px" />
+                        <BorderTop BorderWidth="0px" />
+                    </SeparatorStyle>
+                </Separator>
+                <ContentCollection>
+                    <dx:SplitterContentControl>
+                        <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+                    </dx:SplitterContentControl>
+                </ContentCollection>
+            </dx:SplitterPane>
+            
+        </Panes>
+    </dx:ASPxSplitter>
+    
+<%-- DXCOMMENT: Configure a datasource for the left panel's ASPxNavBar --%>
+<asp:XmlDataSource ID="XmlDataSourceLeft" runat="server" DataFile="~/App_Data/SideMenu.xml"
+    XPath="/menu/*"></asp:XmlDataSource>
+
+    
+</asp:Content>

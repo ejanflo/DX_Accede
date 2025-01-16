@@ -1,0 +1,14 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/Root.master" AutoEventWireup="true" CodeBehind="Light.master.cs" Inherits="DX_WebTemplate.LightMaster" %>
+
+<%-- DXCOMMENT: Page Light.master is a master page for Account pages --%>
+<asp:Content ID="Content1" ContentPlaceHolderID="Content" runat="server">
+    <style>
+/*        body {
+      background: url('../Content/Images/flat-mountains.svg') no-repeat center center fixed; 
+      background-size: cover; 
+        }*/
+    </style>
+<div class="content">
+<asp:ContentPlaceHolder ID="MainContent" runat="server" />
+</div>
+</asp:Content>

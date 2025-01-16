@@ -1,0 +1,283 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Root.master.cs" Inherits="DX_WebTemplate.RootMaster" %>
+
+<%-- DXCOMMENT: Page Root.master is a master page that contains the root layout (it includes Header, Cental Area, and Footer) --%>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <meta charset="UTF-8" />
+
+    <title>Anflo Group Apps (AGA)</title>
+    <link rel="icon" type="image/x-icon" href="/Content/Images/favicon.ico" />
+    
+    <link href="styles/bootstrap.min.css" rel="stylesheet" /> 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf_viewer.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="styles/Content.css" />
+    <link rel="stylesheet" type="text/css" href="styles/Layout.css" />
+
+    <link rel="stylesheet" type="text/css" href="styles/Site.css" />
+    <link rel="stylesheet" type="text/css" href="Content/Site.css" />
+
+    <script type="text/javascript" src="/Scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="/Scripts/popper.min.js"></script>
+    <script type="text/javascript" src="/Scripts/bootstrap.min.js"></script>    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js"></script>   
+    <script src="https://unpkg.com/jszip/dist/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docx-preview-lib@0.1.14-fix-3/dist/docx-preview.min.js"></script>
+    
+    <script src="Scripts/docviewer.js"></script>
+
+     <%--//sweetalert JS--%>
+    <link rel="stylesheet" href="styles/sweetalert2.min.css" />
+    <script src="/Scripts/sweetalert2.min.js"></script>
+
+    <style type="text/css">
+        .header {
+            height: 75px;
+        }
+        #login {
+            font-size: small;
+        }
+        .loginStatus:hover {
+            color: #000000;
+        }
+        .commandButton {
+              text-decoration: none;
+              border-radius: 4px;
+        }
+         .menu-icon img {
+            width: 16px;
+            height: 16px;
+        }
+              /*display: inline-block;*/
+              /*padding: 8px 16px;*/
+              /*background-color: green;*/
+              /*color: white;*/
+              /*font-size: 14px;*/
+              /*text-align: center;*/
+              /*border: 2px solid black;*/
+
+/*        body {
+      background: url('../Content/Images/flat-mountains.svg') no-repeat center center fixed; 
+      background-size: cover; 
+        }*/
+    </style>
+</head>
+<body runat="server" id="Body">
+    <%--<div id="expDiv" style="height: 500px; width: 1200px; overflow: scroll;">--%>
+    <div class="modal fade" id="viewModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-fullscreen modal-dialog-scrollable" id="modalDialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="vmodalTit"><i class="bi bi-file-earmark-pdf text-danger" style="margin-right: 0.5rem;"></i><strong id="modalTitle">Preview File</strong></h5>
+                    <a id="modalDownload" href="" class="btn btn-secondary btn-sm">
+                        <i class="bi bi-download text-white" style="margin-right: 0.5rem;"></i>
+                        Download
+                    </a>
+                </div>
+                <div class="modal-body container-fluid mx-auto text-center bg-secondary modal-fullscreen" id="pdf_container">
+                </div>
+                <div class="modal-footer" id="wmodalFooter">
+                    <button type="button" id="modalClose" class="btn btn-light btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form id="form1" runat="server">
+        
+
+
+<dx:ASPxSplitter ID="ASPxSplitter1" runat="server" AllowResize="False" Orientation="Vertical"
+        FullscreenMode="True" SeparatorVisible="False" Height="100%" Width="100%" EnableHierarchyRecreation="false" Theme="iOS">
+        <Styles>
+            <Pane>
+                <Paddings Padding="0px" />
+                <Border BorderWidth="0px" />
+            </Pane>
+        </Styles>
+        <Panes>
+
+            <dx:SplitterPane Name="Header" AutoHeight="true">
+                <PaneStyle>
+                    <BorderBottom BorderWidth="1px" />
+                </PaneStyle>
+                <ContentCollection>
+                    <dx:SplitterContentControl>
+                        <div class="header">
+
+
+                            <div class="title">
+                                <%--<a href="http://localhost:61185/Default.aspx">--%>
+                                    <a href="http://devapps.anflocor.com/Default.aspx">
+                                <dx:ASPxImage ID="ASPxImage1" runat="server" SpriteCssClass="header-logo" ShowLoadingImage="true"></dx:ASPxImage>
+                               </a>
+
+                                    <%--<Image SpriteProperties-CssClass="header-logo" />--%>
+                            </div>
+                            <div class="login">
+                                <asp:LoginView ID="HeadLoginView" runat="server" EnableViewState="false">
+                                    <AnonymousTemplate>
+                                        <a id="loginLink" href="~/Logon.aspx" runat="server" style="margin-top:10px; text-decoration: none; color: #006838">Log In</a>
+                                        <%-- | <a id="registerLink" href="~/Account/Register.aspx" runat="server">Register</a>--%>
+                                    </AnonymousTemplate>
+                                    <LoggedInTemplate>
+                                        <a runat="server" href="#" title="Manage your account" style="font-size:large; margin-top:10px; padding-left:15px; text-decoration: none; color: #006838"> 
+                                            <asp:LoginName ID="HeadLoginName" runat="server" />
+                                        </a> 
+
+                                        <%--<asp:LoginStatus CssClass="loginStatus" ID="HeadLoginStatus" runat="server" LogoutAction="Redirect" LogoutText=" Log Out"
+                                        style="font-size:medium; margin-top:10px; padding-left:5px; text-decoration: none;"
+                                        LogoutPageUrl="~/Logout.aspx"  ForeColor="#89919a" />--%>
+
+                                    </LoggedInTemplate>
+                                </asp:LoginView>
+                            </div>
+
+                            <%--Menu Navigation Bar--%>
+                            <div class="menutop">
+                                <dx:ASPxMenu ID="MenuTop" runat="server" Width="100%" ItemAutoWidth="False">
+                                    <%--DataSourceID="XmlDataSourceHeader"--%>
+                                    <Border BorderWidth="0px" />
+                                    <BorderTop BorderWidth="1px" />
+                                    <Items>
+                                        <dx:MenuItem Text="Home" NavigateUrl="~/Default.aspx" Image-IconID="businessobjects_bo_address_svg_white_16x16" />
+                                        <%--<dx:MenuItem Text="Travel Main" NavigateUrl="~/TravelExpenseMain.aspx" Image-IconID="businessobjects_bo_address_svg_white_16x16" />
+                                         <dx:MenuItem Text="Travel Appr Main" NavigateUrl="~/TravelExpenseApprovalMain.aspx" Image-IconID="businessobjects_bo_address_svg_white_16x16" />
+                                        <dx:MenuItem Text="Travel Add" NavigateUrl="~/TravelExpenseAdd.aspx" Image-IconID="businessobjects_bo_address_svg_white_16x16" />
+                                        <dx:MenuItem Text="Expense Report" NavigateUrl="~/AccedeExpenseReportDashboard.aspx" Image-IconID="businessobjects_bo_address_svg_white_16x16" />
+                                        <dx:MenuItem Text="RFP Page" NavigateUrl="~/RFPPage.aspx" Image-IconID="businessobjects_bo_address_svg_white_16x16" />
+                                        <dx:MenuItem Text="Approvals" NavigateUrl="~/AccedeApprovalPage.aspx" Image-IconID="businessobjects_bo_address_svg_white_16x16" />
+                                        <dx:MenuItem Text="Inquiry" NavigateUrl="~/RFPInquiry.aspx" Image-IconID="businessobjects_bo_address_svg_white_16x16" />
+                                        <dx:MenuItem Text="Setup" NavigateUrl="~/AccedeSetupPage.aspx" Image-IconID="businessobjects_bo_address_svg_white_16x16" />
+                                        <dx:MenuItem Text="Cashier Inquiry" NavigateUrl="~/CashierInquiryPage.aspx" Image-IconID="businessobjects_bo_address_svg_white_16x16" />
+                                        <dx:MenuItem Text="Delegation" NavigateUrl="~/UserDelegationPage.aspx" Image-IconID="businessobjects_bo_address_svg_white_16x16" />
+                                        --%>
+                                        <dx:MenuItem Text="User Guide" NavigateUrl="~/maintenance.html" Target="_blank" Alignment="Right" Image-IconID="outlookinspired_support_svg_dark_16x16" />
+                                        <dx:MenuItem Text="Helpdesk" NavigateUrl="https://helpdesk.anflocor.com/" Target="_blank" Alignment="Right" Image-IconID="outlookinspired_glyph_mail_svg_dark_16x16" />
+                                        <dx:MenuItem Text="Log Out" NavigateUrl="~/Logout.aspx" Alignment="Right" Image-IconID="richedit_trackingchanges_locktracking_svg_dark_16x16" />
+                                    </Items>
+                                </dx:ASPxMenu>
+                                <%--<dx:ASPxMenu ID="ASPxMenu1" runat="server" Width="50%" HorizontalAlign="Left" DataSourceID="XmlDataSourceHeader" ItemAutoWidth="False">
+                                    <Border BorderWidth="0px" />
+                                    <BorderTop BorderWidth="1px" />
+                                </dx:ASPxMenu>--%>
+                            </div>
+
+
+                        </div>
+                    </dx:SplitterContentControl>
+                </ContentCollection>
+            </dx:SplitterPane>
+
+
+            <dx:SplitterPane Name="Content" MinSize="375px">
+                <PaneStyle CssClass="mainContentPane"></PaneStyle>
+                <ContentCollection>
+                    <dx:SplitterContentControl ID="SplitterContentControl3" runat="server">
+                        <asp:ContentPlaceHolder ID="Content" runat="server">
+                        </asp:ContentPlaceHolder>
+                    </dx:SplitterContentControl>
+                </ContentCollection>
+                <PaneStyle BackColor="white">
+                    <BorderBottom BorderWidth="1px" />
+                </PaneStyle>
+            </dx:SplitterPane>
+
+<%--            <dx:SplitterPane Name="Footer" Size="125px" PaneStyle-CssClass="footerPane">
+                <ContentCollection>
+                    <dx:SplitterContentControl ID="SplitterContentControl4" runat="server">
+                        <div class="footerMenu">
+                            
+                        </div>
+                        <div class="copyright">
+                            <dx:ASPxLabel ID="ASPxLabel2" runat="server">
+                            </dx:ASPxLabel>
+                        </div>
+                    </dx:SplitterContentControl>
+                </ContentCollection>
+            </dx:SplitterPane>--%>
+        </Panes>
+    </dx:ASPxSplitter>
+    
+    
+<%-- DXCOMMENT: Configure a datasource for the header menu --%>
+<asp:XmlDataSource ID="XmlDataSourceHeader" runat="server" DataFile="~/App_Data/TopMenu.xml"
+    XPath="/items/*"></asp:XmlDataSource>
+
+    
+    </form>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+<%--<dx:ASPxSplitter ID="ASPxSplitter1" runat="server" AllowResize="False" Orientation="Vertical"
+        FullscreenMode="True" SeparatorVisible="False" Height="100%" Width="100%" EnableHierarchyRecreation="false" Theme="Moderno">
+        <Styles>
+            <Pane>
+                <Paddings Padding="0px" />
+                <Border BorderWidth="0px" />
+            </Pane>
+        </Styles>
+        <Panes>
+            <dx:SplitterPane Name="Header" AutoHeight="true">
+                <PaneStyle CssClass="headerPane">
+                    <BorderBottom BorderWidth="1px" />--%>
+                    <%--<BackgroundImage ImageUrl="Content/Images/BlackGlassHeader.jpg" />--%>
+                    <%--<Paddings Padding="10px" />
+                </PaneStyle>
+                <ContentCollection>
+                    <dx:SplitterContentControl ID="SplitterContentControl1" runat="server">
+                        <div class="headerTop">
+                            <div class="templateTitle">
+                                <a id="TitleLink" href="~/" runat="server">Application Name</a>
+                            </div>
+                        </div>
+                        <div class="headerMenu">
+                        <dx:ASPxMenu ID="ASPxMenu1" runat="server" ItemAutoWidth="False" Width="100%"
+                            DataSourceID="XmlDataSourceHeader" Theme="MaterialCompact">
+                            <Border BorderWidth="0px" />
+                            <BorderTop BorderWidth="1px" />
+                        </dx:ASPxMenu>
+                        </div>
+                    </dx:SplitterContentControl>
+                </ContentCollection>
+            </dx:SplitterPane>
+            <dx:SplitterPane Name="Content" MinSize="375px">
+                <PaneStyle CssClass="mainContentPane"></PaneStyle>
+                <ContentCollection>
+                    <dx:SplitterContentControl ID="SplitterContentControl3" runat="server">
+                        <asp:ContentPlaceHolder ID="Content" runat="server">
+                        </asp:ContentPlaceHolder>
+                    </dx:SplitterContentControl>
+                </ContentCollection>
+                <PaneStyle BackColor="white">
+                    <BorderBottom BorderWidth="1px" />
+                </PaneStyle>
+            </dx:SplitterPane>--%>
+
+<%--            <dx:SplitterPane Name="Footer" Size="125px" PaneStyle-CssClass="footerPane">
+                <ContentCollection>
+                    <dx:SplitterContentControl ID="SplitterContentControl4" runat="server">
+                        <div class="footerMenu">
+                            
+                        </div>
+                        <div class="copyright">
+                            <dx:ASPxLabel ID="ASPxLabel2" runat="server">
+                            </dx:ASPxLabel>
+                        </div>
+                    </dx:SplitterContentControl>
+                </ContentCollection>
+            </dx:SplitterPane>--%>
+<%--        </Panes>
+    </dx:ASPxSplitter>--%>
+    

@@ -1,0 +1,582 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 19.125, 33.5" name="ITPORTAL">
+  <DataContextMoniker Name="/ITPORTALDataContext" />
+  <nestedChildShapes>
+    <classShape Id="c452077a-e6c4-4b1c-8481-46a2e4932264" absoluteBounds="0.5, 0.5, 2, 1.3862939453125">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_EmailTemplate" />
+      <nestedChildShapes>
+        <elementListCompartment Id="653309db-eb34-4dda-89c3-0bd051c2a7b5" absoluteBounds="0.51499999999999968, 0.96, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="6c4b0b99-27c3-4e63-ad76-2659a0979053" absoluteBounds="2.75, 0.5, 2, 2.3478011067708335">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_DocumentNumber" />
+      <nestedChildShapes>
+        <elementListCompartment Id="f3a6335a-94bf-4608-ace3-271ec437b795" absoluteBounds="2.7649999999999997, 0.96, 1.9700000000000002, 1.7878011067708335" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="62d68465-2518-44c7-9974-d2df9d274728" absoluteBounds="2.75, 17.875, 2, 2.9247054036458309">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_SecurityApp" />
+      <nestedChildShapes>
+        <elementListCompartment Id="41b759bc-5c11-4c8d-b9e7-67e796ffe1bc" absoluteBounds="2.7650000000000006, 18.335, 1.9700000000000002, 2.364705403645833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="265283d0-c9ae-4531-8cdd-148b4cadc3f4" absoluteBounds="5, 17.75, 2, 2.7324039713541666">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_SecurityUserOrgRole" />
+      <nestedChildShapes>
+        <elementListCompartment Id="89d2c658-ed2a-4879-9f45-36db24245f04" absoluteBounds="5.0150000000000006, 18.21, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="a5300fa0-442e-433d-af22-93924a9b9f94" absoluteBounds="0.5, 3.5, 2, 2.5401025390625005">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_SecurityAppClass" />
+      <nestedChildShapes>
+        <elementListCompartment Id="c9e1aff5-7f6d-4bf8-80ab-85c80bf8ea29" absoluteBounds="0.515, 3.96, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="ff4b04cd-2396-4759-8bcf-15169b903487" absoluteBounds="2.75, 4.75, 2, 2.3478011067708344">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_SecurityAppIntegrateApp" />
+      <nestedChildShapes>
+        <elementListCompartment Id="02180430-7891-4837-b7cc-74ca757250c9" absoluteBounds="2.7650000000000006, 5.21, 1.9700000000000002, 1.7878011067708335" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="26f6adfb-d13a-49ee-ac5b-dc5f51610138" absoluteBounds="5, 0.5, 2, 2.5401025390624987">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_SecurityAppIntegration" />
+      <nestedChildShapes>
+        <elementListCompartment Id="df56a771-88a8-4966-a089-fd754d1819a7" absoluteBounds="5.0150000000000006, 0.96000000000000085, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="0cb17338-f9a5-472c-bc80-8c8d0007c0a2" absoluteBounds="7.25, 5.125, 2, 2.5401025390625005">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_SecurityAppSource" />
+      <nestedChildShapes>
+        <elementListCompartment Id="0a97052a-4fa7-4ebc-9bb7-1d79548c9114" absoluteBounds="7.2650000000000006, 5.585, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="7f824d1a-2b4f-403f-8225-e6c0dda0de18" absoluteBounds="0.5, 6.125, 2, 1.9631982421875023">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_SecurityAppStatus" />
+      <nestedChildShapes>
+        <elementListCompartment Id="00e52232-e306-4801-b555-70a0e2af55ea" absoluteBounds="0.51500000000000057, 6.5850000000000009, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="c4aaca0b-6db0-4893-9004-58df8e033f7c" absoluteBounds="0.5, 17.875, 2, 2.5401025390625023">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_SecurityAppType" />
+      <nestedChildShapes>
+        <elementListCompartment Id="19bbee71-5cc2-41db-8549-d5cc8c1ffdfe" absoluteBounds="0.51500000000000012, 18.335, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="d5deaa70-0c01-4e7d-9527-301ef8dff970" absoluteBounds="7.25, 7.875, 2, 2.7324039713541666">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_SecurityAppUserCompany" />
+      <nestedChildShapes>
+        <elementListCompartment Id="5201530e-b1a6-4068-afa6-3edee5ed200f" absoluteBounds="7.265, 8.335, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="408d393f-2a6b-4738-b101-6db3a1268a65" absoluteBounds="7.25, 0.5, 2, 1.9631982421874987">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_SecurityAppxAppClass" />
+      <nestedChildShapes>
+        <elementListCompartment Id="c791b3aa-f861-4aef-a947-7ba1bd004a76" absoluteBounds="7.265, 0.96, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="ddee6279-bf45-442e-94a6-a2f15b77d4b8" absoluteBounds="7.25, 10.75, 2, 2.9247054036458309">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_SecurityOrgRole_AppRole" />
+      <nestedChildShapes>
+        <elementListCompartment Id="f9c5129a-a64c-409f-83c8-d89f201ab8a4" absoluteBounds="7.2650000000000006, 11.21, 1.9700000000000002, 2.364705403645833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="b41b6e4a-6187-4e97-941d-39b1b036318d" absoluteBounds="5, 7.875, 2, 2.7324039713541666">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_SecurityOrgRole" />
+      <nestedChildShapes>
+        <elementListCompartment Id="94df5c48-a560-4cf1-86ed-c75855845bc2" absoluteBounds="5.015, 8.335, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="81128d5a-0277-4043-a70a-20632f80b2de" absoluteBounds="7.25, 17.875, 2, 4.2708154296875023">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_SecurityPageRole" />
+      <nestedChildShapes>
+        <elementListCompartment Id="23cf4f38-9aad-4bb1-b9b1-1de42faff6d5" absoluteBounds="7.265, 18.335, 1.9700000000000002, 3.7108154296875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="a0061abd-8810-4a92-b079-0f39ab11046d" absoluteBounds="5, 10.75, 2, 3.6939111328125023">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_SecurityPage" />
+      <nestedChildShapes>
+        <elementListCompartment Id="ec9e01f3-18b4-4e9c-a1a7-65a94b643522" absoluteBounds="5.0150000000000006, 11.21, 1.9700000000000002, 3.1339111328125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="86688401-531d-4c70-b470-02e7d53710d2" absoluteBounds="2.75, 15, 2, 2.7324039713541666">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_SecurityRole" />
+      <nestedChildShapes>
+        <elementListCompartment Id="4d4fff88-b656-4dd4-9c40-506626c64c52" absoluteBounds="2.7650000000000006, 15.46, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="0e44feb6-114b-4ade-a1d3-9116ae5b227a" absoluteBounds="7.25, 2.625, 2, 2.3478011067708344">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_SecurityUser" />
+      <nestedChildShapes>
+        <elementListCompartment Id="2041ce37-63ca-4b20-b514-79f96d2f8382" absoluteBounds="7.2650000000000006, 3.0850000000000009, 1.9700000000000002, 1.7878011067708335" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="c05bf96b-285b-48e7-828a-bddeb2e86f44" absoluteBounds="2.75, 12, 2, 2.9247054036458309">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_SecurityUserApp" />
+      <nestedChildShapes>
+        <elementListCompartment Id="16b182b7-1f49-41ca-b01c-1537140c4b7f" absoluteBounds="2.7649999999999997, 12.46, 1.9700000000000002, 2.364705403645833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="ff8dc947-be66-4bc0-9d6f-df130ee38c36" absoluteBounds="7.25, 13.875, 2, 3.8862125651041666">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_SecurityUserAppRole" />
+      <nestedChildShapes>
+        <elementListCompartment Id="b91ef75b-4372-4c01-8186-82716d5884ba" absoluteBounds="7.2650000000000006, 14.335, 1.9700000000000002, 3.3262125651041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(2.5 : 19.1450512695313); (2.75 : 19.1450512695313)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_SecurityAppType/ITP_S_SecurityAppType_ITP_S_SecurityApp" />
+      <nodes>
+        <classShapeMoniker Id="c4aaca0b-6db0-4893-9004-58df8e033f7c" />
+        <classShapeMoniker Id="62d68465-2518-44c7-9974-d2df9d274728" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(5.968748 : 10.6074039713542); (5.968748 : 10.6875); (7.0625 : 10.6875); (7.0625 : 19.1162019856771); (7 : 19.1162019856771)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_SecurityOrgRole/ITP_S_SecurityOrgRole_ITP_S_SecurityUserOrgRole" />
+      <nodes>
+        <classShapeMoniker Id="b41b6e4a-6187-4e97-941d-39b1b036318d" />
+        <classShapeMoniker Id="265283d0-c9ae-4531-8cdd-148b4cadc3f4" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(7 : 10.6074039713542); (7.25 : 10.75)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_SecurityOrgRole/ITP_S_SecurityOrgRole_ITP_S_SecurityOrgRole_AppRole" />
+      <nodes>
+        <classShapeMoniker Id="b41b6e4a-6187-4e97-941d-39b1b036318d" />
+        <classShapeMoniker Id="ddee6279-bf45-442e-94a6-a2f15b77d4b8" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(4.75 : 18.527448171875); (4.76041666666667 : 18.527448171875 : JumpStart); (4.92708333333333 : 18.527448171875 : JumpEnd); (4.96875 : 18.527448171875); (4.96875 : 17.6875); (6.97916666666667 : 17.6875 : JumpStart); (7.14583333333333 : 17.6875 : JumpEnd); (7.1875 : 17.6875); (7.1875 : 17.8237125651042); (8.54779517647059 : 17.8237125651042); (8.54779517647059 : 17.875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_SecurityApp/ITP_S_SecurityApp_ITP_S_SecurityPageRole" />
+      <nodes>
+        <classShapeMoniker Id="62d68465-2518-44c7-9974-d2df9d274728" />
+        <classShapeMoniker Id="81128d5a-0277-4043-a70a-20632f80b2de" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(7 : 12.2812505); (7.21875 : 12.2812505); (7.21875 : 17.78125); (8.16544076470588 : 17.78125); (8.16544076470588 : 17.875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_SecurityPage/ITP_S_SecurityPage_ITP_S_SecurityPageRole" />
+      <nodes>
+        <classShapeMoniker Id="a0061abd-8810-4a92-b079-0f39ab11046d" />
+        <classShapeMoniker Id="81128d5a-0277-4043-a70a-20632f80b2de" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(4.75 : 19.24240034375); (4.76041666666667 : 19.24240034375 : JumpStart); (4.92708333333333 : 19.24240034375 : JumpEnd); (4.9375 : 19.24240034375); (4.9375 : 14.5376611328125); (6 : 14.5376611328125); (6 : 14.4439111328125)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_SecurityApp/ITP_S_SecurityApp_ITP_S_SecurityPage" />
+      <nodes>
+        <classShapeMoniker Id="62d68465-2518-44c7-9974-d2df9d274728" />
+        <classShapeMoniker Id="a0061abd-8810-4a92-b079-0f39ab11046d" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(4.75 : 16.3341802549078); (4.875 : 16.3341802549078); (4.875 : 14.5625); (6.97916666666667 : 14.5625 : JumpStart); (7.14583333333333 : 14.5625 : JumpEnd); (7.1875 : 14.5625); (7.1875 : 13.8125); (8.25 : 13.8125); (8.25 : 13.6747054036458)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_SecurityRole/ITP_S_SecurityRole_ITP_S_SecurityOrgRole_AppRole" />
+      <nodes>
+        <classShapeMoniker Id="86688401-531d-4c70-b470-02e7d53710d2" />
+        <classShapeMoniker Id="ddee6279-bf45-442e-94a6-a2f15b77d4b8" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(4.75 : 17.418500299404); (4.875 : 17.418500299404); (4.875 : 17.6122054036458); (7.125 : 17.6122054036458); (7.125 : 17.8237125651042); (7.67646838235294 : 17.8237125651042); (7.67646838235294 : 17.875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_SecurityRole/ITP_S_SecurityRole_ITP_S_SecurityPageRole" />
+      <nodes>
+        <classShapeMoniker Id="86688401-531d-4c70-b470-02e7d53710d2" />
+        <classShapeMoniker Id="81128d5a-0277-4043-a70a-20632f80b2de" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(3.75 : 17.875); (3.75 : 17.7324039713542)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_SecurityApp/ITP_S_SecurityApp_ITP_S_SecurityRole" />
+      <nodes>
+        <classShapeMoniker Id="62d68465-2518-44c7-9974-d2df9d274728" />
+        <classShapeMoniker Id="86688401-531d-4c70-b470-02e7d53710d2" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(4.281252 : 17.875); (4.281252 : 17.7949039713542); (4.8125 : 17.7949039713542); (4.8125 : 13.4623527018229); (4.75 : 13.4623527018229)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_SecurityApp/ITP_S_SecurityApp_ITP_S_SecurityUserApp" />
+      <nodes>
+        <classShapeMoniker Id="62d68465-2518-44c7-9974-d2df9d274728" />
+        <classShapeMoniker Id="c05bf96b-285b-48e7-828a-bddeb2e86f44" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(4.75 : 19.918077671875); (4.953125 : 19.918077671875); (4.953125 : 17.6875); (7.15625 : 17.6875); (7.15625 : 17.8237125651042); (8.89889708823529 : 17.8237125651042); (8.89889708823529 : 17.7612125651042)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_SecurityApp/ITP_S_SecurityApp_ITP_S_SecurityUserAppRole" />
+      <nodes>
+        <classShapeMoniker Id="62d68465-2518-44c7-9974-d2df9d274728" />
+        <classShapeMoniker Id="ff8dc947-be66-4bc0-9d6f-df130ee38c36" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(4.75 : 17.0420926274539); (4.76041666666667 : 17.0420926274539 : JumpStart); (4.92708333333333 : 17.0420926274539 : JumpEnd); (4.96875 : 17.0420926274539); (4.96875 : 14.5625); (7.125 : 14.5625); (7.125 : 13.8125); (7.13541666666667 : 13.8125 : JumpStart); (7.30208333333333 : 13.8125 : JumpEnd); (7.7500005 : 13.8125); (7.7500005 : 13.875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_SecurityRole/ITP_S_SecurityRole_ITP_S_SecurityUserAppRole" />
+      <nodes>
+        <classShapeMoniker Id="86688401-531d-4c70-b470-02e7d53710d2" />
+        <classShapeMoniker Id="ff8dc947-be66-4bc0-9d6f-df130ee38c36" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="962a270d-19e7-4d76-acca-57a599c0b8c0" absoluteBounds="0.5, 8.25, 2, 2.3478011067708344">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_Text" />
+      <nestedChildShapes>
+        <elementListCompartment Id="b7f2b8bb-38d8-4eb3-9e2e-c54424d0dbe8" absoluteBounds="0.51500000000000057, 8.71, 1.9700000000000002, 1.7878011067708335" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="103dfdab-9b86-4c59-ab97-2b8670095916" absoluteBounds="9.5, 8.375, 2, 5.0400211588541666">
+      <DataClassMoniker Name="/ITPORTALDataContext/vw_AGA_I_UserTile" />
+      <nestedChildShapes>
+        <elementListCompartment Id="40dd31e0-7338-4750-b530-0b3b81fa03f5" absoluteBounds="9.515, 8.835, 1.9700000000000002, 4.4800211588541661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="98a98a52-40a5-4a3c-a414-0a9a71083b4b" absoluteBounds="9.5, 0.5, 2, 2.5401025390624987">
+      <DataClassMoniker Name="/ITPORTALDataContext/vw_AGA_I_TilesRole" />
+      <nestedChildShapes>
+        <elementListCompartment Id="51dd1e54-9d5f-4919-a886-83f94a89e120" absoluteBounds="9.515, 0.96000000000000085, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="63cfaf72-2c6a-433d-8560-1e8970163e64" absoluteBounds="9.5, 5.625, 2, 2.5401025390625005">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_ForeignExch" />
+      <nestedChildShapes>
+        <elementListCompartment Id="3774bfff-a9cf-4a6d-83ae-714e903cab66" absoluteBounds="9.515, 6.085, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="c4971415-efc2-4d45-9493-33e7606086dc" absoluteBounds="5, 20.625, 2, 3.6939111328124952">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_WorkflowDetail" />
+      <nestedChildShapes>
+        <elementListCompartment Id="ba99ed7d-4e76-4d20-b5a5-e0b95acefc8a" absoluteBounds="5.0150000000000006, 21.085, 1.9700000000000002, 3.1339111328125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="94eaf726-a367-460a-96cd-f3ebf891e702" absoluteBounds="2.75, 26.375, 2, 3.8862125651041666">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_WorkflowHeader" />
+      <nestedChildShapes>
+        <elementListCompartment Id="b422dbde-1f7d-443b-9401-26c33f29db1a" absoluteBounds="2.7650000000000006, 26.835, 1.9700000000000002, 3.3262125651041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(5 : 9.24120198567708); (4.90625 : 9.24120198567708); (4.90625 : 20.53125); (6 : 20.53125); (6 : 20.625)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_SecurityOrgRole/ITP_S_SecurityOrgRole_ITP_S_WorkflowDetail" />
+      <nodes>
+        <classShapeMoniker Id="b41b6e4a-6187-4e97-941d-39b1b036318d" />
+        <classShapeMoniker Id="c4971415-efc2-4d45-9493-33e7606086dc" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(4.75 : 28.3181062825521); (4.9375 : 28.3181062825521); (4.9375 : 24.4375); (6 : 24.4375); (6 : 24.3189111328125)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_WorkflowHeader/ITP_S_WorkflowHeader_ITP_S_WorkflowDetail" />
+      <nodes>
+        <classShapeMoniker Id="94eaf726-a367-460a-96cd-f3ebf891e702" />
+        <classShapeMoniker Id="c4971415-efc2-4d45-9493-33e7606086dc" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.75 : 19.9723778365885); (2.734375 : 19.9723778365885); (2.734375 : 26.3515625); (3.75 : 26.3515625); (3.75 : 26.375)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_SecurityApp/ITP_S_SecurityApp_ITP_S_WorkflowHeader" />
+      <nodes>
+        <classShapeMoniker Id="62d68465-2518-44c7-9974-d2df9d274728" />
+        <classShapeMoniker Id="94eaf726-a367-460a-96cd-f3ebf891e702" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="08c3bdc1-4d54-4179-8324-ac128816fb6b" absoluteBounds="9.5, 13.5, 2, 2.9247054036458309">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_Status" />
+      <nestedChildShapes>
+        <elementListCompartment Id="4a5dab8e-4104-44e0-85e6-9f515f7ac8c1" absoluteBounds="9.515, 13.96, 1.9700000000000002, 2.364705403645833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="44134de2-8141-4fdd-a156-cf3cf6b79ded" absoluteBounds="9.5, 16.5, 2, 3.5016097005208309">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_T_FileAttachment" />
+      <nestedChildShapes>
+        <elementListCompartment Id="8b162039-59a5-49fb-a0e1-0c87e254179d" absoluteBounds="9.515, 16.96, 1.9700000000000002, 2.941609700520833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="0f6ee72e-8872-4496-a5d6-64774947eb6c" absoluteBounds="5, 14.625, 2, 2.9247054036458309">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_WorkflowGroupDetail" />
+      <nestedChildShapes>
+        <elementListCompartment Id="e1b498aa-8068-4fec-b16c-6ddbdde67300" absoluteBounds="5.0150000000000006, 15.085, 1.9700000000000002, 2.364705403645833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(4.281252 : 26.375); (4.281252 : 26.3125); (4.84375 : 26.3125); (4.84375 : 15.4795906274539); (5 : 15.4795906274539)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_WorkflowHeader/ITP_S_WorkflowHeader_ITP_S_WorkflowGroupDetail" />
+      <nodes>
+        <classShapeMoniker Id="94eaf726-a367-460a-96cd-f3ebf891e702" />
+        <classShapeMoniker Id="0f6ee72e-8872-4496-a5d6-64774947eb6c" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="40ce9a32-6110-45f0-baf8-6e6832f13251" absoluteBounds="2.75, 30.375, 2, 2.9247054036458309">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_WorkflowGroupHeader" />
+      <nestedChildShapes>
+        <elementListCompartment Id="f995b733-a1a2-464f-83b6-d7bacf75ebb9" absoluteBounds="2.7650000000000006, 30.835, 1.9700000000000002, 2.364705403645833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="7dcca899-c22a-485f-b021-206cfee77ce6" absoluteBounds="11.75, 0.5, 2, 3.5016097005208309">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_T_WorkflowGroupActivity" />
+      <nestedChildShapes>
+        <elementListCompartment Id="e476b10d-e4ce-4f9a-bde8-b638378baa2e" absoluteBounds="11.765, 0.96000000000000085, 1.9700000000000002, 2.941609700520833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(3.75 : 30.375); (3.75 : 30.3125); (4.78125 : 30.3125); (4.78125 : 15.9381379411809); (4.82291666666667 : 15.9381379411809 : JumpStart); (4.98958333333333 : 15.9381379411809 : JumpEnd); (5 : 15.9381379411809)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_WorkflowGroupHeader/ITP_S_WorkflowGroupHeader_ITP_S_WorkflowGroupDetail" />
+      <nodes>
+        <classShapeMoniker Id="40ce9a32-6110-45f0-baf8-6e6832f13251" />
+        <classShapeMoniker Id="0f6ee72e-8872-4496-a5d6-64774947eb6c" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(3.75 : 20.7997054036458); (3.75 : 20.859375); (2.71875 : 20.859375); (2.71875 : 31.8373527018229); (2.75 : 31.8373527018229)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_SecurityApp/ITP_S_SecurityApp_ITP_S_WorkflowGroupHeader" />
+      <nodes>
+        <classShapeMoniker Id="62d68465-2518-44c7-9974-d2df9d274728" />
+        <classShapeMoniker Id="40ce9a32-6110-45f0-baf8-6e6832f13251" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="e3eb85c0-8827-4139-b1a9-c0e78c67b822" absoluteBounds="11.75, 4.125, 2, 4.2708154296874987">
+      <DataClassMoniker Name="/ITPORTALDataContext/CompanyMaster" />
+      <nestedChildShapes>
+        <elementListCompartment Id="4fa003ef-a65e-47de-a5ab-06973d42c7b5" absoluteBounds="11.765, 4.585, 1.9700000000000002, 3.7108154296875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="2c9da156-72f4-41b7-85d0-9f9509bb90f3" absoluteBounds="11.75, 8.5, 2, 2.3478011067708309">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_SecurityAppUserCompanyDept" />
+      <nestedChildShapes>
+        <elementListCompartment Id="ba134323-e23b-4a58-8ed2-b8065a2d9838" absoluteBounds="11.765, 8.96, 1.9700000000000002, 1.7878011067708335" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="55b7af83-5ff8-4e0d-8267-9b6ecc7de5d8" absoluteBounds="9.5, 20.125, 2, 2.3478011067708309">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_OrgDepartmentMaster" />
+      <nestedChildShapes>
+        <elementListCompartment Id="071506bf-ffe9-4ab0-84ae-03e549157091" absoluteBounds="9.515, 20.585, 1.9700000000000002, 1.7878011067708335" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="3b0bc5a1-9db9-4053-bf93-98ed2db64ed5" absoluteBounds="11.75, 11, 2, 1.5785953776041666">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_WorkflowGroup_Department" />
+      <nestedChildShapes>
+        <elementListCompartment Id="deef8c3e-7e18-4877-9be5-3264cbd7586a" absoluteBounds="11.765, 11.46, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="c296c7fa-9d33-415e-a0bc-1bc0ed83d77f" absoluteBounds="11.75, 12.75, 2, 6.5784326171875023">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_UserMaster" />
+      <nestedChildShapes>
+        <elementListCompartment Id="80249f35-e20e-43f3-a50e-f6b6c8d20f31" absoluteBounds="11.765, 13.21, 1.9700000000000002, 6.0184326171875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="0cb53794-5046-41e7-8f7d-5fc5310868e6" absoluteBounds="14, 0.5, 2, 1.5785953776041666">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_S_AccountCharged" />
+      <nestedChildShapes>
+        <elementListCompartment Id="10bc8509-5bbc-4d86-83d5-3d99facc3140" absoluteBounds="14.015, 0.96000000000000085, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="3d5d08a5-4460-40d5-aaed-e27da681096c" absoluteBounds="14, 6, 2, 1.1939925130208309">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_S_ExpenseType" />
+      <nestedChildShapes>
+        <elementListCompartment Id="6243378b-cbda-4499-a743-559051643210" absoluteBounds="14.015, 6.4600000000000009, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="effbd07c-4c89-464d-828c-f1fadcf44b74" absoluteBounds="14, 7.375, 2, 1.5785953776041666">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_S_PayMethod" />
+      <nestedChildShapes>
+        <elementListCompartment Id="9d13b427-b44c-4971-8c43-9666a2eb34d0" absoluteBounds="14.015, 7.8350000000000009, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="445231e5-b48a-42c0-ae97-ebb8bee401b7" absoluteBounds="14, 9.125, 2, 1.5785953776041666">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_S_RFPTranType" />
+      <nestedChildShapes>
+        <elementListCompartment Id="3143ad99-1a89-4167-bd76-450b7475c047" absoluteBounds="14.015, 9.585, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="558f51a9-ea74-417b-a062-1ff44a4ee5ad" absoluteBounds="14, 10.875, 2, 1.7708968098958309">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_T_ExpenseCA" />
+      <nestedChildShapes>
+        <elementListCompartment Id="a8ba57be-fef1-45c9-91a2-e6d621c7225e" absoluteBounds="14.015, 11.335, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="60875869-8b33-41ac-85d5-1159093ecf1c" absoluteBounds="14, 12.875, 2, 4.2708154296874987">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_T_WorkflowActivity" />
+      <nestedChildShapes>
+        <elementListCompartment Id="f36e0971-591f-477a-b47e-d7306668b4e0" absoluteBounds="14.015, 13.335, 1.9700000000000002, 3.7108154296875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="3eaad5de-1f62-4af1-9479-8002cb15a4d6" absoluteBounds="14, 17.375, 2, 2.7324039713541666">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_DocumentType" />
+      <nestedChildShapes>
+        <elementListCompartment Id="c168d704-1707-471c-9142-ae686e7357fe" absoluteBounds="14.015, 17.835, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="d4ac4657-8279-4aa1-a13f-bf63b026884f" absoluteBounds="14, 20.25, 2, 1.7708968098958344">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_S_Computation" />
+      <nestedChildShapes>
+        <elementListCompartment Id="de408f59-c7f9-4ef5-ad2a-f3ec4d11dff7" absoluteBounds="14.015, 20.71, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="78687e06-8a8f-4890-a74c-3ebe1d2f09b8" absoluteBounds="9.5, 22.625, 2, 3.6939111328125023">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACDE_T_Main" />
+      <nestedChildShapes>
+        <elementListCompartment Id="46bc4ab6-551f-4f1b-8889-069fe1452096" absoluteBounds="9.515, 23.085, 1.9700000000000002, 3.1339111328125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="f0e99c3a-ca51-4793-be88-c0018f845a20" absoluteBounds="14, 22.25, 2, 3.5016097005208309">
+      <DataClassMoniker Name="/ITPORTALDataContext/vw_ACDE_MainTotalExpense" />
+      <nestedChildShapes>
+        <elementListCompartment Id="cfa682de-53e5-433f-80c3-c61d15bb43d0" absoluteBounds="14.015, 22.71, 1.9700000000000002, 2.941609700520833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="4e283d0d-0f60-4072-9823-bac204a230ae" absoluteBounds="5, 24.5, 2, 6.0015283203125023">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACDE_T_Expense" />
+      <nestedChildShapes>
+        <elementListCompartment Id="9417a019-4266-46ea-a2b0-fb476bd033f7" absoluteBounds="5.0150000000000006, 24.96, 1.9700000000000002, 5.4415283203125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="2e590fe7-88d1-4384-a4f4-2d299b779eff" absoluteBounds="0.5, 25.125, 2, 2.5401025390625023">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_TaskDelegation" />
+      <nestedChildShapes>
+        <elementListCompartment Id="b8884809-0347-4019-8e68-335d7297d5f2" absoluteBounds="0.515, 25.585, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="e59e9d79-0094-4978-a3c4-6e5db4f40093" absoluteBounds="11.75, 24, 2, 4.0785139973958309">
+      <DataClassMoniker Name="/ITPORTALDataContext/vw_ACCEDE_I_WFSetup" />
+      <nestedChildShapes>
+        <elementListCompartment Id="ca1e2ec5-bb7d-48ac-af7f-317169afbf73" absoluteBounds="11.765, 24.46, 1.9700000000000002, 3.518513997395833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="7f22625c-7a2d-4d92-b689-c0b047648732" absoluteBounds="14, 4, 2, 1.7708968098958331">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_M_CheckMinAmount" />
+      <nestedChildShapes>
+        <elementListCompartment Id="0cfe73ae-441c-4d85-a6f2-ad8b16de942d" absoluteBounds="14.015, 4.46, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="d60bd3d3-fa62-41be-90e1-ec28b8d25386" absoluteBounds="0.5, 27.75, 2, 4.0785139973958326">
+      <DataClassMoniker Name="/ITPORTALDataContext/vw_ACCEDE_FinApproverVerify" />
+      <nestedChildShapes>
+        <elementListCompartment Id="eff0d51f-e4f5-49f7-b4ee-bb049f4f66d6" absoluteBounds="0.51500000000000012, 28.21, 1.9700000000000002, 3.518513997395833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="43507d31-1005-4eab-a0f6-6177182512a4" absoluteBounds="0.5, 2, 2, 1.3862939453125">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACDE_T_MasterCode" />
+      <nestedChildShapes>
+        <elementListCompartment Id="919ae512-45ba-4aaf-a327-1a4b27d858de" absoluteBounds="0.51500000000000012, 2.46, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="8e1f7c94-855f-437c-af5c-d0afc6100116" absoluteBounds="2.75, 3, 2, 1.5785953776041666">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_M_MaxAmntComp" />
+      <nestedChildShapes>
+        <elementListCompartment Id="f238f791-ec06-4079-8f6d-4207dbfdfeda" absoluteBounds="2.765, 3.46, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="19938412-c1af-4d29-917b-898ee2a30056" absoluteBounds="9.5, 3.125, 2, 2.3478011067708335">
+      <DataClassMoniker Name="/ITPORTALDataContext/ITP_S_UserDelegation" />
+      <nestedChildShapes>
+        <elementListCompartment Id="c9dd8a3d-8726-4c7e-a246-4d6c313e1864" absoluteBounds="9.515, 3.585, 1.9700000000000002, 1.7878011067708335" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="78590c63-ae64-41bf-b473-f8392cefef41" absoluteBounds="5, 3.125, 2, 4.6554182942708326">
+      <DataClassMoniker Name="/ITPORTALDataContext/vw_ACCEDE_I_RAWFActivity" />
+      <nestedChildShapes>
+        <elementListCompartment Id="532ca1f7-110f-493e-9ad0-a67abb97776c" absoluteBounds="5.015, 3.585, 1.9700000000000002, 4.095418294270833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="fc21d928-4d36-46fd-b55e-6b8171fb4f86" absoluteBounds="2.75, 7.25, 2, 4.6554182942708326">
+      <DataClassMoniker Name="/ITPORTALDataContext/vw_ACCEDE_I_WorkflowActivity" />
+      <nestedChildShapes>
+        <elementListCompartment Id="83c7bea8-64d2-4e3f-a5d5-aaf9eccb5da3" absoluteBounds="2.765, 7.71, 1.9700000000000002, 4.095418294270833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="66e72ce7-1ea9-4d99-9302-90a6c0d989c9" absoluteBounds="0.5, 20.5, 2, 4.4631168619791666">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_T_ExpenseMain" />
+      <nestedChildShapes>
+        <elementListCompartment Id="2a05d643-12a2-4b56-9e49-e7283b2c0187" absoluteBounds="0.51500000000000012, 20.96, 1.9700000000000002, 3.903116861979167" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="f3b60536-abb2-4a2e-8974-5e357e241002" absoluteBounds="11.75, 19.5, 2, 4.2708154296875">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_T_ExpenseDetail" />
+      <nestedChildShapes>
+        <elementListCompartment Id="9bd4a2cd-6195-45ed-bd8d-d949df5f4f61" absoluteBounds="11.765, 19.96, 1.9700000000000002, 3.7108154296875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="97ed1782-32a8-4965-925f-df49d9b23efb" absoluteBounds="0.5, 10.75, 2, 4.4631168619791666">
+      <DataClassMoniker Name="/ITPORTALDataContext/vw_ACCEDE_I_ExpenseDetail" />
+      <nestedChildShapes>
+        <elementListCompartment Id="78f90a87-8dff-48be-b59a-e904ea2085fa" absoluteBounds="0.51500000000000012, 11.21, 1.9700000000000002, 3.903116861979167" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="e2c46610-7722-4ea8-b2a8-cb520fa10ded" absoluteBounds="2.75, 24.875, 2, 1.3862939453125">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_T_ExpenseDetailFileAttach" />
+      <nestedChildShapes>
+        <elementListCompartment Id="eb5d449b-74c9-4e50-b9ed-832f4336943c" absoluteBounds="2.7649999999999997, 25.335, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="bdd6a0fd-19d4-4ad7-8f6d-4ea6f2f2864a" absoluteBounds="2.75, 20.875, 2, 3.8862125651041666">
+      <DataClassMoniker Name="/ITPORTALDataContext/vw_ACCEDE_I_UserWFAccess" />
+      <nestedChildShapes>
+        <elementListCompartment Id="a16a4d76-ff8e-4270-97a9-af0e78d2ece4" absoluteBounds="2.765, 21.335, 1.9700000000000002, 3.3262125651041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="6b37555e-011b-403b-829d-715e99ca0382" absoluteBounds="0.5, 15.25, 2, 2.5401025390625">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_T_ExpenseDetailsMap" />
+      <nestedChildShapes>
+        <elementListCompartment Id="443b4bfd-1022-4e9d-a47d-40874ad3cabe" absoluteBounds="0.515, 15.71, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="b56ed4bf-9bcc-4f5d-a267-c13b45bee7a0" absoluteBounds="7.25, 22.375, 2, 6.3861311848958326">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_T_RFPMain" />
+      <nestedChildShapes>
+        <elementListCompartment Id="c5002be4-71db-41b1-8bd4-22259a302b4f" absoluteBounds="7.265, 22.835, 1.9700000000000002, 5.826131184895833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="8c5f8492-7cef-48bc-acec-fbe3d4388445" absoluteBounds="14, 2.125, 2, 1.7708968098958331">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_S_CostCenter" />
+      <nestedChildShapes>
+        <elementListCompartment Id="f82b993a-050c-4ed0-bf52-d5d37e74d631" absoluteBounds="14.015, 2.585, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="6200d279-e87c-4507-b638-0e17f7de2275" absoluteBounds="16.25, 0.5, 2.625, 1.5785953776041666">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_T_TravelForAccounting" />
+      <nestedChildShapes>
+        <elementListCompartment Id="51f7884b-a1f8-48b3-b823-3e09fd00b795" absoluteBounds="16.265, 0.96, 2.5949999999999998, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="c42f6153-3769-475d-85a0-960ee9b602ed" absoluteBounds="16.25, 2.25, 2.625, 4.2708154296875">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_T_TravelExpenseMain" />
+      <nestedChildShapes>
+        <elementListCompartment Id="c86dcea5-8549-4626-8da5-12a55989c7c0" absoluteBounds="16.265, 2.71, 2.5949999999999998, 3.7108154296875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="50c3260e-6a4b-4f06-a037-8408f30c48f2" absoluteBounds="16.25, 6.75, 2.625, 4.6554182942708326">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_T_TravelExpenseDetailsMap" />
+      <nestedChildShapes>
+        <elementListCompartment Id="82c0dd4d-cf51-405f-a1f3-83c3878ac8ce" absoluteBounds="16.265, 7.21, 2.5949999999999998, 4.095418294270833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="7c630600-a7bc-424a-9286-2c9bb76b38b2" absoluteBounds="16.25, 11.625, 2.625, 1.7708968098958331">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_T_TravelExpenseDetail" />
+      <nestedChildShapes>
+        <elementListCompartment Id="843d2392-27d1-4d02-9440-83c8702f7f52" absoluteBounds="16.265, 12.085, 2.5949999999999998, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="affb3080-ea5f-4156-9020-c93201419700" absoluteBounds="16.25, 13.625, 2.625, 1.7708968098958331">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_T_TraExpReimTranspoMap" />
+      <nestedChildShapes>
+        <elementListCompartment Id="4abaad3d-b905-4b9a-bdd4-db9a87d8e385" absoluteBounds="16.265, 14.085, 2.5949999999999998, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="841fe353-02fd-48c8-81c1-b313bb7a7fb2" absoluteBounds="16.25, 15.625, 2.625, 1.9631982421875">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_T_TraExpOtherBusMap" />
+      <nestedChildShapes>
+        <elementListCompartment Id="1076b457-72e2-4a9b-a0cf-79b8f363c9a3" absoluteBounds="16.265, 16.085, 2.5949999999999998, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="409f6bd0-44fd-4934-a193-50ca57f01ceb" absoluteBounds="16.25, 17.875, 2.625, 1.9631982421875">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_T_TraExpMiscTravelMap" />
+      <nestedChildShapes>
+        <elementListCompartment Id="6593db6d-bafc-40ac-b059-2c7d6c444c86" absoluteBounds="16.265, 18.335, 2.5949999999999998, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="808bf9a7-280e-4f6d-aaab-50bf26e8646a" absoluteBounds="16.25, 20.125, 2.625, 1.7708968098958331">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_T_TraExpFixedAllowMap" />
+      <nestedChildShapes>
+        <elementListCompartment Id="1768e633-9676-43d3-8960-bad654b79d36" absoluteBounds="16.265, 20.585, 2.5949999999999998, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="30c2c43a-03ee-402d-86a7-0dff70606968" absoluteBounds="16.25, 22.125, 2.625, 1.7708968098958331">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_T_TraExpEntertainmentMap" />
+      <nestedChildShapes>
+        <elementListCompartment Id="bbe23b2d-4217-4087-b168-c3d59f09ef70" absoluteBounds="16.265, 22.585, 2.5949999999999998, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="da6e26d7-0ed7-4460-8377-992a7fd43699" absoluteBounds="16.25, 24.125, 2.625, 1.7708968098958331">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_T_TraExpBusinessMealMap" />
+      <nestedChildShapes>
+        <elementListCompartment Id="1d7a70a8-b62a-480e-9831-3b5725888652" absoluteBounds="16.265, 24.585, 2.5949999999999998, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="4c06aac1-5e50-4409-9168-c0c47b7de5e1" absoluteBounds="16.25, 26.125, 2.625, 1.3862939453125">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_T_TravelExpenseDetailsFileAttach" />
+      <nestedChildShapes>
+        <elementListCompartment Id="d67abfd3-8a8c-40d1-86e4-6136de6feb08" absoluteBounds="16.265, 26.585, 2.5949999999999998, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

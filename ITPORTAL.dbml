@@ -1,0 +1,1154 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="ITPORTAL" Class="ITPORTALDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Table Name="dbo.ITP_S_EmailTemplate" Member="ITP_S_EmailTemplates">
+    <Type Name="ITP_S_EmailTemplate">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Type" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Template" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_DocumentNumber" Member="ITP_S_DocumentNumbers">
+    <Type Name="ITP_S_DocumentNumber">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="DocType_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Prefix" Type="System.String" DbType="VarChar(6)" CanBeNull="true" />
+      <Column Name="Value" Type="System.String" DbType="VarChar(6)" CanBeNull="true" />
+      <Column Name="NextNum" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="Company_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="App_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DocNumCreated" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_SecurityApp" Member="ITP_S_SecurityApps">
+    <Type Name="ITP_S_SecurityApp">
+      <Column Name="App_Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="App_Name" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="App_Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="App_DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="App_DateModified" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="App_CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="App_ModifiedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="AppType_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Old_AppId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="ITP_S_SecurityApp_ITP_S_SecurityPageRole" Member="ITP_S_SecurityPageRoles" ThisKey="App_Id" OtherKey="SecurityApp_Id" Type="ITP_S_SecurityPageRole" />
+      <Association Name="ITP_S_SecurityApp_ITP_S_SecurityPage" Member="ITP_S_SecurityPages" ThisKey="App_Id" OtherKey="SecurityApp_Id" Type="ITP_S_SecurityPage" />
+      <Association Name="ITP_S_SecurityApp_ITP_S_SecurityRole" Member="ITP_S_SecurityRoles" ThisKey="App_Id" OtherKey="AppId" Type="ITP_S_SecurityRole" />
+      <Association Name="ITP_S_SecurityApp_ITP_S_SecurityUserApp" Member="ITP_S_SecurityUserApps" ThisKey="App_Id" OtherKey="SecurityApp_Id" Type="ITP_S_SecurityUserApp" />
+      <Association Name="ITP_S_SecurityApp_ITP_S_SecurityUserAppRole" Member="ITP_S_SecurityUserAppRoles" ThisKey="App_Id" OtherKey="SecurityApp_Id" Type="ITP_S_SecurityUserAppRole" />
+      <Association Name="ITP_S_SecurityApp_ITP_S_WorkflowHeader" Member="ITP_S_WorkflowHeaders" ThisKey="App_Id" OtherKey="App_Id" Type="ITP_S_WorkflowHeader" />
+      <Association Name="ITP_S_SecurityApp_ITP_S_WorkflowGroupHeader" Member="ITP_S_WorkflowGroupHeaders" ThisKey="App_Id" OtherKey="App_Id" Type="ITP_S_WorkflowGroupHeader" />
+      <Association Name="ITP_S_SecurityAppType_ITP_S_SecurityApp" Member="ITP_S_SecurityAppType" ThisKey="AppType_Id" OtherKey="AppType_Id" Type="ITP_S_SecurityAppType" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_SecurityUserOrgRoles" Member="ITP_S_SecurityUserOrgRoles">
+    <Type Name="ITP_S_SecurityUserOrgRole">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UserId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="OrgRoleId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DateModified" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ModifiedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsPrimary" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Association Name="ITP_S_SecurityOrgRole_ITP_S_SecurityUserOrgRole" Member="ITP_S_SecurityOrgRole" ThisKey="OrgRoleId" OtherKey="Id" Type="ITP_S_SecurityOrgRole" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_SecurityAppClass" Member="ITP_S_SecurityAppClasses">
+    <Type Name="ITP_S_SecurityAppClass">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ApplicationType" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ModifiedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DateModified" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_SecurityAppIntegrateApp" Member="ITP_S_SecurityAppIntegrateApps">
+    <Type Name="ITP_S_SecurityAppIntegrateApp">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="AppId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IntgrAppId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IntegrationType" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Remarks" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_SecurityAppIntegration" Member="ITP_S_SecurityAppIntegrations">
+    <Type Name="ITP_S_SecurityAppIntegration">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IntegrationMode" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DateModified" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ModifiedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_SecurityAppSource" Member="ITP_S_SecurityAppSources">
+    <Type Name="ITP_S_SecurityAppSource">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Souce" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DateModified" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ModifedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_SecurityAppStatus" Member="ITP_S_SecurityAppStatus">
+    <Type Name="ITP_S_SecurityAppStatus">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Status" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_SecurityAppTypes" Member="ITP_S_SecurityAppTypes">
+    <Type Name="ITP_S_SecurityAppType">
+      <Column Name="AppType_Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="AppType_Name" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="AppType_Desc" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="AppType_DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="AppType_DateModified" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="AppType_CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="AppType_ModifiedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Association Name="ITP_S_SecurityAppType_ITP_S_SecurityApp" Member="ITP_S_SecurityApps" ThisKey="AppType_Id" OtherKey="AppType_Id" Type="ITP_S_SecurityApp" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_SecurityAppUserCompany" Member="ITP_S_SecurityAppUserCompanies">
+    <Type Name="ITP_S_SecurityAppUserCompany">
+      <Column Name="UserCompany_Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UserId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="CompanyId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="UserCompany_DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UserCompany_DateModified" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UserCompany_CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="UserCompany_ModifiedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="AppId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_SecurityAppxAppClass" Member="ITP_S_SecurityAppxAppClasses">
+    <Type Name="ITP_S_SecurityAppxAppClass">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="AppId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="AppClassId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_SecurityOrgRole_AppRole" Member="ITP_S_SecurityOrgRole_AppRoles">
+    <Type Name="ITP_S_SecurityOrgRole_AppRole">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="SecurityOrg_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SecurityRole_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DateModified" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ModifiedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="SecurityApp_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SecurityCompany_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="ITP_S_SecurityOrgRole_ITP_S_SecurityOrgRole_AppRole" Member="ITP_S_SecurityOrgRole" ThisKey="SecurityOrg_Id" OtherKey="Id" Type="ITP_S_SecurityOrgRole" IsForeignKey="true" />
+      <Association Name="ITP_S_SecurityRole_ITP_S_SecurityOrgRole_AppRole" Member="ITP_S_SecurityRole" ThisKey="SecurityRole_Id" OtherKey="Role_Id" Type="ITP_S_SecurityRole" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_SecurityOrgRoles" Member="ITP_S_SecurityOrgRoles">
+    <Type Name="ITP_S_SecurityOrgRole">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Role_Name" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DateModified" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Modifiedby" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="Count" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="ITP_S_SecurityOrgRole_ITP_S_SecurityUserOrgRole" Member="ITP_S_SecurityUserOrgRoles" ThisKey="Id" OtherKey="OrgRoleId" Type="ITP_S_SecurityUserOrgRole" />
+      <Association Name="ITP_S_SecurityOrgRole_ITP_S_SecurityOrgRole_AppRole" Member="ITP_S_SecurityOrgRole_AppRoles" ThisKey="Id" OtherKey="SecurityOrg_Id" Type="ITP_S_SecurityOrgRole_AppRole" />
+      <Association Name="ITP_S_SecurityOrgRole_ITP_S_WorkflowDetail" Member="ITP_S_WorkflowDetails" ThisKey="Id" OtherKey="OrgRole_Id" Type="ITP_S_WorkflowDetail" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_SecurityPageRole" Member="ITP_S_SecurityPageRoles">
+    <Type Name="ITP_S_SecurityPageRole">
+      <Column Name="PageRole_Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="SecurityApp_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SecurityRole_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PageRole_DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="PageRole_DateModified" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="PageRole_CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PageRole_ModifiedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="SecurityPageId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreateAccess" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="ReadAccess" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="UpdateAccess" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="DeleteAccess" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DateModified" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ModifiedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="ITP_S_SecurityApp_ITP_S_SecurityPageRole" Member="ITP_S_SecurityApp" ThisKey="SecurityApp_Id" OtherKey="App_Id" Type="ITP_S_SecurityApp" IsForeignKey="true" />
+      <Association Name="ITP_S_SecurityPage_ITP_S_SecurityPageRole" Member="ITP_S_SecurityPage" ThisKey="SecurityPageId" OtherKey="Page_Id" Type="ITP_S_SecurityPage" IsForeignKey="true" />
+      <Association Name="ITP_S_SecurityRole_ITP_S_SecurityPageRole" Member="ITP_S_SecurityRole" ThisKey="SecurityRole_Id" OtherKey="Role_Id" Type="ITP_S_SecurityRole" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_SecurityPages" Member="ITP_S_SecurityPages">
+    <Type Name="ITP_S_SecurityPage">
+      <Column Name="Page_Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Page_Name" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Page_Url" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Page_ParentPageId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Page_Level" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SecurityApp_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Page_DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Page_DateModified" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Page_CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Page_ModifiedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="Page_UrlId" Type="System.String" DbType="NVarChar(MAX)" IsDbGenerated="true" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="PageType" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PageSorting" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Association Name="ITP_S_SecurityPage_ITP_S_SecurityPageRole" Member="ITP_S_SecurityPageRoles" ThisKey="Page_Id" OtherKey="SecurityPageId" Type="ITP_S_SecurityPageRole" />
+      <Association Name="ITP_S_SecurityApp_ITP_S_SecurityPage" Member="ITP_S_SecurityApp" ThisKey="SecurityApp_Id" OtherKey="App_Id" Type="ITP_S_SecurityApp" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_SecurityRoles" Member="ITP_S_SecurityRoles">
+    <Type Name="ITP_S_SecurityRole">
+      <Column Name="Role_Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Role_Name" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="AppId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Role_DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Role_DateMod" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Role_CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Role_ModBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Association Name="ITP_S_SecurityRole_ITP_S_SecurityOrgRole_AppRole" Member="ITP_S_SecurityOrgRole_AppRoles" ThisKey="Role_Id" OtherKey="SecurityRole_Id" Type="ITP_S_SecurityOrgRole_AppRole" />
+      <Association Name="ITP_S_SecurityRole_ITP_S_SecurityPageRole" Member="ITP_S_SecurityPageRoles" ThisKey="Role_Id" OtherKey="SecurityRole_Id" Type="ITP_S_SecurityPageRole" />
+      <Association Name="ITP_S_SecurityRole_ITP_S_SecurityUserAppRole" Member="ITP_S_SecurityUserAppRoles" ThisKey="Role_Id" OtherKey="SecurityRole_Id" Type="ITP_S_SecurityUserAppRole" />
+      <Association Name="ITP_S_SecurityApp_ITP_S_SecurityRole" Member="ITP_S_SecurityApp" ThisKey="AppId" OtherKey="App_Id" Type="ITP_S_SecurityApp" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_SecurityUser" Member="ITP_S_SecurityUsers">
+    <Type Name="ITP_S_SecurityUser">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UserId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="UserApp_DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UserApp_DateModified" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UserApp_CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="UserApp_ModifiedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_SecurityUserApp" Member="ITP_S_SecurityUserApps">
+    <Type Name="ITP_S_SecurityUserApp">
+      <Column Name="UserApp_Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Username" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="UserApp_DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UserApp_DateModified" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UserApp_CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="UserApp_ModifiedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="UserId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="SecurityApp_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="WASPUserId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="ITP_S_SecurityApp_ITP_S_SecurityUserApp" Member="ITP_S_SecurityApp" ThisKey="SecurityApp_Id" OtherKey="App_Id" Type="ITP_S_SecurityApp" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_SecurityUserAppRoles" Member="ITP_S_SecurityUserAppRoles">
+    <Type Name="ITP_S_SecurityUserAppRole">
+      <Column Name="UserAppRoles_Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="SecurityRole_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SecurityApp_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Username" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="UserId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="UserAppRoles_DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UserAppRoles_DateModifed" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UserAppRoles_CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="UserAppRoles_ModifiedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="CompanyId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CR" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="RD" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="UPD" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="DEL" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Association Name="ITP_S_SecurityApp_ITP_S_SecurityUserAppRole" Member="ITP_S_SecurityApp" ThisKey="SecurityApp_Id" OtherKey="App_Id" Type="ITP_S_SecurityApp" IsForeignKey="true" />
+      <Association Name="ITP_S_SecurityRole_ITP_S_SecurityUserAppRole" Member="ITP_S_SecurityRole" ThisKey="SecurityRole_Id" OtherKey="Role_Id" Type="ITP_S_SecurityRole" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_Texts" Member="ITP_S_Texts">
+    <Type Name="ITP_S_Text">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Type" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Text1" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="Text2" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="Text3" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="Text4" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="Color" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.vw_AGA_I_UserTiles" Member="vw_AGA_I_UserTiles">
+    <Type Name="vw_AGA_I_UserTile">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="GroupID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="GroupName" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="GroupDescription" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="TileGroup_IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="Sort" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Title" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Subtitle" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="URL" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="Icon" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Column Name="Value" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Information" Type="System.String" DbType="VarChar(150)" CanBeNull="true" />
+      <Column Name="App_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Tile_IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="App_Name" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="App_Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="SortBlank" Type="System.String" DbType="VarChar(1) NOT NULL" CanBeNull="false" />
+      <Column Name="Tile_Id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UserId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="SecurityApp_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="CompanyId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.vw_AGA_I_TilesRole" Member="vw_AGA_I_TilesRoles">
+    <Type Name="vw_AGA_I_TilesRole">
+      <Column Name="Tile_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Title" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Subtitle" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="URL" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="App_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="App_Name" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="App_Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Role_Name" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_ForeignExch" Member="ITP_S_ForeignExches">
+    <Type Name="ITP_S_ForeignExch">
+      <Column Name="FE_Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Currency_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DateValid" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="PesoRate" Type="System.Decimal" DbType="Decimal(18,5)" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.String" DbType="VarChar(15)" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ModifiedBy" Type="System.String" DbType="VarChar(15)" CanBeNull="true" />
+      <Column Name="DateModified" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_WorkflowDetails" Member="ITP_S_WorkflowDetails">
+    <Type Name="ITP_S_WorkflowDetail">
+      <Column Name="WFD_Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="WF_Id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="OrgRole_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Sequence" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Type" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DateModified" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ModifiedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="ApprovalNeeded" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="WFDStatus" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="NextWFD_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="ITP_S_SecurityOrgRole_ITP_S_WorkflowDetail" Member="ITP_S_SecurityOrgRole" ThisKey="OrgRole_Id" OtherKey="Id" Type="ITP_S_SecurityOrgRole" IsForeignKey="true" />
+      <Association Name="ITP_S_WorkflowHeader_ITP_S_WorkflowDetail" Member="ITP_S_WorkflowHeader" ThisKey="WF_Id" OtherKey="WF_Id" Type="ITP_S_WorkflowHeader" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_WorkflowHeader" Member="ITP_S_WorkflowHeaders">
+    <Type Name="ITP_S_WorkflowHeader">
+      <Column Name="WF_Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="App_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Company_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DateModified" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ModifiedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsShow" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="Minimum" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="Maximum" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="IsRA" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="With_DivHead" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Association Name="ITP_S_WorkflowHeader_ITP_S_WorkflowDetail" Member="ITP_S_WorkflowDetails" ThisKey="WF_Id" OtherKey="WF_Id" Type="ITP_S_WorkflowDetail" />
+      <Association Name="ITP_S_WorkflowHeader_ITP_S_WorkflowGroupDetail" Member="ITP_S_WorkflowGroupDetails" ThisKey="WF_Id" OtherKey="WF_Id" Type="ITP_S_WorkflowGroupDetail" />
+      <Association Name="ITP_S_SecurityApp_ITP_S_WorkflowHeader" Member="ITP_S_SecurityApp" ThisKey="App_Id" OtherKey="App_Id" Type="ITP_S_SecurityApp" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_Status" Member="ITP_S_Status">
+    <Type Name="ITP_S_Status">
+      <Column Name="STS_Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="STS_Name" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="STS_Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="STS_DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="STS_DateModifed" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="STS_CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="STS_ModifiedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="STS_IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="STS_IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="STS_IsApproval" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="STS_ForExecution" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_T_FileAttachment" Member="ITP_T_FileAttachments">
+    <Type Name="ITP_T_FileAttachment">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="FileAttachment" Type="System.Data.Linq.Binary" DbType="VarBinary(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="FileName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="FileExtension" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="URL" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="DateUploaded" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="App_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Company_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Doc_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Doc_No" Type="System.String" DbType="NChar(50)" CanBeNull="true" />
+      <Column Name="User_ID" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="FileSize" Type="System.String" DbType="NChar(20)" CanBeNull="true" />
+      <Column Name="DocType_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_WorkflowGroupDetail" Member="ITP_S_WorkflowGroupDetails">
+    <Type Name="ITP_S_WorkflowGroupDetail">
+      <Column Name="WFGD_Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="WFG_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="WF_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Type" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Sequence" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DateModified" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ModifiedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Association Name="ITP_S_WorkflowHeader_ITP_S_WorkflowGroupDetail" Member="ITP_S_WorkflowHeader" ThisKey="WF_Id" OtherKey="WF_Id" Type="ITP_S_WorkflowHeader" IsForeignKey="true" />
+      <Association Name="ITP_S_WorkflowGroupHeader_ITP_S_WorkflowGroupDetail" Member="ITP_S_WorkflowGroupHeader" ThisKey="WFG_Id" OtherKey="WFGH_Id" Type="ITP_S_WorkflowGroupHeader" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_WorkflowGroupHeader" Member="ITP_S_WorkflowGroupHeaders">
+    <Type Name="ITP_S_WorkflowGroupHeader">
+      <Column Name="WFGH_Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Company_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="App_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DateModified" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ModifiedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Association Name="ITP_S_WorkflowGroupHeader_ITP_S_WorkflowGroupDetail" Member="ITP_S_WorkflowGroupDetails" ThisKey="WFGH_Id" OtherKey="WFG_Id" Type="ITP_S_WorkflowGroupDetail" />
+      <Association Name="ITP_S_SecurityApp_ITP_S_WorkflowGroupHeader" Member="ITP_S_SecurityApp" ThisKey="App_Id" OtherKey="App_Id" Type="ITP_S_SecurityApp" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_T_WorkflowGroupActivities" Member="ITP_T_WorkflowGroupActivities">
+    <Type Name="ITP_T_WorkflowGroupActivity">
+      <Column Name="WFGA_Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="WFG_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="WFGD_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Status" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DateAssigned" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DateAction" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Remarks" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Document_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Control_Id" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="AppId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CompId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CompanyMaster" Member="CompanyMasters">
+    <Type Name="CompanyMaster">
+      <Column Name="RowId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CompanyDesc" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="CompanyShortName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="INTERID" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="FullAddress" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="IsNorth" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsSouth" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="DynamicsId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="KDS" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DateModified" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ModifiedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="HRId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="WASSId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SAP_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_SecurityAppUserCompanyDept" Member="ITP_S_SecurityAppUserCompanyDepts">
+    <Type Name="ITP_S_SecurityAppUserCompanyDept">
+      <Column Name="UserDeptID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UserId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="CompanyId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DepCode" Type="System.String" DbType="NVarChar(24)" CanBeNull="true" />
+      <Column Name="AppId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDefault" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_OrgDepartmentMaster" Member="ITP_S_OrgDepartmentMasters">
+    <Type Name="ITP_S_OrgDepartmentMaster">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="DepCode" Type="System.String" DbType="NVarChar(24)" CanBeNull="true" />
+      <Column Name="DepDesc" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="DepHead" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="Div_Code" Type="System.String" DbType="NVarChar(24)" CanBeNull="true" />
+      <Column Name="Company_Code" Type="System.String" DbType="NVarChar(24)" CanBeNull="true" />
+      <Column Name="Company_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SAP_CostCenter" Type="System.String" DbType="VarChar(150)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_WorkflowGroup_Department" Member="ITP_S_WorkflowGroup_Departments">
+    <Type Name="ITP_S_WorkflowGroup_Department">
+      <Column Name="WFGDept_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="WFG_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DepCode_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_UserMaster" Member="ITP_S_UserMasters">
+    <Type Name="ITP_S_UserMaster">
+      <Column Name="ITP_U_Master_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="EmpCode" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="LName" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="FName" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="MName" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="FullName" Type="System.String" DbType="NVarChar(404) NOT NULL" CanBeNull="false" />
+      <Column Name="CompanyID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CompanyName" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="DivDesc" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="DepDesc" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="SecDesc" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="DesDesc" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="CompanyAddress" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="LocalNo" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="MobileNo" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="Email" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="JobLevel" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="UserName" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="isSouth" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="TIN" Type="System.String" DbType="VarChar(300)" CanBeNull="true" />
+      <Column Name="BirthDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Address" Type="System.String" DbType="VarChar(1500)" CanBeNull="true" />
+      <Column Name="City" Type="System.String" DbType="VarChar(300)" CanBeNull="true" />
+      <Column Name="Province" Type="System.String" DbType="VarChar(300)" CanBeNull="true" />
+      <Column Name="DateHired" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DivCode" Type="System.String" DbType="VarChar(15)" CanBeNull="true" />
+      <Column Name="DepCode" Type="System.String" DbType="VarChar(15)" CanBeNull="true" />
+      <Column Name="SecCode" Type="System.String" DbType="VarChar(15)" CanBeNull="true" />
+      <Column Name="DesCode" Type="System.String" DbType="VarChar(15)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_S_AccountCharged" Member="ACCEDE_S_AccountChargeds">
+    <Type Name="ACCEDE_S_AccountCharged">
+      <Column Name="AccCharged_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TransactionType" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="GLAccount" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_S_ExpenseType" Member="ACCEDE_S_ExpenseTypes">
+    <Type Name="ACCEDE_S_ExpenseType">
+      <Column Name="ExpenseType_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_S_PayMethod" Member="ACCEDE_S_PayMethods">
+    <Type Name="ACCEDE_S_PayMethod">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="PMethod_desc" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
+      <Column Name="PMethod_name" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="isActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_S_RFPTranType" Member="ACCEDE_S_RFPTranTypes">
+    <Type Name="ACCEDE_S_RFPTranType">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="RFPTranType_Name" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="RFPTranType_Desc" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
+      <Column Name="isActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_T_ExpenseCA" Member="ACCEDE_T_ExpenseCAs">
+    <Type Name="ACCEDE_T_ExpenseCA">
+      <Column Name="ExpCA_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="RFPMain_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="User_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsUploaded" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="ExpenseMain_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_T_WorkflowActivity" Member="ITP_T_WorkflowActivities">
+    <Type Name="ITP_T_WorkflowActivity">
+      <Column Name="WFA_Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Status" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DateAssigned" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="DateAction" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="OrgRole_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="WF_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="WFD_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="Document_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Remarks" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="AppId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CompanyId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="OrgRole_Id_Orig" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDelegated" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="ActedBy_User_Id" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="AppDocTypeId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_DocumentType" Member="ITP_S_DocumentTypes">
+    <Type Name="ITP_S_DocumentType">
+      <Column Name="DCT_Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="DCT_Name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="DCT_Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="DCT_CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DCT_ModifiedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DCT_DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DCT_DateModified" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DCT_IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="DCT_IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="App_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_S_Computation" Member="ACCEDE_S_Computations">
+    <Type Name="ACCEDE_S_Computation">
+      <Column Name="Computation_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Type" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Value1" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="Value2" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="Value3" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACDE_T_Main" Member="ACDE_T_Mains">
+    <Type Name="ACDE_T_Main">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ReportName" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
+      <Column Name="ReportDate" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="ExpenseCat_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CompCode_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CostObjType_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CostCenter_ID" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="ModPay_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Comment" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="WithTravel" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="User_ID" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Status_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ReportDateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ItineraryName" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="TravelType_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.vw_ACDE_MainTotalExpense" Member="vw_ACDE_MainTotalExpenses">
+    <Type Name="vw_ACDE_MainTotalExpense">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ReportName" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
+      <Column Name="ReportDate" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="ExpenseCat_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CompCode_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CostObjType_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CostCenter_ID" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="ModPay_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Comment" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="WithTravel" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="User_ID" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Status_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ReportDateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Total" Type="System.Decimal" DbType="Decimal(38,2)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACDE_T_Expense" Member="ACDE_T_Expenses">
+    <Type Name="ACDE_T_Expense">
+      <Column Name="ID" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="PaymentType" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="ExpenseType_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="VendorDetails" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="TransactionDate" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="Requested_Amount" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="ACDE_Main_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ExpenseCategory" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BusinessPurpose" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="VendorName" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="VendorTIN" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="VendorAddress" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="CityOfPurchase" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="InvoiceORNum" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="ReceiptStatus" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Currency_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="WithholdingTaxAmnt" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="WithholdingTaxATC" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="WBSElement" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="InternalOrder" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="AssetNum" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="SubAssetNum" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="TaxPostedAmnt" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="VATExempt" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="Comment" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="DailyAllowanceDetail" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="GSTAmnt" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_TaskDelegation" Member="ITP_S_TaskDelegations">
+    <Type Name="ITP_S_TaskDelegation">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="OrgRole_ID_Orig" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="OrgRole_ID_Delegate" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="App_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DateFrom" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DateTo" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Company_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Remarks" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="isActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.vw_ACCEDE_I_WFSetup" Member="vw_ACCEDE_I_WFSetups">
+    <Type Name="vw_ACCEDE_I_WFSetup">
+      <Column Name="WFD_Id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="WF_Id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="OrgRole_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Sequence" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Type" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DateModified" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ModifiedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="ApprovalNeeded" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="UserId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Expr1" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="App_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Company_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_M_CheckMinAmount" Member="ACCEDE_M_CheckMinAmounts">
+    <Type Name="ACCEDE_M_CheckMinAmount">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CompanyId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PayMethod_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MaxAmount" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="isActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.vw_ACCEDE_FinApproverVerify" Member="vw_ACCEDE_FinApproverVerifies">
+    <Type Name="vw_ACCEDE_FinApproverVerify">
+      <Column Name="Role_Name" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="UserAppRoles_Id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SecurityRole_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SecurityApp_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Username" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="UserId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="UserAppRoles_DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UserAppRoles_DateModifed" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UserAppRoles_CreatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="UserAppRoles_ModifiedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="CompanyId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CR" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="RD" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="UPD" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="DEL" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACDE_T_MasterCodes" Member="ACDE_T_MasterCodes">
+    <Type Name="ACDE_T_MasterCode">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Code" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_M_MaxAmntComp" Member="ACCEDE_M_MaxAmntComps">
+    <Type Name="ACCEDE_M_MaxAmntComp">
+      <Column Name="ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CompanyId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MaxAmount" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="isActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ITP_S_UserDelegation" Member="ITP_S_UserDelegations">
+    <Type Name="ITP_S_UserDelegation">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="DelegatorUserID" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="DelegateUserID" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="DateFrom" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DateTo" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Company_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Remarks" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="isActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.vw_ACCEDE_I_RAWFActivity" Member="vw_ACCEDE_I_RAWFActivities">
+    <Type Name="vw_ACCEDE_I_RAWFActivity">
+      <Column Name="WFA_Id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Status" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DateAssigned" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="DateAction" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="OrgRole_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="WF_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="WFD_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="Document_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Remarks" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="AppId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CompanyId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="OrgRole_Id_Orig" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDelegated" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="ActedBy_User_Id" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="IsRA" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="UserId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="DCT_Name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.vw_ACCEDE_I_WorkflowActivity" Member="vw_ACCEDE_I_WorkflowActivities">
+    <Type Name="vw_ACCEDE_I_WorkflowActivity">
+      <Column Name="WFA_Id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Status" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DateAssigned" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="DateAction" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="OrgRole_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="WF_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="WFD_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="Document_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Remarks" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="AppId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CompanyId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="OrgRole_Id_Orig" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDelegated" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="ActedBy_User_Id" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="IsRA" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="UserId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="DCT_Name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_T_ExpenseMain" Member="ACCEDE_T_ExpenseMains">
+    <Type Name="ACCEDE_T_ExpenseMain">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Purpose" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="DocNo" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="Status" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ExpenseName" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="ReportDate" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="PaymentType" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CostCenter" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="CompanyId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ExpenseCat" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="UserId" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="ExpenseType_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="WF_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="FAPWF_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="isTravel" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="remarks" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="Exp_Currency" Type="System.String" DbType="VarChar(5)" CanBeNull="true" />
+      <Column Name="Dept_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_T_ExpenseDetails" Member="ACCEDE_T_ExpenseDetails">
+    <Type Name="ACCEDE_T_ExpenseDetail">
+      <Column Name="ExpenseReportDetail_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="DateAdded" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="Supplier" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="TIN" Type="System.String" DbType="NVarChar(15)" CanBeNull="true" />
+      <Column Name="InvoiceOR" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Particulars" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="AccountToCharged" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="CostCenterIOWBS" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="GrossAmount" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="VAT" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="EWT" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="NetAmount" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="IsUploaded" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="ExpenseMain_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Preparer_ID" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="ExpDtl_Currency" Type="System.String" DbType="VarChar(5)" CanBeNull="true" />
+      <Column Name="ExpDtl_IO" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="ExpDtl_WBS" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.vw_ACCEDE_I_ExpenseDetails" Member="vw_ACCEDE_I_ExpenseDetails">
+    <Type Name="vw_ACCEDE_I_ExpenseDetail">
+      <Column Name="ExpenseReportDetail_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DateAdded" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="Supplier" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="TIN" Type="System.String" DbType="NVarChar(15)" CanBeNull="true" />
+      <Column Name="InvoiceOR" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Particulars" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="AccountToCharged" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="CostCenterIOWBS" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="GrossAmount" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="VAT" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="EWT" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="NetAmount" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="IsUploaded" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="ExpenseMain_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Preparer_ID" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="ExpDtl_Currency" Type="System.String" DbType="VarChar(5)" CanBeNull="true" />
+      <Column Name="ExpDtl_IO" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="ExpDtl_WBS" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="P_Name" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_T_ExpenseDetailFileAttach" Member="ACCEDE_T_ExpenseDetailFileAttaches">
+    <Type Name="ACCEDE_T_ExpenseDetailFileAttach">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="FileAttach_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ExpDetail_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.vw_ACCEDE_I_UserWFAccess" Member="vw_ACCEDE_I_UserWFAccesses">
+    <Type Name="vw_ACCEDE_I_UserWFAccess">
+      <Column Name="WFGH_Id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="WorkflowGroupHeader_Name" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="WorkflowGroupHeader_Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="WFGD_Id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="WF_Id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="WorkflowHeader_Name" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="WorkflowHeader_Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="DepCode" Type="System.String" DbType="NVarChar(24)" CanBeNull="true" />
+      <Column Name="DepDesc" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="UserId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="CompanyId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="App_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsRA" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="With_DivHead" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="Minimum" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="Maximum" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_T_ExpenseDetailsMap" Member="ACCEDE_T_ExpenseDetailsMaps">
+    <Type Name="ACCEDE_T_ExpenseDetailsMap">
+      <Column Name="ExpenseDetailMap_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="AccountToCharged" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CostCenterIOWBS" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="VAT" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="EWT" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="NetAmount" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="ExpenseReportDetail_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Preparer_ID" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="EDM_Remarks" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_T_RFPMain" Member="ACCEDE_T_RFPMains">
+    <Type Name="ACCEDE_T_RFPMain">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Company_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Department_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PayMethod" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="TranType" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="isTravel" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="SAPCostCenter" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="IO_Num" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Payee" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="LastDayTransact" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="Amount" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="Purpose" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="WF_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="User_ID" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Status" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="RFP_DocNum" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IsExpenseCA" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="Exp_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="FAPWF_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsExpenseReim" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="WBS" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="AcctCharged" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PLDate" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="Remarks" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="SAPDocNo" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="Currency" Type="System.String" DbType="VarChar(5)" CanBeNull="true" />
+      <Column Name="isReturnToAudit" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="isRePrint" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_S_CostCenter" Member="ACCEDE_S_CostCenters">
+    <Type Name="ACCEDE_S_CostCenter">
+      <Column Name="CostCenter_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Department" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="CostCenter" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="CompanyId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DepartmentId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_T_TravelForAccounting" Member="ACCEDE_T_TravelForAccountings">
+    <Type Name="ACCEDE_T_TravelForAccounting">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Code" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Amount" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="TravelExpenseMain_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_T_TravelExpenseMain" Member="ACCEDE_T_TravelExpenseMains">
+    <Type Name="ACCEDE_T_TravelExpenseMain">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Status" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Doc_No" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Employee_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Preparer_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Company_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Trip_To" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Purpose" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="WF_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="FAPWF_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Remarks" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Dep_Code" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Date_From" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Date_To" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Date_Created" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Time_Departed" Type="System.TimeSpan" DbType="Time" CanBeNull="true" />
+      <Column Name="Time_Arrived" Type="System.TimeSpan" DbType="Time" CanBeNull="true" />
+      <Column Name="ExpenseType_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_T_TravelExpenseDetailsMap" Member="ACCEDE_T_TravelExpenseDetailsMaps">
+    <Type Name="ACCEDE_T_TravelExpenseDetailsMap">
+      <Column Name="TravelExpenseDetailMap_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TravelExpenseDetail_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ReimTranspo_Type1" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="ReimTranspo_Amount1" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
+      <Column Name="ReimTranspo_Type2" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="ReimTranspo_Amount2" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
+      <Column Name="ReimTranspo_Type3" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="ReimTranspo_Amount3" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
+      <Column Name="FixedAllow_ForP" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="FixedAllow_Amount" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
+      <Column Name="MiscTravel_Type" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="MiscTravel_Specify" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="MiscTravel_Amount" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
+      <Column Name="Entertainment_Explain" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Entertainment_Amount" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
+      <Column Name="BusMeals_Explain" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="BusMeals_Amount" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
+      <Column Name="OtherBus_Type" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="OtherBus_Specify" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="OtherBus_Amount" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_T_TravelExpenseDetails" Member="ACCEDE_T_TravelExpenseDetails">
+    <Type Name="ACCEDE_T_TravelExpenseDetail">
+      <Column Name="TravelExpenseDetail_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TravelExpenseDetail_Date" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LocParticulars" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="TravelExpenseMain_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Total_Expenses" Type="System.Decimal" DbType="Decimal(15,2)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_T_TraExpReimTranspoMap" Member="ACCEDE_T_TraExpReimTranspoMaps">
+    <Type Name="ACCEDE_T_TraExpReimTranspoMap">
+      <Column Name="ReimTranspo_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ReimTranspo_Amount" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="TravelExpenseDetail_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="User_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ReimTranspo_Type" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_T_TraExpOtherBusMap" Member="ACCEDE_T_TraExpOtherBusMaps">
+    <Type Name="ACCEDE_T_TraExpOtherBusMap">
+      <Column Name="OtherBusinessExp_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="OtherBusinessExp_Amount" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="OtherBusinessExp_Specify" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="TravelExpenseDetail_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="User_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="OtherBusinessExp_Type" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_T_TraExpMiscTravelMap" Member="ACCEDE_T_TraExpMiscTravelMaps">
+    <Type Name="ACCEDE_T_TraExpMiscTravelMap">
+      <Column Name="MiscTravelExp_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="MiscTravelExp_Amount" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="MiscTravelExp_Specify" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="TravelExpenseDetail_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="User_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MiscTravelExp_Type" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_T_TraExpFixedAllowMap" Member="ACCEDE_T_TraExpFixedAllowMaps">
+    <Type Name="ACCEDE_T_TraExpFixedAllowMap">
+      <Column Name="FixedAllow_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="FixedAllow_ForP" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="FixedAllow_Amount" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="TravelExpenseDetail_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="User_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_T_TraExpEntertainmentMap" Member="ACCEDE_T_TraExpEntertainmentMaps">
+    <Type Name="ACCEDE_T_TraExpEntertainmentMap">
+      <Column Name="Entertainment_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Entertainment_Explain" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Entertainment_Amount" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="TravelExpenseDetail_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="User_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_T_TraExpBusinessMealMap" Member="ACCEDE_T_TraExpBusinessMealMaps">
+    <Type Name="ACCEDE_T_TraExpBusinessMealMap">
+      <Column Name="BusinessMeal_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="BusinessMeal_Explain" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="BusinessMeal_Amount" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="TravelExpenseDetail_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="User_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_T_TravelExpenseDetailsFileAttach" Member="ACCEDE_T_TravelExpenseDetailsFileAttaches">
+    <Type Name="ACCEDE_T_TravelExpenseDetailsFileAttach">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="FileAttachment_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ExpenseDetails_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+</Database>

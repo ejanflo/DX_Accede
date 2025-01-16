@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<items>
+	<!--<item Text="Home" NavigateUrl="~/Default.aspx" />-->
+	<item Text="User Guide" NavigateUrl="~/maintenance.html" Target="_blank" ImageUrl="/Content/Images/MultipleComment.svg" BeginGroup="true" />
+	<item Text="Helpdesk" NavigateUrl="https://helpdesk.anflocor.com/" Target="_blank" ImageUrl="/Content/Images/Email.svg" CssClass="right-aligned" />
+		<!--ImageUrl="/Content/Images/Fruit.svg"-->
+	<item Text="Log Out" NavigateUrl="~/Logout.aspx" ImageUrl="/Content/Images/RemoveComment.svg" CssClass="right-aligned" />
+	<!--<item Text="Grid View" NavigateUrl="Page_Templates/GridView_ReadOnly.aspx" />
+	<item Text="Form Layout" NavigateUrl="Page_Templates/FormLayout_View.aspx"  />
+	<group text="Security">
+		<item Text="Application" NavigateUrl="Security/SecurityApplication.aspx" />
+		<item Text="User" NavigateUrl="Security/SecurityUser.aspx" />
+		<item Text="Org. Role" NavigateUrl="Security/SecurityOrg.aspx" />
+	</group>
+	<group text="Setup">
+		<item Text="Tile Setup" NavigateUrl="Security/SetupTile.aspx" />
+		<item Text="Task Delegation" NavigateUrl="Setup/TaskDelegation.aspx" />
+	</group>
+	<group text="Workflow">
+		<item Text="Workflow" NavigateUrl="Workflow/SecurityWorkflow.aspx" />
+		<item Text="Workflow Group" NavigateUrl="Workflow/SecurityWorkflowGroup.aspx" />
+	</group>-->
+</items>
