@@ -22,6 +22,7 @@ namespace DX_WebTemplate
             if (AnfloSession.Current.ValidCookieUser())
             {
                 AnfloSession.Current.CreateSession(HttpContext.Current.User.ToString());
+                Session["statid"] = context.ITP_S_Status.Where(x => x.STS_Name == "Pending at Cashier" || x.STS_Description == "Pending at Cashier").Select(x => x.STS_Id).FirstOrDefault();
             }
             else
                 Response.Redirect("~/Logon.aspx");

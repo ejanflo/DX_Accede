@@ -470,7 +470,7 @@ namespace DX_WebTemplate
             {
                 DateTime currentDate = DateTime.Now;
 
-                //SendEmail(doc_id, org_id, comps_id, stat);
+                SendEmail(doc_id, org_id, comps_id, stat);
 
                 var wfa = new ITP_T_WorkflowActivity()
                 {
@@ -727,28 +727,28 @@ namespace DX_WebTemplate
                         {
                             Debug.WriteLine("There's FAPWF");
                             var fapRetStatus = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Returned by Finance").Select(x => x.STS_Id).FirstOrDefault();
-                            var countApprovedFAPWF = _DataContext.ITP_T_WorkflowActivities.Count(w => w.WF_Id == fapwf && w.AppId == 1032 && w.Document_Id == docID && (w.Status != 7 && w.Status != 8 && w.Status != fapRetStatus));
+                            var countApprovedFAPWF = _DataContext.ITP_T_WorkflowActivities.Count(w => w.WF_Id == fapwf && w.AppId == 1032 && w.Document_Id == docID && w.AppDocTypeId == doctype_id && (w.Status != 7 && w.Status != 8 && w.Status != fapRetStatus));
 
                             if (countApprovedFAPWF <= 0)
                             {
                                 Debug.WriteLine("All FAPWF approved");
 
-                                var audwf = _DataContext.ITP_S_WorkflowHeaders.Where(w => w.Name == "ACCEDE AUDIT" && w.App_Id == 1032 && w.Company_Id == companyID).Select(x => x.WF_Id).FirstOrDefault();
+                                var audwf = _DataContext.ITP_S_WorkflowHeaders.Where(w => (w.Name == "ACDE AUDIT" || w.Name == "ACCEDE AUDIT") && w.App_Id == 1032 && w.Company_Id == companyID).Select(x => x.WF_Id).FirstOrDefault();
                                 var audwfd = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == audwf && w.Sequence == 1).Select(w => w.WFD_Id).FirstOrDefault();
                                 var audorID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == audwf && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault();
 
-                                var countAUDWF = _DataContext.ITP_T_WorkflowActivities.Count(w => w.WF_Id == audwf && w.AppId == 1032 && w.Document_Id == docID);
+                                var countAUDWF = _DataContext.ITP_T_WorkflowActivities.Count(w => w.WF_Id == audwf && w.AppId == 1032 && w.Document_Id == docID && w.AppDocTypeId == doctype_id);
 
                                 if (countAUDWF > 0)
                                 {
                                     Debug.WriteLine("There's AUDWF");
                                     var audRetStatus = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Returned by Audit").Select(x => x.STS_Id).FirstOrDefault();
-                                    var countApprovedAUDWF = _DataContext.ITP_T_WorkflowActivities.Count(w => w.WF_Id == audwf && w.AppId == 1032 && w.Document_Id == docID && w.Status != 7 && w.Status != 8 && w.Status != audRetStatus);
+                                    var countApprovedAUDWF = _DataContext.ITP_T_WorkflowActivities.Count(w => w.WF_Id == audwf && w.AppId == 1032 && w.Document_Id == docID && w.AppDocTypeId == doctype_id && w.Status != 7 && w.Status != 8 && w.Status != audRetStatus);
 
                                     if (countApprovedAUDWF <= 0)
                                     {
                                         Debug.WriteLine("All AUDWF approved");
-                                        var updateWFA = _DataContext.ITP_T_WorkflowActivities.Where(a => a.Document_Id == docID && a.WF_Id == wfID && a.WFA_Id == wfaID);
+                                        var updateWFA = _DataContext.ITP_T_WorkflowActivities.Where(a => a.Document_Id == docID && a.AppDocTypeId == doctype_id && a.WF_Id == wfID && a.WFA_Id == wfaID);
 
                                         foreach (var ex in updateWFA)
                                         {
@@ -759,7 +759,7 @@ namespace DX_WebTemplate
                                         }                                        
 
                                         var liqStatus = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Liquidated").Select(x => x.STS_Id).FirstOrDefault();
-                                        var updateCA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.TranType == 1 && x.Exp_ID == docID);
+                                        var updateCA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.TranType == 1 && x.isTravel == true && x.Exp_ID == docID);
                                         foreach (ACCEDE_T_RFPMain r in updateCA)
                                         {
                                             r.Status = liqStatus;
@@ -768,7 +768,7 @@ namespace DX_WebTemplate
 
                                         if (Convert.ToDecimal(Session["totalCA"]) == Convert.ToDecimal(Session["totalEXP"]) || Convert.ToDecimal(Session["totalCA"]) > Convert.ToDecimal(Session["totalEXP"]) || (Convert.ToDecimal(Session["totalCA"]) < Convert.ToDecimal(Session["totalEXP"]) && reimPayMethod == "Check"))
                                         {
-                                            var p2pwf = _DataContext.ITP_S_WorkflowHeaders.Where(w => w.Name == "ACCEDE P2P" && w.App_Id == 1032 && w.Company_Id == companyID).Select(x => x.WF_Id).FirstOrDefault();
+                                            var p2pwf = _DataContext.ITP_S_WorkflowHeaders.Where(w => w.Name == "ACDE P2P" && w.App_Id == 1032 && w.Company_Id == companyID).Select(x => x.WF_Id).FirstOrDefault();
                                             var p2pwfd = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == p2pwf && w.Sequence == 1).Select(w => w.WFD_Id).FirstOrDefault();
                                             var p2porID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == p2pwf && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault();
                                             var p2pstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at P2P" || s.STS_Name == "Pending at P2P").Select(s => s.STS_Id).FirstOrDefault();
@@ -777,7 +777,7 @@ namespace DX_WebTemplate
                                         }
                                         else
                                         {
-                                            var cashierwf = _DataContext.ITP_S_WorkflowHeaders.Where(w => w.Name == "ACCEDE CASHIER" && w.App_Id == 1032 && w.Company_Id == companyID).Select(x => x.WF_Id).FirstOrDefault();
+                                            var cashierwf = _DataContext.ITP_S_WorkflowHeaders.Where(w => w.Name == "ACDE CASHIER" && w.App_Id == 1032 && w.Company_Id == companyID).Select(x => x.WF_Id).FirstOrDefault();
                                             var cashierwfd = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == cashierwf && w.Sequence == 1).Select(w => w.WFD_Id).FirstOrDefault();
                                             var cashierorID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == cashierwf && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault();
                                             var cashstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Cashier" || s.STS_Name == "Pending at Cashier").Select(s => s.STS_Id).FirstOrDefault();
