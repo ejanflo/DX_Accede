@@ -632,6 +632,7 @@ namespace DX_WebTemplate
             {
                 int docID = Convert.ToInt32(Session["TravelExp_Id"]);
                 int reim_docID = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == docID && x.IsExpenseReim == true).Where(x => x.isTravel == true).Select(x => x.ID).FirstOrDefault();
+                var doctype_id = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).Select(x => x.DCT_Id).FirstOrDefault();
                 var pmid = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == docID && x.IsExpenseReim == true).Where(x => x.isTravel == true).Select(x => x.PayMethod).FirstOrDefault();
                 var reimPayMethod = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == pmid).Select(x => x.PMethod_name).FirstOrDefault();
                 string userID = Convert.ToString(Session["userID"]);
@@ -720,7 +721,7 @@ namespace DX_WebTemplate
                         var fapwfd = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == fapwf && w.Sequence == 1).Select(w => w.WFD_Id).FirstOrDefault();
                         var orID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == fapwf && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault() ?? 0;
 
-                        var countFAPWF = _DataContext.ITP_T_WorkflowActivities.Count(w => w.WF_Id == fapwf && w.AppId == 1032 && w.Document_Id == docID);
+                        var countFAPWF = _DataContext.ITP_T_WorkflowActivities.Count(w => w.WF_Id == fapwf && w.AppId == 1032 && w.Document_Id == docID && w.AppDocTypeId == doctype_id);
 
                         if (countFAPWF > 0)
                         {
