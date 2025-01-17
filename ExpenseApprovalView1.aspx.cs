@@ -275,7 +275,7 @@ namespace DX_WebTemplate
         [WebMethod]
         public static bool btnReturnClickAjax(string return_remarks)
         {
-            AccedeAuditViewPage rfp = new AccedeAuditViewPage();
+            ExpenseApprovalView1 rfp = new ExpenseApprovalView1();
             return rfp.btnReturnClick(return_remarks);
         }
 
@@ -368,7 +368,7 @@ namespace DX_WebTemplate
         [WebMethod]
         public static ExpItemDetails DisplayExpDetailsAJAX1(int item_id)
         {
-            AccedeAuditViewPage exp = new AccedeAuditViewPage();
+            ExpenseApprovalView1 exp = new ExpenseApprovalView1();
             return exp.DisplayExpDetails(item_id);
 
         }

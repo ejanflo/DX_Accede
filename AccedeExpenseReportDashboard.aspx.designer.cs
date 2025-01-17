@@ -78,15 +78,6 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxFormLayout ASPxFormLayout2;
 
         /// <summary>
-        /// drpdown_EmpId control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox drpdown_EmpId;
-
-        /// <summary>
         /// drpdown_Comp control.
         /// </summary>
         /// <remarks>
@@ -94,6 +85,15 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxComboBox drpdown_Comp;
+
+        /// <summary>
+        /// drpdown_EmpId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox drpdown_EmpId;
 
         /// <summary>
         /// date_expDate control.
@@ -391,5 +391,14 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlCurrency;
+
+        /// <summary>
+        /// SqlUserSelf control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlUserSelf;
     }
 }

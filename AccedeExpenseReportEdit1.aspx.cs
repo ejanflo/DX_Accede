@@ -57,6 +57,11 @@ namespace DX_WebTemplate
                     sqlDept.SelectParameters["CompanyId"].DefaultValue = mainExp.CompanyId.ToString();
                     sqlDept.SelectParameters["UserId"].DefaultValue = mainExp.ExpenseName.ToString();
 
+                    SqlUser.SelectParameters["Company_ID"].DefaultValue = mainExp.CompanyId.ToString();
+                    SqlUser.SelectParameters["DelegateTo_UserID"].DefaultValue = mainExp.ExpenseName.ToString();
+                    SqlUser.SelectParameters["DateFrom"].DefaultValue = DateTime.Now.ToString();
+                    SqlUser.SelectParameters["DateTo"].DefaultValue = DateTime.Now.ToString();
+
                     var pay_released = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Disbursed").FirstOrDefault();
                     sqlRFPMainCA.SelectParameters["User_ID"].DefaultValue = mainExp.ExpenseName.ToString();
                     sqlRFPMainCA.SelectParameters["Status"].DefaultValue = pay_released.STS_Id.ToString();

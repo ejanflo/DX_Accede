@@ -659,7 +659,7 @@ onTravelClick();
                             <dx:LayoutItem Caption="Payee" ColSpan="1" Name="Payee">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="drpdown_Payee" runat="server" ClientInstanceName="drpdown_Payee" DataSourceID="SqlUser" OnCallback="drpdown_Payee_Callback" TextField="FullName" ValueField="EmpCode" Width="100%">
+                                        <dx:ASPxComboBox ID="drpdown_Payee" runat="server" ClientInstanceName="drpdown_Payee" DataSourceID="SqlUser" OnCallback="drpdown_Payee_Callback" TextField="FullName" ValueField="DelegateFor_UserID" Width="100%">
                                         </dx:ASPxComboBox>
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
@@ -1446,9 +1446,13 @@ SavePopup.Hide();
         </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlStatus" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_Status]"></asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlUser" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_UserMaster] WHERE ([CompanyID] = @CompanyID) ORDER BY [FullName]">
+    <asp:SqlDataSource ID="SqlUser" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_UserDelegationUMaster] WHERE (([DelegateTo_UserID] = @DelegateTo_UserID) AND ([Company_ID] = @Company_ID) AND ([DateFrom] &lt;= @DateFrom) AND ([DateTo] &gt;= @DateTo) AND ([IsActive] = @IsActive)) ORDER BY [FullName]">
         <SelectParameters>
-            <asp:Parameter Name="CompanyID" Type="Int32" />
+            <asp:Parameter Name="DelegateTo_UserID" Type="String" />
+            <asp:Parameter Name="Company_ID" Type="Int32" />
+            <asp:Parameter Name="DateFrom" Type="DateTime" />
+            <asp:Parameter Name="DateTo" Type="DateTime" />
+            <asp:Parameter DefaultValue="1" Name="IsActive" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
 </asp:Content>

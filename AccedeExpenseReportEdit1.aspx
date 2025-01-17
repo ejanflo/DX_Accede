@@ -970,7 +970,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                 <dx:LayoutItem Caption="Employee Name" ColSpan="1" FieldName="ExpenseName">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxComboBox ID="exp_EmpId" runat="server" ClientInstanceName="exp_EmpId" DataSourceID="SqlUser" EnableTheming="True" Font-Bold="True" Font-Size="Small" TextField="FullName" ValueField="EmpCode" Width="100%">
+                                                            <dx:ASPxComboBox ID="exp_EmpId" runat="server" ClientInstanceName="exp_EmpId" DataSourceID="SqlUser" EnableTheming="True" Font-Bold="True" Font-Size="Small" TextField="FullName" ValueField="DelegateFor_UserID" Width="100%">
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
@@ -3535,11 +3535,19 @@ computeNetAmount(&quot;edit&quot;);
             <asp:SessionParameter Name="ExpDetail_Id" SessionField="ExpDetailsID" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-        <asp:SqlDataSource ID="SqlCostCenterAll" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_CostCenterDept] WHERE ([CompanyId] = @CompanyId)">
-            <SelectParameters>
-                <asp:Parameter Name="CompanyId" Type="Int32" />
-            </SelectParameters>
-        </asp:SqlDataSource>
-        <asp:SqlDataSource ID="SqlUser" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_UserMaster]"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlCostCenterAll" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_CostCenterDept] WHERE ([CompanyId] = @CompanyId)">
+        <SelectParameters>
+            <asp:Parameter Name="CompanyId" Type="Int32" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlUser" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_UserDelegationUMaster] WHERE (([DelegateTo_UserID] = @DelegateTo_UserID) AND ([Company_ID] = @Company_ID) AND ([DateFrom] &lt;= @DateFrom) AND ([DateTo] &gt;= @DateTo) AND ([IsActive] = @IsActive)) ORDER BY [FullName]">
+        <SelectParameters>
+            <asp:Parameter Name="DelegateTo_UserID" Type="String" />
+            <asp:Parameter Name="Company_ID" Type="Int32" />
+            <asp:Parameter Name="DateFrom" Type="DateTime" />
+            <asp:Parameter Name="DateTo" Type="DateTime" />
+            <asp:Parameter DefaultValue="1" Name="IsActive" Type="Int32" />
+        </SelectParameters>
+    </asp:SqlDataSource>
 </asp:Content>
 

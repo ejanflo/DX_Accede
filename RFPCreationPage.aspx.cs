@@ -828,7 +828,10 @@ namespace DX_WebTemplate
             var comp_id = drpdown_Company.Value != null ? Convert.ToInt32(drpdown_Company.Value) : 0;
             if(comp_id != 0)
             {
-                SqlUser.SelectParameters["CompanyID"].DefaultValue = comp_id.ToString();
+                SqlUser.SelectParameters["Company_ID"].DefaultValue = comp_id.ToString();
+                SqlUser.SelectParameters["DelegateTo_UserID"].DefaultValue = Session["userID"].ToString();
+                SqlUser.SelectParameters["DateFrom"].DefaultValue = DateTime.Now.ToString();
+                SqlUser.SelectParameters["DateTo"].DefaultValue = DateTime.Now.ToString();
             }
             drpdown_Payee.DataSourceID = null;
             drpdown_Payee.DataSource = SqlUser;

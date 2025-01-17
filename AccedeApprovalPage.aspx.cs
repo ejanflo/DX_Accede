@@ -59,18 +59,30 @@ namespace DX_WebTemplate
         {
 
             Session["PassActID"] = e.Parameters.Split('|').First();
-
+            string actID = e.Parameters.Split('|').First();
             var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP").Where(x => x.App_Id == 1032).FirstOrDefault();
+            string encryptedID = Encrypt(actID); // Implement the Encrypt method securely
 
             if (e.Parameters.Split('|').Last() == app_docType.DCT_Id.ToString())
             {
-                ASPxWebControl.RedirectOnCallback("RFPApprovalView.aspx");
+                //ASPxWebControl.RedirectOnCallback("RFPApprovalView.aspx");
+                string redirectUrl = $"RFPApprovalView.aspx?secureToken={encryptedID}";
+                ASPxWebControl.RedirectOnCallback(redirectUrl);
             }
             else
             {
-                ASPxWebControl.RedirectOnCallback("ExpenseApprovalView.aspx");
+                //ASPxWebControl.RedirectOnCallback("ExpenseApprovalView.aspx");
+                string redirectUrl = $"ExpenseApprovalView.aspx?secureToken={encryptedID}";
+                ASPxWebControl.RedirectOnCallback(redirectUrl);
             }
 
+        }
+
+        private string Encrypt(string plainText)
+        {
+            // Example: Use a proper encryption library like AES or RSA for actual implementations
+            // This is just a placeholder for encryption logic
+            return Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(plainText));
         }
 
         protected void gridMain_HtmlDataCellPrepared(object sender, ASPxGridViewTableDataCellEventArgs e)

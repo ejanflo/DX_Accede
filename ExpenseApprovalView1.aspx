@@ -61,7 +61,7 @@
         function viewCADetailModal(item_id) {
             $.ajax({
                 type: "POST",
-                url: "ExpenseApprovalView.aspx/DisplayCADetailsAJAX",
+                url: "ExpenseApprovalView1.aspx/DisplayCADetailsAJAX",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: JSON.stringify({

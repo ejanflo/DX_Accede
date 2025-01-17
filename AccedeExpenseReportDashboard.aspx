@@ -18,12 +18,13 @@
             //}           
         }
         function OnUserChanged(userId,comp) {
-            drpdown_Comp.PerformCallback(userId);
+            //drpdown_Comp.PerformCallback(userId);
             drpdown_Department.PerformCallback(comp);
         }
         function OnCompanyChanged(comp) {
             drpdown_CostCenter.PerformCallback();
             drpdown_Department.PerformCallback(comp);
+            drpdown_EmpId.PerformCallback();
         }
         function OnDeptChanged() {
             drpdown_CostCenter.PerformCallback();
@@ -509,12 +510,12 @@
                 <Items>
                     <dx:LayoutGroup Caption="Expense Report Header" ColSpan="2" ColCount="2" ColumnCount="2" ColumnSpan="2" GroupBoxDecoration="HeadingLine">
                         <Items>
-                            <dx:LayoutItem Caption="Employee Name" ColSpan="1">
+                            <dx:LayoutItem Caption="Company" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="drpdown_EmpId" runat="server" ClientInstanceName="drpdown_EmpId" DataSourceID="SqlUser" TextField="FullName" ValueField="EmpCode" Width="100%">
+                                        <dx:ASPxComboBox ID="drpdown_Comp" runat="server" Width="100%" DataSourceID="SqlUserCompany" TextField="CompanyShortName" ValueField="CompanyId" ClientInstanceName="drpdown_Comp" OnCallback="drpdown_Comp_Callback">
                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	OnUserChanged(s.GetValue(), drpdown_Comp.GetValue());
+	OnCompanyChanged(s.GetValue());
 }" />
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreateForm">
                                                 <RequiredField ErrorText="Required field." IsRequired="True" />
@@ -523,12 +524,12 @@
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
                             </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Company" ColSpan="1">
+                            <dx:LayoutItem Caption="Employee Name" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="drpdown_Comp" runat="server" Width="100%" DataSourceID="SqlUserCompany" TextField="CompanyShortName" ValueField="CompanyId" ClientInstanceName="drpdown_Comp" OnCallback="drpdown_Comp_Callback">
+                                        <dx:ASPxComboBox ID="drpdown_EmpId" runat="server" ClientInstanceName="drpdown_EmpId" DataSourceID="SqlUser" TextField="FullName" ValueField="DelegateFor_UserID" Width="100%" OnCallback="drpdown_EmpId_Callback">
                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	OnCompanyChanged(s.GetValue());
+	OnUserChanged(s.GetValue(), drpdown_Comp.GetValue());
 }" />
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreateForm">
                                                 <RequiredField ErrorText="Required field." IsRequired="True" />
@@ -770,6 +771,20 @@
         </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlPaymethod" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_PayMethod]"></asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlUser" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_UserMaster]"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlUser" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_UserDelegationUMaster] WHERE (([DelegateTo_UserID] = @DelegateTo_UserID) AND ([Company_ID] = @Company_ID) AND ([DateFrom] &lt;= @DateFrom) AND ([DateTo] &gt;= @DateTo) AND ([IsActive] = @IsActive)) ORDER BY [FullName]">
+        <SelectParameters>
+            <asp:Parameter Name="DelegateTo_UserID" Type="String" />
+            <asp:Parameter Name="Company_ID" Type="Int32" />
+            <asp:Parameter Name="DateFrom" Type="DateTime" />
+            <asp:Parameter Name="DateTo" Type="DateTime" />
+            <asp:Parameter DefaultValue="1" Name="IsActive" Type="Int32" />
+        </SelectParameters>
+    </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlCurrency" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACDE_T_Currency]"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlUserSelf" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT EmpCode AS DelegateFor_UserID, FullName FROM [ITP_S_UserMaster] WHERE ([EmpCode] = @EmpCode)">
+        <SelectParameters>
+            <asp:Parameter Name="EmpCode" Type="String" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+
 </asp:Content>

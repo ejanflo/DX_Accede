@@ -27,9 +27,10 @@ namespace DX_WebTemplate
                     var EmpCode = Session["userID"].ToString();
 
                     SqlUserCompany.SelectParameters["UserId"].DefaultValue = EmpCode;
+                    SqlUserSelf.SelectParameters["EmpCode"].DefaultValue = EmpCode;
 
-                    drpdown_EmpId.Value = EmpCode.ToString();
-                    drpdown_Comp.DataBindItems();
+                    //drpdown_EmpId.Value = EmpCode.ToString();
+                    //drpdown_EmpId.DataBindItems();
                 }
                 else
                     Response.Redirect("~/Logon.aspx");
@@ -142,7 +143,7 @@ namespace DX_WebTemplate
 
         protected void drpdown_CostCenter_Callback(object sender, CallbackEventArgsBase e)
         {
-            SqlCostCenter.SelectParameters["CompanyId"].DefaultValue = drpdown_Comp.Value != null ? drpdown_Comp.Value.ToString() : "";
+            SqlCostCenter.SelectParameters["CompanyId"].DefaultValue = drpdown_EmpId.Value != null ? drpdown_EmpId.Value.ToString() : "";
             SqlCostCenter.SelectParameters["DepartmentId"].DefaultValue = drpdown_Department.Value != null ? drpdown_Department.Value.ToString() : "";
             SqlCostCenter.DataBind();
 
@@ -270,7 +271,7 @@ namespace DX_WebTemplate
         protected void drpdown_Department_Callback(object sender, CallbackEventArgsBase e)
         {
             sqlDept.SelectParameters["CompanyId"].DefaultValue = e.Parameter != null ? e.Parameter.ToString() : "";
-            sqlDept.SelectParameters["UserId"].DefaultValue = drpdown_EmpId.Value.ToString();
+            sqlDept.SelectParameters["UserId"].DefaultValue = drpdown_EmpId.Value != null ? drpdown_EmpId.Value.ToString() : "";
             sqlDept.DataBind();
 
             drpdown_Department.DataSourceID = null;
@@ -288,10 +289,39 @@ namespace DX_WebTemplate
             SqlUserCompany.SelectParameters["UserId"].DefaultValue = e.Parameter != null ? e.Parameter.ToString() : "";
             SqlUserCompany.DataBind();
 
-            drpdown_Comp.DataSourceID = null;
-            drpdown_Comp.DataSource = SqlUserCompany;
-            drpdown_Comp.DataBindItems();
+            drpdown_EmpId.DataSourceID = null;
+            drpdown_EmpId.DataSource = SqlUserCompany;
+            drpdown_EmpId.DataBindItems();
         }
 
+        protected void drpdown_EmpId_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var comp_id = drpdown_Comp.Value != null ? Convert.ToInt32(drpdown_Comp.Value) : 0;
+            if (comp_id != 0)
+            {
+                SqlUser.SelectParameters["Company_ID"].DefaultValue = comp_id.ToString();
+                SqlUser.SelectParameters["DelegateTo_UserID"].DefaultValue = Session["userID"].ToString();
+                SqlUser.SelectParameters["DateFrom"].DefaultValue = DateTime.Now.ToString();
+                SqlUser.SelectParameters["DateTo"].DefaultValue = DateTime.Now.ToString();
+            }
+            drpdown_EmpId.DataSourceID = null;
+            drpdown_EmpId.DataSource = SqlUser;
+            drpdown_EmpId.DataBind();
+
+            if (drpdown_EmpId.Items.Count()  > 0)
+            {
+                drpdown_EmpId.Value = Session["userID"].ToString();
+                drpdown_EmpId.DataBind();
+            }
+            else
+            {
+                drpdown_EmpId.DataSourceID = null;
+                drpdown_EmpId.DataSource = SqlUserSelf;
+                drpdown_EmpId.Value = Session["userID"].ToString();
+                drpdown_EmpId.DataBind();
+            }
+
+            
+        }
     }
 }
