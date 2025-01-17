@@ -822,5 +822,19 @@ namespace DX_WebTemplate
             }
             return false;
         }
+
+        protected void drpdown_Payee_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var comp_id = drpdown_Company.Value != null ? Convert.ToInt32(drpdown_Company.Value) : 0;
+            if(comp_id != 0)
+            {
+                SqlUser.SelectParameters["CompanyID"].DefaultValue = comp_id.ToString();
+            }
+            drpdown_Payee.DataSourceID = null;
+            drpdown_Payee.DataSource = SqlUser;
+            
+            drpdown_Payee.Value = Session["userID"].ToString();
+            drpdown_Payee.DataBind();
+        }
     }
 }

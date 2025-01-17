@@ -159,15 +159,6 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox txtbox_IO;
 
         /// <summary>
-        /// drpdown_Payee control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox drpdown_Payee;
-
-        /// <summary>
         /// expCat control.
         /// </summary>
         /// <remarks>
@@ -175,6 +166,15 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxComboBox expCat;
+
+        /// <summary>
+        /// drpdown_Payee control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox drpdown_Payee;
 
         /// <summary>
         /// drpdown_currency control.
@@ -661,5 +661,14 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlStatus;
+
+        /// <summary>
+        /// SqlUser control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlUser;
     }
 }
