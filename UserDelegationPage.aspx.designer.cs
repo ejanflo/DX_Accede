@@ -33,15 +33,6 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxGridView gridMain;
 
         /// <summary>
-        /// btnEdit control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.GridViewCommandColumnCustomButton btnEdit;
-
-        /// <summary>
         /// InsertPopup control.
         /// </summary>
         /// <remarks>
@@ -69,13 +60,22 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox drpdown_Comp;
 
         /// <summary>
-        /// drpdown_user control.
+        /// drpdown_user_for control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox drpdown_user;
+        protected global::DevExpress.Web.ASPxComboBox drpdown_user_for;
+
+        /// <summary>
+        /// drpdown_user_to control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox drpdown_user_to;
 
         /// <summary>
         /// date_From control.
@@ -103,15 +103,6 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxCheckBox chkbx_isActive;
-
-        /// <summary>
-        /// memo_remarks control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxMemo memo_remarks;
 
         /// <summary>
         /// btnAddInsert control.
@@ -193,15 +184,6 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxCheckBox ASPxCheckBox1;
-
-        /// <summary>
-        /// ASPxMemo1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxMemo ASPxMemo1;
 
         /// <summary>
         /// ASPxButton1 control.

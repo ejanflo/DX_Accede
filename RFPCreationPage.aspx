@@ -123,7 +123,7 @@
                         // Update the description text box with the response value
                         if (response) {
                             drpdown_Payee.SetValue(response.d);
-                            drpdown_Payee.SetReadOnly(true);
+                            //drpdown_Payee.SetReadOnly(true);
                         }
                     },
                     error: function (xhr, status, error) {
@@ -1453,6 +1453,11 @@ SavePopup.Hide();
             <asp:Parameter Name="DateFrom" Type="DateTime" />
             <asp:Parameter Name="DateTo" Type="DateTime" />
             <asp:Parameter DefaultValue="1" Name="IsActive" Type="Int32" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlUserSelf" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT EmpCode AS DelegateFor_UserID, FullName FROM [ITP_S_UserMaster] WHERE ([EmpCode] = @EmpCode)">
+        <SelectParameters>
+            <asp:Parameter Name="EmpCode" Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>
 </asp:Content>

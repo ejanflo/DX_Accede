@@ -1,4 +1,5 @@
-﻿using DevExpress.Web;
+﻿using DevExpress.Data.Linq.Helpers;
+using DevExpress.Web;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -123,13 +124,17 @@ namespace DX_WebTemplate
                             ewt_lbl.DisplayFormatString = "#,##0.00" + " " + exp.Exp_Currency;
 
                         }
+                        else
+                        {
+                            Response.Redirect("~/AccedeApprovalPage.aspx");
+                        }
                     }
                     
                 }
                 catch (Exception ex)
                 {
                     //Session["MyRequestPath"] = Request.Url.AbsoluteUri;
-                    Response.Redirect("~/Logon.aspx");
+                    Response.Redirect("~/AccedeApprovalPage.aspx");
                 }
                 
             }
@@ -180,14 +185,14 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static bool btnApproveClickAjax(string approve_remarks)
+        public static string btnApproveClickAjax(string approve_remarks)
         {
             ExpenseApprovalView rfp = new ExpenseApprovalView();
             var isApprove = rfp.btnApproveClick(approve_remarks);
             return isApprove;
         }
 
-        public bool btnApproveClick(string remarks)
+        public string btnApproveClick(string remarks)
         {
             try
             {
@@ -412,7 +417,7 @@ namespace DX_WebTemplate
                                 }
                                 else
                                 {
-                                    return false;
+                                    return "Workflow data does not exist.";
                                 }
 
                                 //End of Finance WF transition
@@ -442,25 +447,25 @@ namespace DX_WebTemplate
                         _DataContext.SubmitChanges();
                     }
 
-                    return true;
+                    return "success";
                 }
 
-                return false;
+                return "Cannot load Expense Report data. Please reload the page or try login again.";
             }
             catch (Exception ex)
             {
-                return false;
+                return ex.Message;
             }
         }
 
         [WebMethod]
-        public static bool btnReturnClickAjax(string return_remarks)
+        public static string btnReturnClickAjax(string return_remarks)
         {
             ExpenseApprovalView rfp = new ExpenseApprovalView();
             return rfp.btnReturnClick(return_remarks);
         }
 
-        public bool btnReturnClick(string remarks)
+        public string btnReturnClick(string remarks)
         {
             try
             {
@@ -527,24 +532,24 @@ namespace DX_WebTemplate
                     SendEmailTo(creator_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Return", "", tranType.Description);
                     _DataContext.SubmitChanges();
 
-                    return true;
+                    return "success";
                 }
-                return false;
+                return "Cannot load Expense Report data. Please reload the page or try login again.";
             }
             catch (Exception ex)
             {
-                return false;
+                return ex.Message;
             }
         }
 
         [WebMethod]
-        public static bool btnDisapproveClickAjax(string disapprove_remarks)
+        public static string btnDisapproveClickAjax(string disapprove_remarks)
         {
             ExpenseApprovalView rfp = new ExpenseApprovalView();
             return rfp.btnDisapproveClick(disapprove_remarks);
         }
 
-        public bool btnDisapproveClick(string remarks)
+        public string btnDisapproveClick(string remarks)
         {
             try
             {
@@ -609,13 +614,13 @@ namespace DX_WebTemplate
                     SendEmailTo(creator_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Disapprove", "", tranType.Description);
                     _DataContext.SubmitChanges();
 
-                    return true;
+                    return "success";
                 }
-                return false;
+                return "Cannot load Expense Report data. Please reload the page or try login again.";
             }
             catch (Exception ex)
             {
-                return false;
+                return ex.Message;
             }
         }
 
@@ -660,6 +665,7 @@ namespace DX_WebTemplate
 
         public RFPDetails DisplayReimDetails(int item_id)
         {
+            Session["Reim_edit_id"] = item_id;
             var rfpReim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == item_id).FirstOrDefault();
             RFPDetails rfp = new RFPDetails();
             if (rfpReim != null)
@@ -668,19 +674,53 @@ namespace DX_WebTemplate
                 var deptName = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == rfpReim.Department_ID).FirstOrDefault().DepDesc;
                 var payMethName = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == rfpReim.PayMethod).FirstOrDefault().PMethod_name;
                 var tranTypeName = _DataContext.ACCEDE_S_RFPTranTypes.Where(x => x.ID == rfpReim.TranType).FirstOrDefault().RFPTranType_Name;
+                var payeeName = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == rfpReim.Payee).FirstOrDefault();
 
                 rfp.company = compName != null ? compName : "";
                 rfp.department = deptName != null ? deptName : "";
                 rfp.payMethod = payMethName != null ? payMethName : "";
                 rfp.tranType = tranTypeName != null ? tranTypeName : "";
                 rfp.CostCenter = rfpReim.SAPCostCenter != null ? rfpReim.SAPCostCenter : "";
-                rfp.payee = rfpReim.Payee != null ? rfpReim.Payee : "";
+                rfp.payee = payeeName != null ? payeeName.FullName : "";
                 rfp.purpose = rfpReim.Purpose != null ? rfpReim.Purpose : "";
                 rfp.amount = rfpReim.Amount != null ? rfpReim.Amount.ToString() : "";
                 rfp.currency = rfpReim.Currency != null ? rfpReim.Currency : "";
                 rfp.docNum = rfpReim.RFP_DocNum != null ? rfpReim.RFP_DocNum : "";
+                rfp.payMethod_id = rfpReim.PayMethod != null ? rfpReim.PayMethod.ToString() : "";
             }
             return rfp;
+        }
+
+        [WebMethod]
+        public static string SaveReimDetailsAJAX(string payMethod)
+        {
+            ExpenseApprovalView exp = new ExpenseApprovalView();
+            return exp.SaveReimDetails(payMethod);
+        }
+
+        public string SaveReimDetails(string payMethod)
+        {
+            try
+            {
+                var reimDetails = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == Convert.ToInt32(Session["Reim_edit_id"])).FirstOrDefault();
+                reimDetails.PayMethod = Convert.ToInt32(payMethod);
+
+                var caDetails = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(reimDetails.Exp_ID))
+                    .Where(x => x.IsExpenseCA == true);
+
+                if(caDetails.Count() == 0 )
+                {
+                    var expMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x=>x.ID == Convert.ToInt32(reimDetails.Exp_ID)).FirstOrDefault();
+                    expMain.PaymentType = Convert.ToInt32(payMethod);
+                }
+                _DataContext.SubmitChanges();
+                return "success";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+
         }
 
         [WebMethod]
@@ -889,6 +929,7 @@ namespace DX_WebTemplate
         public string amount { get; set; }
         public string currency { get; set; }
         public string docNum { get; set; }
+        public string payMethod_id { get; set; }
     }
 
     public class ExpItemDetails

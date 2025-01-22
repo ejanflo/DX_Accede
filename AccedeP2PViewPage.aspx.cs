@@ -156,35 +156,32 @@ namespace DX_WebTemplate
 
                 var rfp_main_reimburse = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == exp_main.ID)
                     .Where(x => x.IsExpenseReim == true).FirstOrDefault();
+
+                var payMethodDesc = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == exp_main.PaymentType).FirstOrDefault();
+                var tranTypeDesc = _DataContext.ACCEDE_S_RFPTranTypes.Where(x => x.ID == rfp_main_reimburse.TranType).FirstOrDefault();
+
                 if (rfp_main_reimburse != null)
                 {
-                    var payMethodDesc = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == rfp_main_reimburse.PayMethod).FirstOrDefault();
-                    var tranTypeDesc = _DataContext.ACCEDE_S_RFPTranTypes.Where(x => x.ID == rfp_main_reimburse.TranType).FirstOrDefault();
-                    if (payMethodDesc.PMethod_desc == "Check")
-                    {
-                        var Cash_status = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Pending at Cashier").FirstOrDefault();
-                        rfp_main_reimburse.Status = Cash_status.STS_Id;
-                        exp_main.Status = Cash_status.STS_Id;
-                    }
-                    else
-                    {
-                        var Completed_status = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Completed").FirstOrDefault();
-                        rfp_main_reimburse.Status = Completed_status.STS_Id;
-                        var creator_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == rfp_main_reimburse.User_ID)
-                                          .FirstOrDefault();
-
-                        var sender_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Session["UserID"].ToString())
-                                  .FirstOrDefault();
-
-                        RFPApprovalView rfp = new RFPApprovalView();
-                        rfp.SendEmailTo(creator_detail.EmpCode, Convert.ToInt32(rfp_main_reimburse.Company_ID), sender_detail.FullName, sender_detail.Email, rfp_main_reimburse.RFP_DocNum, rfp_main_reimburse.DateCreated.ToString(), rfp_main_reimburse.Purpose, approve_remarks, "Approve", payMethodDesc.PMethod_name, tranTypeDesc.RFPTranType_Name);
-
-                    }
+                    
+                    var Cash_status = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Pending at Cashier").FirstOrDefault();
+                    rfp_main_reimburse.Status = Cash_status.STS_Id;
+                    exp_main.Status = Cash_status.STS_Id;
+                    
                 }
                 else
                 {
                     var ApproveStatus = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Complete").FirstOrDefault();
                     exp_main.Status = ApproveStatus.STS_Id;
+
+                    var creator_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == exp_main.UserId)
+                                          .FirstOrDefault();
+
+                    var sender_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Session["UserID"].ToString())
+                              .FirstOrDefault();
+
+                    RFPApprovalView rfp = new RFPApprovalView();
+                    rfp.SendEmailTo(creator_detail.EmpCode, Convert.ToInt32(rfp_main_reimburse.Company_ID), sender_detail.FullName, sender_detail.Email, rfp_main_reimburse.RFP_DocNum, rfp_main_reimburse.DateCreated.ToString(), rfp_main_reimburse.Purpose, approve_remarks, "Approve", payMethodDesc.PMethod_name, tranTypeDesc.RFPTranType_Name);
+
                 }
 
                 var wfID = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == exp_main.CompanyId)

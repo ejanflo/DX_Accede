@@ -43,12 +43,6 @@ namespace DX_WebTemplate
 
                     //sqlMain.SelectParameters["UserId"].DefaultValue = empCode;
 
-                    SqlCompany.SelectParameters["UserId"].DefaultValue = empCode;
-                    SqlMain.SelectParameters["DelegatorUserID"].DefaultValue = empCode;
-
-                    drpdown_Comp.DataSourceID = null;
-                    drpdown_Comp.DataSource = SqlCompany;
-                    drpdown_Comp.DataBind();
                 }
                 else
                 {
@@ -63,28 +57,27 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static bool InsertDelegationAJAX(string comp_id, string user_id, string dateFrom, string dateTo, bool is_active, string remarks)
+        public static bool InsertDelegationAJAX(string comp_id, string user_id_for, string user_id_to, string dateFrom, string dateTo, bool is_active)
         {
             UserDelegationPage del = new UserDelegationPage();
-            return del.InsertDelegation(Convert.ToInt32(comp_id), user_id, Convert.ToDateTime(dateFrom), Convert.ToDateTime(dateTo), is_active, remarks);
+            return del.InsertDelegation(Convert.ToInt32(comp_id), user_id_for, user_id_to, Convert.ToDateTime(dateFrom), Convert.ToDateTime(dateTo), is_active);
         }
 
-        public bool InsertDelegation(int comp_id, string user_id, DateTime dateFrom, DateTime dateTo, bool is_active, string remarks)
+        public bool InsertDelegation(int comp_id, string user_id_for, string user_id_to, DateTime dateFrom, DateTime dateTo, bool is_active)
         {
             try
             {
-                ITP_S_UserDelegation del = new ITP_S_UserDelegation();
+                ACCEDE_S_UserDelegation del = new ACCEDE_S_UserDelegation();
                 {
                     del.Company_ID = comp_id;
-                    del.DelegatorUserID = Session["userID"].ToString();
-                    del.DelegateUserID = user_id;
+                    del.DelegateFor_UserID = user_id_for;
+                    del.DelegateTo_UserID = user_id_to;
                     del.DateFrom = dateFrom;
                     del.DateTo = dateTo;
                     del.isActive = is_active;
-                    del.Remarks = remarks;
                 }
 
-                _DataContext.ITP_S_UserDelegations.InsertOnSubmit(del);
+                _DataContext.ACCEDE_S_UserDelegations.InsertOnSubmit(del);
                 _DataContext.SubmitChanges();
 
                 return true;

@@ -74,7 +74,7 @@
                           // Update the description text box with the response value
                           if (response) {
                               drpdown_Payee.SetValue(response.d);
-                              drpdown_Payee.SetReadOnly(true);
+                              //drpdown_Payee.SetReadOnly(true);
                           }
                       },
                       error: function (xhr, status, error) {
@@ -418,6 +418,7 @@
                                         <dx:ASPxComboBox ID="drpdown_Company" runat="server" ClientInstanceName="drpdown_Company" DataSourceID="SqlCompany" TextField="CompanyShortName" ValueField="CompanyId" Width="100%">
                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	drpdown_Department.PerformCallback();
+drpdown_Payee.PerformCallback();
 drpdown_WF.PerformCallback();
 ifComp_is_DLI();
 onAmountChanged(drpdown_PayMethod.GetValue());
@@ -591,11 +592,8 @@ onTravelClick();
                             <dx:LayoutItem Caption="Payee" ColSpan="1" Name="Payee" FieldName="Payee">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="drpdown_Payee" runat="server" Width="100%" ClientInstanceName="drpdown_Payee">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
-                                                <RequiredField ErrorText="This field is required." IsRequired="True" />
-                                            </ValidationSettings>
-                                        </dx:ASPxTextBox>
+                                        <dx:ASPxComboBox ID="drpdown_Payee" runat="server" ClientInstanceName="drpdown_Payee" DataSourceID="SqlUser" OnCallback="drpdown_Payee_Callback" TextField="FullName" ValueField="DelegateFor_UserID" Width="100%">
+                                        </dx:ASPxComboBox>
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
                                 <CaptionSettings HorizontalAlign="Right" />
@@ -1384,4 +1382,18 @@ SavePopup.Hide();
                 <asp:Parameter Name="original_ID" Type="Int32" />
             </UpdateParameters>
         </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlUser" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_UserDelegationUMaster] WHERE (([DelegateTo_UserID] = @DelegateTo_UserID) AND ([Company_ID] = @Company_ID) AND ([DateFrom] &lt;= @DateFrom) AND ([DateTo] &gt;= @DateTo) AND ([IsActive] = @IsActive)) ORDER BY [FullName]">
+        <SelectParameters>
+            <asp:Parameter Name="DelegateTo_UserID" Type="String" />
+            <asp:Parameter Name="Company_ID" Type="Int32" />
+            <asp:Parameter Name="DateFrom" Type="DateTime" />
+            <asp:Parameter Name="DateTo" Type="DateTime" />
+            <asp:Parameter DefaultValue="1" Name="IsActive" Type="Int32" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlUserSelf" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT EmpCode AS DelegateFor_UserID, FullName FROM [ITP_S_UserMaster] WHERE ([EmpCode] = @EmpCode)">
+        <SelectParameters>
+            <asp:Parameter Name="EmpCode" Type="String" />
+        </SelectParameters>
+    </asp:SqlDataSource>
 </asp:Content>

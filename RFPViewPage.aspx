@@ -176,7 +176,7 @@
 
                         LoadingPanel1.SetText('Updating document&hellip;');
                         LoadingPanel1.Show();
-                        window.location.href = 'RFPPage.aspx';
+                        window.location.href = 'RFPViewPage.aspx';
                         
                     } else {
                         LoadingPanel1.SetText('Changes saving failed!&hellip;');
@@ -367,6 +367,10 @@
                         page.render(renderContext);
                     });
                 };
+            }
+
+            if (e.buttonID == 'btnRemove') {
+                DocuGrid.PerformCallback(s.GetRowKey(e.visibleIndex) + "|" + e.buttonID);
             }
         }
 

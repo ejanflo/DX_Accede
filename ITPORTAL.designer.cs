@@ -225,6 +225,9 @@ namespace DX_WebTemplate
     partial void InsertACCEDE_T_TravelExpenseDetailsFileAttach(ACCEDE_T_TravelExpenseDetailsFileAttach instance);
     partial void UpdateACCEDE_T_TravelExpenseDetailsFileAttach(ACCEDE_T_TravelExpenseDetailsFileAttach instance);
     partial void DeleteACCEDE_T_TravelExpenseDetailsFileAttach(ACCEDE_T_TravelExpenseDetailsFileAttach instance);
+    partial void InsertACCEDE_S_UserDelegation(ACCEDE_S_UserDelegation instance);
+    partial void UpdateACCEDE_S_UserDelegation(ACCEDE_S_UserDelegation instance);
+    partial void DeleteACCEDE_S_UserDelegation(ACCEDE_S_UserDelegation instance);
     #endregion
 		
 		public ITPORTALDataContext(string connection) : 
@@ -848,6 +851,14 @@ namespace DX_WebTemplate
 			get
 			{
 				return this.GetTable<ACCEDE_T_TravelExpenseDetailsFileAttach>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ACCEDE_S_UserDelegation> ACCEDE_S_UserDelegations
+		{
+			get
+			{
+				return this.GetTable<ACCEDE_S_UserDelegation>();
 			}
 		}
 	}
@@ -23265,6 +23276,236 @@ namespace DX_WebTemplate
 					this._ExpenseDetails_ID = value;
 					this.SendPropertyChanged("ExpenseDetails_ID");
 					this.OnExpenseDetails_IDChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_S_UserDelegation")]
+	public partial class ACCEDE_S_UserDelegation : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private string _DelegateFor_UserID;
+		
+		private string _DelegateTo_UserID;
+		
+		private System.Nullable<System.DateTime> _DateFrom;
+		
+		private System.Nullable<System.DateTime> _DateTo;
+		
+		private System.Nullable<int> _Company_ID;
+		
+		private string _Remarks;
+		
+		private System.Nullable<bool> _isActive;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnDelegateFor_UserIDChanging(string value);
+    partial void OnDelegateFor_UserIDChanged();
+    partial void OnDelegateTo_UserIDChanging(string value);
+    partial void OnDelegateTo_UserIDChanged();
+    partial void OnDateFromChanging(System.Nullable<System.DateTime> value);
+    partial void OnDateFromChanged();
+    partial void OnDateToChanging(System.Nullable<System.DateTime> value);
+    partial void OnDateToChanged();
+    partial void OnCompany_IDChanging(System.Nullable<int> value);
+    partial void OnCompany_IDChanged();
+    partial void OnRemarksChanging(string value);
+    partial void OnRemarksChanged();
+    partial void OnisActiveChanging(System.Nullable<bool> value);
+    partial void OnisActiveChanged();
+    #endregion
+		
+		public ACCEDE_S_UserDelegation()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DelegateFor_UserID", DbType="VarChar(50)")]
+		public string DelegateFor_UserID
+		{
+			get
+			{
+				return this._DelegateFor_UserID;
+			}
+			set
+			{
+				if ((this._DelegateFor_UserID != value))
+				{
+					this.OnDelegateFor_UserIDChanging(value);
+					this.SendPropertyChanging();
+					this._DelegateFor_UserID = value;
+					this.SendPropertyChanged("DelegateFor_UserID");
+					this.OnDelegateFor_UserIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DelegateTo_UserID", DbType="VarChar(50)")]
+		public string DelegateTo_UserID
+		{
+			get
+			{
+				return this._DelegateTo_UserID;
+			}
+			set
+			{
+				if ((this._DelegateTo_UserID != value))
+				{
+					this.OnDelegateTo_UserIDChanging(value);
+					this.SendPropertyChanging();
+					this._DelegateTo_UserID = value;
+					this.SendPropertyChanged("DelegateTo_UserID");
+					this.OnDelegateTo_UserIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DateFrom", DbType="DateTime")]
+		public System.Nullable<System.DateTime> DateFrom
+		{
+			get
+			{
+				return this._DateFrom;
+			}
+			set
+			{
+				if ((this._DateFrom != value))
+				{
+					this.OnDateFromChanging(value);
+					this.SendPropertyChanging();
+					this._DateFrom = value;
+					this.SendPropertyChanged("DateFrom");
+					this.OnDateFromChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DateTo", DbType="DateTime")]
+		public System.Nullable<System.DateTime> DateTo
+		{
+			get
+			{
+				return this._DateTo;
+			}
+			set
+			{
+				if ((this._DateTo != value))
+				{
+					this.OnDateToChanging(value);
+					this.SendPropertyChanging();
+					this._DateTo = value;
+					this.SendPropertyChanged("DateTo");
+					this.OnDateToChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Company_ID", DbType="Int")]
+		public System.Nullable<int> Company_ID
+		{
+			get
+			{
+				return this._Company_ID;
+			}
+			set
+			{
+				if ((this._Company_ID != value))
+				{
+					this.OnCompany_IDChanging(value);
+					this.SendPropertyChanging();
+					this._Company_ID = value;
+					this.SendPropertyChanged("Company_ID");
+					this.OnCompany_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Remarks", DbType="VarChar(MAX)")]
+		public string Remarks
+		{
+			get
+			{
+				return this._Remarks;
+			}
+			set
+			{
+				if ((this._Remarks != value))
+				{
+					this.OnRemarksChanging(value);
+					this.SendPropertyChanging();
+					this._Remarks = value;
+					this.SendPropertyChanged("Remarks");
+					this.OnRemarksChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_isActive", DbType="Bit")]
+		public System.Nullable<bool> isActive
+		{
+			get
+			{
+				return this._isActive;
+			}
+			set
+			{
+				if ((this._isActive != value))
+				{
+					this.OnisActiveChanging(value);
+					this.SendPropertyChanging();
+					this._isActive = value;
+					this.SendPropertyChanged("isActive");
+					this.OnisActiveChanged();
 				}
 			}
 		}

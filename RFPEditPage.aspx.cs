@@ -60,6 +60,8 @@ namespace DX_WebTemplate
                     SqlExpense.SelectParameters["UserId"].DefaultValue = empCode;
                     SqlCAHistory.SelectParameters["User_ID"].DefaultValue = empCode;
 
+                    SqlUserSelf.SelectParameters["EmpCode"].DefaultValue = empCode;
+
                     SqlMain.SelectParameters["ID"].DefaultValue = rfp_id.ToString();
                     SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = rfp_details.WF_Id.ToString();
                     SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = rfp_details.FAPWF_Id.ToString();
@@ -71,6 +73,11 @@ namespace DX_WebTemplate
                     SqlWF.SelectParameters["Minimum"].DefaultValue = rfp_details.Amount.ToString();
                     SqlWF.SelectParameters["Maximum"].DefaultValue = rfp_details.Amount.ToString();
                     SqlWF.SelectParameters["DepCode"].DefaultValue = depCode.DepCode.ToString();
+
+                    SqlUser.SelectParameters["Company_ID"].DefaultValue = rfp_details.Company_ID.ToString();
+                    SqlUser.SelectParameters["DelegateTo_UserID"].DefaultValue = Session["userID"].ToString();
+                    SqlUser.SelectParameters["DateFrom"].DefaultValue = DateTime.Now.ToString();
+                    SqlUser.SelectParameters["DateTo"].DefaultValue = DateTime.Now.ToString();
 
                     PLD.MinDate = DateTime.Now;
 
@@ -401,6 +408,36 @@ namespace DX_WebTemplate
         {
             RFPCreationPage rfp = new RFPCreationPage();
             return rfp.MaxAmountPerComp(Convert.ToInt32(comp_id));
+        }
+
+        protected void drpdown_Payee_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var comp_id = drpdown_Company.Value != null ? Convert.ToInt32(drpdown_Company.Value) : 0;
+            if (comp_id != 0)
+            {
+                SqlUser.SelectParameters["Company_ID"].DefaultValue = comp_id.ToString();
+                SqlUser.SelectParameters["DelegateTo_UserID"].DefaultValue = Session["userID"].ToString();
+                SqlUser.SelectParameters["DateFrom"].DefaultValue = DateTime.Now.ToString();
+                SqlUser.SelectParameters["DateTo"].DefaultValue = DateTime.Now.ToString();
+            }
+            drpdown_Payee.DataSourceID = null;
+            drpdown_Payee.DataSource = SqlUser;
+
+            drpdown_Payee.Value = Session["userID"].ToString();
+            drpdown_Payee.DataBind();
+
+            if (drpdown_Payee.Items.Count() > 0)
+            {
+                drpdown_Payee.Value = Session["userID"].ToString();
+                drpdown_Payee.DataBind();
+            }
+            else
+            {
+                drpdown_Payee.DataSourceID = null;
+                drpdown_Payee.DataSource = SqlUserSelf;
+                drpdown_Payee.Value = Session["userID"].ToString();
+                drpdown_Payee.DataBind();
+            }
         }
     }
 }

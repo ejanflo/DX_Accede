@@ -137,7 +137,7 @@
                                             <Columns>
                                                 <dx:GridViewDataTextColumn Caption="Transaction Type" FieldName="DocTranType" ShowInCustomizationForm="True" VisibleIndex="0">
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn Caption="Creator" FieldName="CreatorFullname" ShowInCustomizationForm="True" VisibleIndex="1">
+                                                <dx:GridViewDataTextColumn Caption="Employee Name" FieldName="EmployeeName" ShowInCustomizationForm="True" VisibleIndex="1">
                                                 </dx:GridViewDataTextColumn>
                                                 <dx:GridViewDataTextColumn AdaptivePriority="1" FieldName="STS_Name" ShowInCustomizationForm="True" VisibleIndex="3" Caption="Status">
                                                 </dx:GridViewDataTextColumn>

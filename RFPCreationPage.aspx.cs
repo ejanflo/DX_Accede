@@ -59,6 +59,8 @@ namespace DX_WebTemplate
                     SqlExpense.SelectParameters["UserId"].DefaultValue = empCode;
                     SqlCAHistory.SelectParameters["User_ID"].DefaultValue = empCode;
 
+                    SqlUserSelf.SelectParameters["EmpCode"].DefaultValue = empCode;
+
                     var disburse_stat = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Disbursed").FirstOrDefault();
                     var unliquidated_CA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.IsExpenseCA == true).Where(x => x.Status == Convert.ToInt32(disburse_stat.STS_Id));
 
@@ -838,6 +840,20 @@ namespace DX_WebTemplate
             
             drpdown_Payee.Value = Session["userID"].ToString();
             drpdown_Payee.DataBind();
+
+            if (drpdown_Payee.Items.Count() > 0)
+            {
+                drpdown_Payee.Value = Session["userID"].ToString();
+                drpdown_Payee.DataBind();
+            }
+            else
+            {
+                drpdown_Payee.DataSourceID = null;
+                drpdown_Payee.DataSource = SqlUserSelf;
+                drpdown_Payee.Value = Session["userID"].ToString();
+                drpdown_Payee.DataBind();
+            }
+
         }
     }
 }

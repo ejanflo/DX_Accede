@@ -15,11 +15,12 @@
             LoadingPanel.SetText("Processing&hellip;");
             LoadingPanel.Show();
             var comp_id = drpdown_Comp.GetValue();
-            var user_id = drpdown_user.GetValue();
+            var user_id_for = drpdown_user_for.GetValue();
+            var user_id_to = drpdown_user_to.GetValue();
             var dateFrom = date_From.GetValue();
             var dateTo = date_To.GetValue();
             var is_active = chkbx_isActive.GetValue();
-            var remarks = memo_remarks.GetValue();
+            //var remarks = memo_remarks.GetValue();
 
             $.ajax({
                 type: "POST",
@@ -28,15 +29,19 @@
                 dataType: "json",
                 data: JSON.stringify({
                     comp_id: comp_id,
-                    user_id: user_id,
+                    user_id_for: user_id_for,
+                    user_id_to: user_id_to,
                     dateFrom: dateFrom,
                     dateTo: dateTo,
-                    is_active: is_active,
-                    remarks: remarks
+                    is_active: is_active
+                    //remarks: remarks
                 }),
                 success: function (response) {
                     // Update the Paymethod value
-                    window.location.href = "UserDelegationPage.aspx";
+                    //window.location.href = "UserDelegationPage.aspx";
+                    InsertPopup.Hide();
+                    LoadingPanel.Hide();
+                    gridMain.Refresh();
                 },
                 error: function (xhr, status, error) {
                     console.log("Error:", error);
@@ -72,10 +77,12 @@
                                         <PageSizeItemSettings Visible="True">
                                         </PageSizeItemSettings>
                                     </SettingsPager>
+                                    <SettingsEditing Mode="Batch">
+                                    </SettingsEditing>
                                     <Settings ShowHeaderFilterButton="True" VerticalScrollableHeight="350" GridLines="Horizontal" />
                                     <SettingsBehavior EnableCustomizationWindow="True" />
                                     <SettingsResizing ColumnResizeMode="Control" Visualization="Postponed" />
-                                    <SettingsDataSecurity AllowDelete="False" AllowEdit="False" AllowInsert="False" />
+                                    <SettingsDataSecurity AllowDelete="False" AllowInsert="False" />
                                     <SettingsPopup>
                                         <FilterControl AutoUpdatePosition="False">
                                         </FilterControl>
@@ -87,30 +94,26 @@
                                         <SettingsItemCaptions ChangeCaptionLocationInAdaptiveMode="False" />
                                     </EditFormLayoutProperties>
                                     <Columns>
-                                        <dx:GridViewDataTextColumn ShowInCustomizationForm="True" VisibleIndex="3" Caption="Date From" FieldName="DateFrom">
+                                        <dx:GridViewDataTextColumn ShowInCustomizationForm="True" VisibleIndex="4" Caption="Date From" FieldName="DateFrom">
                                         </dx:GridViewDataTextColumn>
-                                        <dx:GridViewDataTextColumn ShowInCustomizationForm="True" VisibleIndex="4" Caption="Date To" FieldName="DateTo">
+                                        <dx:GridViewDataTextColumn ShowInCustomizationForm="True" VisibleIndex="5" Caption="Date To" FieldName="DateTo">
                                         </dx:GridViewDataTextColumn>
                                         <dx:GridViewDataTextColumn FieldName="ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
                                         </dx:GridViewDataTextColumn>
-                                        <dx:GridViewDataComboBoxColumn Caption="Delegated User" FieldName="DelegateUserID" ShowInCustomizationForm="True" VisibleIndex="2">
+                                        <dx:GridViewDataComboBoxColumn Caption="Delegated For" FieldName="DelegateFor_UserID" ShowInCustomizationForm="True" VisibleIndex="2">
                                             <PropertiesComboBox DataSourceID="sqlUser" TextField="FullName" ValueField="EmpCode">
                                             </PropertiesComboBox>
                                         </dx:GridViewDataComboBoxColumn>
-                                        <dx:GridViewDataComboBoxColumn Caption="Company" FieldName="Company_ID" ShowInCustomizationForm="True" VisibleIndex="5">
-                                            <PropertiesComboBox DataSourceID="SqlCompany" TextField="CompanyShortName" ValueField="CompanyId">
+                                        <dx:GridViewDataComboBoxColumn Caption="Company" FieldName="Company_ID" ShowInCustomizationForm="True" VisibleIndex="6">
+                                            <PropertiesComboBox DataSourceID="SqlCompany" TextField="CompanyShortName" ValueField="WASSId">
                                             </PropertiesComboBox>
                                         </dx:GridViewDataComboBoxColumn>
-                                        <dx:GridViewDataCheckColumn Caption="is Active" FieldName="isActive" ShowInCustomizationForm="True" VisibleIndex="6">
+                                        <dx:GridViewDataCheckColumn Caption="is Active" FieldName="isActive" ShowInCustomizationForm="True" VisibleIndex="7">
                                         </dx:GridViewDataCheckColumn>
-                                        <dx:GridViewDataMemoColumn Caption="Remarks" FieldName="Remarks" ShowInCustomizationForm="True" VisibleIndex="7">
-                                        </dx:GridViewDataMemoColumn>
-                                        <dx:GridViewCommandColumn Caption="Action" ShowInCustomizationForm="True" VisibleIndex="0">
-                                            <CustomButtons>
-                                                <dx:GridViewCommandColumnCustomButton ID="btnEdit" Text="Edit">
-                                                </dx:GridViewCommandColumnCustomButton>
-                                            </CustomButtons>
-                                        </dx:GridViewCommandColumn>
+                                        <dx:GridViewDataComboBoxColumn Caption="Delegate To" FieldName="DelegateTo_UserID" ShowInCustomizationForm="True" VisibleIndex="3">
+                                            <PropertiesComboBox DataSourceID="sqlUser" TextField="FullName" ValueField="EmpCode">
+                                            </PropertiesComboBox>
+                                        </dx:GridViewDataComboBoxColumn>
                                     </Columns>
                                     <Toolbars>
                                         <dx:GridViewToolbar>
@@ -197,7 +200,7 @@
             <SettingsAdaptivity AdaptivityMode="SingleColumnWindowLimit">
             </SettingsAdaptivity>
         <Items>
-            <dx:LayoutGroup ColSpan="1" ColCount="2" ColumnCount="2" GroupBoxDecoration="HeadingLine" Caption="">
+            <dx:LayoutGroup ColSpan="1" GroupBoxDecoration="HeadingLine" Caption="">
                 <GroupBoxStyle>
                     <Caption Font-Size="Medium">
                     </Caption>
@@ -205,10 +208,10 @@
                 <Items>
                     <dx:LayoutGroup Caption="" ColSpan="1" GroupBoxDecoration="None" Width="100%">
                         <Items>
-                            <dx:LayoutItem Caption="Company" ColSpan="1">
+                            <dx:LayoutItem Caption="Company" ColSpan="1" Width="100%">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="drpdown_Comp" runat="server" ClientInstanceName="drpdown_Comp" TextField="CompanyShortName" ValueField="CompanyId" Width="100%">
+                                        <dx:ASPxComboBox ID="drpdown_Comp" runat="server" ClientInstanceName="drpdown_Comp" TextField="CompanyShortName" ValueField="WASSId" Width="100%" DataSourceID="SqlCompany">
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="RFPEditForm">
                                                 <RequiredField ErrorText="This field is required." IsRequired="True" />
                                             </ValidationSettings>
@@ -216,13 +219,21 @@
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
                             </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Delegate User" ColSpan="1">
+                            <dx:LayoutItem Caption="Delegate For" ColSpan="1" Width="100%">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="drpdown_user" runat="server" ClientInstanceName="drpdown_user" DataSourceID="sqlUser" TextField="FullName" ValueField="EmpCode" Width="100%">
+                                        <dx:ASPxComboBox ID="drpdown_user_for" runat="server" ClientInstanceName="drpdown_user_for" DataSourceID="sqlUser" TextField="FullName" ValueField="EmpCode" Width="100%">
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="RFPEditForm">
                                                 <RequiredField ErrorText="This field is required" IsRequired="True" />
                                             </ValidationSettings>
+                                        </dx:ASPxComboBox>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                            </dx:LayoutItem>
+                            <dx:LayoutItem Caption="Delegate To" ColSpan="1" Width="100%">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxComboBox ID="drpdown_user_to" runat="server" ClientInstanceName="drpdown_user_to" DataSourceID="sqlUser" TextField="FullName" ValueField="EmpCode" Width="100%">
                                         </dx:ASPxComboBox>
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
@@ -249,7 +260,7 @@
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
                             </dx:LayoutItem>
-                            <dx:LayoutItem Caption="is Active" ColSpan="1">
+                            <dx:LayoutItem Caption="is Active" ColSpan="1" Width="100%">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxCheckBox ID="chkbx_isActive" runat="server" CheckState="Unchecked" ClientInstanceName="chkbx_isActive">
@@ -257,17 +268,9 @@
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
                             </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Remarks" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxMemo ID="memo_remarks" runat="server" ClientInstanceName="memo_remarks" Height="71px" Width="100%">
-                                        </dx:ASPxMemo>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                            </dx:LayoutItem>
                         </Items>
                     </dx:LayoutGroup>
-                    <dx:LayoutGroup Caption="" ColSpan="2" GroupBoxDecoration="None" HorizontalAlign="Right" Name="btnLayoutGroup" ColCount="3" ColumnCount="3" ColumnSpan="2" Width="100%">
+                    <dx:LayoutGroup Caption="" ColSpan="1" GroupBoxDecoration="None" HorizontalAlign="Right" Name="btnLayoutGroup" ColCount="3" ColumnCount="3" Width="100%">
                         <Items>
                             <dx:LayoutItem Caption="" ColSpan="1" Name="editBTN" HorizontalAlign="Right">
                                 <LayoutItemNestedControlCollection>
@@ -371,14 +374,6 @@
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
                             </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Remarks" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxMemo ID="ASPxMemo1" runat="server" ClientInstanceName="memo_remarks" Height="71px" Width="100%">
-                                        </dx:ASPxMemo>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                            </dx:LayoutItem>
                         </Items>
                     </dx:LayoutGroup>
                     <dx:LayoutGroup Caption="" ColSpan="2" GroupBoxDecoration="None" HorizontalAlign="Right" Name="btnLayoutGroup" ColCount="3" ColumnCount="3" ColumnSpan="2" Width="100%">
@@ -420,17 +415,31 @@
 
     <dx:ASPxLoadingPanel ID="LoadingPanel" ClientInstanceName="LoadingPanel" Modal="true" runat="server" Theme="MaterialCompact"></dx:ASPxLoadingPanel>
 </div>
-    <asp:SqlDataSource ID="SqlMain" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_UserDelegation] WHERE ([DelegatorUserID] = @DelegatorUserID)">
-        <SelectParameters>
-            <asp:Parameter Name="DelegatorUserID" Type="Int32" />
-        </SelectParameters>
+    <asp:SqlDataSource ID="SqlMain" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_UserDelegation]" DeleteCommand="DELETE FROM [ACCEDE_S_UserDelegation] WHERE [ID] = @ID" InsertCommand="INSERT INTO [ACCEDE_S_UserDelegation] ([DelegateFor_UserID], [DelegateTo_UserID], [DateFrom], [DateTo], [Company_ID], [Remarks], [isActive]) VALUES (@DelegateFor_UserID, @DelegateTo_UserID, @DateFrom, @DateTo, @Company_ID, @Remarks, @isActive)" UpdateCommand="UPDATE [ACCEDE_S_UserDelegation] SET [DelegateFor_UserID] = @DelegateFor_UserID, [DelegateTo_UserID] = @DelegateTo_UserID, [DateFrom] = @DateFrom, [DateTo] = @DateTo, [Company_ID] = @Company_ID, [Remarks] = @Remarks, [isActive] = @isActive WHERE [ID] = @ID">
+        <DeleteParameters>
+            <asp:Parameter Name="ID" Type="Int32" />
+        </DeleteParameters>
+        <InsertParameters>
+            <asp:Parameter Name="DelegateFor_UserID" Type="String" />
+            <asp:Parameter Name="DelegateTo_UserID" Type="String" />
+            <asp:Parameter Name="DateFrom" Type="DateTime" />
+            <asp:Parameter Name="DateTo" Type="DateTime" />
+            <asp:Parameter Name="Company_ID" Type="Int32" />
+            <asp:Parameter Name="Remarks" Type="String" />
+            <asp:Parameter Name="isActive" Type="Boolean" />
+        </InsertParameters>
+        <UpdateParameters>
+            <asp:Parameter Name="DelegateFor_UserID" Type="String" />
+            <asp:Parameter Name="DelegateTo_UserID" Type="String" />
+            <asp:Parameter Name="DateFrom" Type="DateTime" />
+            <asp:Parameter Name="DateTo" Type="DateTime" />
+            <asp:Parameter Name="Company_ID" Type="Int32" />
+            <asp:Parameter Name="Remarks" Type="String" />
+            <asp:Parameter Name="isActive" Type="Boolean" />
+            <asp:Parameter Name="ID" Type="Int32" />
+        </UpdateParameters>
     </asp:SqlDataSource>
-        <asp:SqlDataSource ID="sqlUser" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT FullName, IsActive, EmpCode FROM vw_ITP_I_SecurityUser WHERE (IsActive = 1) ORDER BY FullName"></asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_SecurityUserComp] WHERE (([IsActive] = @IsActive) AND ([UserId] = @UserId) AND ([AppId] = @AppId))">
-        <SelectParameters>
-            <asp:Parameter Name="IsActive" Type="Boolean" DefaultValue="True" />
-            <asp:Parameter DefaultValue="" Name="UserId" Type="String" />
-            <asp:Parameter DefaultValue="1032" Name="AppId" Type="Int32" />
-        </SelectParameters>
+        <asp:SqlDataSource ID="sqlUser" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_UserMaster] ORDER BY [FullName]"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [CompanyMaster] WHERE (([WASSId] IS NOT NULL) AND ([SAP_Id] IS NOT NULL)) ORDER BY [CompanyShortName]">
     </asp:SqlDataSource>
 </asp:Content>
