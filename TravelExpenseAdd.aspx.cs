@@ -176,9 +176,9 @@ namespace DX_WebTemplate
 
                     //// - - Setting RA Workflow - - ////
 
-                    var sqlWFid = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.IsRA == true && totExpCA >= x.Minimum && totExpCA <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault());
-                    SqlWF.SelectParameters["WF_Id"].DefaultValue = sqlWFid;
-                    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = sqlWFid;
+                    Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.IsRA == true && totExpCA >= x.Minimum && totExpCA <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault());
+                    SqlWF.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
+                    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
 
                     //var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(mainExp.Dep_Code)).FirstOrDefault();
 
@@ -219,10 +219,10 @@ namespace DX_WebTemplate
                     //SqlFAPWF.DataBind();
 
                     //// - - Setting FAP workflow - - ////
-                    
-                    var fapsqlWFid = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && (x.IsRA == false || x.IsRA == null && totExpCA >= x.Minimum && totExpCA <= x.Maximum)).Select(x => x.WF_Id).FirstOrDefault());
-                    SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = fapsqlWFid;
-                    SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = fapsqlWFid;
+
+                    Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && (x.IsRA == false || x.IsRA == null && totExpCA >= x.Minimum && totExpCA <= x.Maximum)).Select(x => x.WF_Id).FirstOrDefault());
+                    SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
+                    SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
 
                     //var fapwf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(mainExp.Company_Id))
                     //    .Where(x => x.App_Id == 1032)
