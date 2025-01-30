@@ -985,8 +985,8 @@ namespace DX_WebTemplate
             }
             else
                 dsDoc = (DataSet)Session["DataSetDoc"];
-            ASPxGridView22.DataSource = dsDoc.Tables[0];
-            ASPxGridView22.DataBind();
+            TraDocuGrid.DataSource = dsDoc.Tables[0];
+            TraDocuGrid.DataBind();
         }
 
         private DataTable CreateDataTable(string idColumnName, params string[] columnNames)
@@ -1047,8 +1047,8 @@ namespace DX_WebTemplate
             ASPxGridView22.DataSource = ds.Tables[0];
             ASPxGridView22.DataBind();
 
-            ASPxGridView22.DataSource = SqlDocs2;
-            ASPxGridView22.DataBind();
+            TraDocuGrid.DataSource = SqlDocs2;
+            TraDocuGrid.DataBind();
 
             //reimTranGrid.DataSource = ds.Tables[0];
             //fixedAllowGrid.DataSource = ds.Tables[1];
