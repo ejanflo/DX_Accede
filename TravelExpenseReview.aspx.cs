@@ -50,7 +50,7 @@ namespace DX_WebTemplate
                     ApplyStylesToGrid(DocumentGrid, colorCode);
                     ApplyStylesToGrid(WFSequenceGrid, colorCode);
                     ApplyStylesToGrid(FAPWFGrid, colorCode);
-                    ApplyStylesToGrid(TraDocuGrid, colorCode);
+                    ApplyStylesToGrid(ASPxGridView22, colorCode);
                     ApplyStylesToGrid(ASPxGridView22, colorCode);
 
                     var mainExp = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).FirstOrDefault();
@@ -817,24 +817,83 @@ namespace DX_WebTemplate
 
 
         [WebMethod]
-        public static bool RedirectToRFPDetailsAJAX(string rfpDoc)
+        public static object RedirectToRFPDetailsAJAX(string rfpDoc)
         {
             TravelExpenseReview exp = new TravelExpenseReview();
             return exp.RedirectToRFPDetails(rfpDoc);
         }
 
-        public bool RedirectToRFPDetails(string rfpDoc)
+        public object RedirectToRFPDetails(string rfpDoc)
         {
             try
             {
+                int rfpCompany;
+                int rfpPayMethod;
+                int rfpTypeTransact;
+                string rfpSAPDoc;
+                int rfpDepartment;
+                string rfpCostCenter;
+                string rfpIO;
+                string rfpPayee;
+                decimal rfpAmount;
+                DateTime rfpLastDayTransact;
+                string rfpPurpose;
+                string rfpstatus;
+
                 var rfp = _DataContext.ACCEDE_T_RFPMains.Where(x => x.RFP_DocNum == rfpDoc).FirstOrDefault();
-                if (rfp != null)
-                {
-                    Session["passRFPID"] = rfp.ID;
-                }
-                return true;
+
+                Session["passRFPID"] = rfp.ID;
+
+                rfpCompany = Convert.ToInt32(rfp.Company_ID);
+                rfpPayMethod = Convert.ToInt32(rfp.PayMethod);
+                rfpTypeTransact = Convert.ToInt32(rfp.TranType);
+                rfpSAPDoc = rfp.SAPDocNo;
+                rfpDepartment = Convert.ToInt32(rfp.Department_ID);
+                rfpCostCenter = rfp.SAPCostCenter;
+                rfpIO = rfp.IO_Num;
+                rfpPayee = rfp.Payee;
+                rfpAmount = Convert.ToDecimal(rfp.Amount);
+                rfpLastDayTransact = Convert.ToDateTime(rfp.LastDayTransact);
+                rfpPurpose = rfp.Purpose;
+                var stat = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(rfp.Exp_ID)).Select(x => x.Status).FirstOrDefault();
+                rfpstatus = _DataContext.ITP_S_Status.Where(x => x.STS_Id == stat).Select(x => x.STS_Description).FirstOrDefault();
+
+                return new { rfpCompany, rfpPayMethod, rfpTypeTransact, rfpSAPDoc, rfpDepartment, rfpCostCenter, rfpIO, rfpPayee, rfpAmount, rfpLastDayTransact, rfpstatus };
+
             }
             catch (Exception ex) { return false; }
+        }
+
+        [WebMethod]
+        public static bool UpdateRFPChangesAJAX(int rfpPayMethod, string rfpSAPDoc)
+        {
+            TravelExpenseReview exp = new TravelExpenseReview();
+            return exp.UpdateRFPChanges(rfpPayMethod, rfpSAPDoc);
+        }
+
+        public bool UpdateRFPChanges(int rfpPayMethod, string rfpSAPDoc)
+        {
+            try
+            {
+                var id = Convert.ToInt32(Session["passRFPID"]);
+
+                //UPDATE RFP Main
+                var updateRFPMain = _DataContext.ACCEDE_T_RFPMains
+                    .Where(e => e.ID == id && e.IsExpenseReim == true && e.isTravel == true);
+
+                foreach (ACCEDE_T_RFPMain e in updateRFPMain)
+                {
+                    e.PayMethod = rfpPayMethod;
+                    e.SAPDocNo = rfpSAPDoc;
+                }
+                _DataContext.SubmitChanges();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         [WebMethod]
@@ -918,8 +977,8 @@ namespace DX_WebTemplate
             }
             else
                 dsDoc = (DataSet)Session["DataSetDoc"];
-            TraDocuGrid.DataSource = dsDoc.Tables[0];
-            TraDocuGrid.DataBind();
+            ASPxGridView22.DataSource = dsDoc.Tables[0];
+            ASPxGridView22.DataBind();
         }
 
         private DataTable CreateDataTable(string idColumnName, params string[] columnNames)
@@ -980,8 +1039,8 @@ namespace DX_WebTemplate
             ASPxGridView22.DataSource = ds.Tables[0];
             ASPxGridView22.DataBind();
 
-            TraDocuGrid.DataSource = SqlDocs2;
-            TraDocuGrid.DataBind();
+            ASPxGridView22.DataSource = SqlDocs2;
+            ASPxGridView22.DataBind();
 
             //reimTranGrid.DataSource = ds.Tables[0];
             //fixedAllowGrid.DataSource = ds.Tables[1];

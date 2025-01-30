@@ -453,7 +453,7 @@
                     <dx:LayoutItem Caption="Employee Name" ColSpan="2" ColumnSpan="2" VerticalAlign="Top">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
-                                <dx:ASPxComboBox ID="employeeCB" runat="server" DataSourceID="SqlUser" TextField="FullName" ValueField="EmpCode" Width="100%" ClientInstanceName="employeeCB" Font-Bold="True">
+                                <dx:ASPxComboBox ID="employeeCB" runat="server" DataSourceID="SqlUsersDelegated" TextField="FullName" ValueField="DelegateTo_UserID" Width="100%" ClientInstanceName="employeeCB" Font-Bold="True">
                                     <ClientSideEvents SelectedIndexChanged="OnFnameSelected" />
                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="CreateForm">
                                         <RequiredField ErrorText="*Required field" IsRequired="True" />
@@ -646,6 +646,11 @@
             </SelectParameters>
         </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([DepCode] IS NOT NULL)"></asp:SqlDataSource>
+        <asp:SqlDataSource ID="SqlUsersDelegated" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_UserDelegationUMaster] WHERE ([DelegateTo_UserID] = @DelegateTo_UserID)">
+            <SelectParameters>
+                <asp:SessionParameter Name="DelegateTo_UserID" SessionField="userID" Type="String" />
+            </SelectParameters>
+        </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlUser" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_UserMaster]">
         </asp:SqlDataSource>
 

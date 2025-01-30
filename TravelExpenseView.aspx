@@ -73,7 +73,7 @@
                 loadPanel.Show();
                 var item_id = s.GetRowKey(e.visibleIndex);
                 locParticularsMemo.SetValue('');
-                travelDateCalendar.ClearSelection();
+                travelDateCalendar.SetDate(null);
                 totalExpTB.SetValue('');
                 viewExpDetailModal(item_id);
             }
@@ -97,11 +97,9 @@
                 }),
                 success: function (response) {
                     addExpCallback.EndCallback.AddHandler(function () {
-                        travelDateCalendar.ClearSelection();
                         locParticularsMemo.SetValue(response.d.locParticulars);
                         totalExpTB.SetValue(response.d.totalExp);
-                        travelDateCalendar.SetVisibleDate(new Date(response.d.travelDate));
-                        travelDateCalendar.SelectDate(new Date(response.d.travelDate));
+                        travelDateCalendar.SetDate(new Date(response.d.travelDate));
 
                         loadPanel.Hide();
                         travelExpensePopup.Show();
@@ -864,7 +862,7 @@
                                                                         <CellStyle Font-Bold="True">
                                                                         </CellStyle>
                                                                     </dx:GridViewCommandColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="6">
+                                                                    <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="5">
                                                                         <EditFormSettings Visible="False" />
                                                                     </dx:GridViewDataTextColumn>
                                                                     <dx:GridViewDataTextColumn FieldName="Company_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="13">
@@ -878,8 +876,6 @@
                                                                     <dx:GridViewDataTextColumn FieldName="SAPCostCenter" ShowInCustomizationForm="True" VisibleIndex="9">
                                                                     </dx:GridViewDataTextColumn>
                                                                     <dx:GridViewDataTextColumn Caption="IO No." FieldName="IO_Num" ShowInCustomizationForm="True" VisibleIndex="10">
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="Payee" ShowInCustomizationForm="True" VisibleIndex="7">
                                                                     </dx:GridViewDataTextColumn>
                                                                     <dx:GridViewDataDateColumn FieldName="LastDayTransact" ShowInCustomizationForm="True" Visible="False" VisibleIndex="17">
                                                                     </dx:GridViewDataDateColumn>
@@ -905,6 +901,10 @@
                                                                     </dx:GridViewDataCheckColumn>
                                                                     <dx:GridViewDataComboBoxColumn Caption="Payment Method" FieldName="PayMethod" ShowInCustomizationForm="True" VisibleIndex="8">
                                                                         <PropertiesComboBox DataSourceID="sqlPayMethod" TextField="PMethod_name" ValueField="ID">
+                                                                        </PropertiesComboBox>
+                                                                    </dx:GridViewDataComboBoxColumn>
+                                                                    <dx:GridViewDataComboBoxColumn FieldName="Payee" ShowInCustomizationForm="True" VisibleIndex="7">
+                                                                        <PropertiesComboBox DataSourceID="SqlEmpName" TextField="FullName" ValueField="EmpCode">
                                                                         </PropertiesComboBox>
                                                                     </dx:GridViewDataComboBoxColumn>
                                                                 </Columns>
@@ -1445,10 +1445,22 @@
                                                 </dx:LayoutItem>
                                             </Items>
                                         </dx:LayoutGroup>
-                                        <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="None" HorizontalAlign="Center" Width="100%">
+                                        <dx:LayoutGroup Caption="" ColCount="5" ColSpan="1" ColumnCount="5" GroupBoxDecoration="None" HorizontalAlign="Center" Width="100%">
                                             <Paddings PaddingLeft="0px" PaddingRight="0px" PaddingTop="20px" />
                                             <Items>
-                                                <dx:LayoutItem Caption="Location/Particulars" ColSpan="1" VerticalAlign="Top" Width="20%">
+                                                <dx:LayoutItem Caption="Date" ColSpan="1" VerticalAlign="Top" Width="20%">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxDateEdit ID="travelDateCalendar" runat="server" ClientInstanceName="travelDateCalendar" Width="100%" Theme="MaterialCompact">
+                                                            </dx:ASPxDateEdit>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionSettings Location="Top" />
+                                                    <Paddings PaddingBottom="20px" />
+                                                    <CaptionStyle Font-Bold="True">
+                                                    </CaptionStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Location/Particulars" ColSpan="2" VerticalAlign="Top" Width="20%" ColumnSpan="2">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxMemo ID="locParticularsMemo0" runat="server" ClientInstanceName="locParticularsMemo" Theme="MaterialCompact" Width="100%" ReadOnly="True">
@@ -2025,17 +2037,26 @@
                                                         </dx:LayoutItem>
                                                     </Items>
                                                 </dx:LayoutGroup>
-                                                <dx:LayoutItem Caption="" ColSpan="1" VerticalAlign="Top" RowSpan="2" Width="80%">
+                                                <dx:EmptyLayoutItem ColSpan="1">
+                                                </dx:EmptyLayoutItem>
+                                                <dx:EmptyLayoutItem ColSpan="1">
+                                                </dx:EmptyLayoutItem>
+                                                <dx:EmptyLayoutItem ColSpan="5" ColumnSpan="5">
+                                                    <BorderBottom BorderColor="#666666" BorderStyle="Solid" />
+                                                </dx:EmptyLayoutItem>
+                                                <dx:LayoutItem Caption="" ColSpan="5" VerticalAlign="Top" RowSpan="2" Width="80%" ColumnSpan="5">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxGridView ID="ASPxGridView22" runat="server" AutoGenerateColumns="False" ClientInstanceName="ASPxGridView22" EnableTheming="True" Font-Size="Small" KeyFieldName="TravelExpenseDetailMap_ID" OnCustomColumnDisplayText="ASPxGridView22_CustomColumnDisplayText" Theme="MaterialCompact" Width="100%">
                                                                 <ClientSideEvents EndCallback="function(s, e) {
 	updateTotal(s);
 }" />
+                                                                <SettingsAdaptivity AdaptivityMode="HideDataCells">
+                                                                </SettingsAdaptivity>
                                                                 <SettingsEditing Mode="Batch">
                                                                     <BatchEditSettings StartEditAction="Click" />
                                                                 </SettingsEditing>
-                                                                <Settings HorizontalScrollBarMode="Visible" VerticalScrollableHeight="295" VerticalScrollBarMode="Visible" />
+                                                                <SettingsBehavior AllowDragDrop="False" />
                                                                 <SettingsCommandButton>
                                                                     <NewButton>
                                                                         <Image IconID="iconbuilder_actions_add_svg_16x16">
@@ -2070,267 +2091,195 @@
                                                                             <BorderRight BorderColor="Black" BorderStyle="Solid" />
                                                                         </CellStyle>
                                                                     </dx:GridViewCommandColumn>
-                                                                    <dx:GridViewBandColumn Caption="FIXED ALLOW. &amp; MISC. TRAVEL EXPENSES" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
+                                                                    <dx:GridViewBandColumn Caption="FIXED ALLOWANCES" ShowInCustomizationForm="True" VisibleIndex="2">
+                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" BackColor="#CCCCCC" />
                                                                         <Columns>
-                                                                            <dx:GridViewBandColumn Caption="Fixed Allowance" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                                                <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
-                                                                                <Columns>
-                                                                                    <dx:GridViewDataComboBoxColumn Caption="F or P" FieldName="FixedAllow_ForP" ShowInCustomizationForm="True" VisibleIndex="0" Width="110px">
-                                                                                        <PropertiesComboBox>
-                                                                                            <Items>
-                                                                                                <dx:ListEditItem Text="Full" Value="F" />
-                                                                                                <dx:ListEditItem Text="Partial" Value="P" />
-                                                                                            </Items>
-                                                                                        </PropertiesComboBox>
-                                                                                        <HeaderStyle HorizontalAlign="Center" >
-                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </HeaderStyle>
-                                                                                        <CellStyle>
-                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataComboBoxColumn>
-                                                                                    <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="FixedAllow_Amount" ShowInCustomizationForm="True" VisibleIndex="3" Width="90px">
-                                                                                        <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
-                                                                                        </PropertiesSpinEdit>
-                                                                                        <HeaderStyle HorizontalAlign="Center" >
-                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </HeaderStyle>
-                                                                                        <CellStyle>
-                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                            <BorderRight BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataSpinEditColumn>
-                                                                                </Columns>
-                                                                            </dx:GridViewBandColumn>
-                                                                            <dx:GridViewBandColumn Caption="Misc Travel Expense " ShowInCustomizationForm="True" VisibleIndex="1">
-                                                                                <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
-                                                                                <Columns>
-                                                                                    <dx:GridViewDataComboBoxColumn Caption="Type" FieldName="MiscTravel_Type" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
-                                                                                        <PropertiesComboBox ClientInstanceName="miscTravelType" DataSourceID="SqlMiscTravelExp" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
-                                                                                            <Columns>
-                                                                                                <dx:ListBoxColumn Caption="Type" FieldName="Type" Width="50px">
-                                                                                                </dx:ListBoxColumn>
-                                                                                                <dx:ListBoxColumn Caption="Description" FieldName="Description" Width="240px">
-                                                                                                </dx:ListBoxColumn>
-                                                                                            </Columns>
-                                                                                            <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	var selectedValue = s.GetValue(); // Get the selected value from ComboBox 
-               if (selectedValue == 5) { 
-                      MiscTravelExpSpecify.SetVisible(true);  
-                      //miscTravelExpPopup.Show();
-               }else{
-                      MiscTravelExpSpecify.SetVisible(false);  
-               }
-}
-" />
-                                                                                        </PropertiesComboBox>
-                                                                                        <HeaderStyle HorizontalAlign="Center" >
-                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </HeaderStyle>
-                                                                                    </dx:GridViewDataComboBoxColumn>
-                                                                                    <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="MiscTravel_Amount" ShowInCustomizationForm="True" VisibleIndex="2" Width="90px">
-                                                                                        <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
-                                                                                        </PropertiesSpinEdit>
-                                                                                        <HeaderStyle HorizontalAlign="Center" >
-                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </HeaderStyle>
-                                                                                        <CellStyle>
-                                                                                            <BorderRight BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataSpinEditColumn>
-                                                                                    <dx:GridViewDataMemoColumn Caption="if Others, specify:" FieldName="MiscTravel_Specify" ShowInCustomizationForm="True" VisibleIndex="1" Width="140px">
-                                                                                        <PropertiesMemoEdit ClientInstanceName="MiscTravelExpSpecify">
-                                                                                            <ClientSideEvents Init="function(s, e) {
-	MiscTravelExpSpecify.SetVisible(false);
-}
-" />
-                                                                                        </PropertiesMemoEdit>
-                                                                                        <HeaderStyle>
-                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </HeaderStyle>
-                                                                                    </dx:GridViewDataMemoColumn>
-                                                                                </Columns>
-                                                                            </dx:GridViewBandColumn>
+                                                                            <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="FixedAllow_Amount" ShowInCustomizationForm="True" VisibleIndex="3" Width="90px">
+                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
+                                                                                </PropertiesSpinEdit>
+                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <Border BorderStyle="Solid" />
+                                                                                </HeaderStyle>
+                                                                                <CellStyle>
+                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                    <BorderRight BorderColor="Black" BorderStyle="Solid" />
+                                                                                </CellStyle>
+                                                                            </dx:GridViewDataSpinEditColumn>
+                                                                            <dx:GridViewDataComboBoxColumn Caption="F or P" FieldName="FixedAllow_ForP" ShowInCustomizationForm="True" VisibleIndex="2" Width="110px">
+                                                                                <PropertiesComboBox>
+                                                                                    <Items>
+                                                                                        <dx:ListEditItem Text="Full" Value="F" />
+                                                                                        <dx:ListEditItem Text="Partial" Value="P" />
+                                                                                    </Items>
+                                                                                </PropertiesComboBox>
+                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <Border BorderStyle="Solid" />
+                                                                                </HeaderStyle>
+                                                                                <CellStyle>
+                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                </CellStyle>
+                                                                            </dx:GridViewDataComboBoxColumn>
                                                                         </Columns>
                                                                     </dx:GridViewBandColumn>
                                                                     <dx:GridViewBandColumn Caption="REIMBURSABLE TRANSPORTATION" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
+                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" BackColor="#CCCCCC" />
                                                                         <Columns>
-                                                                            <dx:GridViewBandColumn Caption=" " ShowInCustomizationForm="True" VisibleIndex="0">
-                                                                                <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
-                                                                                <Columns>
-                                                                                    <dx:GridViewDataComboBoxColumn Caption=" Type" CellRowSpan="3" FieldName="ReimTranspo_Type1" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
-                                                                                        <PropertiesComboBox DataSourceID="SqlReimTranspo" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
-                                                                                            <Columns>
-                                                                                                <dx:ListBoxColumn Caption="Type" FieldName="Type" Width="50px">
-                                                                                                </dx:ListBoxColumn>
-                                                                                                <dx:ListBoxColumn Caption="Description" FieldName="Description" Width="180px">
-                                                                                                </dx:ListBoxColumn>
-                                                                                            </Columns>
-                                                                                        </PropertiesComboBox>
-                                                                                        <EditFormCaptionStyle HorizontalAlign="Center">
-                                                                                        </EditFormCaptionStyle>
-                                                                                        <HeaderStyle HorizontalAlign="Center">
-                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </HeaderStyle>
-                                                                                        <CellStyle>
-                                                                                            <BorderLeft BorderColor="Black" BorderStyle="Solid" />
-                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataComboBoxColumn>
-                                                                                    <dx:GridViewDataSpinEditColumn Caption=" Amount" CellRowSpan="3" FieldName="ReimTranspo_Amount1" ShowInCustomizationForm="True" VisibleIndex="1" Width="90px">
-                                                                                        <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
-                                                                                        </PropertiesSpinEdit>
-                                                                                        <EditFormCaptionStyle HorizontalAlign="Center">
-                                                                                        </EditFormCaptionStyle>
-                                                                                        <HeaderStyle HorizontalAlign="Center">
-                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </HeaderStyle>
-                                                                                        <CellStyle>
-                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                            <BorderRight BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataSpinEditColumn>
-                                                                                    <dx:GridViewDataComboBoxColumn Caption="  Type" FieldName="ReimTranspo_Type2" ShowInCustomizationForm="True" VisibleIndex="2" Width="140px">
-                                                                                        <PropertiesComboBox DataSourceID="SqlReimTranspo" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
-                                                                                            <Columns>
-                                                                                                <dx:ListBoxColumn Caption="Type" FieldName="Type" Width="50px">
-                                                                                                </dx:ListBoxColumn>
-                                                                                                <dx:ListBoxColumn Caption="Description" FieldName="Description" Width="180px">
-                                                                                                </dx:ListBoxColumn>
-                                                                                            </Columns>
-                                                                                        </PropertiesComboBox>
-                                                                                        <EditFormCaptionStyle HorizontalAlign="Center">
-                                                                                        </EditFormCaptionStyle>
-                                                                                        <HeaderStyle HorizontalAlign="Center">
-                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </HeaderStyle>
-                                                                                        <CellStyle>
-                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataComboBoxColumn>
-                                                                                    <dx:GridViewDataSpinEditColumn Caption=" Amount" FieldName="ReimTranspo_Amount2" ShowInCustomizationForm="True" VisibleIndex="3" Width="90px">
-                                                                                        <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
-                                                                                        </PropertiesSpinEdit>
-                                                                                        <EditFormCaptionStyle HorizontalAlign="Center">
-                                                                                        </EditFormCaptionStyle>
-                                                                                        <HeaderStyle HorizontalAlign="Center">
-                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </HeaderStyle>
-                                                                                        <CellStyle>
-                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                            <BorderRight BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataSpinEditColumn>
-                                                                                    <dx:GridViewDataComboBoxColumn Caption=" Type" CellRowSpan="2" FieldName="ReimTranspo_Type3" ShowInCustomizationForm="True" VisibleIndex="4" Width="140px">
-                                                                                        <PropertiesComboBox DataSourceID="SqlReimTranspo" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
-                                                                                            <Columns>
-                                                                                                <dx:ListBoxColumn Caption="Type" FieldName="Type" Width="50px">
-                                                                                                </dx:ListBoxColumn>
-                                                                                                <dx:ListBoxColumn Caption="Description" FieldName="Description" Width="180px">
-                                                                                                </dx:ListBoxColumn>
-                                                                                            </Columns>
-                                                                                        </PropertiesComboBox>
-                                                                                        <EditFormCaptionStyle HorizontalAlign="Center">
-                                                                                        </EditFormCaptionStyle>
-                                                                                        <HeaderStyle HorizontalAlign="Center">
-                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </HeaderStyle>
-                                                                                        <CellStyle>
-                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataComboBoxColumn>
-                                                                                    <dx:GridViewDataSpinEditColumn Caption="Amount" CellRowSpan="2" FieldName="ReimTranspo_Amount3" ShowInCustomizationForm="True" VisibleIndex="5" Width="90px">
-                                                                                        <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
-                                                                                        </PropertiesSpinEdit>
-                                                                                        <EditFormCaptionStyle HorizontalAlign="Center">
-                                                                                        </EditFormCaptionStyle>
-                                                                                        <HeaderStyle HorizontalAlign="Center">
-                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </HeaderStyle>
-                                                                                        <CellStyle>
-                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                            <BorderRight BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataSpinEditColumn>
-                                                                                </Columns>
-                                                                            </dx:GridViewBandColumn>
+                                                                            <dx:GridViewDataComboBoxColumn Caption=" Type" CellRowSpan="3" FieldName="ReimTranspo_Type1" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
+                                                                                <PropertiesComboBox DataSourceID="SqlReimTranspo" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
+                                                                                    <Columns>
+                                                                                        <dx:ListBoxColumn Caption="Type" FieldName="Type" Width="50px">
+                                                                                        </dx:ListBoxColumn>
+                                                                                        <dx:ListBoxColumn Caption="Description" FieldName="Description" Width="180px">
+                                                                                        </dx:ListBoxColumn>
+                                                                                    </Columns>
+                                                                                </PropertiesComboBox>
+                                                                                <EditFormCaptionStyle HorizontalAlign="Center">
+                                                                                </EditFormCaptionStyle>
+                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <Border BorderStyle="Solid" />
+                                                                                </HeaderStyle>
+                                                                                <CellStyle>
+                                                                                    <BorderLeft BorderColor="Black" BorderStyle="Solid" />
+                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                </CellStyle>
+                                                                            </dx:GridViewDataComboBoxColumn>
+                                                                            <dx:GridViewDataSpinEditColumn Caption=" Amount" CellRowSpan="3" FieldName="ReimTranspo_Amount1" ShowInCustomizationForm="True" VisibleIndex="5" Width="90px">
+                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
+                                                                                </PropertiesSpinEdit>
+                                                                                <EditFormCaptionStyle HorizontalAlign="Center">
+                                                                                </EditFormCaptionStyle>
+                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <Border BorderStyle="Solid" />
+                                                                                </HeaderStyle>
+                                                                                <CellStyle>
+                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                    <BorderRight BorderColor="Black" BorderStyle="Solid" />
+                                                                                </CellStyle>
+                                                                            </dx:GridViewDataSpinEditColumn>
+                                                                            <dx:GridViewDataComboBoxColumn Caption="  Type" FieldName="ReimTranspo_Type2" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1" Width="140px">
+                                                                                <PropertiesComboBox DataSourceID="SqlReimTranspo" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
+                                                                                    <Columns>
+                                                                                        <dx:ListBoxColumn Caption="Type" FieldName="Type" Width="50px">
+                                                                                        </dx:ListBoxColumn>
+                                                                                        <dx:ListBoxColumn Caption="Description" FieldName="Description" Width="180px">
+                                                                                        </dx:ListBoxColumn>
+                                                                                    </Columns>
+                                                                                </PropertiesComboBox>
+                                                                                <EditFormCaptionStyle HorizontalAlign="Center">
+                                                                                </EditFormCaptionStyle>
+                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <Border BorderStyle="Solid" />
+                                                                                </HeaderStyle>
+                                                                                <CellStyle>
+                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                </CellStyle>
+                                                                            </dx:GridViewDataComboBoxColumn>
+                                                                            <dx:GridViewDataSpinEditColumn Caption=" Amount" FieldName="ReimTranspo_Amount2" ShowInCustomizationForm="True" Visible="False" VisibleIndex="2" Width="90px">
+                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
+                                                                                </PropertiesSpinEdit>
+                                                                                <EditFormCaptionStyle HorizontalAlign="Center">
+                                                                                </EditFormCaptionStyle>
+                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <Border BorderStyle="Solid" />
+                                                                                </HeaderStyle>
+                                                                                <CellStyle>
+                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                    <BorderRight BorderColor="Black" BorderStyle="Solid" />
+                                                                                </CellStyle>
+                                                                            </dx:GridViewDataSpinEditColumn>
+                                                                            <dx:GridViewDataComboBoxColumn Caption=" Type" CellRowSpan="2" FieldName="ReimTranspo_Type3" ShowInCustomizationForm="True" Visible="False" VisibleIndex="3" Width="140px">
+                                                                                <PropertiesComboBox DataSourceID="SqlReimTranspo" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
+                                                                                    <Columns>
+                                                                                        <dx:ListBoxColumn Caption="Type" FieldName="Type" Width="50px">
+                                                                                        </dx:ListBoxColumn>
+                                                                                        <dx:ListBoxColumn Caption="Description" FieldName="Description" Width="180px">
+                                                                                        </dx:ListBoxColumn>
+                                                                                    </Columns>
+                                                                                </PropertiesComboBox>
+                                                                                <EditFormCaptionStyle HorizontalAlign="Center">
+                                                                                </EditFormCaptionStyle>
+                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <Border BorderStyle="Solid" />
+                                                                                </HeaderStyle>
+                                                                                <CellStyle>
+                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                </CellStyle>
+                                                                            </dx:GridViewDataComboBoxColumn>
+                                                                            <dx:GridViewDataSpinEditColumn Caption="Amount" CellRowSpan="2" FieldName="ReimTranspo_Amount3" ShowInCustomizationForm="True" Visible="False" VisibleIndex="4" Width="90px">
+                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
+                                                                                </PropertiesSpinEdit>
+                                                                                <EditFormCaptionStyle HorizontalAlign="Center">
+                                                                                </EditFormCaptionStyle>
+                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <Border BorderStyle="Solid" />
+                                                                                </HeaderStyle>
+                                                                                <CellStyle>
+                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                    <BorderRight BorderColor="Black" BorderStyle="Solid" />
+                                                                                </CellStyle>
+                                                                            </dx:GridViewDataSpinEditColumn>
                                                                         </Columns>
                                                                     </dx:GridViewBandColumn>
-                                                                    <dx:GridViewBandColumn Caption="ENTERTAINMENT" ShowInCustomizationForm="True" VisibleIndex="3" MaxWidth="50">
-                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" Wrap="True" />
+                                                                    <dx:GridViewBandColumn Caption="ENTERTAINMENT" ShowInCustomizationForm="True" VisibleIndex="4" MaxWidth="50">
+                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" Wrap="True" BackColor="#CCCCCC" />
                                                                         <Columns>
-                                                                            <dx:GridViewBandColumn Caption=" " ShowInCustomizationForm="True" VisibleIndex="0">
-                                                                                <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
-                                                                                <Columns>
-                                                                                    <dx:GridViewDataMemoColumn Caption="Explanation" FieldName="Entertainment_Explain" ShowInCustomizationForm="True" VisibleIndex="1" Width="140px">
-                                                                                        <HeaderStyle HorizontalAlign="Center" >
-                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </HeaderStyle>
-                                                                                        <CellStyle>
-                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataMemoColumn>
-                                                                                    <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="Entertainment_Amount" ShowInCustomizationForm="True" VisibleIndex="2" Width="90px">
-                                                                                        <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
-                                                                                        </PropertiesSpinEdit>
-                                                                                        <HeaderStyle HorizontalAlign="Center" >
-                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </HeaderStyle>
-                                                                                        <CellStyle>
-                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                            <BorderRight BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataSpinEditColumn>
-                                                                                </Columns>
-                                                                            </dx:GridViewBandColumn>
+                                                                            <dx:GridViewDataMemoColumn Caption="Explanation" FieldName="Entertainment_Explain" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
+                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <Border BorderStyle="Solid" />
+                                                                                </HeaderStyle>
+                                                                                <CellStyle>
+                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                </CellStyle>
+                                                                            </dx:GridViewDataMemoColumn>
+                                                                            <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="Entertainment_Amount" ShowInCustomizationForm="True" VisibleIndex="1" Width="90px">
+                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
+                                                                                </PropertiesSpinEdit>
+                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <Border BorderStyle="Solid" />
+                                                                                </HeaderStyle>
+                                                                                <CellStyle>
+                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                    <BorderRight BorderColor="Black" BorderStyle="Solid" />
+                                                                                </CellStyle>
+                                                                            </dx:GridViewDataSpinEditColumn>
                                                                         </Columns>
                                                                     </dx:GridViewBandColumn>
-                                                                    <dx:GridViewBandColumn Caption="BUSINESS MEALS" ShowInCustomizationForm="True" VisibleIndex="4" MaxWidth="50">
-                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" Wrap="True" />
+                                                                    <dx:GridViewBandColumn Caption="BUSINESS MEALS" ShowInCustomizationForm="True" VisibleIndex="5" MaxWidth="50">
+                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" Wrap="True" BackColor="#CCCCCC" />
                                                                         <Columns>
-                                                                            <dx:GridViewBandColumn Caption=" " ShowInCustomizationForm="True" VisibleIndex="0">
-                                                                                <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
-                                                                                <Columns>
-                                                                                    <dx:GridViewDataMemoColumn Caption="Explanation" FieldName="BusMeals_Explain" ShowInCustomizationForm="True" VisibleIndex="1" Width="140px">
-                                                                                        <HeaderStyle HorizontalAlign="Center">
-                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </HeaderStyle>
-                                                                                        <CellStyle>
-                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataMemoColumn>
-                                                                                    <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="BusMeals_Amount" ShowInCustomizationForm="True" VisibleIndex="2" Width="90px">
-                                                                                        <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
-                                                                                        </PropertiesSpinEdit>
-                                                                                        <HeaderStyle HorizontalAlign="Center" >
-                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </HeaderStyle>
-                                                                                        <CellStyle>
-                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                            <BorderRight BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataSpinEditColumn>
-                                                                                </Columns>
-                                                                            </dx:GridViewBandColumn>
+                                                                            <dx:GridViewDataMemoColumn Caption="Explanation" FieldName="BusMeals_Explain" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
+                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <Border BorderStyle="Solid" />
+                                                                                </HeaderStyle>
+                                                                                <CellStyle>
+                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                </CellStyle>
+                                                                            </dx:GridViewDataMemoColumn>
+                                                                            <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="BusMeals_Amount" ShowInCustomizationForm="True" VisibleIndex="1" Width="90px">
+                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
+                                                                                </PropertiesSpinEdit>
+                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <Border BorderStyle="Solid" />
+                                                                                </HeaderStyle>
+                                                                                <CellStyle>
+                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                    <BorderRight BorderColor="Black" BorderStyle="Solid" />
+                                                                                </CellStyle>
+                                                                            </dx:GridViewDataSpinEditColumn>
                                                                         </Columns>
                                                                     </dx:GridViewBandColumn>
-                                                                    <dx:GridViewBandColumn Caption="OTHER BUS. EXPENSES" ShowInCustomizationForm="True" VisibleIndex="5">
-                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
+                                                                    <dx:GridViewBandColumn Caption="OTHER BUS. EXPENSES" ShowInCustomizationForm="True" VisibleIndex="6">
+                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" BackColor="#CCCCCC" />
                                                                         <Columns>
-                                                                            <dx:GridViewBandColumn Caption=" " ShowInCustomizationForm="True" VisibleIndex="0">
-                                                                                <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
-                                                                                <Columns>
-                                                                                    <dx:GridViewDataComboBoxColumn Caption="Type" FieldName="OtherBus_Type" ShowInCustomizationForm="True" VisibleIndex="1" Width="140px">
-                                                                                        <PropertiesComboBox DataSourceID="SqlOtherBusExp" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID" ClientInstanceName="otherBusType">
-                                                                                            <Columns>
-                                                                                                <dx:ListBoxColumn Caption="Type" FieldName="Type" Width="50px">
-                                                                                                </dx:ListBoxColumn>
-                                                                                                <dx:ListBoxColumn Caption="Description" FieldName="Description" Width="180px">
-                                                                                                </dx:ListBoxColumn>
-                                                                                            </Columns>
-                                                                                            <ClientSideEvents SelectedIndexChanged="function(s, e) {
+                                                                            <dx:GridViewDataComboBoxColumn Caption="Type" FieldName="OtherBus_Type" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
+                                                                                <PropertiesComboBox ClientInstanceName="otherBusType" DataSourceID="SqlOtherBusExp" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
+                                                                                    <Columns>
+                                                                                        <dx:ListBoxColumn Caption="Type" FieldName="Type" Width="50px">
+                                                                                        </dx:ListBoxColumn>
+                                                                                        <dx:ListBoxColumn Caption="Description" FieldName="Description" Width="180px">
+                                                                                        </dx:ListBoxColumn>
+                                                                                    </Columns>
+                                                                                    <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	var selectedValue = s.GetValue(); // Get the selected value from ComboBox 
                if (selectedValue == 5) { 
                         OtherBusinessExpSpecify.SetVisible(true);
@@ -2340,41 +2289,92 @@
                }
 }
 " />
-                                                                                        </PropertiesComboBox>
-                                                                                        <HeaderStyle HorizontalAlign="Center" >
-                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </HeaderStyle>
-                                                                                        <CellStyle>
-                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataComboBoxColumn>
-                                                                                    <dx:GridViewDataMemoColumn Caption="if Others, specify:" FieldName="OtherBus_Specify" ShowInCustomizationForm="True" VisibleIndex="2" Width="140px">
+                                                                                </PropertiesComboBox>
+                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <Border BorderStyle="Solid" />
+                                                                                </HeaderStyle>
+                                                                                <CellStyle>
+                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                </CellStyle>
+                                                                                <Columns>
+                                                                                    <dx:GridViewDataMemoColumn Caption="if Others, specify:" FieldName="OtherBus_Specify" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
                                                                                         <PropertiesMemoEdit ClientInstanceName="OtherBusinessExpSpecify">
                                                                                             <ClientSideEvents Init="function(s, e) {
 	OtherBusinessExpSpecify.SetVisible(false);
 }
 " />
                                                                                         </PropertiesMemoEdit>
-                                                                                        <HeaderStyle>
-                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
+                                                                                        <HeaderStyle BackColor="#F0F0F0">
+                                                                                        <Border BorderStyle="Solid" />
                                                                                         </HeaderStyle>
                                                                                         <CellStyle>
                                                                                             <BorderTop BorderColor="Black" BorderStyle="Solid" />
                                                                                         </CellStyle>
                                                                                     </dx:GridViewDataMemoColumn>
-                                                                                    <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="OtherBus_Amount" ShowInCustomizationForm="True" VisibleIndex="3" Width="90px">
-                                                                                        <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
-                                                                                        </PropertiesSpinEdit>
-                                                                                        <HeaderStyle HorizontalAlign="Center" >
-                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </HeaderStyle>
-                                                                                        <CellStyle>
-                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                            <BorderRight BorderColor="Black" BorderStyle="Solid" />
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataSpinEditColumn>
                                                                                 </Columns>
-                                                                            </dx:GridViewBandColumn>
+                                                                            </dx:GridViewDataComboBoxColumn>
+                                                                            <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="OtherBus_Amount" ShowInCustomizationForm="True" VisibleIndex="1" Width="90px">
+                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
+                                                                                </PropertiesSpinEdit>
+                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <Border BorderStyle="Solid" />
+                                                                                </HeaderStyle>
+                                                                                <CellStyle>
+                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                    <BorderRight BorderColor="Black" BorderStyle="Solid" />
+                                                                                </CellStyle>
+                                                                            </dx:GridViewDataSpinEditColumn>
+                                                                        </Columns>
+                                                                    </dx:GridViewBandColumn>
+                                                                    <dx:GridViewBandColumn Caption="MISC. TRAVEL EXPENSES" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                                        <HeaderStyle BackColor="#CCCCCC" Font-Bold="True" HorizontalAlign="Center"></HeaderStyle>
+                                                                        <Columns>
+                                                                            <dx:GridViewDataComboBoxColumn Caption="Type" FieldName="MiscTravel_Type" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
+                                                                                <PropertiesComboBox ClientInstanceName="miscTravelType" DataSourceID="SqlMiscTravelExp" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
+                                                                                    <Columns>
+                                                                                        <dx:ListBoxColumn Caption="Type" FieldName="Type" Width="50px">
+                                                                                        </dx:ListBoxColumn>
+                                                                                        <dx:ListBoxColumn Caption="Description" FieldName="Description" Width="240px">
+                                                                                        </dx:ListBoxColumn>
+                                                                                    </Columns>
+                                                                                    <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	var selectedValue = s.GetValue(); // Get the selected value from ComboBox 
+               if (selectedValue == 5) { 
+                      MiscTravelExpSpecify.SetVisible(true);  
+                      //miscTravelExpPopup.Show();
+               }else{
+                      MiscTravelExpSpecify.SetVisible(false);  
+               }
+}
+" />
+                                                                                </PropertiesComboBox>
+                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <Border BorderStyle="Solid" />
+                                                                                </HeaderStyle>
+                                                                                <Columns>
+                                                                                    <dx:GridViewDataMemoColumn Caption="if Others, specify:" FieldName="MiscTravel_Specify" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
+                                                                                        <PropertiesMemoEdit ClientInstanceName="MiscTravelExpSpecify">
+                                                                                            <ClientSideEvents Init="function(s, e) {
+	MiscTravelExpSpecify.SetVisible(false);
+}
+" />
+                                                                                        </PropertiesMemoEdit>
+                                                                                        <HeaderStyle BackColor="#F0F0F0">
+                                                                                        <Border BorderStyle="Solid" />
+                                                                                        </HeaderStyle>
+                                                                                    </dx:GridViewDataMemoColumn>
+                                                                                </Columns>
+                                                                            </dx:GridViewDataComboBoxColumn>
+                                                                            <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="MiscTravel_Amount" ShowInCustomizationForm="True" VisibleIndex="1" Width="90px">
+                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
+                                                                                </PropertiesSpinEdit>
+                                                                                <HeaderStyle BackColor="#F0F0F0" Font-Bold="False" HorizontalAlign="Center">
+                                                                                <Border BorderStyle="Solid" />
+                                                                                </HeaderStyle>
+                                                                                <CellStyle>
+                                                                                    <BorderRight BorderColor="Black" BorderStyle="Solid" />
+                                                                                </CellStyle>
+                                                                            </dx:GridViewDataSpinEditColumn>
                                                                         </Columns>
                                                                     </dx:GridViewBandColumn>
                                                                 </Columns>
@@ -2399,35 +2399,12 @@
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings Location="Top" />
+                                                    <Paddings PaddingBottom="25px" />
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Date" ColSpan="1" VerticalAlign="Top" Width="20%">
-                                                    <LayoutItemNestedControlCollection>
-                                                        <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxCalendar ID="travelDateCalendar0" runat="server" ClientInstanceName="travelDateCalendar" EnableLargePeriodNavigation="False" HighlightToday="False" ShowClearButton="False" ShowTodayButton="False" Theme="MaterialCompact" Width="100%" ReadOnly="True">
-                                                                <CellStyle>
-                                                                    <Paddings Padding="6px" />
-                                                                </CellStyle>
-                                                                <DaySelectedStyle BackColor="#006838" ForeColor="White">
-                                                                </DaySelectedStyle>
-                                                                <ButtonStyle>
-                                                                    <HoverStyle ForeColor="#006838">
-                                                                    </HoverStyle>
-                                                                </ButtonStyle>
-                                                                <HeaderStyle BackColor="#006838" ForeColor="White" />
-                                                                <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="expAdd">
-                                                                    <ErrorImage IconID="outlookinspired_highimportance_svg_16x16">
-                                                                    </ErrorImage>
-                                                                    <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                                </ValidationSettings>
-                                                            </dx:ASPxCalendar>
-                                                        </dx:LayoutItemNestedControlContainer>
-                                                    </LayoutItemNestedControlCollection>
-                                                    <CaptionSettings Location="Top" />
-                                                    <Paddings PaddingBottom="20px" />
-                                                    <CaptionStyle Font-Bold="True">
-                                                    </CaptionStyle>
-                                                </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Supporting Documents" ColSpan="2" ColumnSpan="2" RowSpan="2" VerticalAlign="Top">
+                                                <dx:EmptyLayoutItem ColSpan="5" ColumnSpan="5">
+                                                    <BorderBottom BorderColor="#666666" BorderStyle="Solid" />
+                                                </dx:EmptyLayoutItem>
+                                                <dx:LayoutItem Caption="Supporting Documents" ColSpan="5" ColumnSpan="5" RowSpan="2" VerticalAlign="Top">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxUploadControl ID="TraUploadController" runat="server" AutoStartUpload="True" ClientInstanceName="TraUploadController" Font-Size="Small" ShowProgressPanel="True" UploadMode="Auto" Width="100%" Visible="False">

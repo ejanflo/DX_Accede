@@ -51,10 +51,10 @@ namespace DX_WebTemplate
                     ApplyStylesToGrid(ASPxGridView22, colorCode);
 
                     var mainExp = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).FirstOrDefault();
-                    var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense").Where(x => x.App_Id == 1032).FirstOrDefault();
-                    var status = _DataContext.ITP_S_Status.Where(x => x.STS_Id == Convert.ToInt32(mainExp.Status)).Select(x => x.STS_Description).FirstOrDefault() ?? string.Empty;
+                    var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).FirstOrDefault();
+                    var status = _DataContext.ITP_S_Status.Where(x => x.STS_Id == Convert.ToInt32(mainExp.Status)).Select(x => x.STS_Description).FirstOrDefault();
 
-                    if (mainExp != null)
+                    if (mainExp != null && status != null)
                     {
                         ExpenseEditForm.Items[0].Caption = "Travel Expense Document No.: " + mainExp.Doc_No + " (" + status + ")";
 
@@ -78,22 +78,30 @@ namespace DX_WebTemplate
                     //else
                     //    forAccounting.ClientVisible = false;
 
-                    if (status == "Saved" || status.Contains("Returned") || string.IsNullOrEmpty(status))
+                    if (status != null)
                     {
-                        editButton.Visible = true;
-                        printButton.Visible = false;
-                    }
-                    else if (status == "Approved" || status.Contains("Approved"))
-                    {
-                        printButton.Visible = true;
-                        printItem.VisibleIndex = 1;
-                        editItem.VisibleIndex = 0;
-                        editButton.Visible = false;
+                        if (status == "Saved" || status.Contains("Returned"))
+                        {
+                            editButton.Visible = true;
+                            printButton.Visible = false;
+                        }
+                        else if (status == "Approved" || status.Contains("Approved"))
+                        {
+                            printButton.Visible = true;
+                            printItem.VisibleIndex = 1;
+                            editItem.VisibleIndex = 0;
+                            editButton.Visible = false;
+                        }
+                        else
+                        {
+                            printButton.Visible = false;
+                            editButton.Visible = false;
+                        }
                     }
                     else
                     {
+                        editButton.Visible = true;
                         printButton.Visible = false;
-                        editButton.Visible = false;
                     }
                 }
                 else
@@ -200,7 +208,7 @@ namespace DX_WebTemplate
                     filesizeStr = filesize.ToString() + " Bytes";
                 }
 
-                var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense").Where(x => x.App_Id == 1032).FirstOrDefault();
+                var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).FirstOrDefault();
 
                 ITP_T_FileAttachment docs = new ITP_T_FileAttachment();
                 {
@@ -226,13 +234,13 @@ namespace DX_WebTemplate
 
 
         [WebMethod]
-        public static bool RedirectToRFPDetailsAJAX(string rfpDoc)
+        public static object RedirectToRFPDetailsAJAX(string rfpDoc)
         {
-            TravelExpenseReview exp = new TravelExpenseReview();
+            TravelExpenseView exp = new TravelExpenseView();
             return exp.RedirectToRFPDetails(rfpDoc);
         }
 
-        public bool RedirectToRFPDetails(string rfpDoc)
+        public object RedirectToRFPDetails(string rfpDoc)
         {
             try
             {

@@ -879,6 +879,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxButton popupCancelBtn;
 
         /// <summary>
+        /// travelDateCalendar control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxDateEdit travelDateCalendar;
+
+        /// <summary>
         /// locParticularsMemo control.
         /// </summary>
         /// <remarks>
@@ -949,15 +958,6 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxGridView ASPxGridView22;
-
-        /// <summary>
-        /// travelDateCalendar control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxCalendar travelDateCalendar;
 
         /// <summary>
         /// TraUploadController control.

@@ -190,7 +190,7 @@ namespace DX_WebTemplate
         [WebMethod]
         public static bool RedirectToRFPDetailsAJAX(string rfpDoc)
         {
-            TravelExpenseReview exp = new TravelExpenseReview();
+            TravelExpenseApprovalHistoryView exp = new TravelExpenseApprovalHistoryView();
             return exp.RedirectToRFPDetails(rfpDoc);
         }
 

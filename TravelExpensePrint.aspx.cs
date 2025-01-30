@@ -28,7 +28,7 @@ namespace DX_WebTemplate
 
                     if (travel != null)
                     {
-                        var audwf = context.ITP_S_WorkflowHeaders.Where(x => x.Name == "ACCEDE AUDIT" && x.Description == "ACCEDE AUDIT" && x.App_Id == 1032).Select(x => x.WF_Id).FirstOrDefault();
+                        var audwf = context.ITP_S_WorkflowHeaders.Where(x => x.Name == "ACDE AUDIT" && x.Description == "ACDE AUDIT" && x.App_Id == 1032).Select(x => x.WF_Id).FirstOrDefault();
                         var audapprid = context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WF_Id == audwf && x.AppId == 1032).FirstOrDefault();
                         var audapprdate = context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WF_Id == audwf && x.AppId == 1032).Select(x => x.DateAction).FirstOrDefault();
                         var audapprname = context.ITP_S_UserMasters.Where(x => x.EmpCode == audapprid.ActedBy_User_Id).Select(x => x.FullName).FirstOrDefault().ToUpper() ?? string.Empty;
