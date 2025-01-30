@@ -89,7 +89,7 @@ namespace DX_WebTemplate
         {
             try
             {
-                var app_docType = Convert.ToInt32(context.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense").Where(x => x.App_Id == 1032).Select(x => x.DCT_Id).FirstOrDefault());
+                var app_docType = Convert.ToInt32(context.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).Select(x => x.DCT_Id).FirstOrDefault());
                 GenerateDocNo generateDocNo = new GenerateDocNo();
                 generateDocNo.RunStoredProc_GenerateDocNum(Convert.ToInt32(app_docType), Convert.ToInt32(companyid), 1032);
                 var docNo = generateDocNo.GetLatest_DocNum(Convert.ToInt32(app_docType), Convert.ToInt32(companyid), 1032);

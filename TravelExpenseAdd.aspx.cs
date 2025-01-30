@@ -24,6 +24,7 @@ namespace DX_WebTemplate
 {
     public partial class TravelExpenseAdd : System.Web.UI.Page
     {
+        string ITPORTALcon = ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString;
         ITPORTALDataContext _DataContext = new ITPORTALDataContext(ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString);
 
         DataSet ds = null;
@@ -168,28 +169,102 @@ namespace DX_WebTemplate
 
                     var totExpCA = totalexp > totalca ? Convert.ToDecimal(totalexp - totalca) : Convert.ToDecimal(totalca - totalexp);
 
-                    SqlWF.SelectParameters["UserId"].DefaultValue = mainExp.Employee_Id.ToString();
-                    SqlWF.SelectParameters["CompanyId"].DefaultValue = mainExp.Company_Id.ToString();
-                    SqlWF.DataBind();
+                    //SqlWF.SelectParameters["UserId"].DefaultValue = mainExp.Employee_Id.ToString();
+                    //SqlWF.SelectParameters["CompanyId"].DefaultValue = mainExp.Company_Id.ToString();
+                    //SqlWF.DataBind();
                     //drpdown_WF.Value = 2078; drpdown_WF.DataBind();
 
-                    Session["mainwfid"] = Convert.ToString(_DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == mainExp.Employee_Id.ToString() && x.CompanyId == mainExp.Company_Id).Select(x => x.WF_Id).FirstOrDefault()) ?? string.Empty;
+                    //// - - Setting RA Workflow - - ////
 
-                    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
-                    SqlWorkflowSequence.DataBind();
+                    var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(mainExp.Dep_Code)).FirstOrDefault();
 
-                    Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == mainExp.Company_Id && x.App_Id == 1032 && x.IsRA == null && totExpCA >= x.Minimum && totExpCA <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault()) ?? string.Empty;
+                    // Fetch data using the stored procedure
+                    DataTable rawf = GetWorkflowHeadersByExpenseAndDepartment(mainExp.Employee_Id.ToString(), Convert.ToInt32(mainExp.Company_Id), totalexp, depcode != null ? depcode.DepCode : "0", 1032);
 
-                    SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
-                    SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
-                    SqlFAPWF2.DataBind();
-                    SqlFAPWF.DataBind();
+                    if (rawf != null && rawf.Rows.Count > 0)
+                    {
+                        // Get the first row's WF_Id value
+                        DataRow firstRow = rawf.Rows[0];
+                        int wfId = Convert.ToInt32(firstRow["WF_Id"]);
+
+                        // Set the dropdown to the first item (if applicable)
+                        drpdown_WF.SelectedIndex = 0;
+
+                        // Update the SQL data source parameters
+                        SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
+                        SqlWF.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
+                    }
+                    else
+                    {
+                        // Handle the case when no data is returned
+                        drpdown_WF.SelectedIndex = -1; // Optionally reset the dropdown
+                        SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = string.Empty;
+                        SqlWF.SelectParameters["WF_Id"].DefaultValue = string.Empty;
+                    }
+
+                    //Session["mainwfid"] = Convert.ToString(_DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == mainExp.Employee_Id.ToString() && x.CompanyId == mainExp.Company_Id).Select(x => x.WF_Id).FirstOrDefault()) ?? string.Empty;
+
+                    //SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
+                    //SqlWorkflowSequence.DataBind();
+
+                    //Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == mainExp.Company_Id && x.App_Id == 1032 && x.IsRA == null && totExpCA >= x.Minimum && totExpCA <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault()) ?? string.Empty;
+
+                    //SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
+                    //SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
+                    //SqlFAPWF2.DataBind();
+                    //SqlFAPWF.DataBind();
+
+                    //// - - Setting FAP workflow - - ////
+                    var fapwf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(mainExp.Company_Id))
+                        .Where(x => x.App_Id == 1032)
+                        .Where(x => x.Minimum <= Convert.ToDecimal(Math.Abs(totalexp)))
+                        .Where(x => x.Maximum >= Convert.ToDecimal(Math.Abs(totalexp)))
+                        .Where(x => x.IsRA == null || x.IsRA == false)
+                        .FirstOrDefault();
+
+                    if (fapwf != null)
+                    {
+                        drpdown_FAPWF.SelectedIndex = 0;
+                        SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = fapwf.WF_Id.ToString();
+                        SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = fapwf.WF_Id.ToString();
+                    }
                 }
             }
             catch (Exception)
             {
                 Response.Redirect("~/Logon.aspx");
             }
+        }
+
+        private DataTable GetWorkflowHeadersByExpenseAndDepartment(string userId, int companyId, decimal totalExp, string depCode, int app_id)
+        {
+            DataTable dataTable = new DataTable();
+
+            using (SqlConnection connection = new SqlConnection(ITPORTALcon))
+            {
+                using (SqlCommand command = new SqlCommand("sp_sel_ACCEDE_GetWorkflowHeadersByExpenseAndDepartment", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    // Add parameters
+                    command.Parameters.AddWithValue("@UserId", userId);
+                    command.Parameters.AddWithValue("@CompanyId", companyId);
+                    command.Parameters.AddWithValue("@totalExp", totalExp);
+                    command.Parameters.AddWithValue("@DepCode", depCode);
+                    command.Parameters.AddWithValue("@AppId", app_id);
+
+                    // Open the connection
+                    connection.Open();
+
+                    // Execute the query and load the results into the DataTable
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        dataTable.Load(reader);
+                    }
+                }
+            }
+
+            return dataTable;
         }
 
         protected void UploadController_FilesUploadComplete(object sender, DevExpress.Web.FilesUploadCompleteEventArgs e)
