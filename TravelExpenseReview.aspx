@@ -1371,7 +1371,7 @@
                                                                                                     <dx:LayoutItem Caption="Workflow" ColSpan="1">
                                                                                                         <LayoutItemNestedControlCollection>
                                                                                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                                                                                <dx:ASPxComboBox ID="drpdown_WF" runat="server" ClientEnabled="False" ClientInstanceName="drpdown_WF" DataSourceID="SqlWF" Font-Bold="True" Height="39px" SelectedIndex="0" TextField="WorkflowHeader_Name" ValueField="WF_Id" Width="100%">
+                                                                                                                <dx:ASPxComboBox ID="drpdown_WF" runat="server" ClientEnabled="False" ClientInstanceName="drpdown_WF" DataSourceID="SqlWF" Font-Bold="True" Height="39px" SelectedIndex="0" TextField="Name" ValueField="WF_Id" Width="100%">
                                                                                                                     <ClientSideEvents Init="function(s, e) {
 	WFSequenceGrid.PerformCallback();
 }" SelectedIndexChanged="function(s, e) {
@@ -3715,18 +3715,17 @@ onTravelClick();
             <asp:Parameter DefaultValue="ExpCat" Name="Code" Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlWF" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_UserWFAccess] WHERE (([UserId] = @UserId) AND ([CompanyId] = @CompanyId))">
+    <asp:SqlDataSource ID="SqlWF" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_WorkflowHeader] WHERE ([WF_Id] = @WF_Id)">
         <SelectParameters>
-            <asp:Parameter Name="UserId" Type="String" />
-            <asp:Parameter Name="CompanyId" Type="Int32" />
+            <asp:Parameter Name="WF_Id" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlWorkflowSequence" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT ITP_S_WorkflowDetails.WF_Id, ITP_S_WorkflowDetails.Description, ITP_S_WorkflowDetails.OrgRole_Id, ITP_S_WorkflowDetails.Sequence, ITP_S_UserMaster.FullName FROM ITP_S_WorkflowDetails INNER JOIN ITP_S_SecurityUserOrgRoles ON ITP_S_WorkflowDetails.OrgRole_Id = ITP_S_SecurityUserOrgRoles.OrgRoleId INNER JOIN ITP_S_UserMaster ON ITP_S_SecurityUserOrgRoles.UserId = ITP_S_UserMaster.EmpCode WHERE (ITP_S_WorkflowDetails.WF_Id = @WF_Id) ORDER BY ITP_S_WorkflowDetails.Sequence">
+    <asp:SqlDataSource ID="SqlWorkflowSequence" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_RS_Workflow_Sequence] WHERE ([WF_Id] = @WF_Id) ORDER BY [Sequence]">
         <SelectParameters>
             <asp:Parameter Name="WF_Id" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlFAPWF" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT ITP_S_WorkflowDetails.WF_Id, ITP_S_WorkflowDetails.Description, ITP_S_WorkflowDetails.OrgRole_Id, ITP_S_WorkflowDetails.Sequence, ITP_S_UserMaster.FullName FROM ITP_S_WorkflowDetails INNER JOIN ITP_S_SecurityUserOrgRoles ON ITP_S_WorkflowDetails.OrgRole_Id = ITP_S_SecurityUserOrgRoles.OrgRoleId INNER JOIN ITP_S_UserMaster ON ITP_S_SecurityUserOrgRoles.UserId = ITP_S_UserMaster.EmpCode WHERE (ITP_S_WorkflowDetails.WF_Id = @WF_Id) ORDER BY ITP_S_WorkflowDetails.Sequence">
+    <asp:SqlDataSource ID="SqlFAPWF" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_RS_Workflow_Sequence] WHERE ([WF_Id] = @WF_Id) ORDER BY [Sequence]">
         <SelectParameters>
             <asp:Parameter Name="WF_Id" Type="Int32" />
         </SelectParameters>

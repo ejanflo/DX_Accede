@@ -110,7 +110,7 @@ namespace DX_WebTemplate
                 var due_lbl = ExpenseEditForm.FindItemOrGroupByName("due_lbl") as LayoutItem;
                 var reimDetails = ExpenseEditForm.FindItemOrGroupByName("reimDetails") as LayoutItem;
 
-                var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.IsExpenseReim == true).FirstOrDefault();
+                var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.isTravel == true && x.IsExpenseReim == true).FirstOrDefault();
 
                 if (reim != null)
                 {
