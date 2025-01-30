@@ -121,7 +121,7 @@ namespace DX_WebTemplate
                     var reimItem = ExpenseEditForm.FindItemOrGroupByName("reimItem") as LayoutItem;
                     var reimDetails = ExpenseEditForm.FindItemOrGroupByName("reimDetails") as LayoutItem;
 
-                    var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.IsExpenseReim == true).FirstOrDefault();
+                    var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.isTravel == true && x.IsExpenseReim == true).FirstOrDefault();
 
                     if (reim != null)
                     {
@@ -133,7 +133,7 @@ namespace DX_WebTemplate
                     var userId = Convert.ToString(Session["userID"]);
 
                     var totalca = _DataContext.ACCEDE_T_RFPMains
-                        .Where(x => x.Exp_ID == travelExpId && x.TranType == 1 && x.User_ID == userId)
+                        .Where(x => x.Exp_ID == travelExpId && x.isTravel == true && x.TranType == 1 && x.User_ID == userId)
                         .Sum(x => (decimal?)x.Amount) ?? 0;
 
                     var totalexp = _DataContext.ACCEDE_T_TravelExpenseDetails
@@ -141,7 +141,7 @@ namespace DX_WebTemplate
                         .Sum(x => (decimal?)x.Total_Expenses) ?? 0;
 
                     var countCA = _DataContext.ACCEDE_T_RFPMains
-                        .Count(x => x.Exp_ID == travelExpId && x.TranType == 1 && x.User_ID == userId);
+                        .Count(x => x.Exp_ID == travelExpId && x.isTravel == true && x.TranType == 1 && x.User_ID == userId);
 
                     var countExp = _DataContext.ACCEDE_T_TravelExpenseDetails
                         .Count(x => x.TravelExpenseMain_ID == travelExpId);
@@ -220,7 +220,7 @@ namespace DX_WebTemplate
 
                     //// - - Setting FAP workflow - - ////
                     
-                    var fapsqlWFid = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == mainExp.Company_Id && x.IsRA == false).Select(x => x.WF_Id).FirstOrDefault());
+                    var fapsqlWFid = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == mainExp.Company_Id && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
                     SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = fapsqlWFid;
                     SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = fapsqlWFid;
 

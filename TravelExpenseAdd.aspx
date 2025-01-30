@@ -1537,7 +1537,7 @@
                                                                                             <dx:LayoutItem Caption="Workflow" ColSpan="1">
                                                                                                 <LayoutItemNestedControlCollection>
                                                                                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                                                                                        <dx:ASPxComboBox ID="drpdown_WF" runat="server" ClientInstanceName="drpdown_WF" DataSourceID="SqlWF" Font-Size="Small" Height="39px" SelectedIndex="0" TextField="WorkflowHeader_Name" ValueField="WF_Id" Width="100%" ClientEnabled="False" Font-Bold="True">
+                                                                                                        <dx:ASPxComboBox ID="drpdown_WF" runat="server" ClientInstanceName="drpdown_WF" DataSourceID="SqlWF" Font-Size="Small" Height="39px" SelectedIndex="0" TextField="Name" ValueField="WF_Id" Width="100%" ClientEnabled="False" Font-Bold="True">
                                                                                                             <ClientSideEvents Init="function(s, e) {
 	WFSequenceGrid.PerformCallback();
 }" SelectedIndexChanged="function(s, e) {
