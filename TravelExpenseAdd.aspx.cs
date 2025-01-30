@@ -176,9 +176,9 @@ namespace DX_WebTemplate
 
                     //// - - Setting RA Workflow - - ////
 
-                    Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.IsRA == true && totExpCA >= x.Minimum && totExpCA <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault());
-                    SqlWF.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
-                    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
+                    Session["mainwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.IsRA == true && totExpCA >= x.Minimum && totExpCA <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault());
+                    SqlWF.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
+                    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
 
                     //var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(mainExp.Dep_Code)).FirstOrDefault();
 
