@@ -176,31 +176,35 @@ namespace DX_WebTemplate
 
                     //// - - Setting RA Workflow - - ////
 
-                    var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(mainExp.Dep_Code)).FirstOrDefault();
+                    var sqlWFid = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == mainExp.Company_Id && x.IsRA == true).Select(x => x.WF_Id).FirstOrDefault());
+                    SqlWF.SelectParameters["WF_Id"].DefaultValue = sqlWFid;
+                    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = sqlWFid;
 
-                    // Fetch data using the stored procedure
-                    DataTable rawf = GetWorkflowHeadersByExpenseAndDepartment(mainExp.Employee_Id.ToString(), Convert.ToInt32(mainExp.Company_Id), totalexp, depcode != null ? depcode.DepCode : "0", 1032);
+                    //var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(mainExp.Dep_Code)).FirstOrDefault();
 
-                    if (rawf != null && rawf.Rows.Count > 0)
-                    {
-                        // Get the first row's WF_Id value
-                        DataRow firstRow = rawf.Rows[0];
-                        int wfId = Convert.ToInt32(firstRow["WF_Id"]);
+                    //// Fetch data using the stored procedure
+                    //DataTable rawf = GetWorkflowHeadersByExpenseAndDepartment(mainExp.Employee_Id.ToString(), Convert.ToInt32(mainExp.Company_Id), totalexp, depcode != null ? depcode.DepCode : "0", 1032);
 
-                        // Set the dropdown to the first item (if applicable)
-                        drpdown_WF.SelectedIndex = 0;
+                    //if (rawf != null && rawf.Rows.Count > 0)
+                    //{
+                    //    // Get the first row's WF_Id value
+                    //    DataRow firstRow = rawf.Rows[0];
+                    //    int wfId = Convert.ToInt32(firstRow["WF_Id"]);
 
-                        // Update the SQL data source parameters
-                        SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
-                        SqlWF.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
-                    }
-                    else
-                    {
-                        // Handle the case when no data is returned
-                        drpdown_WF.SelectedIndex = -1; // Optionally reset the dropdown
-                        SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = string.Empty;
-                        SqlWF.SelectParameters["WF_Id"].DefaultValue = string.Empty;
-                    }
+                    //    // Set the dropdown to the first item (if applicable)
+                    //    drpdown_WF.SelectedIndex = 0;
+
+                    //    // Update the SQL data source parameters
+                    //    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
+                    //    SqlWF.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
+                    //}
+                    //else
+                    //{
+                    //    // Handle the case when no data is returned
+                    //    drpdown_WF.SelectedIndex = -1; // Optionally reset the dropdown
+                    //    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = string.Empty;
+                    //    SqlWF.SelectParameters["WF_Id"].DefaultValue = string.Empty;
+                    //}
 
                     //Session["mainwfid"] = Convert.ToString(_DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == mainExp.Employee_Id.ToString() && x.CompanyId == mainExp.Company_Id).Select(x => x.WF_Id).FirstOrDefault()) ?? string.Empty;
 
@@ -215,19 +219,24 @@ namespace DX_WebTemplate
                     //SqlFAPWF.DataBind();
 
                     //// - - Setting FAP workflow - - ////
-                    var fapwf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(mainExp.Company_Id))
-                        .Where(x => x.App_Id == 1032)
-                        .Where(x => x.Minimum <= Convert.ToDecimal(Math.Abs(totalexp)))
-                        .Where(x => x.Maximum >= Convert.ToDecimal(Math.Abs(totalexp)))
-                        .Where(x => x.IsRA == null || x.IsRA == false)
-                        .FirstOrDefault();
+                    
+                    var fapsqlWFid = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == mainExp.Company_Id && x.IsRA == false).Select(x => x.WF_Id).FirstOrDefault());
+                    SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = fapsqlWFid;
+                    SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = fapsqlWFid;
 
-                    if (fapwf != null)
-                    {
-                        drpdown_FAPWF.SelectedIndex = 0;
-                        SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = fapwf.WF_Id.ToString();
-                        SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = fapwf.WF_Id.ToString();
-                    }
+                    //var fapwf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(mainExp.Company_Id))
+                    //    .Where(x => x.App_Id == 1032)
+                    //    .Where(x => x.Minimum <= Convert.ToDecimal(Math.Abs(totalexp)))
+                    //    .Where(x => x.Maximum >= Convert.ToDecimal(Math.Abs(totalexp)))
+                    //    .Where(x => x.IsRA == null || x.IsRA == false)
+                    //    .FirstOrDefault();
+
+                    //if (fapwf != null)
+                    //{
+                    //    drpdown_FAPWF.SelectedIndex = 0;
+                    //    SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = fapwf.WF_Id.ToString();
+                    //    SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = fapwf.WF_Id.ToString();
+                    //}
                 }
             }
             catch (Exception)
