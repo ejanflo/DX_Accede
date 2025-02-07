@@ -228,6 +228,12 @@ namespace DX_WebTemplate
     partial void InsertACCEDE_S_UserDelegation(ACCEDE_S_UserDelegation instance);
     partial void UpdateACCEDE_S_UserDelegation(ACCEDE_S_UserDelegation instance);
     partial void DeleteACCEDE_S_UserDelegation(ACCEDE_S_UserDelegation instance);
+    partial void InsertACDE_T_Currency(ACDE_T_Currency instance);
+    partial void UpdateACDE_T_Currency(ACDE_T_Currency instance);
+    partial void DeleteACDE_T_Currency(ACDE_T_Currency instance);
+    partial void InsertACCEDE_S_ExpenseClassification(ACCEDE_S_ExpenseClassification instance);
+    partial void UpdateACCEDE_S_ExpenseClassification(ACCEDE_S_ExpenseClassification instance);
+    partial void DeleteACCEDE_S_ExpenseClassification(ACCEDE_S_ExpenseClassification instance);
     #endregion
 		
 		public ITPORTALDataContext(string connection) : 
@@ -859,6 +865,22 @@ namespace DX_WebTemplate
 			get
 			{
 				return this.GetTable<ACCEDE_S_UserDelegation>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ACDE_T_Currency> ACDE_T_Currencies
+		{
+			get
+			{
+				return this.GetTable<ACDE_T_Currency>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ACCEDE_S_ExpenseClassification> ACCEDE_S_ExpenseClassifications
+		{
+			get
+			{
+				return this.GetTable<ACCEDE_S_ExpenseClassification>();
 			}
 		}
 	}
@@ -23506,6 +23528,274 @@ namespace DX_WebTemplate
 					this._isActive = value;
 					this.SendPropertyChanged("isActive");
 					this.OnisActiveChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACDE_T_Currency")]
+	public partial class ACDE_T_Currency : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private string _CurrDescription;
+		
+		private System.Nullable<bool> _isActive;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnCurrDescriptionChanging(string value);
+    partial void OnCurrDescriptionChanged();
+    partial void OnisActiveChanging(System.Nullable<bool> value);
+    partial void OnisActiveChanged();
+    #endregion
+		
+		public ACDE_T_Currency()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CurrDescription", DbType="VarChar(50)")]
+		public string CurrDescription
+		{
+			get
+			{
+				return this._CurrDescription;
+			}
+			set
+			{
+				if ((this._CurrDescription != value))
+				{
+					this.OnCurrDescriptionChanging(value);
+					this.SendPropertyChanging();
+					this._CurrDescription = value;
+					this.SendPropertyChanged("CurrDescription");
+					this.OnCurrDescriptionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_isActive", DbType="Bit")]
+		public System.Nullable<bool> isActive
+		{
+			get
+			{
+				return this._isActive;
+			}
+			set
+			{
+				if ((this._isActive != value))
+				{
+					this.OnisActiveChanging(value);
+					this.SendPropertyChanging();
+					this._isActive = value;
+					this.SendPropertyChanged("isActive");
+					this.OnisActiveChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_S_ExpenseClassification")]
+	public partial class ACCEDE_S_ExpenseClassification : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private string _ClassificationName;
+		
+		private string _ClassificationDesc;
+		
+		private System.Nullable<bool> _isActive;
+		
+		private System.Nullable<bool> _withFAPLogic;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnClassificationNameChanging(string value);
+    partial void OnClassificationNameChanged();
+    partial void OnClassificationDescChanging(string value);
+    partial void OnClassificationDescChanged();
+    partial void OnisActiveChanging(System.Nullable<bool> value);
+    partial void OnisActiveChanged();
+    partial void OnwithFAPLogicChanging(System.Nullable<bool> value);
+    partial void OnwithFAPLogicChanged();
+    #endregion
+		
+		public ACCEDE_S_ExpenseClassification()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClassificationName", DbType="VarChar(100)")]
+		public string ClassificationName
+		{
+			get
+			{
+				return this._ClassificationName;
+			}
+			set
+			{
+				if ((this._ClassificationName != value))
+				{
+					this.OnClassificationNameChanging(value);
+					this.SendPropertyChanging();
+					this._ClassificationName = value;
+					this.SendPropertyChanged("ClassificationName");
+					this.OnClassificationNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClassificationDesc", DbType="VarChar(MAX)")]
+		public string ClassificationDesc
+		{
+			get
+			{
+				return this._ClassificationDesc;
+			}
+			set
+			{
+				if ((this._ClassificationDesc != value))
+				{
+					this.OnClassificationDescChanging(value);
+					this.SendPropertyChanging();
+					this._ClassificationDesc = value;
+					this.SendPropertyChanged("ClassificationDesc");
+					this.OnClassificationDescChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_isActive", DbType="Bit")]
+		public System.Nullable<bool> isActive
+		{
+			get
+			{
+				return this._isActive;
+			}
+			set
+			{
+				if ((this._isActive != value))
+				{
+					this.OnisActiveChanging(value);
+					this.SendPropertyChanging();
+					this._isActive = value;
+					this.SendPropertyChanged("isActive");
+					this.OnisActiveChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_withFAPLogic", DbType="Bit")]
+		public System.Nullable<bool> withFAPLogic
+		{
+			get
+			{
+				return this._withFAPLogic;
+			}
+			set
+			{
+				if ((this._withFAPLogic != value))
+				{
+					this.OnwithFAPLogicChanging(value);
+					this.SendPropertyChanging();
+					this._withFAPLogic = value;
+					this.SendPropertyChanged("withFAPLogic");
+					this.OnwithFAPLogicChanged();
 				}
 			}
 		}

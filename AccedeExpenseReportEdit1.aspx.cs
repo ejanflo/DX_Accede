@@ -156,6 +156,7 @@ namespace DX_WebTemplate
                     //// - - Setting FAP workflow - - ////
                     var fapwf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(mainExp.CompanyId))
                         .Where(x => x.App_Id == 1032)
+                        .Where(x => x.With_DivHead == false || x.With_DivHead == null)
                         .Where(x => x.Minimum <= Convert.ToDecimal(Math.Abs(totalExp)))
                         .Where(x => x.Maximum >= Convert.ToDecimal(Math.Abs(totalExp)))
                         .Where(x => x.IsRA == null || x.IsRA == false)

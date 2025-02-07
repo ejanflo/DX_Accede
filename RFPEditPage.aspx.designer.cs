@@ -105,6 +105,24 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxRadioButton rdButton_NonTrav;
 
         /// <summary>
+        /// drpdown_TravType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox drpdown_TravType;
+
+        /// <summary>
+        /// drpdown_classification control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox drpdown_classification;
+
+        /// <summary>
         /// dateEdit_lastDayTran control.
         /// </summary>
         /// <remarks>
@@ -652,5 +670,14 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlUserSelf;
+
+        /// <summary>
+        /// SqlClassification control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlClassification;
     }
 }

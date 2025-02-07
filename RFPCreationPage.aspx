@@ -56,12 +56,18 @@
             var layoutControl = window["formRFP"];
             if (layoutControl) {
                 var layoutItem = layoutControl.GetItemByName("LDOT");
+                var layoutItem2 = layoutControl.GetItemByName("TravType");
+                var layoutItem3 = layoutControl.GetItemByName("ClassType");
                 if (layoutItem) {
 
                     if (rdButton_Trav.GetValue() == true) {
                         layoutItem.SetVisible(true);
+                        layoutItem2.SetVisible(true);
+                        layoutItem3.SetVisible(false);
                     } else {
                         layoutItem.SetVisible(false);
+                        layoutItem2.SetVisible(false);
+                        layoutItem3.SetVisible(true);
                     }
                     
                     
@@ -109,6 +115,10 @@
 
                 }
             }
+        }
+
+        function onTravTypeChanged() {
+            drpdown_currency.PerformCallback();
         }
 
         function onPayToVendorTranType() {
@@ -262,12 +272,14 @@
             var exp_id = drpdown_ExpID.GetValue();
             var fap = drpdwn_FAPWF.GetValue();
             var wbs = txtbox_WBS.GetValue() != null ? txtbox_WBS.GetValue() : "";
+            var travType = drpdown_TravType.GetValue() != null ? drpdown_TravType.GetValue() : "";
             //var exp_cat = expCat.GetValue() != null ? expCat.GetValue() : "";
             //console.log('This: ' + exp_cat)
             var pld = PLD.GetValue() != null ? PLD.GetValue() : "";
             console.log(pld);
             //var remarks = txtbox_remarks.GetValue() != null ? txtbox_remarks.GetValue() : "";
             var curr = drpdown_currency.GetValue();
+            var classification = drpdown_classification.GetValue() != null ? drpdown_classification.GetValue() : "";
 
             if (wf_id == null || fap == null) {
                 var layoutControl = window["formRFP"];
@@ -310,7 +322,9 @@
                         //exp_cat: exp_cat,
                         pld: pld,
                         //remarks: remarks,
-                        curr: curr
+                        curr: curr,
+                        travType: travType,
+                        classification: classification
                     }),
                     success: function (response) {
                         // Update the description text box with the response value
@@ -426,7 +440,7 @@
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxButton ID="btnSubmit" runat="server" BackColor="#006838" Text="Submit" AutoPostBack="False">
                                             <ClientSideEvents Click="function(s, e) {
-	if(ASPxClientEdit.ValidateGroup('CreationForm')) SubmitPopup.Show();
+	if(ASPxClientEdit.ValidateGroup('CreationForm')) SubmitPopup.Show(); console.log(drpdown_Payee.GetValue());
 }" />
                                         </dx:ASPxButton>
                                     </dx:LayoutItemNestedControlContainer>
@@ -509,7 +523,7 @@ onAmountChanged(drpdown_PayMethod.GetValue());
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxComboBox ID="drpdown_TranType" runat="server" DataSourceID="SqlTranType" TextField="RFPTranType_Name" ValueField="ID" ClientInstanceName="drpdown_TranType" Width="100%">
                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	onPayToVendorTranType();
+	//onPayToVendorTranType();
 ifTranType_is_CA();
 }" />
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
@@ -520,7 +534,7 @@ ifTranType_is_CA();
                                 </LayoutItemNestedControlCollection>
                                 <CaptionSettings HorizontalAlign="Right" />
                             </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Projected Liquidation Date" ClientVisible="False" ColSpan="2" Name="PLD" ColumnSpan="2" Width="100%">
+                            <dx:LayoutItem Caption="Projected Liquidation Date" ColSpan="2" Name="PLD" ColumnSpan="2" Width="100%">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxDateEdit ID="PLD" runat="server" ClientInstanceName="PLD" Width="100%">
@@ -532,12 +546,12 @@ ifTranType_is_CA();
                                 </LayoutItemNestedControlCollection>
                                 <CaptionSettings HorizontalAlign="Right" />
                             </dx:LayoutItem>
-                            <dx:LayoutGroup Caption="" ColCount="2" ColSpan="2" ColumnCount="2" HorizontalAlign="Right" ColumnSpan="2" Width="100%" ClientVisible="False">
+                            <dx:LayoutGroup Caption="" ColCount="2" ColSpan="2" ColumnCount="2" HorizontalAlign="Right" ColumnSpan="2" Width="100%">
                                 <Items>
                                     <dx:LayoutItem Caption="" ColSpan="1" Width="30%">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxRadioButton ID="rdButton_Trav" runat="server" ClientInstanceName="rdButton_Trav" RightToLeft="False" Text="Travel" Width="100px" ReadOnly="True">
+                                                <dx:ASPxRadioButton ID="rdButton_Trav" runat="server" ClientInstanceName="rdButton_Trav" RightToLeft="False" Text="Travel" Width="100px">
                                                     <RadioButtonFocusedStyle Wrap="True">
                                                     </RadioButtonFocusedStyle>
                                                     <ClientSideEvents CheckedChanged="function(s, e) {
@@ -551,7 +565,7 @@ onTravelClick();
                                     <dx:LayoutItem Caption="" ColSpan="1" Width="60%">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxRadioButton ID="rdButton_NonTrav" runat="server" Checked="True" ClientInstanceName="rdButton_NonTrav" Text="Non-Travel" Width="200px" ReadOnly="True">
+                                                <dx:ASPxRadioButton ID="rdButton_NonTrav" runat="server" Checked="True" ClientInstanceName="rdButton_NonTrav" Text="Non-Travel" Width="200px">
                                                     <RadioButtonStyle Font-Size="Smaller" Wrap="True">
                                                     </RadioButtonStyle>
                                                     <ClientSideEvents CheckedChanged="function(s, e) {
@@ -564,6 +578,25 @@ onTravelClick();
                                     </dx:LayoutItem>
                                 </Items>
                             </dx:LayoutGroup>
+                            <dx:LayoutItem Caption="Travel Type" ClientVisible="False" ColSpan="2" ColumnSpan="2" Width="100%" Name="TravType">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxComboBox ID="drpdown_TravType" runat="server" Width="100%" ClientInstanceName="drpdown_TravType">
+                                            <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	onTravTypeChanged();
+}" />
+                                            <Items>
+                                                <dx:ListEditItem Text="Foreign" Value="1" />
+                                                <dx:ListEditItem Text="Domestic" Value="2" />
+                                            </Items>
+                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
+                                                <RequiredField ErrorText="This field is required." IsRequired="True" />
+                                            </ValidationSettings>
+                                        </dx:ASPxComboBox>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                                <CaptionSettings HorizontalAlign="Left" Location="Top" VerticalAlign="Middle" />
+                            </dx:LayoutItem>
                             <dx:LayoutItem Caption="Last day of transaction" ClientVisible="False" ColSpan="2" Name="LDOT" ColumnSpan="2" Width="100%">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
@@ -578,14 +611,17 @@ onTravelClick();
                                 <CaptionStyle Font-Italic="False" Font-Size="Small">
                                 </CaptionStyle>
                             </dx:LayoutItem>
-                            <dx:LayoutItem Caption="WBS" ClientVisible="False" ColSpan="2" ColumnSpan="2" Name="WBS" Width="100%">
+                            <dx:LayoutItem Caption="Classification" ColSpan="2" ColumnSpan="2" Width="100%" Name="ClassType">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="txtbox_WBS" runat="server" ClientInstanceName="txtbox_WBS" Width="100%">
+                                        <dx:ASPxComboBox ID="drpdown_classification" runat="server" ClientInstanceName="drpdown_classification" Width="100%" DataSourceID="SqlClassification" TextField="ClassificationName" ValueField="ID">
+                                            <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	drpdwn_FAPWF.PerformCallback();
+}" />
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                 <RequiredField ErrorText="This field is required." IsRequired="True" />
                                             </ValidationSettings>
-                                        </dx:ASPxTextBox>
+                                        </dx:ASPxComboBox>
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
                                 <CaptionSettings HorizontalAlign="Left" Location="Top" />
@@ -656,6 +692,18 @@ onTravelClick();
                                 </LayoutItemNestedControlCollection>
                                 <CaptionSettings HorizontalAlign="Left" Location="Top" />
                             </dx:LayoutItem>
+                            <dx:LayoutItem Caption="WBS" ClientVisible="False" ColSpan="1" Name="WBS" Width="100%">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxTextBox ID="txtbox_WBS" runat="server" ClientInstanceName="txtbox_WBS" Width="100%">
+                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
+                                                <RequiredField ErrorText="This field is required." IsRequired="True" />
+                                            </ValidationSettings>
+                                        </dx:ASPxTextBox>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                                <CaptionSettings HorizontalAlign="Left" Location="Top" />
+                            </dx:LayoutItem>
                             <dx:LayoutItem Caption="Payee" ColSpan="1" Name="Payee">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
@@ -678,7 +726,7 @@ onTravelClick();
                                     <dx:LayoutItem Caption="Currency" ColSpan="1">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxComboBox ID="drpdown_currency" runat="server" ClientInstanceName="drpdown_currency" DataSourceID="SqlCurrency" SelectedIndex="0" TextField="CurrDescription" ValueField="CurrDescription" Width="50%">
+                                                <dx:ASPxComboBox ID="drpdown_currency" runat="server" ClientInstanceName="drpdown_currency" DataSourceID="SqlCurrency" TextField="CurrDescription" ValueField="CurrDescription" Width="50%" OnCallback="drpdown_currency_Callback">
                                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                         <RequiredField ErrorText="This field is requried." IsRequired="True" />
                                                     </ValidationSettings>
@@ -1399,14 +1447,12 @@ SavePopup.Hide();
             <asp:Parameter DefaultValue="true" Name="isActive" Type="Boolean" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlWF" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_UserWFAccess] WHERE (([UserId] = @UserId) AND ([CompanyId] = @CompanyId) AND ([IsRA] = @IsRA) AND ([Minimum] &lt;= @Minimum) AND ([Maximum] &gt;= @Maximum) AND ([DepCode] = @DepCode))">
+    <asp:SqlDataSource ID="SqlWF" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_UserWFAccess] WHERE (([UserId] = @UserId) AND ([CompanyId] = @CompanyId) AND ([IsRA] = @IsRA) AND ([DepCode] = @DepCode))">
         <SelectParameters>
             <asp:Parameter Name="UserId" Type="String" />
             <asp:Parameter Name="CompanyId" Type="Int32" />
             <asp:Parameter DefaultValue="True" Name="IsRA" Type="Boolean" />
-            <asp:Parameter DefaultValue="" Name="Minimum" Type="Decimal" />
-            <asp:Parameter Name="Maximum" Type="Decimal" />
-            <asp:Parameter Name="DepCode" Type="String" />
+            <asp:Parameter DefaultValue="" Name="DepCode" Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlWorkflowSequence" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_RS_Workflow_Sequence] WHERE ([WF_Id] = @WF_Id) ORDER BY [Sequence]">
@@ -1446,18 +1492,23 @@ SavePopup.Hide();
         </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlStatus" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_Status]"></asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlUser" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_UserDelegationUMaster] WHERE (([DelegateTo_UserID] = @DelegateTo_UserID) AND ([Company_ID] = @Company_ID) AND ([DateFrom] &lt;= @DateFrom) AND ([DateTo] &gt;= @DateTo) AND ([IsActive] = @IsActive)) ORDER BY [FullName]">
+    <asp:SqlDataSource ID="SqlUser" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_UserDelegationUMaster] WHERE (([DelegateTo_UserID] = @DelegateTo_UserID) AND ([DateFrom] &lt;= @DateFrom) AND ([DateTo] &gt;= @DateTo) AND ([IsActive] = @IsActive) AND ([Company_ID] = @Company_ID)) ORDER BY [FullName]">
         <SelectParameters>
             <asp:Parameter Name="DelegateTo_UserID" Type="String" />
-            <asp:Parameter Name="Company_ID" Type="Int32" />
             <asp:Parameter Name="DateFrom" Type="DateTime" />
             <asp:Parameter Name="DateTo" Type="DateTime" />
-            <asp:Parameter DefaultValue="1" Name="IsActive" Type="Int32" />
+            <asp:Parameter Name="IsActive" Type="Int32" DefaultValue="1" />
+            <asp:Parameter Name="Company_ID" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlUserSelf" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT EmpCode AS DelegateFor_UserID, FullName FROM [ITP_S_UserMaster] WHERE ([EmpCode] = @EmpCode)">
+    <asp:SqlDataSource ID="SqlUserSelf" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT EmpCode, FullName FROM [ITP_S_UserMaster] WHERE ([EmpCode] = @EmpCode)">
         <SelectParameters>
             <asp:Parameter Name="EmpCode" Type="String" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlClassification" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_ExpenseClassification] WHERE ([isActive] = @isActive) ORDER BY [ClassificationName]">
+        <SelectParameters>
+            <asp:Parameter DefaultValue="true" Name="isActive" Type="Boolean" />
         </SelectParameters>
     </asp:SqlDataSource>
 </asp:Content>

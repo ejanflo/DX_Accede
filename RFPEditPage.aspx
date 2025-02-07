@@ -15,12 +15,18 @@
               var layoutControl = window["formRFP"];
               if (layoutControl) {
                   var layoutItem = layoutControl.GetItemByName("LDOT");
+                  var layoutItem2 = layoutControl.GetItemByName("TravType");
+                  var layoutItem3 = layoutControl.GetItemByName("ClassType");
                   if (layoutItem) {
 
                       if (rdButton_Trav.GetValue() == true) {
                           layoutItem.SetVisible(true);
+                          layoutItem2.SetVisible(true);
+                          layoutItem3.SetVisible(false);
                       } else {
                           layoutItem.SetVisible(false);
+                          layoutItem2.SetVisible(false);
+                          layoutItem3.SetVisible(true);
                       }
 
 
@@ -506,6 +512,40 @@ onTravelClick();
                                     </dx:LayoutItem>
                                 </Items>
                             </dx:LayoutGroup>
+                            <dx:LayoutItem Caption="Travel Type" ColSpan="2" ColumnSpan="2" Width="100%">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxComboBox ID="drpdown_TravType" runat="server" ClientInstanceName="drpdown_TravType" Width="100%">
+                                            <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	onTravTypeChanged();
+}" />
+                                            <Items>
+                                                <dx:ListEditItem Text="Foreign" Value="1" />
+                                                <dx:ListEditItem Text="Domestic" Value="2" />
+                                            </Items>
+                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
+                                                <RequiredField ErrorText="This field is required." IsRequired="True" />
+                                            </ValidationSettings>
+                                        </dx:ASPxComboBox>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                                <CaptionSettings HorizontalAlign="Left" Location="Top" />
+                            </dx:LayoutItem>
+                            <dx:LayoutItem Caption="Classification" ColSpan="2" ColumnSpan="2" Width="100%">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxComboBox ID="drpdown_classification" runat="server" ClientInstanceName="drpdown_classification" DataSourceID="SqlClassification" TextField="ClassificationName" ValueField="ID" Width="100%">
+                                            <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	drpdwn_FAPWF.PerformCallback();
+}" />
+                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
+                                                <RequiredField ErrorText="This field is required." IsRequired="True" />
+                                            </ValidationSettings>
+                                        </dx:ASPxComboBox>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                                <CaptionSettings HorizontalAlign="Left" Location="Top" />
+                            </dx:LayoutItem>
                             <dx:LayoutItem Caption="Last day of transaction" ClientVisible="False" ColSpan="2" Name="LDOT" ColumnSpan="2" Width="100%" FieldName="LastDayTransact">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
@@ -1394,6 +1434,11 @@ SavePopup.Hide();
     <asp:SqlDataSource ID="SqlUserSelf" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT EmpCode AS DelegateFor_UserID, FullName FROM [ITP_S_UserMaster] WHERE ([EmpCode] = @EmpCode)">
         <SelectParameters>
             <asp:Parameter Name="EmpCode" Type="String" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlClassification" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_ExpenseClassification] WHERE ([isActive] = @isActive) ORDER BY [ClassificationName]">
+        <SelectParameters>
+            <asp:Parameter DefaultValue="true" Name="isActive" Type="Boolean" />
         </SelectParameters>
     </asp:SqlDataSource>
 </asp:Content>
