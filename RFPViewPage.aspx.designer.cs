@@ -150,6 +150,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxRadioButton rdButton_NonTrav;
 
         /// <summary>
+        /// txtbox_TravType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox txtbox_TravType;
+
+        /// <summary>
         /// ASPxTextBox17 control.
         /// </summary>
         /// <remarks>

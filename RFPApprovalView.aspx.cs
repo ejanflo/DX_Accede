@@ -213,18 +213,18 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static bool btnApproveClickAjax(string approve_remarks, string pMethod, string io, string acctCharge, string cCenter)
+        public static bool btnApproveClickAjax(string approve_remarks, string pMethod, string io, string acctCharge, string cCenter, string secureToken)
         {
             RFPApprovalView rfp = new RFPApprovalView();
-            var isApprove = rfp.btnApproveClick(approve_remarks, pMethod, io, acctCharge, cCenter);
+            var isApprove = rfp.btnApproveClick(approve_remarks, pMethod, io, acctCharge, cCenter, secureToken);
             return isApprove;
         }
 
-        public bool btnApproveClick(string approve_remarks, string pMethod, string io, string acctCharge, string cCenter)
+        public bool btnApproveClick(string approve_remarks, string pMethod, string io, string acctCharge, string cCenter, string secureToken)
         {
             try
             {
-                string encryptedID = Request.QueryString["secureToken"];
+                string encryptedID = secureToken;
                 if (!string.IsNullOrEmpty(encryptedID))
                 {
                     var actID = Convert.ToInt32(Decrypt(encryptedID));
@@ -423,18 +423,18 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static bool btnReturnClickAjax(string return_remarks, string pMethod, string io, string acctCharge, string cCenter)
+        public static bool btnReturnClickAjax(string return_remarks, string pMethod, string io, string acctCharge, string cCenter, string secureToken)
         {
             RFPApprovalView rfp = new RFPApprovalView();
-            return rfp.btnReturnClick(return_remarks, pMethod, io, acctCharge, cCenter);
+            return rfp.btnReturnClick(return_remarks, pMethod, io, acctCharge, cCenter, secureToken);
         }
 
-        public bool btnReturnClick(string remarks, string pMethod, string io, string acctCharge, string cCenter)
+        public bool btnReturnClick(string remarks, string pMethod, string io, string acctCharge, string cCenter, string secureToken)
         {
             try
             {
 
-                string encryptedID = Request.QueryString["secureToken"];
+                string encryptedID = secureToken;
                 if (!string.IsNullOrEmpty(encryptedID))
                 {
                     var actID = Convert.ToInt32(Decrypt(encryptedID));
@@ -479,18 +479,18 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static bool btnDisapproveClickAjax(string disapprove_remarks, string pMethod, string io, string acctCharge, string cCenter)
+        public static bool btnDisapproveClickAjax(string disapprove_remarks, string pMethod, string io, string acctCharge, string cCenter, string secureToken)
         {
             RFPApprovalView rfp = new RFPApprovalView();
-            return rfp.btnDisapproveClick(disapprove_remarks, pMethod, io, acctCharge, cCenter);
+            return rfp.btnDisapproveClick(disapprove_remarks, pMethod, io, acctCharge, cCenter, secureToken);
         }
 
-        public bool btnDisapproveClick(string remarks, string pMethod, string io, string acctCharge, string cCenter)
+        public bool btnDisapproveClick(string remarks, string pMethod, string io, string acctCharge, string cCenter, string secureToken)
         {
             try
             {
 
-                string encryptedID = Request.QueryString["secureToken"];
+                string encryptedID = secureToken;
                 if (!string.IsNullOrEmpty(encryptedID))
                 {
                     var actID = Convert.ToInt32(Decrypt(encryptedID));

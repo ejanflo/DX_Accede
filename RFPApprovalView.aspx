@@ -19,6 +19,7 @@
             var io = edit_IO.GetValue() != null ? edit_IO.GetValue() : "";
             var acctCharge = edit_AcctCharged.GetValue();
             var cCenter = txt_CostCenter.GetValue();
+            var secureToken = new URLSearchParams(window.location.search).get('secureToken');
 
             $.ajax({
                 type: "POST",
@@ -30,7 +31,8 @@
                     pMethod: pMethod,
                     io: io,
                     acctCharge: acctCharge,
-                    cCenter: cCenter
+                    cCenter: cCenter,
+                    secureToken: secureToken
                 }),
                 success: function (response) {
                     // Update the description text box with the response value
@@ -93,6 +95,7 @@
             var io = edit_IO.GetValue() != null ? edit_IO.GetValue() : "";
             var acctCharge = edit_AcctCharged.GetValue();
             var cCenter = txt_CostCenter.GetValue();
+            var secureToken = new URLSearchParams(window.location.search).get('secureToken');
 
             $.ajax({
                 type: "POST",
@@ -104,7 +107,8 @@
                     pMethod: pMethod,
                     io: io,
                     acctCharge: acctCharge,
-                    cCenter: cCenter
+                    cCenter: cCenter,
+                    secureToken: secureToken
                 }),
                 success: function (response) {
                     // Update the description text box with the response value
@@ -167,6 +171,7 @@
             var io = edit_IO.GetValue() != null ? edit_IO.GetValue() : "";
             var acctCharge = edit_AcctCharged.GetValue();
             var cCenter = txt_CostCenter.GetValue();
+            var secureToken = new URLSearchParams(window.location.search).get('secureToken');
 
             $.ajax({
                 type: "POST",
@@ -178,7 +183,8 @@
                     pMethod: pMethod,
                     io: io,
                     acctCharge: acctCharge,
-                    cCenter: cCenter
+                    cCenter: cCenter,
+                    secureToken: secureToken
                 }),
                 success: function (response) {
                     // Update the description text box with the response value

@@ -185,18 +185,18 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static string btnApproveClickAjax(string approve_remarks)
+        public static string btnApproveClickAjax(string approve_remarks, string secureToken)
         {
             ExpenseApprovalView rfp = new ExpenseApprovalView();
-            var isApprove = rfp.btnApproveClick(approve_remarks);
+            var isApprove = rfp.btnApproveClick(approve_remarks, secureToken);
             return isApprove;
         }
 
-        public string btnApproveClick(string remarks)
+        public string btnApproveClick(string remarks, string secureToken)
         {
             try
             {
-                string encryptedID = Request.QueryString["secureToken"];
+                string encryptedID = secureToken;
                 if (!string.IsNullOrEmpty(encryptedID))
                 {
                     var actID = Convert.ToInt32(Decrypt(encryptedID));
@@ -459,18 +459,18 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static string btnReturnClickAjax(string return_remarks)
+        public static string btnReturnClickAjax(string return_remarks, string secureToken)
         {
             ExpenseApprovalView rfp = new ExpenseApprovalView();
-            return rfp.btnReturnClick(return_remarks);
+            return rfp.btnReturnClick(return_remarks, secureToken);
         }
 
-        public string btnReturnClick(string remarks)
+        public string btnReturnClick(string remarks, string secureToken)
         {
             try
             {
 
-                string encryptedID = Request.QueryString["secureToken"];
+                string encryptedID = secureToken;
                 if (!string.IsNullOrEmpty(encryptedID))
                 {
                     var actID = Convert.ToInt32(Decrypt(encryptedID));
@@ -543,17 +543,17 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static string btnDisapproveClickAjax(string disapprove_remarks)
+        public static string btnDisapproveClickAjax(string disapprove_remarks, string secureToken)
         {
             ExpenseApprovalView rfp = new ExpenseApprovalView();
-            return rfp.btnDisapproveClick(disapprove_remarks);
+            return rfp.btnDisapproveClick(disapprove_remarks, secureToken);
         }
 
-        public string btnDisapproveClick(string remarks)
+        public string btnDisapproveClick(string remarks, string secureToken)
         {
             try
             {
-                string encryptedID = Request.QueryString["secureToken"];
+                string encryptedID = secureToken;
                 if (!string.IsNullOrEmpty(encryptedID))
                 {
                     var actID = Convert.ToInt32(Decrypt(encryptedID));

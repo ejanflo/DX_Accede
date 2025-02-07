@@ -273,13 +273,15 @@
         function approveClick() {
             LoadingPanel.Show();
             var approve_remarks = txt_approve_remarks.GetValue();
+            var secureToken = new URLSearchParams(window.location.search).get('secureToken');
             $.ajax({
                 type: "POST",
                 url: "ExpenseApprovalView.aspx/btnApproveClickAjax",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: JSON.stringify({
-                    approve_remarks: approve_remarks
+                    approve_remarks: approve_remarks,
+                    secureToken: secureToken
                 }),
                 success: function (response) {
                     // Update the description text box with the response value
@@ -305,13 +307,15 @@
         function ReturnClick() {
             LoadingPanel.Show();
             var return_remarks = txt_return_remarks.GetValue();
+            var secureToken = new URLSearchParams(window.location.search).get('secureToken');
             $.ajax({
                 type: "POST",
                 url: "ExpenseApprovalView.aspx/btnReturnClickAjax",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: JSON.stringify({
-                    return_remarks: return_remarks
+                    return_remarks: return_remarks,
+                    secureToken: secureToken
                 }),
                 success: function (response) {
                     // Update the description text box with the response value
@@ -337,13 +341,15 @@
         function DisapproveClick() {
             LoadingPanel.Show();
             var disapprove_remarks = txt_disapprove_remarks.GetValue();
+            var secureToken = new URLSearchParams(window.location.search).get('secureToken');
             $.ajax({
                 type: "POST",
                 url: "ExpenseApprovalView.aspx/btnDisapproveClickAjax",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: JSON.stringify({
-                    disapprove_remarks: disapprove_remarks
+                    disapprove_remarks: disapprove_remarks,
+                    secureToken: secureToken
                 }),
                 success: function (response) {
                     // Update the description text box with the response value

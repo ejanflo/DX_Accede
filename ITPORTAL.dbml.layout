@@ -157,14 +157,14 @@
         <classShapeMoniker Id="81128d5a-0277-4043-a70a-20632f80b2de" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(4.75 : 19.24240034375); (4.9375 : 19.24240034375); (4.9375 : 14.5376611328125); (6 : 14.5376611328125); (6 : 14.4439111328125)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(4.75 : 19.24240034375); (4.76041666666667 : 19.24240034375 : JumpStart); (4.92708333333333 : 19.24240034375 : JumpEnd); (4.9375 : 19.24240034375); (4.9375 : 14.5376611328125); (6 : 14.5376611328125); (6 : 14.4439111328125)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_SecurityApp/ITP_S_SecurityApp_ITP_S_SecurityPage" />
       <nodes>
         <classShapeMoniker Id="62d68465-2518-44c7-9974-d2df9d274728" />
         <classShapeMoniker Id="a0061abd-8810-4a92-b079-0f39ab11046d" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(4.75 : 16.3341802549078); (4.875 : 16.3341802549078); (4.875 : 14.5625); (7.1875 : 14.5625); (7.1875 : 13.8125); (8.25 : 13.8125); (8.25 : 13.6747054036458)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(4.75 : 16.3341802549078); (4.875 : 16.3341802549078); (4.875 : 14.5625); (6.97916666666667 : 14.5625 : JumpStart); (7.14583333333333 : 14.5625 : JumpEnd); (7.1875 : 14.5625); (7.1875 : 13.8125); (8.25 : 13.8125); (8.25 : 13.6747054036458)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_SecurityRole/ITP_S_SecurityRole_ITP_S_SecurityOrgRole_AppRole" />
       <nodes>
         <classShapeMoniker Id="86688401-531d-4c70-b470-02e7d53710d2" />
@@ -199,7 +199,7 @@
         <classShapeMoniker Id="ff8dc947-be66-4bc0-9d6f-df130ee38c36" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(4.75 : 17.0420926274539); (4.76041666666667 : 17.0420926274539 : JumpStart); (4.92708333333333 : 17.0420926274539 : JumpEnd); (4.96875 : 17.0420926274539); (4.96875 : 14.5625); (7.125 : 14.5625); (7.125 : 13.8125); (7.13541666666667 : 13.8125 : JumpStart); (7.30208333333333 : 13.8125 : JumpEnd); (7.7500005 : 13.8125); (7.7500005 : 13.875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(4.75 : 17.0420926274539); (4.76041666666667 : 17.0420926274539 : JumpStart); (4.92708333333333 : 17.0420926274539 : JumpEnd); (4.96875 : 17.0420926274539); (4.96875 : 14.5625); (7.125 : 14.5625); (7.125 : 13.8125); (7.7500005 : 13.8125); (7.7500005 : 13.875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_SecurityRole/ITP_S_SecurityRole_ITP_S_SecurityUserAppRole" />
       <nodes>
         <classShapeMoniker Id="86688401-531d-4c70-b470-02e7d53710d2" />
@@ -500,12 +500,6 @@
         <elementListCompartment Id="443b4bfd-1022-4e9d-a47d-40874ad3cabe" absoluteBounds="0.515, 15.71, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="b56ed4bf-9bcc-4f5d-a267-c13b45bee7a0" absoluteBounds="7.25, 22.375, 2, 6.3861311848958326">
-      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_T_RFPMain" />
-      <nestedChildShapes>
-        <elementListCompartment Id="c5002be4-71db-41b1-8bd4-22259a302b4f" absoluteBounds="7.265, 22.835, 1.9700000000000002, 5.826131184895833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
-      </nestedChildShapes>
-    </classShape>
     <classShape Id="8c5f8492-7cef-48bc-acec-fbe3d4388445" absoluteBounds="14, 2.125, 2, 1.7708968098958331">
       <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_S_CostCenter" />
       <nestedChildShapes>
@@ -594,6 +588,12 @@
       <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_S_ExpenseClassification" />
       <nestedChildShapes>
         <elementListCompartment Id="59435819-9bda-4c90-bdcf-2008b7a73300" absoluteBounds="7.265, 30.835, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="71dc66dc-704b-41a1-bb56-015dafa59793" absoluteBounds="7.25, 22.25, 2, 6.7707340494791657">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_T_RFPMain" />
+      <nestedChildShapes>
+        <elementListCompartment Id="8eafde5a-0ede-472f-a065-3bc3418ffa74" absoluteBounds="7.265, 22.71, 1.9700000000000002, 6.2107340494791661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
   </nestedChildShapes>

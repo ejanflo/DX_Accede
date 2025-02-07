@@ -49,6 +49,8 @@ namespace DX_WebTemplate
 
                     var pld = formRFP.FindItemOrGroupByName("PLD") as LayoutItem;
                     var wbs = formRFP.FindItemOrGroupByName("WBS") as LayoutItem;
+                    var cType = formRFP.FindItemOrGroupByName("ClassType") as LayoutItem;
+                    var tType = formRFP.FindItemOrGroupByName("TravType") as LayoutItem;
 
                     Session["Doc_No"] = rfp_details.RFP_DocNum.ToString();
 
@@ -78,6 +80,22 @@ namespace DX_WebTemplate
                     SqlUser.SelectParameters["DelegateTo_UserID"].DefaultValue = Session["userID"].ToString();
                     SqlUser.SelectParameters["DateFrom"].DefaultValue = DateTime.Now.ToString();
                     SqlUser.SelectParameters["DateTo"].DefaultValue = DateTime.Now.ToString();
+                    drpdown_Payee.DataSourceID = null;
+                    drpdown_Payee.DataSource = SqlUser;
+                    drpdown_Payee.DataBind();
+
+                    if(drpdown_Payee.Items.Count() > 0)
+                    {
+                        drpdown_Payee.Value = rfp_details.Payee.ToString();
+                        drpdown_Payee.DataBind();
+                    }
+                    else
+                    {
+                        drpdown_Payee.DataSourceID = null;
+                        drpdown_Payee.DataSource = SqlUserSelf;
+                        drpdown_Payee.Value = rfp_details.Payee.ToString();
+                        drpdown_Payee.DataBind();
+                    }
 
                     PLD.MinDate = DateTime.Now;
 
@@ -87,11 +105,21 @@ namespace DX_WebTemplate
                         {
                             rdButton_Trav.Checked = true;
                             rdButton_NonTrav.Checked = false;
+                            cType.ClientVisible = false;
+                            if(rfp_details.isForeignTravel != null && rfp_details.isForeignTravel == true)
+                            {
+                                drpdown_TravType.Value = "1";
+                            }
+                            else
+                            {
+                                drpdown_TravType.Value = "2";
+                            }
                         }
                         else
                         {
                             rdButton_Trav.Checked = false;
                             rdButton_NonTrav.Checked = true;
+                            tType.ClientVisible = false;
                         }
 
                         if (rfp_details.TranType == 1)
@@ -127,13 +155,13 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static int UpdateRFPMainAjax(string Comp_ID, string Dept_ID, string Paymethod, string tranType, bool isTrav, string costCenter, string io, string payee, string lastDay, string amount, string purpose, string wf_id, string status, string exp_id, string fap, string wbs, string pld)
+        public static int UpdateRFPMainAjax(string Comp_ID, string Dept_ID, string Paymethod, string tranType, bool isTrav, string costCenter, string io, string payee, string lastDay, string amount, string purpose, string wf_id, string status, string exp_id, string fap, string wbs, string pld, string curr, string travType, string classification)
         {
             RFPEditPage rfp = new RFPEditPage();
-            return rfp.UpdateRFPMain(Convert.ToInt32(Comp_ID), Convert.ToInt32(Dept_ID), Convert.ToInt32(Paymethod), Convert.ToInt32(tranType), isTrav, costCenter, io, payee, lastDay, Convert.ToDecimal(amount), purpose, Convert.ToInt32(wf_id), Convert.ToInt32(status), Convert.ToInt32(exp_id), Convert.ToInt32(fap), wbs, pld);
+            return rfp.UpdateRFPMain(Convert.ToInt32(Comp_ID), Convert.ToInt32(Dept_ID), Convert.ToInt32(Paymethod), Convert.ToInt32(tranType), isTrav, costCenter, io, payee, lastDay, Convert.ToDecimal(amount), purpose, Convert.ToInt32(wf_id), Convert.ToInt32(status), Convert.ToInt32(exp_id), Convert.ToInt32(fap), wbs, pld, curr, travType, classification);
         }
 
-        public int UpdateRFPMain(int Comp_ID, int Dept_ID, int Paymethod, int tranType, bool isTrav, string costCenter, string io, string payee, string lastDay, decimal amount, string purpose, int wf_id, int status, int exp_id, int fap, string wbs, string pld)
+        public int UpdateRFPMain(int Comp_ID, int Dept_ID, int Paymethod, int tranType, bool isTrav, string costCenter, string io, string payee, string lastDay, decimal amount, string purpose, int wf_id, int status, int exp_id, int fap, string wbs, string pld, string curr, string travType, string classification)
         {
             var rfp_main = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == Convert.ToInt32(Session["EditRFPID"])).FirstOrDefault();
             
@@ -199,7 +227,24 @@ namespace DX_WebTemplate
                 {
                     rfp_main.PLDate = null;
                 }
-
+                rfp_main.Currency = curr;
+                if(travType != "")
+                {
+                    if(travType == "1")
+                    {
+                        rfp_main.isForeignTravel = true;
+                    }
+                    else
+                    {
+                        rfp_main.isForeignTravel = false;
+                    }
+                    
+                }
+                if(classification != "")
+                {
+                    rfp_main.Classification_Type_Id = Convert.ToInt32(classification);
+                }
+                
                 //if(remarks != "")
                 //{
                 //    rfp_main.Remarks = remarks;
@@ -217,10 +262,10 @@ namespace DX_WebTemplate
 
                 bool ins_wf = rfpCreatePage.InsertWorkflowAct(rfp_main.ID);
 
-                if (!ins_wf)
-                {
-                    return 0;
-                }
+                //if (!ins_wf)
+                //{
+                //    return 0;
+                //}
 
             }
 
@@ -437,6 +482,25 @@ namespace DX_WebTemplate
                 drpdown_Payee.DataSource = SqlUserSelf;
                 drpdown_Payee.Value = Session["userID"].ToString();
                 drpdown_Payee.DataBind();
+            }
+        }
+
+        protected void drpdown_currency_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var travType = e.Parameter != null ? e.Parameter.ToString() : "";
+            var USDCurrency = _DataContext.ACDE_T_Currencies.Where(x => x.CurrDescription == "USD").FirstOrDefault();
+            var PHPCurrency = _DataContext.ACDE_T_Currencies.Where(x => x.CurrDescription == "PHP").FirstOrDefault();
+            if (travType == "1")
+            {
+                drpdown_currency.Value = USDCurrency.ID.ToString();
+                drpdown_currency.Text = USDCurrency.CurrDescription.ToString();
+                drpdown_currency.DataBind();
+            }
+            else
+            {
+                drpdown_currency.Value = PHPCurrency.ID.ToString();
+                drpdown_currency.Text = PHPCurrency.CurrDescription.ToString();
+                drpdown_currency.DataBind();
             }
         }
     }
