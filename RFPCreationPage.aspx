@@ -63,10 +63,16 @@
                     if (rdButton_Trav.GetValue() == true) {
                         layoutItem.SetVisible(true);
                         layoutItem2.SetVisible(true);
+                        drpdown_classification.SetValue("");
+                        drpdown_currency.PerformCallback();
+                        drpdwn_FAPWF.PerformCallback();
                         layoutItem3.SetVisible(false);
                     } else {
                         layoutItem.SetVisible(false);
                         layoutItem2.SetVisible(false);
+                        drpdown_classification.SetValue("");
+                        drpdown_currency.PerformCallback();
+                        drpdwn_FAPWF.PerformCallback();
                         layoutItem3.SetVisible(true);
                     }
                     
@@ -119,6 +125,7 @@
 
         function onTravTypeChanged() {
             drpdown_currency.PerformCallback();
+            drpdwn_FAPWF.PerformCallback();
         }
 
         function onPayToVendorTranType() {

@@ -320,12 +320,15 @@ namespace DX_WebTemplate
                             if (wfHead_data.IsRA == true)
                             {
                                 //transition to finance wf
-                                var finance_wf_data = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032)
-                                                .Where(x => x.Company_Id == rfp_main.Company_ID)
-                                                .Where(x => x.Minimum <= rfp_main.Amount)
-                                                .Where(x => x.Maximum >= rfp_main.Amount)
-                                                .Where(x => x.IsRA != true || x.IsRA == null)
-                                                .Where(x => x.IsActive == true)
+                                //var finance_wf_data = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032)
+                                //                .Where(x => x.Company_Id == rfp_main.Company_ID)
+                                //                .Where(x => x.Minimum <= rfp_main.Amount)
+                                //                .Where(x => x.Maximum >= rfp_main.Amount)
+                                //                .Where(x => x.IsRA != true || x.IsRA == null)
+                                //                .Where(x => x.IsActive == true)
+                                //                .FirstOrDefault();
+
+                                var finance_wf_data = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.WF_Id == rfp_main.FAPWF_Id)
                                                 .FirstOrDefault();
 
                                 if (finance_wf_data != null)

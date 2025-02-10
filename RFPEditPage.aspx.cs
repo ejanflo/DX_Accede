@@ -72,8 +72,6 @@ namespace DX_WebTemplate
                     SqlDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType != null ? app_docType.DCT_Id.ToString() : null;
 
                     var depCode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x=>x.ID == rfp_details.Department_ID).FirstOrDefault();
-                    SqlWF.SelectParameters["Minimum"].DefaultValue = rfp_details.Amount.ToString();
-                    SqlWF.SelectParameters["Maximum"].DefaultValue = rfp_details.Amount.ToString();
                     SqlWF.SelectParameters["DepCode"].DefaultValue = depCode.DepCode.ToString();
 
                     SqlUser.SelectParameters["Company_ID"].DefaultValue = rfp_details.Company_ID.ToString();
@@ -256,7 +254,7 @@ namespace DX_WebTemplate
             {
                 RFPCreationPage rfpCreatePage = new RFPCreationPage();
                 var Approver = from app in _DataContext.vw_ACCEDE_I_WFSetups
-                                where app.WF_Id == Convert.ToInt32(rfp_main.WF_Id)
+                                where app.WF_Id == Convert.ToInt32(wf_id)
                                 where app.Sequence == 1
                                 select app;
 
@@ -306,10 +304,8 @@ namespace DX_WebTemplate
         protected void drpdown_WF_Callback(object sender, DevExpress.Web.CallbackEventArgsBase e)
         {
             var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(drpdown_Department.Value)).FirstOrDefault();
-            var amount = spinEdit_Amount.Value != null ? spinEdit_Amount.Value.ToString() : "0";
+            
             SqlWF.SelectParameters["CompanyId"].DefaultValue = drpdown_Company.Value.ToString();
-            SqlWF.SelectParameters["Minimum"].DefaultValue = amount;
-            SqlWF.SelectParameters["Maximum"].DefaultValue = amount;
             SqlWF.SelectParameters["DepCode"].DefaultValue = depcode != null ? depcode.DepCode.ToString() : "0";
             SqlWF.DataBind();
 
@@ -319,8 +315,6 @@ namespace DX_WebTemplate
 
             var wf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.CompanyId == Convert.ToInt32(drpdown_Company.Value))
                     .Where(x => x.UserId == Session["userID"].ToString())
-                    .Where(x => x.Minimum <= Convert.ToDecimal(amount))
-                    .Where(x => x.Maximum >= Convert.ToDecimal(amount))
                     .Where(x => x.DepCode == (depcode != null ? depcode.DepCode : "0"))
                     .Where(x => x.IsRA == true);
 
@@ -335,31 +329,139 @@ namespace DX_WebTemplate
 
         protected void drpdwn_FAPWF_Callback(object sender, DevExpress.Web.CallbackEventArgsBase e)
         {
-            var comp_id = e.Parameter.Split('|').Last();
-            var amount = e.Parameter.Split('|').First();
+            var comp_id = drpdown_Company.Value != null ? drpdown_Company.Value : 0;
+            var amount = spinEdit_Amount.Value != null ? spinEdit_Amount.Value : "0.00";
+            var classTypeId = drpdown_classification.Value != null ? drpdown_classification.Value : 0;
+            var classType = _DataContext.ACCEDE_S_ExpenseClassifications.Where(x => x.ID == Convert.ToInt32(classTypeId)).FirstOrDefault();
+            var tripType = e.Parameter != "" ? e.Parameter.ToString() : "";
 
-            var wf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(comp_id)).Where(x => x.App_Id == 1032).Where(x => x.Minimum <= Convert.ToDecimal(amount)).Where(x => x.Maximum >= Convert.ToDecimal(amount)).FirstOrDefault();
-            if (wf != null)
+            if (Convert.ToInt64(comp_id) != 0)
             {
-                SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = wf.WF_Id.ToString();
-                SqlFAPWF2.DataBind();
+                if (classType != null)
+                {
+                    if (Convert.ToBoolean(classType.withFAPLogic) == true)
+                    {
+                        var wf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(comp_id)).Where(x => x.App_Id == 1032)
+                        .Where(x => x.With_DivHead == true)
+                        .Where(x => x.Minimum <= Convert.ToDecimal(amount))
+                        .Where(x => x.Maximum >= Convert.ToDecimal(amount))
+                        .Where(x => x.IsRA == false || x.IsRA == null).FirstOrDefault();
 
-                drpdwn_FAPWF.DataSourceID = null;
-                drpdwn_FAPWF.DataSource = SqlFAPWF2;
-                drpdwn_FAPWF.DataBindItems();
-                drpdwn_FAPWF.SelectedIndex = 0;
+                        if (wf != null)
+                        {
+                            SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = wf.WF_Id.ToString();
+                            SqlFAPWF2.DataBind();
+
+                            drpdwn_FAPWF.DataSourceID = null;
+                            drpdwn_FAPWF.DataSource = SqlFAPWF2;
+                            drpdwn_FAPWF.DataBindItems();
+                            drpdwn_FAPWF.SelectedIndex = 0;
+                        }
+                        else
+                        {
+                            SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = "";
+                            SqlFAPWF2.DataBind();
+
+                            drpdwn_FAPWF.DataSourceID = null;
+                            drpdwn_FAPWF.DataSource = SqlFAPWF2;
+                            drpdwn_FAPWF.DataBindItems();
+                            drpdwn_FAPWF.SelectedIndex = 0;
+                        }
+                    }
+                    else
+                    {
+                        var wf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(comp_id)).Where(x => x.App_Id == 1032)
+                        .Where(x => x.With_DivHead == false || x.With_DivHead == null)
+                        .Where(x => x.Minimum <= Convert.ToDecimal(amount))
+                        .Where(x => x.Maximum >= Convert.ToDecimal(amount))
+                        .Where(x => x.IsRA == false || x.IsRA == null).FirstOrDefault();
+
+                        if (wf != null)
+                        {
+                            SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = wf.WF_Id.ToString();
+                            SqlFAPWF2.DataBind();
+
+                            drpdwn_FAPWF.DataSourceID = null;
+                            drpdwn_FAPWF.DataSource = SqlFAPWF2;
+                            drpdwn_FAPWF.DataBindItems();
+                            drpdwn_FAPWF.SelectedIndex = 0;
+                        }
+                        else
+                        {
+                            SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = "";
+                            SqlFAPWF2.DataBind();
+
+                            drpdwn_FAPWF.DataSourceID = null;
+                            drpdwn_FAPWF.DataSource = SqlFAPWF2;
+                            drpdwn_FAPWF.DataBindItems();
+                            drpdwn_FAPWF.SelectedIndex = 0;
+                        }
+                    }
+                }
+                else
+                {
+                    if (tripType.ToString() == "1")
+                    {
+                        var wf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(comp_id)).Where(x => x.App_Id == 1032)
+                            .Where(x => x.With_DivHead == true)
+                            .Where(x => x.Description.Contains("foreign"))
+                            .Where(x => x.IsRA == false || x.IsRA == null).FirstOrDefault();
+
+                        if (wf != null)
+                        {
+                            SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = wf.WF_Id.ToString();
+                            SqlFAPWF2.DataBind();
+
+                            drpdwn_FAPWF.DataSourceID = null;
+                            drpdwn_FAPWF.DataSource = SqlFAPWF2;
+                            drpdwn_FAPWF.DataBindItems();
+                            drpdwn_FAPWF.SelectedIndex = 0;
+                        }
+                        else
+                        {
+                            SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = "";
+                            SqlFAPWF2.DataBind();
+
+                            drpdwn_FAPWF.DataSourceID = null;
+                            drpdwn_FAPWF.DataSource = SqlFAPWF2;
+                            drpdwn_FAPWF.DataBindItems();
+                            drpdwn_FAPWF.SelectedIndex = 0;
+                        }
+                    }
+                    else
+                    {
+                        var wf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(comp_id)).Where(x => x.App_Id == 1032)
+                            .Where(x => x.With_DivHead == false || x.With_DivHead == null)
+                            .Where(x => x.Minimum <= Convert.ToDecimal(amount))
+                            .Where(x => x.Maximum >= Convert.ToDecimal(amount))
+                            .Where(x => x.IsRA == false || x.IsRA == null).FirstOrDefault();
+
+                        if (wf != null)
+                        {
+                            SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = wf.WF_Id.ToString();
+                            SqlFAPWF2.DataBind();
+
+                            drpdwn_FAPWF.DataSourceID = null;
+                            drpdwn_FAPWF.DataSource = SqlFAPWF2;
+                            drpdwn_FAPWF.DataBindItems();
+                            drpdwn_FAPWF.SelectedIndex = 0;
+                        }
+                        else
+                        {
+                            SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = "";
+                            SqlFAPWF2.DataBind();
+
+                            drpdwn_FAPWF.DataSourceID = null;
+                            drpdwn_FAPWF.DataSource = SqlFAPWF2;
+                            drpdwn_FAPWF.DataBindItems();
+                            drpdwn_FAPWF.SelectedIndex = 0;
+                        }
+                    }
+
+                }
 
 
-            }
-            else
-            {
-                SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = "";
-                SqlFAPWF2.DataBind();
 
-                drpdwn_FAPWF.DataSourceID = null;
-                drpdwn_FAPWF.DataSource = SqlFAPWF2;
-                drpdwn_FAPWF.DataBindItems();
-                drpdwn_FAPWF.SelectedIndex = 0;
             }
         }
 

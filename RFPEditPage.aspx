@@ -22,10 +22,14 @@
                       if (rdButton_Trav.GetValue() == true) {
                           layoutItem.SetVisible(true);
                           layoutItem2.SetVisible(true);
+                          drpdown_currency.PerformCallback(drpdown_TravType.GetValue());
+                          drpdwn_FAPWF.PerformCallback(drpdown_TravType.GetValue());
                           layoutItem3.SetVisible(false);
                       } else {
                           layoutItem.SetVisible(false);
                           layoutItem2.SetVisible(false);
+                          drpdown_currency.PerformCallback("");
+                          drpdwn_FAPWF.PerformCallback("");
                           layoutItem3.SetVisible(true);
                       }
 
@@ -70,6 +74,7 @@
 
           function onTravTypeChanged(trav) {
               drpdown_currency.PerformCallback(trav);
+              drpdwn_FAPWF.PerformCallback(trav);
           }
 
           function onPayToVendorTranType() {
@@ -1362,14 +1367,12 @@ SavePopup.Hide();
             <asp:Parameter Name="DepCode" Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>--%>
-    <asp:SqlDataSource ID="SqlWF" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_UserWFAccess] WHERE (([UserId] = @UserId) AND ([CompanyId] = @CompanyId) AND ([IsRA] = @IsRA) AND ([Minimum] &lt;= @Minimum) AND ([Maximum] &gt;= @Maximum) AND ([DepCode] = @DepCode))">
+    <asp:SqlDataSource ID="SqlWF" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_UserWFAccess] WHERE (([UserId] = @UserId) AND ([CompanyId] = @CompanyId) AND ([IsRA] = @IsRA) AND ([DepCode] = @DepCode))">
         <SelectParameters>
             <asp:Parameter Name="UserId" Type="String" />
             <asp:Parameter Name="CompanyId" Type="Int32" />
             <asp:Parameter DefaultValue="True" Name="IsRA" Type="Boolean" />
-            <asp:Parameter DefaultValue="" Name="Minimum" Type="Decimal" />
-            <asp:Parameter Name="Maximum" Type="Decimal" />
-            <asp:Parameter Name="DepCode" Type="String" />
+            <asp:Parameter DefaultValue="" Name="DepCode" Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlWorkflowSequence" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_RS_Workflow_Sequence] WHERE ([WF_Id] = @WF_Id) ORDER BY [Sequence]">
