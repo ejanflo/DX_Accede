@@ -260,10 +260,10 @@ namespace DX_WebTemplate
 
                 bool ins_wf = rfpCreatePage.InsertWorkflowAct(rfp_main.ID);
 
-                //if (!ins_wf)
-                //{
-                //    return 0;
-                //}
+                if (!ins_wf)
+                {
+                    return 0;
+                }
 
             }
 

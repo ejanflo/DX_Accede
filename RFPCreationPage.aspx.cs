@@ -429,11 +429,11 @@ namespace DX_WebTemplate
 
                     bool ins_wf = InsertWorkflowAct(generatedID);
 
-                    //if (!ins_wf)
-                    //{
-                    //    return 0;
-                    //}
-                    
+                    if (!ins_wf)
+                    {
+                        return 0;
+                    }
+
                 }
 
                 return generatedID;

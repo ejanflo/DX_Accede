@@ -338,7 +338,7 @@ namespace DX_WebTemplate
                                 var sender_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Session["UserID"].ToString())
                                           .FirstOrDefault();
 
-                                SendEmailTo(nexApprover_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Pending", payMethod.ToString(), tranType.ToString());
+                                SendEmailTo(exp_main.ID, nexApprover_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Pending", payMethod.ToString(), tranType.ToString());
 
                             }
                         }
@@ -411,7 +411,7 @@ namespace DX_WebTemplate
                                         var sender_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Session["UserID"].ToString())
                                                   .FirstOrDefault();
 
-                                        SendEmailTo(nexApprover_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Pending", payMethod.ToString(), tranType.ToString());
+                                        SendEmailTo(exp_main.ID, nexApprover_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Pending", payMethod.ToString(), tranType.ToString());
 
                                     }
                                 }
@@ -438,7 +438,7 @@ namespace DX_WebTemplate
                                 var sender_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Session["UserID"].ToString())
                                           .FirstOrDefault();
 
-                                SendEmailTo(creator_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Approve", payMethod.ToString(), tranType.ToString());
+                                SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Approve", payMethod.ToString(), tranType.ToString());
 
                             }
 
@@ -529,7 +529,7 @@ namespace DX_WebTemplate
                               .FirstOrDefault();
 
 
-                    SendEmailTo(creator_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Return", "", tranType.Description);
+                    SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Return", "", tranType.Description);
                     _DataContext.SubmitChanges();
 
                     return "success";
@@ -611,7 +611,7 @@ namespace DX_WebTemplate
                               .FirstOrDefault();
 
 
-                    SendEmailTo(creator_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Disapprove", "", tranType.Description);
+                    SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Disapprove", "", tranType.Description);
                     _DataContext.SubmitChanges();
 
                     return "success";
@@ -762,13 +762,16 @@ namespace DX_WebTemplate
             return exp;
         }
 
-        public bool SendEmailTo(string receiver_id, int Comp_id, string sender_fullname, string sender_email, string doc_no, string date_created, string document_purpose, string remarks, string status, string payMethod, string tranType)
+        public bool SendEmailTo(int doc_id, string receiver_id, int Comp_id, string sender_fullname, string sender_email, string doc_no, string date_created, string document_purpose, string remarks, string status, string payMethod, string tranType)
         {
             try
             {
                 ///////---START EMAIL PROCESS-----////////
                 //foreach (var user in _DataContext.ITP_S_SecurityUserOrgRoles.Where(x => x.OrgRoleId == org_id))
                 //{
+                var exp_main = _DataContext.ACCEDE_T_ExpenseMains.Where(x=>x.ID == doc_id).FirstOrDefault();
+
+                var requestor_detail = _DataContext.ITP_S_UserMasters.Where(x=>x.EmpCode == exp_main.ExpenseName).FirstOrDefault();
                 var user_email = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == receiver_id)
                                     .FirstOrDefault();
 
@@ -802,6 +805,7 @@ namespace DX_WebTemplate
                 string emailSite = "https://devapps.anflocor.com";
                 string sendEmailTo = user_email.Email;
                 string emailSubject = doc_no + ": " + emailSubTitle;
+                string requestorName = requestor_detail.FullName;
 
 
                 ANFLO anflo = new ANFLO();
@@ -813,7 +817,7 @@ namespace DX_WebTemplate
                 emailDetails += "<tr><td>Company</td><td><strong>" + comp_name.CompanyShortName + "</strong></td></tr>";
                 emailDetails += "<tr><td>Document Date</td><td><strong>" + date_created + "</strong></td></tr>";
                 emailDetails += "<tr><td>Document No.</td><td><strong>" + doc_no + "</strong></td></tr>";
-                emailDetails += "<tr><td>Requestor</td><td><strong>" + senderName + "</strong></td></tr>";
+                emailDetails += "<tr><td>Requestor</td><td><strong>" + requestorName + "</strong></td></tr>";
                 //emailDetails += "<tr><td>Pay Method</td><td><strong>" + payMethod + "</strong></td></tr>";
                 emailDetails += "<tr><td>Transaction Type</td><td><strong>" + tranType + "</strong></td></tr>";
                 emailDetails += "<tr><td>Status</td><td><strong>" + "Pending" + "</strong></td></tr>";
