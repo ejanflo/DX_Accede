@@ -216,10 +216,18 @@
                         if (stats == 1) {
                             LoadingPanel1.SetText('Payment disbursed! Printing report&hellip;');
                             LoadingPanel1.Show();
-                            // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
+                            
                             setTimeout(function () {
-                                window.location.href = 'RFPPrintPage.aspx';
+                                window.open('RFPPrintPage.aspx', '_blank');
                             }, 3000); // Adjust the time (in milliseconds) as needed
+
+                            // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
+                            LoadingPanel1.SetText('Printing successful! Redirecting&hellip;');
+                            LoadingPanel1.Show();
+                            setTimeout(function () {
+                                window.location.href = 'CashierInquiryPage.aspx';
+                            }, 3000); // Adjust the time (in milliseconds) as needed
+
                         } else {
                             LoadingPanel1.SetText('Changes saved successfully! Updating document&hellip;');
                             LoadingPanel1.Show();

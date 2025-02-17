@@ -94,7 +94,6 @@
             }
         }
 
-
         function OnDeptChanged(dept_id) {
             drpdown_WF.PerformCallback();
             //exp_costCenter.PerformCallback();
@@ -3484,7 +3483,7 @@ computeNetAmount(&quot;edit&quot;);
             <asp:Parameter Name="UserId" Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlExpDetails" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_ExpenseDetails] WHERE ([ExpenseMain_ID] = @ExpenseMain_ID)">
+    <asp:SqlDataSource ID="SqlExpDetails" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_ExpenseDetails] WHERE ([ExpenseMain_ID] = @ExpenseMain_ID)">
         <SelectParameters>
             <asp:Parameter Name="ExpenseMain_ID" Type="Int32" />
         </SelectParameters>

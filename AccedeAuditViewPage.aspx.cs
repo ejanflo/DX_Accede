@@ -407,6 +407,91 @@ namespace DX_WebTemplate
             return exp;
         }
 
+        private string Decrypt(string encryptedText)
+        {
+            // Example: Use the corresponding decryption logic
+            return System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(encryptedText));
+        }
+
+        [WebMethod]
+        public static string btnApproveForwardAJAX(string secureToken, string forwardWF, string remarks)
+        {
+            RFPApprovalView rfp = new RFPApprovalView();
+
+            return rfp.btnApproveForward(secureToken, forwardWF, remarks);
+
+        }
+
+        public string btnApproveForward(string secureToken, string forwardWF, string remarks)
+        {
+            try
+            {
+                string encryptedID = secureToken;
+
+                if (!string.IsNullOrEmpty(encryptedID))
+                {
+                    var actID = Convert.ToInt32(Decrypt(encryptedID));
+                    var rfp_id = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == actID).FirstOrDefault();
+                    var actDetails = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == actID).FirstOrDefault();
+
+                    var rfp_main = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == rfp_id.Document_Id).FirstOrDefault();
+                    var fin_wfDetail_data = _DataContext.ITP_S_WorkflowDetails.Where(x => x.WF_Id == actDetails.WF_Id).Where(x => x.Sequence == 1).FirstOrDefault();
+                    var org_id = fin_wfDetail_data.OrgRole_Id;
+                    var date2day = DateTime.Now;
+
+                    //DELEGATE CHECK
+                    foreach (var del in _DataContext.ITP_S_TaskDelegations.Where(x => x.OrgRole_ID_Orig == fin_wfDetail_data.OrgRole_Id).Where(x => x.DateFrom <= date2day).Where(x => x.DateTo >= date2day).Where(x => x.isActive == true))
+                    {
+                        if (del != null)
+                        {
+                            org_id = Convert.ToInt32(del.OrgRole_ID_Delegate);
+                        }
+
+                    }
+                    var payMethod = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == rfp_main.PayMethod).FirstOrDefault();
+                    var tranType = _DataContext.ACCEDE_S_RFPTranTypes.Where(x => x.ID == rfp_main.TranType).FirstOrDefault();
+
+                    var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP").Where(x => x.App_Id == 1032).FirstOrDefault();
+
+                    actDetails.Status = 1;
+                    actDetails.AppId = 1032;
+                    actDetails.CompanyId = rfp_main.Company_ID;
+                    actDetails.WF_Id = fin_wfDetail_data.WF_Id;
+                    actDetails.DateAssigned = DateTime.Now;
+                    actDetails.DateCreated = DateTime.Now;
+                    actDetails.IsActive = true;
+                    actDetails.OrgRole_Id = org_id;
+                    actDetails.WFD_Id = fin_wfDetail_data.WFD_Id;
+                    actDetails.AppDocTypeId = app_docType.DCT_Id;
+                    actDetails.Remarks = remarks;
+                    actDetails.ActedBy_User_Id = Session["userID"].ToString();
+
+                    // update RFP Main details
+                    rfp_main.Status = 1;
+
+                    var creator_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == rfp_main.User_ID)
+                                                  .FirstOrDefault();
+
+                    var sender_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Session["UserID"].ToString())
+                              .FirstOrDefault();
+
+                    RFPApprovalView rfp = new RFPApprovalView();
+
+                    rfp.SendEmailTo(Convert.ToInt32(rfp_main.ID), creator_detail.EmpCode, Convert.ToInt32(rfp_main.Company_ID), sender_detail.FullName, sender_detail.Email, rfp_main.RFP_DocNum, rfp_main.DateCreated.ToString(), rfp_main.Purpose, remarks, "Return", payMethod.PMethod_name, tranType.RFPTranType_Name);
+                    _DataContext.SubmitChanges();
+
+                    return "success";
+                }
+
+                return "Secure token is null.";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+
+        }
+
     }
     
 }

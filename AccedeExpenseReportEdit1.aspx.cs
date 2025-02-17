@@ -231,7 +231,9 @@ namespace DX_WebTemplate
 
                         //// - - Setting RA Workflow - - ////
 
-                        var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(mainExp.Dept_Id)).FirstOrDefault();
+                        var depcode = _DataContext.ITP_S_OrgDepartmentMasters
+                            .Where(x => x.ID == Convert.ToInt32(mainExp.Dept_Id))
+                            .FirstOrDefault();
 
                         // Fetch data using the stored procedure
                         DataTable rawf = GetWorkflowHeadersByExpenseAndDepartment(mainExp.ExpenseName.ToString(), Convert.ToInt32(mainExp.CompanyId), totalExp, depcode != null ? depcode.DepCode : "0", 1032);
@@ -330,7 +332,11 @@ namespace DX_WebTemplate
             }
             catch (Exception ex)
             {
-                Response.Redirect("~/Logon.aspx");
+                if (!IsPostBack)
+                {
+                    Response.Redirect("~/Logon.aspx");
+                }
+                
             }
         }
 
@@ -1270,7 +1276,7 @@ namespace DX_WebTemplate
             string senderName = requestor_fullname;
             string emailSender = requestor_email;
             string senderRemarks = "";
-            string emailSite = "https://devapps.anflocor.com/AccedeExpenseReportApproval.aspx";
+            string emailSite = "https://devapps.anflocor.com/AccedeApprovalPage.aspx";
             string sendEmailTo = user_email.Email;
             string emailSubject = "Document No. " + doc_id + " (" + status + ")";
 

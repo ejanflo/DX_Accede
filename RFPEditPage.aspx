@@ -152,9 +152,9 @@
                           console.log(response.d);
                           if (response.d == "0") {
                               console.log(response.d);
-                              warning_txt.SetText("Error verifying company amount limit.");
-                              PetCashPopupSave.Show();
-                              spinEdit_Amount.SetValue("");
+                              //warning_txt.SetText("Error verifying company amount limit.");
+                              //PetCashPopupSave.Show();
+                              //spinEdit_Amount.SetValue("");
                           }
                       },
                       error: function (xhr, status, error) {

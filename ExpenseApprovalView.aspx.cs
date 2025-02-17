@@ -205,7 +205,12 @@ namespace DX_WebTemplate
 
                     var exp_main = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == act_detail_id.Document_Id).FirstOrDefault();
 
-                    var rfp_main = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == act_detail_id.Document_Id).Where(x => x.IsExpenseReim == true).FirstOrDefault();
+                    var rfp_main = _DataContext.ACCEDE_T_RFPMains
+                        .Where(x => x.Exp_ID == act_detail_id.Document_Id)
+                        .Where(x => x.Status != 4)
+                        .Where(x => x.IsExpenseReim == true)
+                        .FirstOrDefault();
+
                     var payMethod = "";
                     var tranType = "";
 
@@ -918,7 +923,161 @@ namespace DX_WebTemplate
             return doc.GetDocument(fileId, appId);
         }
 
-       
+        protected void WFSequenceGrid0_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            var wf_id = e.Parameters.ToString();
+
+            SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = wf_id;
+            SqlWFSequenceForward.DataBind();
+
+            WFSequenceGrid0.DataSourceID = null;
+            WFSequenceGrid0.DataSource = SqlWFSequenceForward;
+            WFSequenceGrid0.DataBind();
+        }
+
+        [WebMethod]
+        public static string btnApproveForwardAJAX(string secureToken, string forwardWF, string remarks)
+        {
+            RFPApprovalView rfp = new RFPApprovalView();
+
+            return rfp.btnApproveForward(secureToken, forwardWF, remarks);
+
+        }
+
+        public string btnApproveForward(string secureToken, string forwardWF, string remarks)
+        {
+            try
+            {
+                string encryptedID = secureToken;
+
+                if (!string.IsNullOrEmpty(encryptedID))
+                {
+                    var actID = Convert.ToInt32(Decrypt(encryptedID));
+                    var exp_id = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == actID).FirstOrDefault();
+                    var finance_wf_data = _DataContext.ITP_S_WorkflowHeaders
+                        .Where(x => x.WF_Id == Convert.ToInt32(forwardWF))
+                        .FirstOrDefault();
+
+                    var exp_main = _DataContext.ACCEDE_T_ExpenseMains
+                        .Where(x => x.ID == exp_id.Document_Id)
+                        .FirstOrDefault();
+
+                    var rfp_main = _DataContext.ACCEDE_T_RFPMains
+                        .Where(x => x.Exp_ID == exp_id.Document_Id)
+                        .Where(x => x.Status != 4)
+                        .Where(x => x.IsExpenseReim == true)
+                        .FirstOrDefault();
+
+                    var rfp_app_docType = _DataContext.ITP_S_DocumentTypes
+                        .Where(x => x.DCT_Name == "ACDE RFP")
+                        .Where(x => x.App_Id == 1032)
+                        .FirstOrDefault();
+
+                    var exp_app_doctype = exp_id.AppDocTypeId;
+
+                    var payMethod = "";
+                    var tranType = "";
+
+                    if (rfp_main != null)
+                    {
+                        payMethod = _DataContext.ACCEDE_S_PayMethods
+                            .Where(x => x.ID == rfp_main.PayMethod)
+                            .FirstOrDefault().PMethod_name;
+                        tranType = _DataContext.ACCEDE_S_RFPTranTypes
+                            .Where(x => x.ID == rfp_main.TranType)
+                            .FirstOrDefault().RFPTranType_Name;
+                    }
+                    else
+                    {
+                        var rfp_main_ca = _DataContext.ACCEDE_T_RFPMains
+                            .Where(x => x.Exp_ID == exp_id.Document_Id)
+                            .Where(x => x.IsExpenseCA == true)
+                            .FirstOrDefault();
+                        payMethod = _DataContext.ACCEDE_S_PayMethods
+                            .Where(x => x.ID == rfp_main_ca.PayMethod)
+                            .FirstOrDefault().PMethod_name;
+                        tranType = _DataContext.ACCEDE_S_RFPTranTypes
+                            .Where(x => x.ID == rfp_main_ca.TranType)
+                            .FirstOrDefault().RFPTranType_Name;
+                    }
+
+                    if (finance_wf_data != null)
+                    {
+                        var fin_wfDetail_data = _DataContext.ITP_S_WorkflowDetails.Where(x => x.WF_Id == finance_wf_data.WF_Id).Where(x => x.Sequence == 1).FirstOrDefault();
+                        var org_id = fin_wfDetail_data.OrgRole_Id;
+                        var date2day = DateTime.Now;
+                        //DELEGATE CHECK
+                        foreach (var del in _DataContext.ITP_S_TaskDelegations.Where(x => x.OrgRole_ID_Orig == fin_wfDetail_data.OrgRole_Id).Where(x => x.DateFrom <= date2day).Where(x => x.DateTo >= date2day).Where(x => x.isActive == true))
+                        {
+                            if (del != null)
+                            {
+                                org_id = Convert.ToInt32(del.OrgRole_ID_Delegate);
+                            }
+
+                        }
+
+                        if (rfp_main != null)
+                        {
+                            //Insert new activity to RFP Reimburse
+                            ITP_T_WorkflowActivity new_activity = new ITP_T_WorkflowActivity();
+                            {
+                                new_activity.Status = 1;
+                                new_activity.AppId = 1032;
+                                new_activity.CompanyId = rfp_main.Company_ID;
+                                new_activity.Document_Id = rfp_main.ID;
+                                new_activity.WF_Id = fin_wfDetail_data.WF_Id;
+                                new_activity.DateAssigned = DateTime.Now;
+                                new_activity.DateCreated = DateTime.Now;
+                                new_activity.IsActive = true;
+                                new_activity.OrgRole_Id = org_id;
+                                new_activity.WFD_Id = fin_wfDetail_data.WFD_Id;
+                                new_activity.AppDocTypeId = rfp_app_docType.DCT_Id;
+                            }
+                            _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(new_activity);
+
+                        }
+
+                        //Insert new activity to Expense
+                        ITP_T_WorkflowActivity new_activity_exp = new ITP_T_WorkflowActivity();
+                        {
+                            new_activity_exp.Status = 1;
+                            new_activity_exp.AppId = 1032;
+                            new_activity_exp.CompanyId = exp_main.CompanyId;
+                            new_activity_exp.Document_Id = exp_main.ID;
+                            new_activity_exp.WF_Id = fin_wfDetail_data.WF_Id;
+                            new_activity_exp.DateAssigned = DateTime.Now;
+                            new_activity_exp.DateCreated = DateTime.Now;
+                            new_activity_exp.IsActive = true;
+                            new_activity_exp.OrgRole_Id = org_id;
+                            new_activity_exp.WFD_Id = fin_wfDetail_data.WFD_Id;
+                            new_activity_exp.AppDocTypeId = exp_app_doctype;
+                        }
+                        _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(new_activity_exp);
+
+                        ///////---START EMAIL PROCESS-----////////
+                        foreach (var user in _DataContext.ITP_S_SecurityUserOrgRoles.Where(x => x.OrgRoleId == org_id))
+                        {
+                            var nexApprover_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == user.UserId)
+                                      .FirstOrDefault();
+
+                            var sender_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Session["UserID"].ToString())
+                                      .FirstOrDefault();
+
+                            SendEmailTo(exp_main.ID, nexApprover_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Pending", payMethod.ToString(), tranType.ToString());
+
+                        }
+                        return "success";
+                    }
+                }
+
+                return "Secure token is null.";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+
+        }
     }
 
     public class RFPDetails

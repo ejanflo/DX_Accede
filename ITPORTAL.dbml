@@ -1182,4 +1182,13 @@
       <Column Name="ExpenseClassification" Type="System.Int32" DbType="Int" CanBeNull="true" />
     </Type>
   </Table>
+  <Table Name="dbo.vw_ACCEDE_I_ApproveForwardWF" Member="vw_ACCEDE_I_ApproveForwardWFs">
+    <Type Name="vw_ACCEDE_I_ApproveForwardWF">
+      <Column Name="WF_Id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="EmpCode" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FullName" Type="System.String" DbType="NVarChar(404) NOT NULL" CanBeNull="false" />
+      <Column Name="App_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
 </Database>

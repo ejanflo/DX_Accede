@@ -780,7 +780,7 @@ onTravelClick();
                                                 </LayoutItemNestedControlCollection>
                                                 <CaptionSettings HorizontalAlign="Right" />
                                             </dx:LayoutItem>
-                                            <dx:LayoutItem Caption="Payee" ColSpan="1" FieldName="Payee" Name="Payee">
+                                            <dx:LayoutItem Caption="Payee" ColSpan="1" FieldName="payeeName" Name="Payee">
                                                 <LayoutItemNestedControlCollection>
                                                     <dx:LayoutItemNestedControlContainer runat="server">
                                                         <dx:ASPxTextBox ID="ASPxTextBox8" runat="server" Font-Bold="True" Font-Size="Medium" ReadOnly="True" Width="100%">

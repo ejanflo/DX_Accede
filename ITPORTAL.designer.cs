@@ -883,6 +883,14 @@ namespace DX_WebTemplate
 				return this.GetTable<ACCEDE_T_ExpenseMain>();
 			}
 		}
+		
+		public System.Data.Linq.Table<vw_ACCEDE_I_ApproveForwardWF> vw_ACCEDE_I_ApproveForwardWFs
+		{
+			get
+			{
+				return this.GetTable<vw_ACCEDE_I_ApproveForwardWF>();
+			}
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ITP_S_EmailTemplate")]
@@ -23889,6 +23897,105 @@ namespace DX_WebTemplate
 			if ((this.PropertyChanged != null))
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.vw_ACCEDE_I_ApproveForwardWF")]
+	public partial class vw_ACCEDE_I_ApproveForwardWF
+	{
+		
+		private int _WF_Id;
+		
+		private string _Name;
+		
+		private string _EmpCode;
+		
+		private string _FullName;
+		
+		private System.Nullable<int> _App_Id;
+		
+		public vw_ACCEDE_I_ApproveForwardWF()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WF_Id", DbType="Int NOT NULL")]
+		public int WF_Id
+		{
+			get
+			{
+				return this._WF_Id;
+			}
+			set
+			{
+				if ((this._WF_Id != value))
+				{
+					this._WF_Id = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(50)")]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this._Name = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EmpCode", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string EmpCode
+		{
+			get
+			{
+				return this._EmpCode;
+			}
+			set
+			{
+				if ((this._EmpCode != value))
+				{
+					this._EmpCode = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FullName", DbType="NVarChar(404) NOT NULL", CanBeNull=false)]
+		public string FullName
+		{
+			get
+			{
+				return this._FullName;
+			}
+			set
+			{
+				if ((this._FullName != value))
+				{
+					this._FullName = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_App_Id", DbType="Int")]
+		public System.Nullable<int> App_Id
+		{
+			get
+			{
+				return this._App_Id;
+			}
+			set
+			{
+				if ((this._App_Id != value))
+				{
+					this._App_Id = value;
+				}
 			}
 		}
 	}
