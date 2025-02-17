@@ -114,6 +114,24 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox depCB;
 
         /// <summary>
+        /// ForD control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox ForD;
+
+        /// <summary>
+        /// chargedCB control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox chargedCB;
+
+        /// <summary>
         /// datefromDE control.
         /// </summary>
         /// <remarks>

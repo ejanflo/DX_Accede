@@ -31,9 +31,9 @@ namespace DX_WebTemplate
                 var isdep = Convert.ToString(context.ITP_S_OrgDepartmentMasters.Where(x => x.DepCode == depcode && x.Company_ID == Convert.ToInt32(Session["userCompanyID"])).Select(x => x.ID).FirstOrDefault());
                 
                 if (isdep == "0")
-                    depCB.SelectedIndex = -1;
+                    chargedCB.SelectedIndex = -1;
                 else
-                    depCB.Value = isdep;
+                    chargedCB.Value = isdep;
             }
             else
                 Response.Redirect("~/Logon.aspx");
@@ -51,12 +51,12 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static bool AJAXSaveTravelExpense(string empcode, string companyid, string department_code, string tripto, DateTime datefrom, DateTime dateto, string timedepart, string timearrive, string purpose)
+        public static bool AJAXSaveTravelExpense(string empcode, string companyid, string department_code, string chargedto, string tripto, DateTime datefrom, DateTime dateto, string timedepart, string timearrive, string purpose, string ford)
         {
             DateTime timeDepart = Convert.ToDateTime(timedepart);
             DateTime timeArrive = Convert.ToDateTime(timearrive);
             TravelExpense travel = new TravelExpense();
-            return travel.SaveTravelExpense(empcode, companyid, department_code, tripto, datefrom, dateto, timeDepart.ToString("HH:mm"), timeArrive.ToString("HH:mm"), purpose, DateTime.Now);
+            return travel.SaveTravelExpense(empcode, companyid, department_code, chargedto, tripto, datefrom, dateto, timeDepart.ToString("HH:mm"), timeArrive.ToString("HH:mm"), purpose, ford, DateTime.Now);
         }
 
         public UserInfo GetUserInfo(string fullname)
@@ -85,11 +85,11 @@ namespace DX_WebTemplate
             return user;
         }
 
-        public bool SaveTravelExpense(string empcode, string companyid, string department_code, string tripto, DateTime datefrom, DateTime dateto, string timedepart, string timearrive, string purpose, DateTime datecreated)
+        public bool SaveTravelExpense(string empcode, string companyid, string department_code, string chargedto, string tripto, DateTime datefrom, DateTime dateto, string timedepart, string timearrive, string purpose, string ford, DateTime datecreated)
         {
             try
             {
-                var app_docType = Convert.ToInt32(context.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).Select(x => x.DCT_Id).FirstOrDefault());
+                var app_docType = Convert.ToInt32(context.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense").Where(x => x.App_Id == 1032).Select(x => x.DCT_Id).FirstOrDefault());
                 GenerateDocNo generateDocNo = new GenerateDocNo();
                 generateDocNo.RunStoredProc_GenerateDocNum(Convert.ToInt32(app_docType), Convert.ToInt32(companyid), 1032);
                 var docNo = generateDocNo.GetLatest_DocNum(Convert.ToInt32(app_docType), Convert.ToInt32(companyid), 1032);
@@ -99,12 +99,14 @@ namespace DX_WebTemplate
                     travelMain.Employee_Id = Convert.ToInt32(empcode);
                     travelMain.Company_Id = Convert.ToInt32(companyid);
                     travelMain.Dep_Code = department_code;
+                    travelMain.ChargedTo = Convert.ToInt32(chargedto);
                     travelMain.Trip_To = tripto;
                     travelMain.Date_From = datefrom;
                     travelMain.Date_To = dateto;
                     travelMain.Time_Departed = TimeSpan.Parse(timedepart);
                     travelMain.Time_Arrived = TimeSpan.Parse(timearrive);
                     travelMain.Purpose = purpose;
+                    travelMain.ForeignDomestic = ford;
                     travelMain.Date_Created = datecreated;
                     travelMain.Doc_No = docNo;
                     travelMain.Preparer_Id = Convert.ToInt32(Session["userID"]);

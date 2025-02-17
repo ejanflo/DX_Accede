@@ -15,6 +15,9 @@
     <link rel="stylesheet" type="text/css" href="styles/Content.css" />
     <link rel="stylesheet" type="text/css" href="styles/Layout.css" />
 
+    <%-- Leaflet CSS --%>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.css" />
+
     <link rel="stylesheet" type="text/css" href="styles/Site.css" />
     <link rel="stylesheet" type="text/css" href="Content/Site.css" />
 
@@ -26,6 +29,9 @@
     <script src="https://cdn.jsdelivr.net/npm/docx-preview-lib@0.1.14-fix-3/dist/docx-preview.min.js"></script>
     
     <script src="Scripts/docviewer.js"></script>
+
+    <%-- Leaflet JS --%>
+    <script src="https://unpkg.com/leaflet-geosearch@latest/dist/bundle.min.js"></script>
 
      <%--//sweetalert JS--%>
     <link rel="stylesheet" href="styles/sweetalert2.min.css" />

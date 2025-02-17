@@ -60,24 +60,6 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox empnameCB;
 
         /// <summary>
-        /// reportdateDE control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxDateEdit reportdateDE;
-
-        /// <summary>
-        /// drpdown_expenseType control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox drpdown_expenseType;
-
-        /// <summary>
         /// companyCB control.
         /// </summary>
         /// <remarks>
@@ -94,6 +76,42 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxComboBox departmentCB;
+
+        /// <summary>
+        /// fordCB control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox fordCB;
+
+        /// <summary>
+        /// drpdown_expenseType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox drpdown_expenseType;
+
+        /// <summary>
+        /// chargedCB control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox chargedCB;
+
+        /// <summary>
+        /// reportdateDE control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxDateEdit reportdateDE;
 
         /// <summary>
         /// datefromDE control.

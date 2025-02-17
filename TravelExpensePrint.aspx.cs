@@ -63,6 +63,7 @@ namespace DX_WebTemplate
                         var empdate = DateTime.Now;
                         var department = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(travel.Dep_Code)).Select(x => x.DepDesc).FirstOrDefault().ToUpper();
                         var purpose = travel.Purpose.ToUpper();
+                        var chargedto = context.CompanyMasters.Where(x => x.WASSId == Convert.ToInt32(travel.ChargedTo)).Select(x => x.CompanyShortName).FirstOrDefault().ToUpper();
 
                         report.Parameters["id"].Value = id;
                         report.Parameters["companyid"].Value = companyid;
@@ -75,6 +76,7 @@ namespace DX_WebTemplate
                         report.Parameters["timedeparted"].Value = timedeparted.HasValue ? (DateTime?)DateTime.Today.Add(timedeparted.Value) : null;
                         report.Parameters["empname"].Value = empname;
                         report.Parameters["department"].Value = department;
+                        report.Parameters["chargedto"].Value = chargedto;
                         report.Parameters["purpose"].Value = purpose;
                         report.Parameters["totalca"].Value = totalca;
                         report.Parameters["totalexp"].Value = totalexp;

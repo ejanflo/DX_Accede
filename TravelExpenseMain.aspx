@@ -1,6 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Main.master" AutoEventWireup="true" CodeBehind="TravelExpenseMain.aspx.cs" Inherits="DX_WebTemplate.TravelExpense" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-        <style>
+    <style>
         .radio-buttons-container {
             display: flex;
             align-items: center; /* Vertically centers the radio buttons */
@@ -10,8 +10,80 @@
         .custom .dxMonthGridWithWeekNumbers {
             display: none;
         }
+
+        .suggestions-container {
+            position: absolute;
+            background: white;
+            border: 1px solid #ccc;
+            max-height: 200px;
+            overflow-y: auto;
+            width: 335px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .suggestion-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .suggestion-item:hover {
+            background: #f0f0f0;
+        }
     </style>
-        <script>
+    <script>
+        function onKeyPress(s, e) {
+            var input = s.GetInputElement();  // Get the textbox input element
+            var query = input.value.trim();
+            var suggestionBox = document.getElementById("locationSuggestions");
+
+            if (query.length < 3) {
+                suggestionBox.innerHTML = "";
+                suggestionBox.style.display = "none";
+                return;
+            }
+
+            // Fetch location suggestions from OpenStreetMap (Nominatim API)
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    suggestionBox.innerHTML = "";
+                    suggestionBox.style.display = "block";
+
+                    data.forEach(item => {
+                        var div = document.createElement("div");
+                        div.textContent = item.display_name;
+                        div.classList.add("suggestion-item");
+
+                        // Handle click event to select a location
+                        div.addEventListener("click", function () {
+                            s.SetText(item.display_name);  // Set the selected location in ASPxTextBox
+
+                            // Check if the location is in the Philippines
+                            //if (item.address && item.address.country_code !== "ph") 
+                            //    ForD.SetValue('Foreign');
+                            //else
+                            //    ForD.SetValue('Domestic');
+
+                            suggestionBox.innerHTML = "";
+                            suggestionBox.style.display = "none";
+                        });
+
+                        suggestionBox.appendChild(div);
+                    });
+                })
+                .catch(error => console.error("Error fetching locations:", error));
+        }
+
+        // Hide suggestions when clicking outside
+        document.addEventListener("click", function (event) {
+            var suggestionBox = document.getElementById("locationSuggestions");
+            if (!suggestionBox.contains(event.target)) {
+                suggestionBox.style.display = "none";
+            }
+        });
+
         function OnCustomButtonClick(s, e) {
             expenseGrid.PerformCallback(s.GetRowKey(e.visibleIndex) + "|" + e.buttonID);
             loadPanel.Show();      
@@ -62,12 +134,14 @@
             var empcode = employeeCB.GetValue();
             var companyid = compCB.GetValue();
             var department_code = depCB.GetValue();
+            var chargedto = chargedCB.GetValue();
             var tripto = triptoTB.GetValue();
             var datefrom = datefromDE.GetValue();
             var dateto = datetoDE.GetValue();
             var timedepart = timedepartTE.GetText();
             var timearrive = timearriveTE.GetText();
             var purpose = purposeMemo.GetValue();
+            var ford = ForD.GetValue();
 
             $.ajax({
                 type: "POST",
@@ -78,12 +152,14 @@
                     empcode: empcode,
                     companyid: companyid,
                     department_code: department_code,
+                    chargedto: chargedto,
                     tripto: tripto,
                     datefrom: datefrom,
                     dateto: dateto,
                     timedepart: timedepart,
                     timearrive: timearrive,
-                    purpose: purpose
+                    purpose: purpose,
+                    ford: ford
                 }),
                 success: function (response) {
                     // Update the description text box with the response value
@@ -98,7 +174,7 @@
                 }
             });
         }
-        </script>
+    </script>
     <dx:ASPxFormLayout ID="ASPxFormLayout1" runat="server" Font-Bold="False" Height="144px" Width="100%">
         <Items>
             <dx:LayoutGroup Caption="My Travel Expense Report" ColSpan="1" GroupBoxDecoration="HeadingLine" Width="100%">
@@ -450,7 +526,7 @@
             <dx:LayoutGroup Caption="" ColCount="4" ColSpan="1" ColumnCount="4" GroupBoxDecoration="None" CssClass="mb-4">
                 <Paddings Padding="0px" />
                 <Items>
-                    <dx:LayoutItem Caption="Employee Name" ColSpan="2" ColumnSpan="2" VerticalAlign="Top">
+                    <dx:LayoutItem Caption="Employee Name" ColSpan="2" ColumnSpan="2" VerticalAlign="Top" Width="60%">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
                                 <dx:ASPxComboBox ID="employeeCB" runat="server" DataSourceID="SqlUsersDelegated" TextField="FullName" ValueField="DelegateTo_UserID" Width="100%" ClientInstanceName="employeeCB" Font-Bold="True">
@@ -465,19 +541,21 @@
                         <ParentContainerStyle Font-Bold="False">
                         </ParentContainerStyle>
                     </dx:LayoutItem>
-                    <dx:LayoutItem Caption="Trip To" ColSpan="2" ColumnSpan="2" VerticalAlign="Top">
+                    <dx:LayoutItem Caption="Trip To" ColSpan="2" ColumnSpan="2" VerticalAlign="Top" Width="100%">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
                                 <dx:ASPxTextBox ID="triptoTB" runat="server" ClientInstanceName="triptoTB" Width="100%" Font-Bold="True">
+                                    <ClientSideEvents KeyPress="onKeyPress" />
                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="CreateForm">
                                         <RequiredField ErrorText="*Required field" IsRequired="True" />
                                     </ValidationSettings>
                                 </dx:ASPxTextBox>
+                                <ul id="locationSuggestions" class="suggestions-container"></ul>
                             </dx:LayoutItemNestedControlContainer>
                         </LayoutItemNestedControlCollection>
                         <CaptionSettings Location="Top" />
                     </dx:LayoutItem>
-                    <dx:LayoutItem Caption="Company" ColSpan="1" VerticalAlign="Top">
+                    <dx:LayoutItem Caption="Company" ColSpan="1" VerticalAlign="Top" Width="30%">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
                                 <dx:ASPxComboBox ID="compCB" runat="server" ClientInstanceName="compCB" TextField="CompanyShortName" ValueField="WASSId" Width="100%" DataSourceID="sqlCompany" Font-Bold="True">
@@ -492,10 +570,10 @@
                         </LayoutItemNestedControlCollection>
                         <CaptionSettings Location="Top" />
                     </dx:LayoutItem>
-                    <dx:LayoutItem Caption="Department" ColSpan="1" VerticalAlign="Top">
+                    <dx:LayoutItem Caption="Department" ColSpan="1" VerticalAlign="Top" Width="30%">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
-                                <dx:ASPxComboBox ID="depCB" runat="server" ClientInstanceName="depCB" TextField="DepCode" ValueField="ID" Width="100%" DataSourceID="SqlDepartment" Font-Bold="True">
+                                <dx:ASPxComboBox ID="depCB" runat="server" ClientInstanceName="depCB" DataSourceID="SqlDepartment" Font-Bold="True" TextField="DepCode" ValueField="ID" Width="100%">
                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="CreateForm">
                                         <RequiredField ErrorText="*Required field" IsRequired="True" />
                                     </ValidationSettings>
@@ -504,7 +582,43 @@
                         </LayoutItemNestedControlCollection>
                         <CaptionSettings Location="Top" />
                     </dx:LayoutItem>
-                    <dx:LayoutItem Caption="Date From" ColSpan="1" VerticalAlign="Top">
+<dx:LayoutItem Caption="Foreign or Domestic" ColSpan="2" ColumnSpan="2" Width="100%"><LayoutItemNestedControlCollection>
+<dx:LayoutItemNestedControlContainer runat="server">
+                                <dx:ASPxComboBox ID="ForD" runat="server" Font-Bold="True" Width="100%" ClientInstanceName="ForD">
+                                    <Items>
+                                        <dx:ListEditItem Text="Foreign" Value="Foreign" />
+                                        <dx:ListEditItem Text="Domestic" Value="Domestic" />
+                                    </Items>
+                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="CreateForm">
+                                        <RequiredField ErrorText="*Required field" IsRequired="True" />
+                                    </ValidationSettings>
+                                </dx:ASPxComboBox>
+
+                            </dx:LayoutItemNestedControlContainer>
+</LayoutItemNestedControlCollection>
+
+    <CaptionSettings Location="Top" />
+
+</dx:LayoutItem>
+                    <dx:LayoutItem Caption="Charged to:" ColSpan="2" ColumnSpan="2" Width="60%">
+                        <LayoutItemNestedControlCollection>
+                            <dx:LayoutItemNestedControlContainer runat="server">
+                                <dx:ASPxComboBox ID="chargedCB" runat="server" TextField="CompanyShortName" ValueField="WASSId" Width="100%" DataSourceID="sqlCompany" Font-Bold="True" ClientInstanceName="chargedCB">
+                                    <Columns>
+                                        <dx:ListBoxColumn Caption="Company" FieldName="CompanyShortName" Width="60px">
+                                        </dx:ListBoxColumn>
+                                        <dx:ListBoxColumn Caption="Company Description" FieldName="CompanyDesc" Width="130px">
+                                        </dx:ListBoxColumn>
+                                    </Columns>
+                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="CreateForm">
+                                        <RequiredField ErrorText="*Required field" IsRequired="True" />
+                                    </ValidationSettings>
+                                </dx:ASPxComboBox>
+                            </dx:LayoutItemNestedControlContainer>
+                        </LayoutItemNestedControlCollection>
+                        <CaptionSettings Location="Top" />
+                    </dx:LayoutItem>
+                    <dx:LayoutItem Caption="Date From" ColSpan="1" VerticalAlign="Top" Width="20%">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
                                 <dx:ASPxDateEdit ID="datefromDE" runat="server" ClientInstanceName="datefromDE" Width="100%" Font-Bold="True">
@@ -527,7 +641,7 @@
                         </LayoutItemNestedControlCollection>
                         <CaptionSettings Location="Top" />
                     </dx:LayoutItem>
-                    <dx:LayoutItem Caption="Date To" ColSpan="1" VerticalAlign="Top">
+                    <dx:LayoutItem Caption="Date To" ColSpan="1" VerticalAlign="Top" Width="20%">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
                                 <dx:ASPxDateEdit ID="datetoDE" runat="server" ClientInstanceName="datetoDE" Width="100%" Font-Bold="True">
@@ -550,7 +664,7 @@
                         </LayoutItemNestedControlCollection>
                         <CaptionSettings Location="Top" />
                     </dx:LayoutItem>
-                    <dx:LayoutItem Caption="Purpose" ColSpan="2" ColumnSpan="2" VerticalAlign="Top">
+                    <dx:LayoutItem Caption="Purpose" ColSpan="2" ColumnSpan="2" VerticalAlign="Top" Width="60%">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
                                 <dx:ASPxMemo ID="purposeMemo" runat="server" ClientInstanceName="purposeMemo" Width="100%" Font-Bold="True">
@@ -562,7 +676,7 @@
                         </LayoutItemNestedControlCollection>
                         <CaptionSettings Location="Top" />
                     </dx:LayoutItem>
-                    <dx:LayoutItem Caption="Time Departed" ColSpan="1" VerticalAlign="Top">
+                    <dx:LayoutItem Caption="Time Departed" ColSpan="1" VerticalAlign="Top" Width="20%">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
                                 <dx:ASPxDateEdit ID="timedepartTE" runat="server" EditFormat="Time" Width="100%" ClientInstanceName="timedepartTE" Font-Bold="True">
@@ -583,7 +697,7 @@
                         </LayoutItemNestedControlCollection>
                         <CaptionSettings Location="Top" />
                     </dx:LayoutItem>
-                    <dx:LayoutItem Caption="Time Arrived" ColSpan="1" VerticalAlign="Top">
+                    <dx:LayoutItem Caption="Time Arrived" ColSpan="1" VerticalAlign="Top" Width="20%">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
                                 <dx:ASPxDateEdit ID="timearriveTE" runat="server" ClientInstanceName="timearriveTE" EditFormat="Time" Width="100%" Font-Bold="True">
@@ -637,7 +751,7 @@
     <dx:ASPxLoadingPanel ID="loadPanel" ClientInstanceName="loadPanel" Modal="true" runat="server" Theme="MaterialCompact" Text=""></dx:ASPxLoadingPanel>
 
         <asp:SqlDataSource ID="sqlName" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT [FullName], [EmpCode] FROM [ITP_S_UserMaster]"></asp:SqlDataSource>
-        <asp:SqlDataSource ID="sqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [CompanyMaster] WHERE ([WASSId] IS NOT NULL)"></asp:SqlDataSource>
+        <asp:SqlDataSource ID="sqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [CompanyMaster] WHERE ([WASSId] IS NOT NULL) ORDER BY CompanyDesc ASC"></asp:SqlDataSource>
         <asp:SqlDataSource ID="sqlStatus" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_Status]"></asp:SqlDataSource>
         <asp:SqlDataSource ID="sqlTravelExp" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_TravelExpenseMain] WHERE ([Preparer_Id] = @Preparer_Id) OR ([Employee_Id] = @Employee_Id)">
             <SelectParameters>

@@ -13,6 +13,26 @@
 
     <script src="Scripts/docviewer.js"></script>
     <script>
+        function CheckCurrency(s, e) {
+            var currency = s.GetValue();
+
+            $.ajax({
+                type: "POST",
+                url: "TravelExpenseAdd.aspx/ChangeCurrencyAJAX",
+                data: JSON.stringify({ currency: currency }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    wfCallback.EndCallback.ClearHandlers();
+                    handleExpCA(response.d.expType, response.d.totalca, response.d.totalexp, response.d.allTot, response.d.totExpCA, response.d.hasReim);
+                    wfCallback.PerformCallback(response.d.totExpCA);
+                },
+                failure: function (response) {
+                    // Handle failure
+                }
+            });
+        }
+
         function updateTotal(grid) {
             // Check if cpTotal is available
             if (grid.cpTotal) {
@@ -46,6 +66,7 @@
         }
 
         function AddReimbursement(stat) {
+            reimbursePopup2.Hide();
             if (ASPxClientEdit.ValidateGroup('submitValid')) {
                 var empname = empnameCB.GetValue();
                 var reportdate = reportdateDE.GetValue();
@@ -138,6 +159,7 @@
         }
 
         function ExpCancelClick(s, e) {
+            ASPxGridView22.CancelEdit();
             LoadingPanel.Show();
             var totexp = totalExpTB.GetText();
             $.ajax({
@@ -152,7 +174,7 @@
 
                     wfCallback.EndCallback.ClearHandlers();
                     wfCallback.EndCallback.AddHandler(function () {
-                        handleExpCA(response.d.expType, response.d.totalca, response.d.totalexp, response.d.allTot);
+                        handleExpCA(response.d.expType, response.d.totalca, response.d.totalexp, response.d.allTot, response.d.totExpCA, response.d.hasReim);
 
                         locParticularsMemo.SetText('');
                         travelDateCalendar.SetDate(null);
@@ -170,17 +192,24 @@
             });
         }
 
-        function handleExpCA(expType, totalca, totalexp, allTot) {
+        function handleExpCA(expType, totalca, totalexp, allTot, totExpCA, hasReim) {
             var reimItem = ExpenseEditForm.GetItemByName('reimItem');
+            var reimDetails = ExpenseEditForm.GetItemByName('reimDetails');
             var due_lbl = ExpenseEditForm.GetItemByName('due_lbl');
 
-            if (totalexp > totalca) {
-                reimItem.SetVisible(true);
-                due_lbl.SetCaption("Due To Employee");
-            }
-            else {
+            if (hasReim) {
                 reimItem.SetVisible(false);
-                due_lbl.SetCaption("Due To Company");
+                reimDetails.SetVisible(true);
+            } else {
+                reimDetails.SetVisible(false);
+
+                if (totalexp > totalca) {
+                    reimItem.SetVisible(true);
+                    due_lbl.SetCaption("Due To Employee");
+                } else {
+                    reimItem.SetVisible(false);
+                    due_lbl.SetCaption("Due To Company");
+                }
             }
 
             lbl_caTotal.SetText(totalca);
@@ -191,9 +220,65 @@
 
         function ExpPopupClick(s, e) {
             if (ASPxClientEdit.ValidateGroup("expAdd")) {
-                /* || !checkUnsavedChanges(fixedAllowGrid) || !checkUnsavedChanges(miscTravelGrid) || !checkUnsavedChanges(otherBusGrid) || !checkUnsavedChanges(entertainmentGrid) || !checkUnsavedChanges(busMealsGrid)*/
-                if (!checkUnsavedChanges(ASPxGridView22)) {
-                    e.processOnServer = false; // Prevent server-side processing if unsaved changes exist
+
+                if (ASPxGridView22.batchEditApi.HasChanges()) {
+
+                    ASPxGridView22.UpdateEdit()
+
+                    // Handle the completion of the update
+                    ASPxGridView22.EndCallback.AddHandler(function () {
+
+                        /*ASPxGridView22.BatchEditRowValidating.AddHandler(onBatchRowValidate);*/
+
+                        ASPxGridView22.EndCallback.ClearHandlers();
+
+                        LoadingPanel.Show();
+                        var locParticulars = locParticularsMemo.GetText();
+                        var travelDate = travelDateCalendar.GetDate()
+                        var totalExp = totalExpTB.GetValue()
+
+                        $.ajax({
+                            type: "POST",
+                            url: "TravelExpenseAdd.aspx/AddTravelExpenseDetailsAJAX",
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            data: JSON.stringify({
+                                locParticulars: locParticulars,
+                                travelDate: travelDate,
+                                totalExp: totalExp
+                            }),
+                            success: function (response) {
+                                //Handle success
+                                if (response) {
+                                    ExpenseGrid.PerformCallback();
+
+                                    wfCallback.EndCallback.ClearHandlers();
+                                    wfCallback.EndCallback.AddHandler(function () {
+                                        handleExpCA(response.d.expType, response.d.totalca, response.d.totalexp, response.d.allTot, response.d.totExpCA, response.d.hasReim);
+
+                                        locParticularsMemo.SetText('');
+                                        travelDateCalendar.SetDate(null);
+                                        totalExpTB.SetValue('');
+                                        LoadingPanel.Hide();
+                                        travelExpensePopup.Hide();
+                                        //ExpenseGrid.Refresh();
+
+                                        $('#toast-header').html('Success!');
+                                        $('#toast-body').html('Expense item added successfully.');
+                                        $('.toast').toast('show');
+                                    });
+                                    wfCallback.PerformCallback(response.d.totExpCA);
+                                } else {
+                                    $('#toast-header').html('Failed!');
+                                    $('#toast-body').html("There's an error in adding the expense item.");
+                                    $('.toast').toast('show');
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.log("Error:", error);
+                            }
+                        });
+                    });
                 } else {
                     LoadingPanel.Show();
                     var locParticulars = locParticularsMemo.GetText();
@@ -217,7 +302,7 @@
 
                                 wfCallback.EndCallback.ClearHandlers();
                                 wfCallback.EndCallback.AddHandler(function () {
-                                    handleExpCA(response.d.expType, response.d.totalca, response.d.totalexp, response.d.allTot);
+                                    handleExpCA(response.d.expType, response.d.totalca, response.d.totalexp, response.d.allTot, response.d.totExpCA, response.d.hasReim);
 
                                     locParticularsMemo.SetText('');
                                     travelDateCalendar.SetDate(null);
@@ -245,19 +330,7 @@
             }
         }
 
-        function checkUnsavedChanges(grid) {
-            if (grid.batchEditApi.HasChanges()) {
-                if (confirm("There are unsaved changes. Do you want to proceed without saving?"))
-                    return true;  // Proceed with the button click event
-                else
-                    return false; // Cancel the button click event
-            }
-            return true; // No editing, proceed with the button click event
-        }
-
         function calcExpenses(s, e) {
-            var totalSum = 0;
-
             //// Access each grid view by its ClientInstanceName and get the total summary for the specified column
             //var grid1 = reimTranGrid.cpSummary;
             //var grid2 = fixedAllowGrid.cpSummary;
@@ -273,11 +346,54 @@
             //totalSum += parseFloat(grid4 || 0);
             //totalSum += parseFloat(grid5 || 0);
             //totalSum += parseFloat(grid6 || 0);
+            //var grid = s;
+            //var editedRowIndices = grid.batchEditApi.GetModifiedRowIndices();
 
-            var grid1 = ASPxGridView22.cpSummary;
-            totalSum = parseFloat(grid1 || 0);
+            //for (var i = 0; i < editedRowIndices.length; i++) {
 
-            totalExpTB.SetText(totalSum);
+            //    var rowIndex = editedRowIndices[i];
+
+            //    // Retrieve updated summary values using column field names
+            //    var ReimTranspo_Amount1 = parseFloat(grid.batchEditApi.GetCellValue(rowIndex, "ReimTranspo_Amount1")) || 0;
+            //    var FixedAllow_Amount = parseFloat(grid.batchEditApi.GetCellValue(rowIndex, "FixedAllow_Amount")) || 0;
+            //    var MiscTravel_Amount = parseFloat(grid.batchEditApi.GetCellValue(rowIndex, "MiscTravel_Amount")) || 0;
+            //    var Entertainment_Amount = parseFloat(grid.batchEditApi.GetCellValue(rowIndex, "Entertainment_Amount")) || 0;
+            //    var BusMeals_Amount = parseFloat(grid.batchEditApi.GetCellValue(rowIndex, "BusMeals_Amount")) || 0;
+            //    var OtherBus_Amount = parseFloat(grid.batchEditApi.GetCellValue(rowIndex, "OtherBus_Amount")) || 0;
+
+            //    totReimTranspo_Amount1 += ReimTranspo_Amount1;
+            //    totFixedAllow_Amount += FixedAllow_Amount;
+            //    totMiscTravel_Amount += MiscTravel_Amount;
+            //    totEntertainment_Amount += Entertainment_Amount;
+            //    totBusMeals_Amount += BusMeals_Amount;
+            //    totOtherBus_Amount += OtherBus_Amount;
+            //}
+
+            //// Compute Grand Total
+            //var grandTotal = totReimTranspo_Amount1 + totFixedAllow_Amount + totMiscTravel_Amount + totEntertainment_Amount + totBusMeals_Amount + totOtherBus_Amount;
+            //var grid = ASPxClientGridView.Cast('ASPxGridView22');
+            //var total = 0;
+            //var rowCount = grid.GetVisibleRowsOnPage();
+
+            //for (var i = 0; i < rowCount; i++) {
+            //    var value = grid.batchEditApi.GetCellValue(i, "ReimTranspo_Amount1");
+            //    total += parseFloat(value) || 0;
+            //}
+            //var grid = s;
+
+            //$.ajax({
+            //    type: "POST",
+            //    url: "TravelExpenseAdd.aspx/ComputeTotalAJAX",
+            //    contentType: "application/json; charset=utf-8",
+            //    dataType: "json",
+            //    success: function (response) {
+
+            //        totalExpTB.SetText(response.d.total);
+            //    },
+            //    failure: function (response) {
+            //        // Handle failure
+            //    }
+            //});
         }
 
         function onToolbarItemClick(s, e) {
@@ -365,7 +481,7 @@
                     wfCallback.EndCallback.ClearHandlers();
                     wfCallback.EndCallback.AddHandler(function () {
                         LoadingPanel.Hide();
-                        handleExpCA(response.d.expType, response.d.totalca, response.d.totalexp, response.d.allTot);
+                        handleExpCA(response.d.expType, response.d.totalca, response.d.totalexp, response.d.allTot, response.d.totExpCA, response.d.hasReim);
 
                         // Map button commands to their respective actions
                         const toastMessages = {
@@ -411,7 +527,7 @@
                                 wfCallback.EndCallback.AddHandler(function () {
                                     caPopup.Hide();
                                     LoadingPanel.Hide();
-                                    handleExpCA(response.d.expType, response.d.totalca, response.d.totalexp, response.d.allTot);
+                                    handleExpCA(response.d.expType, response.d.totalca, response.d.totalexp, response.d.allTot, response.d.totExpCA, response.d.hasReim);
 
                                     $('#toast-header').html('Success!');
                                     $('#toast-body').html('CA item(s) have been added successfully.');
@@ -484,11 +600,13 @@
             var reportdate = reportdateDE.GetValue();
             var company = companyCB.GetValue();
             var department = departmentCB.GetValue();
+            var chargedto = chargedCB.GetValue();
             var datefrom = datefromDE.GetValue();
             var dateto = datetoDE.GetValue();
             var timedepart = timedepartTE.GetValue();
             var timearrive = timearriveTE.GetValue();
             var trip = tripMemo.GetValue();
+            var ford = fordCB.GetValue();
             var purpose = purposeMemo.GetValue();
             var expenseType = drpdown_expenseType.GetValue();
 
@@ -500,11 +618,13 @@
                     reportdate: reportdate,
                     company: company,
                     department: department,
+                    chargedto: chargedto,
                     datefrom: datefrom,
                     dateto: dateto,
                     timedepart: timedepart,
                     timearrive: timearrive,
                     trip: trip,
+                    ford: ford,
                     purpose: purpose,
                     expenseType: expenseType,
                     btnaction: btn
@@ -692,52 +812,10 @@
                             <Items>
                                 <dx:LayoutGroup Caption="REPORT HEADER DETAILS" ColSpan="1" GroupBoxDecoration="HeadingLine" Width="65%" ColCount="2" ColumnCount="2" RowSpan="2">
                                     <Items>
-                                        <dx:LayoutItem Caption="Employee Name" ColSpan="1" FieldName="Employee_Id">
+                                        <dx:LayoutItem Caption="Employee Name" ColSpan="2" FieldName="Employee_Id" ColumnSpan="2">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
                                                     <dx:ASPxComboBox ID="empnameCB" runat="server" DataSourceID="SqlEmpName" Font-Bold="True" Font-Size="Small" TextField="FullName" ValueField="EmpCode" Width="100%" AllowMouseWheel="False" ClientInstanceName="empnameCB" ClientEnabled="False" ReadOnly="True">
-                                                        <DropDownButton Visible="False">
-                                                        </DropDownButton>
-                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
-                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                        </ValidationSettings>
-                                                        <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                        <DisabledStyle ForeColor="#333333">
-                                                        </DisabledStyle>
-                                                    </dx:ASPxComboBox>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <CaptionStyle Font-Bold="False">
-                                            </CaptionStyle>
-                                        </dx:LayoutItem>
-                                        <dx:EmptyLayoutItem ColSpan="1">
-                                        </dx:EmptyLayoutItem>
-                                        <dx:LayoutItem Caption="Report Date" ColSpan="1" FieldName="Date_Created">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxDateEdit ID="reportdateDE" runat="server" ClientInstanceName="reportdateDE" DisplayFormatString="MMMM dd, yyyy" Font-Bold="True" Font-Size="Small" Width="100%" Enabled="False">
-                                                        <DropDownButton Visible="False">
-                                                        </DropDownButton>
-                                                        <ValidationSettings ValidationGroup="ExpenseEdit" Display="Dynamic" SetFocusOnError="True">
-                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                        </ValidationSettings>
-                                                        <BorderLeft BorderStyle="None" />
-                                                        <BorderTop BorderStyle="None" />
-                                                        <BorderRight BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                        <DisabledStyle ForeColor="#333333">
-                                                        </DisabledStyle>
-                                                    </dx:ASPxDateEdit>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <CaptionStyle Font-Bold="False">
-                                            </CaptionStyle>
-                                        </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Transaction Type" ColSpan="1">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="drpdown_expenseType" runat="server" ClientInstanceName="drpdown_expenseType" DataSourceID="SqlTranType" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" TextField="Description" ValueField="ExpenseType_ID" Width="100%" ReadOnly="True" ClientEnabled="False">
                                                         <DropDownButton Visible="False">
                                                         </DropDownButton>
                                                         <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
@@ -791,6 +869,95 @@
                                             <CaptionStyle Font-Bold="False">
                                             </CaptionStyle>
                                         </dx:LayoutItem>
+                                        <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2">
+                                        </dx:EmptyLayoutItem>
+                                        <dx:LayoutItem Caption="Travel" ColSpan="1" FieldName="ForeignDomestic">
+                                            <LayoutItemNestedControlCollection>
+                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                    <dx:ASPxComboBox ID="fordCB" runat="server" ClientInstanceName="fordCB" Font-Bold="True" Font-Size="Small" Width="100%" ClientEnabled="False" ReadOnly="True">
+                                                        <ClientSideEvents SelectedIndexChanged="CheckCurrency" />
+                                                        <Items>
+                                                            <dx:ListEditItem Text="Domestic" Value="Domestic" />
+                                                            <dx:ListEditItem Text="Foreign" Value="Foreign" />
+                                                        </Items>
+                                                        <DropDownButton Visible="False">
+                                                        </DropDownButton>
+                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                        </ValidationSettings>
+                                                        <Border BorderStyle="None" />
+                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                        <DisabledStyle ForeColor="#333333">
+                                                        </DisabledStyle>
+                                                    </dx:ASPxComboBox>
+                                                </dx:LayoutItemNestedControlContainer>
+                                            </LayoutItemNestedControlCollection>
+                                            <CaptionStyle Font-Bold="False" Font-Italic="False">
+                                            </CaptionStyle>
+                                        </dx:LayoutItem>
+                                        <dx:LayoutItem Caption="Transaction Type" ColSpan="1" FieldName="ExpenseType_ID">
+                                            <LayoutItemNestedControlCollection>
+                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                    <dx:ASPxComboBox ID="drpdown_expenseType" runat="server" ClientInstanceName="drpdown_expenseType" DataSourceID="SqlTranType" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" TextField="Description" ValueField="ExpenseType_ID" Width="100%" ReadOnly="True" ClientEnabled="False">
+                                                        <DropDownButton Visible="False">
+                                                        </DropDownButton>
+                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                        </ValidationSettings>
+                                                        <Border BorderStyle="None" />
+                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                        <DisabledStyle ForeColor="#333333">
+                                                        </DisabledStyle>
+                                                    </dx:ASPxComboBox>
+                                                </dx:LayoutItemNestedControlContainer>
+                                            </LayoutItemNestedControlCollection>
+                                            <CaptionStyle Font-Bold="False">
+                                            </CaptionStyle>
+                                        </dx:LayoutItem>
+                                        <dx:LayoutItem Caption="Charged To" ColSpan="1" FieldName="ChargedTo">
+                                            <LayoutItemNestedControlCollection>
+                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                    <dx:ASPxComboBox ID="chargedCB" runat="server" ClientInstanceName="chargedCB" DataSourceID="SqlCompany" Font-Bold="True" Font-Size="Small" TextField="CompanyShortName" ValueField="WASSId" Width="100%" NullValueItemDisplayText="{0}" TextFormatString="{0}">
+                                                        <Columns>
+                                                            <dx:ListBoxColumn Caption="Company" FieldName="CompanyShortName" Width="90px">
+                                                            </dx:ListBoxColumn>
+                                                            <dx:ListBoxColumn Caption="Company Description" FieldName="CompanyDesc" Width="150px">
+                                                            </dx:ListBoxColumn>
+                                                        </Columns>
+                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                        </ValidationSettings>
+                                                        <Border BorderStyle="None" />
+                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                        <DisabledStyle ForeColor="#333333">
+                                                        </DisabledStyle>
+                                                    </dx:ASPxComboBox>
+                                                </dx:LayoutItemNestedControlContainer>
+                                            </LayoutItemNestedControlCollection>
+                                            <CaptionStyle Font-Bold="False" Font-Italic="False">
+                                            </CaptionStyle>
+                                        </dx:LayoutItem>
+                                        <dx:LayoutItem Caption="Report Date" ColSpan="1" FieldName="Date_Created">
+                                            <LayoutItemNestedControlCollection>
+                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                    <dx:ASPxDateEdit ID="reportdateDE" runat="server" ClientInstanceName="reportdateDE" DisplayFormatString="MMMM dd, yyyy" Font-Bold="True" Font-Size="Small" Width="100%" Enabled="False">
+                                                        <DropDownButton Visible="False">
+                                                        </DropDownButton>
+                                                        <ValidationSettings ValidationGroup="ExpenseEdit" Display="Dynamic" SetFocusOnError="True">
+                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                        </ValidationSettings>
+                                                        <BorderLeft BorderStyle="None" />
+                                                        <BorderTop BorderStyle="None" />
+                                                        <BorderRight BorderStyle="None" />
+                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                        <DisabledStyle ForeColor="#333333">
+                                                        </DisabledStyle>
+                                                    </dx:ASPxDateEdit>
+                                                </dx:LayoutItemNestedControlContainer>
+                                            </LayoutItemNestedControlCollection>
+                                            <CaptionStyle Font-Bold="False">
+                                            </CaptionStyle>
+                                        </dx:LayoutItem>
                                         <dx:LayoutItem Caption="Date From" ColSpan="1" FieldName="Date_From">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
@@ -800,6 +967,8 @@
                                                         </ValidationSettings>
                                                         <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                        <DisabledStyle ForeColor="#333333">
+                                                        </DisabledStyle>
                                                     </dx:ASPxDateEdit>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
@@ -815,6 +984,8 @@
                                                         </ValidationSettings>
                                                         <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                        <DisabledStyle ForeColor="#333333">
+                                                        </DisabledStyle>
                                                     </dx:ASPxDateEdit>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
@@ -832,6 +1003,8 @@
                                                         </ValidationSettings>
                                                         <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                        <DisabledStyle ForeColor="#333333">
+                                                        </DisabledStyle>
                                                     </dx:ASPxTimeEdit>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
@@ -849,6 +1022,8 @@
                                                         </ValidationSettings>
                                                         <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                        <DisabledStyle ForeColor="#333333">
+                                                        </DisabledStyle>
                                                     </dx:ASPxTimeEdit>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
@@ -864,6 +1039,8 @@
                                                         </ValidationSettings>
                                                         <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                        <DisabledStyle ForeColor="#333333">
+                                                        </DisabledStyle>
                                                     </dx:ASPxMemo>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
@@ -879,6 +1056,8 @@
                                                         </ValidationSettings>
                                                         <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                        <DisabledStyle ForeColor="#333333">
+                                                        </DisabledStyle>
                                                     </dx:ASPxMemo>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
@@ -1746,39 +1925,43 @@
                                                         <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
                                                             <EditFormSettings Visible="False" />
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="TranType" ShowInCustomizationForm="True" Visible="False" VisibleIndex="12">
+                                                        <dx:GridViewDataTextColumn FieldName="TranType" ShowInCustomizationForm="True" Visible="False" VisibleIndex="15">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataCheckColumn FieldName="isTravel" ShowInCustomizationForm="True" Visible="False" VisibleIndex="13">
+                                                        <dx:GridViewDataCheckColumn FieldName="isTravel" ShowInCustomizationForm="True" Visible="False" VisibleIndex="16">
                                                         </dx:GridViewDataCheckColumn>
                                                         <dx:GridViewDataTextColumn FieldName="SAPCostCenter" ShowInCustomizationForm="True" VisibleIndex="7">
                                                         </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataTextColumn Caption="IO No." FieldName="IO_Num" ShowInCustomizationForm="True" VisibleIndex="8">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataDateColumn Caption="Last Day of Transaction" FieldName="LastDayTransact" ShowInCustomizationForm="True" VisibleIndex="10" Visible="False">
+                                                        <dx:GridViewDataDateColumn Caption="Last Day of Transaction" FieldName="LastDayTransact" ShowInCustomizationForm="True" VisibleIndex="13" Visible="False">
                                                             <PropertiesDateEdit DisplayFormatString="MMMM dd, yyyy">
                                                             </PropertiesDateEdit>
                                                         </dx:GridViewDataDateColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Amount" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                        <dx:GridViewDataTextColumn FieldName="Amount" ShowInCustomizationForm="True" VisibleIndex="12">
                                                             <PropertiesTextEdit DisplayFormatString="#,##0.00">
+                                                                <Style Font-Bold="True">
+                                                                </Style>
                                                             </PropertiesTextEdit>
+                                                            <CellStyle Font-Bold="True">
+                                                            </CellStyle>
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Purpose" ShowInCustomizationForm="True" VisibleIndex="9">
+                                                        <dx:GridViewDataTextColumn FieldName="Purpose" ShowInCustomizationForm="True" VisibleIndex="3">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="WF_Id" ShowInCustomizationForm="True" Visible="False" VisibleIndex="14">
+                                                        <dx:GridViewDataTextColumn FieldName="WF_Id" ShowInCustomizationForm="True" Visible="False" VisibleIndex="17">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="User_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="15">
+                                                        <dx:GridViewDataTextColumn FieldName="User_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="18">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Status" ShowInCustomizationForm="True" Visible="False" VisibleIndex="16">
+                                                        <dx:GridViewDataTextColumn FieldName="Status" ShowInCustomizationForm="True" Visible="False" VisibleIndex="19">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="RFP_DocNum" ShowInCustomizationForm="True" Visible="False" VisibleIndex="17">
+                                                        <dx:GridViewDataTextColumn FieldName="RFP_DocNum" ShowInCustomizationForm="True" Visible="False" VisibleIndex="20">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataDateColumn FieldName="DateCreated" ShowInCustomizationForm="True" VisibleIndex="11">
+                                                        <dx:GridViewDataDateColumn FieldName="DateCreated" ShowInCustomizationForm="True" VisibleIndex="14" Visible="False">
                                                             <PropertiesDateEdit DisplayFormatString="MMMM dd, yyyy">
                                                             </PropertiesDateEdit>
                                                         </dx:GridViewDataDateColumn>
-                                                        <dx:GridViewDataCheckColumn FieldName="IsExpenseCA" ShowInCustomizationForm="True" Visible="False" VisibleIndex="18">
+                                                        <dx:GridViewDataCheckColumn FieldName="IsExpenseCA" ShowInCustomizationForm="True" Visible="False" VisibleIndex="21">
                                                         </dx:GridViewDataCheckColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Exp_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="19">
+                                                        <dx:GridViewDataTextColumn FieldName="Exp_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="22">
                                                         </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataComboBoxColumn Caption="Company" FieldName="Company_ID" ShowInCustomizationForm="True" VisibleIndex="4" Visible="False">
                                                             <PropertiesComboBox DataSourceID="sqlCompany" TextField="CompanyShortName" ValueField="WASSId">
@@ -1788,12 +1971,26 @@
                                                             <PropertiesComboBox DataSourceID="sqlDept" TextField="DepCode" ValueField="ID">
                                                             </PropertiesComboBox>
                                                         </dx:GridViewDataComboBoxColumn>
-                                                        <dx:GridViewDataComboBoxColumn Caption="Payment Method" FieldName="PayMethod" ShowInCustomizationForm="True" VisibleIndex="6">
+                                                        <dx:GridViewDataComboBoxColumn Caption="Payment Method" FieldName="PayMethod" ShowInCustomizationForm="True" VisibleIndex="10">
                                                             <PropertiesComboBox DataSourceID="sqlPayMethod" TextField="PMethod_name" ValueField="ID">
                                                             </PropertiesComboBox>
                                                         </dx:GridViewDataComboBoxColumn>
-                                                        <dx:GridViewDataComboBoxColumn FieldName="Payee" ShowInCustomizationForm="True" VisibleIndex="2" Width="400px">
+                                                        <dx:GridViewDataComboBoxColumn FieldName="Payee" ShowInCustomizationForm="True" VisibleIndex="2">
                                                             <PropertiesComboBox DataSourceID="SqlEmpName" TextField="FullName" ValueField="EmpCode">
+                                                            </PropertiesComboBox>
+                                                        </dx:GridViewDataComboBoxColumn>
+                                                        <dx:GridViewDataTextColumn FieldName="Currency" ShowInCustomizationForm="True" VisibleIndex="11">
+                                                            <PropertiesTextEdit>
+                                                                <Style Font-Bold="True">
+                                                                </Style>
+                                                            </PropertiesTextEdit>
+                                                            <CellStyle Font-Bold="True">
+                                                            </CellStyle>
+                                                        </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewDataTextColumn FieldName="WBS" ShowInCustomizationForm="True" VisibleIndex="9">
+                                                        </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewDataComboBoxColumn Caption="Classification" FieldName="Classification_Type_Id" ShowInCustomizationForm="True" VisibleIndex="6">
+                                                            <PropertiesComboBox DataSourceID="SqlExpenseClassification" TextField="ClassificationName" ValueField="ID">
                                                             </PropertiesComboBox>
                                                         </dx:GridViewDataComboBoxColumn>
                                                     </Columns>
@@ -2226,7 +2423,7 @@
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxButton ID="ASPxButton7" runat="server" AutoPostBack="False" BackColor="White" ForeColor="Gray" HorizontalAlign="Right" Text="Cancel" UseSubmitBehavior="False">
                                             <ClientSideEvents Click="function(s, e) {
-	SubmitPopup.Hide();
+	SubmitPopup2.Hide();
 }" />
                                             <Border BorderColor="Gray" />
                                         </dx:ASPxButton>
@@ -2389,7 +2586,7 @@
                                                                 <ClientSideEvents Click="ExpPopupClick" />
                                                                 <Border BorderColor="#006838" />
                                                             </dx:ASPxButton>
-                                                            <dx:ASPxButton ID="popupCancelBtn" runat="server" AutoPostBack="False" BackColor="White" ClientInstanceName="popupCancelBtn" CssClass="ms-4" Font-Bold="True" Font-Size="Small" ForeColor="#878787" Text="Cancel" UseSubmitBehavior="False">
+                                                            <dx:ASPxButton ID="popupCancelBtn" runat="server" AutoPostBack="False" BackColor="White" ClientInstanceName="popupCancelBtn" CssClass="ms-4" Font-Bold="True" Font-Size="Small" ForeColor="#878787" Text="Close" UseSubmitBehavior="False">
                                                                 <ClientSideEvents Click="ExpCancelClick" />
                                                                 <Border BorderColor="#878787" />
                                                             </dx:ASPxButton>
@@ -3024,6 +3221,7 @@
                                                                 <SettingsEditing Mode="Batch">
                                                                     <BatchEditSettings StartEditAction="Click" />
                                                                 </SettingsEditing>
+                                                                <Settings ShowStatusBar="Hidden" />
                                                                 <SettingsBehavior AllowDragDrop="False" />
                                                                 <SettingsCommandButton>
                                                                     <NewButton Text=" ">
@@ -3088,7 +3286,7 @@
                                                                                 </CellStyle>
                                                                             </dx:GridViewDataComboBoxColumn>
                                                                             <dx:GridViewDataSpinEditColumn Caption=" Amount" CellRowSpan="3" FieldName="ReimTranspo_Amount1" ShowInCustomizationForm="True" VisibleIndex="1" Width="90px">
-                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
+                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom" ClientInstanceName="ReimTranspo_Amount1">
                                                                                 </PropertiesSpinEdit>
                                                                                 <EditFormCaptionStyle HorizontalAlign="Center">
                                                                                 </EditFormCaptionStyle>
@@ -3108,6 +3306,8 @@
                                                                                         <dx:ListBoxColumn Caption="Description" FieldName="Description" Width="180px">
                                                                                         </dx:ListBoxColumn>
                                                                                     </Columns>
+                                                                                    <ClearButton DisplayMode="Always">
+                                                                                    </ClearButton>
                                                                                 </PropertiesComboBox>
                                                                                 <EditFormCaptionStyle HorizontalAlign="Center">
                                                                                 </EditFormCaptionStyle>
@@ -3139,6 +3339,8 @@
                                                                                         <dx:ListBoxColumn Caption="Description" FieldName="Description" Width="180px">
                                                                                         </dx:ListBoxColumn>
                                                                                     </Columns>
+                                                                                    <ClearButton DisplayMode="Always">
+                                                                                    </ClearButton>
                                                                                 </PropertiesComboBox>
                                                                                 <EditFormCaptionStyle HorizontalAlign="Center">
                                                                                 </EditFormCaptionStyle>
@@ -3173,6 +3375,8 @@
                                                                                         <dx:ListEditItem Text="Full" Value="F" />
                                                                                         <dx:ListEditItem Text="Partial" Value="P" />
                                                                                     </Items>
+                                                                                    <ClearButton DisplayMode="Always">
+                                                                                    </ClearButton>
                                                                                 </PropertiesComboBox>
                                                                                 <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
                                                                                 <Border BorderColor="Black" BorderStyle="Solid" />
@@ -3263,6 +3467,8 @@
                }
 }
 " />
+                                                                                    <ClearButton DisplayMode="Always">
+                                                                                    </ClearButton>
                                                                                 </PropertiesComboBox>
                                                                                 <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
                                                                                 <Border BorderColor="Black" BorderStyle="Solid" />
@@ -3324,6 +3530,8 @@
                }
 }
 " />
+                                                                                    <ClearButton DisplayMode="Always">
+                                                                                    </ClearButton>
                                                                                 </PropertiesComboBox>
                                                                                 <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
                                                                                 <Border BorderColor="Black" BorderStyle="Solid" />
@@ -3372,6 +3580,7 @@
                                                                     <AlternatingRow BackColor="#ECECEC">
                                                                     </AlternatingRow>
                                                                 </Styles>
+                                                                <Paddings PaddingBottom="25px" />
                                                             </dx:ASPxGridView>
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
@@ -4095,7 +4304,7 @@
         </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlEmpName" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_UserMaster]"></asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [CompanyMaster] WHERE ([WASSId] IS NOT NULL)"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [CompanyMaster] WHERE ([WASSId] IS NOT NULL) ORDER BY CompanyDesc ASC"></asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlTranType" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_ExpenseType]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlExpCat" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACDE_T_MasterCodes] WHERE ([Code] = @Code)">
         <SelectParameters>
@@ -4130,13 +4339,14 @@
             <asp:Parameter DefaultValue="True" Name="isTravel" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="sqlRFPMainCA" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_RFPMain] WHERE (([User_ID] = @User_ID) AND ([IsExpenseCA] = @IsExpenseCA) AND ([TranType] = @TranType) AND ([Status] = @Status) AND ([Exp_ID] IS NULL) AND ([Payee] = @Payee))">
+    <asp:SqlDataSource ID="sqlRFPMainCA" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_RFPMain] WHERE (([User_ID] = @User_ID) AND ([IsExpenseCA] = @IsExpenseCA) AND ([TranType] = @TranType) AND ([Status] = @Status) AND ([Exp_ID] IS NULL) AND ([Payee] = @Payee) AND ([isForeignTravel] = @isForeignTravel))">
         <SelectParameters>
             <asp:SessionParameter Name="User_ID" SessionField="userID" Type="String" />
             <asp:Parameter DefaultValue="True" Name="IsExpenseCA" />
             <asp:Parameter DefaultValue="1" Name="TranType" />
             <asp:SessionParameter DefaultValue="" Name="Status" SessionField="statusid" />
             <asp:SessionParameter Name="Payee" SessionField="Employee_Id" />
+            <asp:SessionParameter Name="isForeignTravel" SessionField="isForeignTravel" />
         </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlRFPMainReim" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_RFPMain] WHERE (([IsExpenseReim] = @IsExpenseReim) AND ([Exp_ID] = @Exp_ID))">
@@ -4227,28 +4437,11 @@
             <asp:Parameter Name="original_ID" Type="Int32" />
         </UpdateParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlDocs2" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" DeleteCommand="DELETE FROM [ITP_T_FileAttachment] WHERE [ID] = @original_ID" InsertCommand="INSERT INTO [ITP_T_FileAttachment] ([FileName], [Description], [DateUploaded], [FileSize]) VALUES (@FileName, @Description, @DateUploaded, @FileSize)" OldValuesParameterFormatString="original_{0}" SelectCommand="SELECT [ID], [FileName], [Description], [DateUploaded], [FileSize], [FileExtension] FROM [ITP_T_FileAttachment] WHERE (([App_ID] = @App_ID) AND ([Doc_ID] = @Doc_ID) AND ([User_ID] = @User_ID))" UpdateCommand="UPDATE [ITP_T_FileAttachment] SET [FileName] = @FileName, [Description] = @Description, [DateUploaded] = @DateUploaded, [FileSize] = @FileSize WHERE [ID] = @original_ID">
-        <DeleteParameters>
-            <asp:Parameter Name="original_ID" Type="Int32" />
-        </DeleteParameters>
-        <InsertParameters>
-            <asp:Parameter Name="FileName" Type="String" />
-            <asp:Parameter Name="Description" Type="String" />
-            <asp:Parameter Name="DateUploaded" Type="DateTime" />
-            <asp:Parameter Name="FileSize" Type="String" />
-        </InsertParameters>
+    <asp:SqlDataSource ID="SqlDocs2" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" OldValuesParameterFormatString="original_{0}" SelectCommand="SELECT * FROM [vw_ACCEDE_I_TravelDocsPerDate] WHERE (([App_ID] = @App_ID) AND ([Doc_ID] = @Doc_ID))">
         <SelectParameters>
             <asp:Parameter Name="App_ID" Type="Int32" DefaultValue="1032" />
-            <asp:SessionParameter DefaultValue="" Name="Doc_ID" SessionField="ExpDetailsID" Type="Int32" />
-            <asp:SessionParameter DefaultValue="" Name="User_ID" SessionField="userID" />
+            <asp:SessionParameter Name="Doc_ID" SessionField="ExpDetailsID" Type="Int32" />
         </SelectParameters>
-        <UpdateParameters>
-            <asp:Parameter Name="FileName" Type="String" />
-            <asp:Parameter Name="Description" Type="String" />
-            <asp:Parameter Name="DateUploaded" Type="DateTime" />
-            <asp:Parameter Name="FileSize" Type="String" />
-            <asp:Parameter Name="original_ID" Type="Int32" />
-        </UpdateParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlRTMap" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" DeleteCommand="DELETE FROM [ACCEDE_T_TraExpReimTranspoMap] WHERE [ReimTranspo_ID] = @ReimTranspo_ID" InsertCommand="INSERT INTO [ACCEDE_T_TraExpReimTranspoMap] ([ReimTranspo_Type], [ReimTranspo_Amount], [TravelExpenseDetail_ID], [User_ID]) VALUES (@ReimTranspo_Type, @ReimTranspo_Amount, @TravelExpenseDetail_ID, @User_ID)" SelectCommand="SELECT * FROM [ACCEDE_T_TraExpReimTranspoMap] WHERE (([TravelExpenseDetail_ID] = @TravelExpenseDetail_ID)) ORDER BY [ReimTranspo_ID]" UpdateCommand="UPDATE [ACCEDE_T_TraExpReimTranspoMap] SET [ReimTranspo_Type] = @ReimTranspo_Type, [ReimTranspo_Amount] = @ReimTranspo_Amount, [TravelExpenseDetail_ID] = @TravelExpenseDetail_ID, [User_ID] = @User_ID WHERE [ReimTranspo_ID] = @ReimTranspo_ID">
         <DeleteParameters>
@@ -4399,5 +4592,7 @@
         <SelectParameters>
             <asp:SessionParameter Name="ExpenseReportDetail_ID" SessionField="ExpDetailsID" Type="Int32" />
         </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlExpenseClassification" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_ExpenseClassification]">
     </asp:SqlDataSource>
 </asp:Content>

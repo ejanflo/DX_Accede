@@ -492,6 +492,9 @@
       <DependentUpon>FileHandler.ashx</DependentUpon>
     </Compile>
     <Compile Include="GenerateDocNo.cs" />
+    <Compile Include="ITPORTAL.cs">
+      <DependentUpon>ITPORTAL.dbml</DependentUpon>
+    </Compile>
     <Compile Include="ITPORTAL.designer.cs">
       <DependentUpon>ITPORTAL.dbml</DependentUpon>
       <DesignTime>True</DesignTime>

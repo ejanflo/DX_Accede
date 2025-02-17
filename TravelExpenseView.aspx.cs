@@ -157,7 +157,7 @@ namespace DX_WebTemplate
                     due_lbl.Caption = "Due To Company";
                 }
 
-                drpdown_expenseType.Value = expType;
+                departmentCB.Value = expType;
                 lbl_caTotal.Text = totalca.ToString();
                 lbl_expenseTotal.Text = totalexp.ToString();
                 lbl_dueTotal.Text = totalexp > totalca ? $"({(totalexp - totalca):N2})" : (totalca - totalexp).ToString("N2");

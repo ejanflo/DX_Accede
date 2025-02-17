@@ -492,7 +492,7 @@ namespace DX_WebTemplate
         [WebMethod]
         public static object SaveSubmitTravelExpenseAJAX(string empname, DateTime reportdate, string company, string department, DateTime datefrom, DateTime dateto, DateTime timedepart, DateTime timearrive, string trip, string purpose, string expenseType, string btnaction)
         {
-            TravelExpenseAdd tra = new TravelExpenseAdd();
+            TravelExpenseEdit tra = new TravelExpenseEdit();
             return tra.SaveSubmitTravelExpense(empname, reportdate, company, department, datefrom, dateto, timedepart, timearrive, trip, purpose, expenseType, btnaction);
         }
 

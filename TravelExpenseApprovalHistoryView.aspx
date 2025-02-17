@@ -566,7 +566,7 @@
                         <dx:LayoutGroup ColSpan="2" ColumnSpan="2" GroupBoxDecoration="None" Width="100%">
                             <Paddings PaddingBottom="25px" />
                             <Items>
-                                <dx:TabbedLayoutGroup ColSpan="1" VerticalAlign="Top" Width="100%" ActiveTabIndex="2">
+                                <dx:TabbedLayoutGroup ColSpan="1" VerticalAlign="Top" Width="100%">
                                     <Items>
                                         <dx:LayoutGroup Caption="EXPENSES" ColSpan="1" VerticalAlign="Top">
                                             <Paddings PaddingBottom="15px" />
