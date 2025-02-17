@@ -37,6 +37,7 @@ namespace DX_WebTemplate
                 if (AnfloSession.Current.ValidCookieUser())
                 {
                     AnfloSession.Current.CreateSession(HttpContext.Current.User.ToString());
+                    var EmpCode = Session["userID"].ToString();
 
                     var mainExp = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"])).FirstOrDefault();
                     var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense").Where(x => x.App_Id == 1032).FirstOrDefault();
@@ -61,6 +62,29 @@ namespace DX_WebTemplate
                     SqlUser.SelectParameters["DelegateTo_UserID"].DefaultValue = mainExp.ExpenseName.ToString();
                     SqlUser.SelectParameters["DateFrom"].DefaultValue = DateTime.Now.ToString();
                     SqlUser.SelectParameters["DateTo"].DefaultValue = DateTime.Now.ToString();
+
+                    SqlUserSelf.SelectParameters["EmpCode"].DefaultValue = EmpCode;
+
+                    exp_EmpId.DataSourceID = null;
+                    exp_EmpId.DataSource = SqlUser;
+
+                    exp_EmpId.Value = Session["userID"].ToString();
+                    exp_EmpId.DataBind();
+
+                    if (exp_EmpId.Items.Count() > 0)
+                    {
+                        exp_EmpId.Value = Session["userID"].ToString();
+                        exp_EmpId.DataBind();
+                    }
+                    else
+                    {
+                        exp_EmpId.DataSourceID = null;
+                        exp_EmpId.DataSource = SqlUserSelf;
+                        exp_EmpId.ValueField = "EmpCode";
+
+                        exp_EmpId.DataBind();
+                        exp_EmpId.SelectedIndex = 0;
+                    }
 
                     var pay_released = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Disbursed").FirstOrDefault();
                     sqlRFPMainCA.SelectParameters["User_ID"].DefaultValue = mainExp.ExpenseName.ToString();
@@ -154,47 +178,90 @@ namespace DX_WebTemplate
                     }
                     //// - - SET WORKFLOWS - - ////
                     //// - - Setting FAP workflow - - ////
-                    var fapwf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(mainExp.CompanyId))
-                        .Where(x => x.App_Id == 1032)
-                        .Where(x => x.Minimum <= Convert.ToDecimal(Math.Abs(totalExp)))
-                        .Where(x => x.Maximum >= Convert.ToDecimal(Math.Abs(totalExp)))
-                        .Where(x => x.IsRA == null || x.IsRA == false)
-                        .FirstOrDefault();
 
-                    if (fapwf != null)
+                    if (!IsPostBack)
                     {
-                        drpdwn_FAPWF.SelectedIndex = 0;
-                        SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = fapwf.WF_Id.ToString();
-                        SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = fapwf.WF_Id.ToString();
+                        var classTypeId = mainExp.ExpenseClassification;
+                        var classType = _DataContext.ACCEDE_S_ExpenseClassifications.Where(x => x.ID == Convert.ToInt32(classTypeId)).FirstOrDefault();
+                        var fapwf_id = 0;
+
+                        if (classType != null && Convert.ToBoolean(classType.withFAPLogic) == true)
+                        {
+                            var fapwf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(mainExp.CompanyId))
+                            .Where(x => x.App_Id == 1032)
+                            .Where(x => x.With_DivHead == true)
+                            .Where(x => x.Minimum <= Convert.ToDecimal(Math.Abs(totalExp)))
+                            .Where(x => x.Maximum >= Convert.ToDecimal(Math.Abs(totalExp)))
+                            .Where(x => x.IsRA == null || x.IsRA == false)
+                            .FirstOrDefault();
+
+                            if (fapwf != null)
+                            {
+                                fapwf_id = fapwf.WF_Id;
+                            }
+                        }
+                        else
+                        {
+                            var fapwf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(mainExp.CompanyId))
+                            .Where(x => x.App_Id == 1032)
+                            .Where(x => x.With_DivHead == false || x.With_DivHead == null)
+                            .Where(x => x.Minimum <= Convert.ToDecimal(Math.Abs(totalExp)))
+                            .Where(x => x.Maximum >= Convert.ToDecimal(Math.Abs(totalExp)))
+                            .Where(x => x.IsRA == null || x.IsRA == false)
+                            .FirstOrDefault();
+
+                            if (fapwf != null)
+                            {
+                                fapwf_id = fapwf.WF_Id;
+                            }
+
+                        }
+
+                        if (fapwf_id != 0)
+                        {
+                            drpdwn_FAPWF.SelectedIndex = 0;
+                            SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = fapwf_id.ToString();
+                            SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = fapwf_id.ToString();
+
+                            //FAPWFGrid.DataSourceID = null;
+                            //FAPWFGrid.DataSource = SqlFAPWF;
+                            //FAPWFGrid.DataBind();
+
+                        }
+
+                        //// - - Setting RA Workflow - - ////
+
+                        var depcode = _DataContext.ITP_S_OrgDepartmentMasters
+                            .Where(x => x.ID == Convert.ToInt32(mainExp.Dept_Id))
+                            .FirstOrDefault();
+
+                        // Fetch data using the stored procedure
+                        DataTable rawf = GetWorkflowHeadersByExpenseAndDepartment(mainExp.ExpenseName.ToString(), Convert.ToInt32(mainExp.CompanyId), totalExp, depcode != null ? depcode.DepCode : "0", 1032);
+
+                        if (rawf != null && rawf.Rows.Count > 0)
+                        {
+                            // Get the first row's WF_Id value
+                            DataRow firstRow = rawf.Rows[0];
+                            int wfId = Convert.ToInt32(firstRow["WF_Id"]);
+
+                            // Set the dropdown to the first item (if applicable)
+                            drpdown_WF.SelectedIndex = 0;
+
+                            // Update the SQL data source parameters
+                            SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
+                            SqlWF.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
+
+                        }
+                        else
+                        {
+                            // Handle the case when no data is returned
+                            drpdown_WF.SelectedIndex = -1; // Optionally reset the dropdown
+                            SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = string.Empty;
+                            SqlWF.SelectParameters["WF_Id"].DefaultValue = string.Empty;
+                        }
                     }
 
-                    //// - - Setting RA Workflow - - ////
                     
-                    var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x=>x.ID == Convert.ToInt32(mainExp.Dept_Id)).FirstOrDefault();
-                    
-                    // Fetch data using the stored procedure
-                    DataTable rawf = GetWorkflowHeadersByExpenseAndDepartment(mainExp.ExpenseName.ToString(), Convert.ToInt32(mainExp.CompanyId), totalExp, depcode != null ? depcode.DepCode : "0", 1032);
-
-                    if (rawf != null && rawf.Rows.Count > 0)
-                    {
-                        // Get the first row's WF_Id value
-                        DataRow firstRow = rawf.Rows[0];
-                        int wfId = Convert.ToInt32(firstRow["WF_Id"]);
-
-                        // Set the dropdown to the first item (if applicable)
-                        drpdown_WF.SelectedIndex = 0;
-
-                        // Update the SQL data source parameters
-                        SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
-                        SqlWF.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
-                    }
-                    else
-                    {
-                        // Handle the case when no data is returned
-                        drpdown_WF.SelectedIndex = -1; // Optionally reset the dropdown
-                        SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = string.Empty;
-                        SqlWF.SelectParameters["WF_Id"].DefaultValue = string.Empty;
-                    }
 
                     //// - - END SETTING WORKFLOW - - ////
 
@@ -265,7 +332,11 @@ namespace DX_WebTemplate
             }
             catch (Exception ex)
             {
-                Response.Redirect("~/Logon.aspx");
+                if (!IsPostBack)
+                {
+                    Response.Redirect("~/Logon.aspx");
+                }
+                
             }
         }
 
@@ -369,7 +440,12 @@ namespace DX_WebTemplate
 
         protected void FAPWFGrid_CustomCallback(object sender, DevExpress.Web.ASPxGridViewCustomCallbackEventArgs e)
         {
+            SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = e.Parameters != null ? e.Parameters.ToString() : "";
+            SqlFAPWF.DataBind();
 
+            FAPWFGrid.DataSourceID = null;
+            FAPWFGrid.DataSource = SqlFAPWF;
+            FAPWFGrid.DataBind();
         }
 
         protected void capopGrid_CustomCallback(object sender, DevExpress.Web.ASPxGridViewCustomCallbackEventArgs e)
@@ -666,7 +742,84 @@ namespace DX_WebTemplate
 
         protected void drpdwn_FAPWF_Callback(object sender, CallbackEventArgsBase e)
         {
+            var mainExp = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"])).FirstOrDefault();
 
+            var rfpCA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == mainExp.ID).Where(x => x.IsExpenseCA == true);
+            var totalCA = new decimal(0.00);
+            foreach (var item in rfpCA)
+            {
+                totalCA += Convert.ToDecimal(item.Amount);
+
+            }
+            //if (totalCA >= 0)
+            //{
+            //    drpdown_expenseType.Text = "Liquidation";
+            //}
+            //else
+            //{
+            //    drpdown_expenseType.Text = "Reimbursement";
+            //}
+
+            var expDetail = _DataContext.ACCEDE_T_ExpenseDetails.Where(x => x.ExpenseMain_ID == mainExp.ID);
+            var totalExp = new decimal(0.00);
+            foreach (var item in expDetail)
+            {
+                totalExp += Convert.ToDecimal(item.GrossAmount);
+            }
+
+            var totalDue = new decimal(0.00);
+            totalDue = totalCA - totalExp;
+
+            //// - - Setting FAP workflow - - ////
+            var classTypeId = drpdown_classification.Value != null ? drpdown_classification.Value : 0;
+            var classType = _DataContext.ACCEDE_S_ExpenseClassifications.Where(x => x.ID == Convert.ToInt32(classTypeId)).FirstOrDefault();
+            var fapwf_id = 0;
+
+            if (classType != null && Convert.ToBoolean(classType.withFAPLogic) == true)
+            {
+                var fapwf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(mainExp.CompanyId))
+                .Where(x => x.App_Id == 1032)
+                .Where(x => x.With_DivHead == true)
+                .Where(x => x.Minimum <= Convert.ToDecimal(Math.Abs(totalExp)))
+                .Where(x => x.Maximum >= Convert.ToDecimal(Math.Abs(totalExp)))
+                .Where(x => x.IsRA == null || x.IsRA == false)
+                .FirstOrDefault();
+
+                if (fapwf != null)
+                {
+                    fapwf_id = fapwf.WF_Id;
+                }
+            }
+            else
+            {
+                var fapwf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(mainExp.CompanyId))
+                .Where(x => x.App_Id == 1032)
+                .Where(x => x.With_DivHead == false || x.With_DivHead == null)
+                .Where(x => x.Minimum <= Convert.ToDecimal(Math.Abs(totalExp)))
+                .Where(x => x.Maximum >= Convert.ToDecimal(Math.Abs(totalExp)))
+                .Where(x => x.IsRA == null || x.IsRA == false)
+                .FirstOrDefault();
+
+                if (fapwf != null)
+                {
+                    fapwf_id = fapwf.WF_Id;
+                }
+
+            }
+
+            if (fapwf_id != 0)
+            {
+                
+                SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = fapwf_id.ToString();
+                SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = fapwf_id.ToString();
+                drpdwn_FAPWF.SelectedIndex = 0;
+                drpdwn_FAPWF.DataBind();
+
+                SqlFAPWF.DataBind();
+                FAPWFGrid.DataSourceID = null;
+                FAPWFGrid.DataSource = SqlFAPWF;
+                FAPWFGrid.DataBind();
+            }
         }
 
         [WebMethod]
@@ -804,16 +957,16 @@ namespace DX_WebTemplate
 
         [WebMethod]
         public static bool AddRFPReimburseAJAX(string comp_id, string payMethod, string purpose, string dept_id, string cCenter,
-            string io, string payee, string acctCharge, string amount, string remarks, bool isTravelrfp, string wbs, string currency)
+            string io, string payee, string acctCharge, string amount, string remarks, bool isTravelrfp, string wbs, string currency, string classification)
         {
             AccedeExpenseReportEdit1 exp = new AccedeExpenseReportEdit1();
 
             return exp.AddRFPReimburse(comp_id, payMethod, purpose, dept_id, cCenter,
-            io, payee, acctCharge, amount, remarks, isTravelrfp, wbs, currency);
+            io, payee, acctCharge, amount, remarks, isTravelrfp, wbs, currency, classification);
         }
 
         public bool AddRFPReimburse(string comp_id, string payMethod, string purpose, string dept_id, string cCenter,
-            string io, string payee, string acctCharge, string amount, string remarks, bool isTravelrfp, string wbs, string currency)
+            string io, string payee, string acctCharge, string amount, string remarks, bool isTravelrfp, string wbs, string currency, string classification)
         {
             try
             {
@@ -866,7 +1019,7 @@ namespace DX_WebTemplate
                         rfp.Exp_ID = expMain.ID;
                         rfp.TranType = 2;
                         rfp.IsExpenseReim = true;
-                        rfp.isTravel = isTravelrfp;
+                        rfp.isTravel = false;//isTravelrfp;
                         rfp.DateCreated = DateTime.Now;
                         rfp.RFP_DocNum = docNum.ToString();
                         if (wbs != "")
@@ -876,6 +1029,7 @@ namespace DX_WebTemplate
                         rfp.User_ID = Session["userID"].ToString();
                         rfp.Currency = currency;
                         rfp.Status = expMain.Status;
+                        rfp.Classification_Type_Id = Convert.ToInt32(classification);
 
                     }
 
@@ -895,14 +1049,14 @@ namespace DX_WebTemplate
 
         [WebMethod]
         public static string UpdateExpenseAJAX(string dateFile, string repName, string comp_id, string expType, string expCat,
-            string purpose, bool trav, string wf, string fapwf, string currency, string department, string payType, string btn)
+            string purpose, bool trav, string wf, string fapwf, string currency, string department, string payType, string btn, string classification)
         {
             AccedeExpenseReportEdit1 exp = new AccedeExpenseReportEdit1();
-            return exp.UpdateExpense(dateFile, repName, comp_id, expType, expCat,purpose, trav, wf, fapwf, currency, department, payType, btn);
+            return exp.UpdateExpense(dateFile, repName, comp_id, expType, expCat,purpose, trav, wf, fapwf, currency, department, payType, btn, classification);
         }
 
         public string UpdateExpense(string dateFile, string repName, string comp_id, string expType, string expCat,
-            string purpose, bool trav, string wf, string fapwf, string currency, string department, string payType, string btn)
+            string purpose, bool trav, string wf, string fapwf, string currency, string department, string payType, string btn, string classification)
         {
             try
             {
@@ -943,6 +1097,7 @@ namespace DX_WebTemplate
                 //exp.remarks = remarks;
                 exp.Exp_Currency = currency;
                 exp.Dept_Id = Convert.ToInt32(department);
+                exp.ExpenseClassification = Convert.ToInt32(classification);
                 if(payType != null)
                 {
                     exp.PaymentType = Convert.ToInt32(payType);
@@ -1121,7 +1276,7 @@ namespace DX_WebTemplate
             string senderName = requestor_fullname;
             string emailSender = requestor_email;
             string senderRemarks = "";
-            string emailSite = "https://devapps.anflocor.com/AccedeExpenseReportApproval.aspx";
+            string emailSite = "https://devapps.anflocor.com/AccedeApprovalPage.aspx";
             string sendEmailTo = user_email.Email;
             string emailSubject = "Document No. " + doc_id + " (" + status + ")";
 
@@ -1876,14 +2031,14 @@ namespace DX_WebTemplate
             sqlCostCenter.SelectParameters["DepartmentId"].DefaultValue = exp_Department.Value != null ? exp_Department.Value.ToString() : "";
             sqlCostCenter.DataBind();
 
-            exp_costCenter.DataSourceID = null;
-            exp_costCenter.DataSource = sqlCostCenter;
-            exp_costCenter.DataBindItems();
+            //exp_costCenter.DataSourceID = null;
+            //exp_costCenter.DataSource = sqlCostCenter;
+            //exp_costCenter.DataBindItems();
 
-            if (exp_costCenter.Items.Count == 1)
-            {
-                exp_costCenter.SelectedIndex = 0;
-            }
+            //if (exp_costCenter.Items.Count == 1)
+            //{
+            //    exp_costCenter.SelectedIndex = 0;
+            //}
         }
 
         private DataTable GetWorkflowHeadersByExpenseAndDepartment(string userId, int companyId, decimal totalExp, string depCode, int app_id)

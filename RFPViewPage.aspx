@@ -216,10 +216,18 @@
                         if (stats == 1) {
                             LoadingPanel1.SetText('Payment disbursed! Printing report&hellip;');
                             LoadingPanel1.Show();
-                            // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
+                            
                             setTimeout(function () {
-                                window.location.href = 'RFPPrintPage.aspx';
+                                window.open('RFPPrintPage.aspx', '_blank');
                             }, 3000); // Adjust the time (in milliseconds) as needed
+
+                            // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
+                            LoadingPanel1.SetText('Printing successful! Redirecting&hellip;');
+                            LoadingPanel1.Show();
+                            setTimeout(function () {
+                                window.location.href = 'CashierInquiryPage.aspx';
+                            }, 3000); // Adjust the time (in milliseconds) as needed
+
                         } else {
                             LoadingPanel1.SetText('Changes saved successfully! Updating document&hellip;');
                             LoadingPanel1.Show();
@@ -641,7 +649,17 @@
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
                                     </dx:LayoutItem>
-                                    <dx:LayoutGroup Caption="" ColCount="2" ColSpan="2" ColumnCount="2" ColumnSpan="2" HorizontalAlign="Left" Width="100%" ClientVisible="False">
+                                    <dx:LayoutItem Caption="Projected Liquidation Date" ColSpan="2" ColumnSpan="2" Width="100%">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxTextBox ID="ASPxTextBox16" runat="server" Font-Bold="True" Font-Size="Medium" ReadOnly="True" Width="100%">
+                                                    <Border BorderStyle="None" />
+                                                    <BorderBottom BorderColor="#333333" BorderStyle="Solid" BorderWidth="1px" />
+                                                </dx:ASPxTextBox>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                    </dx:LayoutItem>
+                                    <dx:LayoutGroup Caption="" ColCount="2" ColSpan="2" ColumnCount="2" ColumnSpan="2" HorizontalAlign="Right" Width="100%">
                                         <Items>
                                             <dx:LayoutItem Caption="" ColSpan="1" Width="30%">
                                                 <LayoutItemNestedControlCollection>
@@ -673,6 +691,26 @@ onTravelClick();
                                             </dx:LayoutItem>
                                         </Items>
                                     </dx:LayoutGroup>
+                                    <dx:LayoutItem Caption="Travel Type" ColSpan="2" ColumnSpan="2" Width="100%" Name="TravType">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxTextBox ID="txtbox_TravType" runat="server" ClientInstanceName="txtbox_TravType" Font-Bold="True" Font-Size="Medium" ReadOnly="True" Width="100%">
+                                                    <Border BorderStyle="None" />
+                                                    <BorderBottom BorderColor="#333333" BorderStyle="Solid" BorderWidth="1px" />
+                                                </dx:ASPxTextBox>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                    </dx:LayoutItem>
+                                    <dx:LayoutItem Caption="Classification" ColSpan="2" ColumnSpan="2" FieldName="ClassificationName" Name="ClassType" Width="100%">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxTextBox ID="ASPxTextBox17" runat="server" Font-Bold="True" Font-Size="Medium" ReadOnly="True" Width="100%">
+                                                    <Border BorderStyle="None" />
+                                                    <BorderBottom BorderColor="#333333" BorderStyle="Solid" BorderWidth="1px" />
+                                                </dx:ASPxTextBox>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                    </dx:LayoutItem>
                                     <dx:LayoutItem Caption="Last day of transaction" ClientVisible="False" ColSpan="2" ColumnSpan="2" FieldName="LastDayTransact" Name="LDOT" Width="100%">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
@@ -782,7 +820,7 @@ onTravelClick();
                                         </LayoutItemNestedControlCollection>
                                         <CaptionSettings HorizontalAlign="Right" />
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Payee" ColSpan="1" FieldName="Payee" Name="Payee">
+                                    <dx:LayoutItem Caption="Payee" ColSpan="1" FieldName="payeeName" Name="Payee">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxTextBox ID="ASPxTextBox8" runat="server" Font-Bold="True" Font-Size="Medium" ReadOnly="True" Width="100%">

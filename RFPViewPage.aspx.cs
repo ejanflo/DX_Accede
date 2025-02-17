@@ -53,6 +53,9 @@ namespace DX_WebTemplate
 
                     var pld = formRFP.FindItemOrGroupByName("PLD") as LayoutItem;
                     var wbs = formRFP.FindItemOrGroupByName("WBS") as LayoutItem;
+                    var cType = formRFP.FindItemOrGroupByName("ClassType") as LayoutItem;
+                    var tType = formRFP.FindItemOrGroupByName("TravType") as LayoutItem;
+
 
                     myLayoutGroup.Caption = "Request For Payment (View) - "+rfp_details.RFP_DocNum;
 
@@ -62,11 +65,13 @@ namespace DX_WebTemplate
                         {
                             rdButton_Trav.Checked = true;
                             rdButton_NonTrav.Checked = false;
+                            cType.ClientVisible = false;
                         }
                         else
                         {
                             rdButton_Trav.Checked = false;
                             rdButton_NonTrav.Checked = true;
+                            tType.ClientVisible = false;
                         }
                         var test = rfp_details.IsExpenseReim;
                         if((rfp_details.Status == 3 || rfp_details.Status == 13 || rfp_details.Status == 15) && rfp_details.User_ID == empCode && rfp_details.IsExpenseReim != true)
@@ -99,6 +104,14 @@ namespace DX_WebTemplate
                             ExpBtn.Visible = false;
                         }
 
+                        if (rfp_details.isForeignTravel != null && rfp_details.isForeignTravel == true)
+                        {
+                            txtbox_TravType.Value = "Foreign";
+                        }
+                        else
+                        {
+                            txtbox_TravType.Value = "Domestic";
+                        }
                         amount_lbl.Text = rfp_details.Currency + " " + Convert.ToDecimal(rfp_details.Amount).ToString("#,##0.00");
                     }
                     var release_cash_status = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Disbursed").FirstOrDefault();

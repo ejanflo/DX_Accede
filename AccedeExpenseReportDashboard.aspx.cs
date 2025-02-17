@@ -147,26 +147,46 @@ namespace DX_WebTemplate
             SqlCostCenter.SelectParameters["DepartmentId"].DefaultValue = drpdown_Department.Value != null ? drpdown_Department.Value.ToString() : "";
             SqlCostCenter.DataBind();
 
-            drpdown_CostCenter.DataSourceID = null;
-            drpdown_CostCenter.DataSource = SqlCostCenter;
-            drpdown_CostCenter.DataBindItems();
+            //drpdown_CostCenter.DataSourceID = null;
+            //drpdown_CostCenter.DataSource = SqlCostCenter;
+            //drpdown_CostCenter.DataBindItems();
 
-            if(drpdown_CostCenter.Items.Count == 1)
-            {
-                drpdown_CostCenter.SelectedIndex = 0;
-            }
+            //if(drpdown_CostCenter.Items.Count == 1)
+            //{
+            //    drpdown_CostCenter.SelectedIndex = 0;
+            //}
 
         }
 
         [WebMethod]
-        public static bool AddExpenseReportAJAX(string expName, string expDate, string Comp, string CostCenter, string expCat, string Purpose, bool isTrav, string currency, string department, string payType)
+        public static string GetCosCenterFrmDeptAJAX(string dept_id)
+        {
+            Accede_Expense_Report accede = new Accede_Expense_Report();
+            return accede.GetCosCenterFrmDept(dept_id);
+        }
+
+        public string GetCosCenterFrmDept(string dept_id)
+        {
+            var deptCostCenter = context.ITP_S_OrgDepartmentMasters.Where(x=>x.ID == Convert.ToInt32(dept_id)).FirstOrDefault();
+            if (deptCostCenter != null && deptCostCenter.SAP_CostCenter != null) 
+            { 
+                return deptCostCenter.SAP_CostCenter.ToString();
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        [WebMethod]
+        public static bool AddExpenseReportAJAX(string expName, string expDate, string Comp, string CostCenter, string expCat, string Purpose, bool isTrav, string currency, string department, string payType, string classification)
         {
             Accede_Expense_Report accede = new Accede_Expense_Report();
             
-            return accede.AddExpenseReport(expName, expDate, Comp, CostCenter, expCat, Purpose, isTrav, currency, department, payType); 
+            return accede.AddExpenseReport(expName, expDate, Comp, CostCenter, expCat, Purpose, isTrav, currency, department, payType, classification); 
         }
 
-        public bool AddExpenseReport(string expName, string expDate, string Comp, string CostCenter, string expCat, string Purpose, bool isTrav, string currency, string department, string payType)
+        public bool AddExpenseReport(string expName, string expDate, string Comp, string CostCenter, string expCat, string Purpose, bool isTrav, string currency, string department, string payType, string classification)
         {
             var expDoctype = context.ITP_S_DocumentTypes.Where(x=>x.DCT_Name == "ACDE Expense").FirstOrDefault();
             try
@@ -194,6 +214,7 @@ namespace DX_WebTemplate
                     main.isTravel = isTrav;
                     main.Exp_Currency = currency;
                     main.Dept_Id = Convert.ToInt32(department);
+                    main.ExpenseClassification = Convert.ToInt32(classification);
                 }
                 context.ACCEDE_T_ExpenseMains.InsertOnSubmit(main);
                 context.SubmitChanges();

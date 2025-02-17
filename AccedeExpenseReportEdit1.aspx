@@ -55,7 +55,7 @@
 
            if (e.item.name === "addExpense") {
 
-               costCenter.SetValue(exp_costCenter.GetValue());
+               costCenter.SetValue(txtbox_CostCenter.GetValue());
                expensePopup1.Show();
 
            } 
@@ -94,10 +94,27 @@
             }
         }
 
-
-        function OnDeptChanged() {
+        function OnDeptChanged(dept_id) {
             drpdown_WF.PerformCallback();
-            exp_costCenter.PerformCallback();
+            //exp_costCenter.PerformCallback();
+            $.ajax({
+                type: "POST",
+                url: "AccedeExpenseReportDashboard.aspx/GetCosCenterFrmDeptAJAX",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({
+                    dept_id: dept_id
+                }),
+                success: function (response) {
+                    // Update the description text box with the response value
+                    console.log(response.d);
+                    txtbox_CostCenter.SetValue(response.d);
+                    
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                }
+            });
         }
 
         function removeFromExp(item_id, btnCommand) {
@@ -280,7 +297,7 @@
                 var payMethod = drpdown_payType.GetValue();
                 var purpose = memo_Purpose.GetValue();
                 var dept_id = exp_Department.GetValue();
-                var cCenter = exp_costCenter.GetValue();
+                var cCenter = txtbox_CostCenter.GetValue();
                 var io = io_reim.GetValue() != null ? io_reim.GetValue() : "";
                 var payee = exp_EmpId.GetValue();
                 var acctCharge = drpdown_ExpCategory.GetValue();
@@ -289,6 +306,7 @@
                 var isTravelrfp = rdButton_Trav_exp.GetValue();
                 var wbs = wbs_reim.GetValue() != null ? wbs_reim.GetValue() : "";
                 var currency = exp_Currency.GetValue();
+                var classification = drpdown_classification.GetValue() != null ? drpdown_classification.GetValue() : "";
 
                 console.log(dept_id);
 
@@ -308,7 +326,8 @@
                         remarks: remarks,
                         isTravelrfp: isTravelrfp,
                         wbs: wbs,
-                        currency: currency
+                        currency: currency,
+                        classification: classification
 
                     }),
                     contentType: "application/json; charset=utf-8",
@@ -355,7 +374,7 @@
             var currency = exp_Currency.GetValue();
             var department = exp_Department.GetValue();
             var payType = drpdown_payType.GetValue();
-
+            var classification = drpdown_classification.GetValue();
             
 
             $.ajax({
@@ -375,7 +394,8 @@
                     currency: currency,
                     department: department,
                     payType: payType,
-                    btn: btn
+                    btn: btn,
+                    classification: classification
 
                 }),
                 contentType: "application/json; charset=utf-8",
@@ -1004,7 +1024,7 @@ drpdown_Company.SetValue(exp_Company.GetValue());
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxComboBox ID="exp_Department" runat="server" ClientInstanceName="exp_Department" DataSourceID="sqlDept" EnableTheming="True" Font-Bold="True" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" OnCallback="exp_Department_Callback" TextField="DepDesc" TextFormatString="{0} - {1}" ValueField="ID" Width="100%">
                                                                 <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	OnDeptChanged();
+	OnDeptChanged(s.GetValue());
 }" />
                                                                 <Columns>
                                                                     <dx:ListBoxColumn Caption="Code" FieldName="DepCode">
@@ -1025,19 +1045,13 @@ drpdown_Company.SetValue(exp_Company.GetValue());
                                                 <dx:LayoutItem Caption="Cost Center" ColSpan="1" FieldName="CostCenter">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxComboBox ID="exp_costCenter" runat="server" ClientInstanceName="exp_costCenter" DataSourceID="sqlCostCenter" EnableTheming="True" Font-Bold="True" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" OnCallback="exp_costCenter_Callback" TextField="Department" TextFormatString="{0} - {1}" ValueField="CostCenter" Width="100%">
-                                                                <Columns>
-                                                                    <dx:ListBoxColumn Caption="Code" FieldName="CostCenter">
-                                                                    </dx:ListBoxColumn>
-                                                                    <dx:ListBoxColumn Caption="Description" FieldName="Department">
-                                                                    </dx:ListBoxColumn>
-                                                                </Columns>
-                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
-                                                                    <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                            <dx:ASPxTextBox ID="txtbox_CostCenter" runat="server" ClientInstanceName="txtbox_CostCenter" Font-Size="Small" Width="100%" Font-Bold="True">
+                                                                <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" ValidationGroup="CreateForm">
+                                                                    <RequiredField ErrorText="This field is required." IsRequired="True" />
                                                                 </ValidationSettings>
                                                                 <Border BorderStyle="None" />
                                                                 <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                            </dx:ASPxComboBox>
+                                                            </dx:ASPxTextBox>
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings HorizontalAlign="Right" />
@@ -1073,6 +1087,22 @@ drpdown_Company.SetValue(exp_Company.GetValue());
                                                     <CaptionSettings HorizontalAlign="Right" />
                                                     <CaptionStyle Font-Bold="True">
                                                     </CaptionStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Classification" ColSpan="1" FieldName="ExpenseClassification">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxComboBox ID="drpdown_classification" runat="server" ClientInstanceName="drpdown_classification" DataSourceID="SqlClassification" EnableTheming="True" Font-Bold="True" Font-Size="Small" TextField="ClassificationName" ValueField="ID" Width="100%">
+                                                                <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	drpdwn_FAPWF.PerformCallback();
+}" />
+                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                                    <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                </ValidationSettings>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                            </dx:ASPxComboBox>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
                                                 </dx:LayoutItem>
                                                 <dx:LayoutItem Caption="Purpose" ColSpan="1" FieldName="Purpose">
                                                     <LayoutItemNestedControlCollection>
@@ -1824,7 +1854,7 @@ ReimbursementTrap2();
         <dx:ASPxLoadingPanel ID="LoadingPanel" runat="server" Theme="MaterialCompact" ClientInstanceName="LoadingPanel" ShowImage="true" ShowText="true" Text="     Processing..." Modal="True">
         </dx:ASPxLoadingPanel>
 
-        <%--<Paddings PaddingLeft="40%" />--%>
+        <%-- This is where the document is rendered and viewed --%>
         <dx:ASPxPopupControl ID="caPopup" runat="server" FooterText="" HeaderText="Select Cash Advance/s" Width="100%" ClientInstanceName="caPopup" Modal="True" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" AllowDragging="True" CloseAction="CloseButton" CssClass="rounded">
             <CloseButtonImage IconID="outlookinspired_close_svg_white_16x16">
             </CloseButtonImage>
@@ -3453,7 +3483,7 @@ computeNetAmount(&quot;edit&quot;);
             <asp:Parameter Name="UserId" Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlExpDetails" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_ExpenseDetails] WHERE ([ExpenseMain_ID] = @ExpenseMain_ID)">
+    <asp:SqlDataSource ID="SqlExpDetails" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_ExpenseDetails] WHERE ([ExpenseMain_ID] = @ExpenseMain_ID)">
         <SelectParameters>
             <asp:Parameter Name="ExpenseMain_ID" Type="Int32" />
         </SelectParameters>
@@ -3547,6 +3577,16 @@ computeNetAmount(&quot;edit&quot;);
             <asp:Parameter Name="DateFrom" Type="DateTime" />
             <asp:Parameter Name="DateTo" Type="DateTime" />
             <asp:Parameter DefaultValue="1" Name="IsActive" Type="Int32" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+        <asp:SqlDataSource ID="SqlClassification" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_ExpenseClassification] WHERE ([isActive] = @isActive) ORDER BY [ClassificationName]">
+        <SelectParameters>
+            <asp:Parameter DefaultValue="true" Name="isActive" Type="Boolean" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+        <asp:SqlDataSource ID="SqlUserSelf" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT EmpCode, FullName FROM [ITP_S_UserMaster] WHERE ([EmpCode] = @EmpCode)">
+        <SelectParameters>
+            <asp:Parameter Name="EmpCode" Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>
 </asp:Content>

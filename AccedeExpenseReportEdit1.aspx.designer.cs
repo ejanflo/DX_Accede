@@ -87,13 +87,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox exp_Department;
 
         /// <summary>
-        /// exp_costCenter control.
+        /// txtbox_CostCenter control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox exp_costCenter;
+        protected global::DevExpress.Web.ASPxTextBox txtbox_CostCenter;
 
         /// <summary>
         /// drpdown_expenseType control.
@@ -112,6 +112,15 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxComboBox drpdown_ExpCategory;
+
+        /// <summary>
+        /// drpdown_classification control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox drpdown_classification;
 
         /// <summary>
         /// memo_Purpose control.
@@ -1480,5 +1489,23 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlUser;
+
+        /// <summary>
+        /// SqlClassification control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlClassification;
+
+        /// <summary>
+        /// SqlUserSelf control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlUserSelf;
     }
 }

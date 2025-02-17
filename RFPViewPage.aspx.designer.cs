@@ -123,6 +123,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox PLD_lbl;
 
         /// <summary>
+        /// ASPxTextBox16 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox16;
+
+        /// <summary>
         /// rdButton_Trav control.
         /// </summary>
         /// <remarks>
@@ -139,6 +148,24 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxRadioButton rdButton_NonTrav;
+
+        /// <summary>
+        /// txtbox_TravType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox txtbox_TravType;
+
+        /// <summary>
+        /// ASPxTextBox17 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox17;
 
         /// <summary>
         /// ASPxTextBox11 control.
