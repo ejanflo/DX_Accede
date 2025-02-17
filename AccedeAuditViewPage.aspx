@@ -56,7 +56,11 @@
 
                 viewExpDetailModal2(item_id);
             }
-         }
+        }
+
+        function OnFowardWFChanged(wf_id) {
+            WFSequenceGrid0.PerformCallback(wf_id);
+        }
 
          function viewCADetailModal(item_id) {
             $.ajax({
@@ -171,6 +175,57 @@
                     DocuGrid1.Refresh();
                     ExpItemMapPopup.Show();
 
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                }
+            });
+        }
+
+        function approveForwardClick() {
+            LoadingPanel.SetText('Processing&hellip;');
+            LoadingPanel.Show();
+            var forwardWF = drpdown_ForwardWF.GetValue() != null ? drpdown_ForwardWF.GetValue() : "";
+            var remarks = txt_forward_remarks.GetValue() != null ? txt_forward_remarks.GetValue() : "";
+            $.ajax({
+                type: "POST",
+                url: "AccedeAuditViewPage.aspx/btnApproveForwardAJAX",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({
+                    forwardWF: forwardWF,
+                    remarks: remarks
+                }),
+                success: function (response) {
+                    // Update the description text box with the response value
+                    var funcResult = response.d;
+                    LoadingPanel.Hide();
+
+                    if (funcResult == "success") {
+                        LoadingPanel.SetText('You forwarded this document. Redirecting&hellip;');
+                        LoadingPanel.Show();
+                        window.location.href = 'AccedeApprovalPage.aspx';
+
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'There is an error forwarding this document.',
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'OK',
+                            allowOutsideClick: false
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // If user clicks OK, call the C# function
+                                LoadingPanel.SetText('Redirecting&hellip;');
+                                LoadingPanel.Show();
+                                window.location.href = 'AccedeApprovalPage.aspx';
+
+                            }
+                        });
+                    }
                 },
                 error: function (xhr, status, error) {
                     console.log("Error:", error);
@@ -491,6 +546,18 @@
                                             <ClientSideEvents Click="function(s, e) {
 	ApprovePopup.Show();
 }" />
+                                        </dx:ASPxButton>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                            </dx:LayoutItem>
+                            <dx:LayoutItem Caption="" ColSpan="1" Name="AAF" Width="20%">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxButton ID="btn_AppForward" runat="server" AutoPostBack="False" BackColor="#006DD6" ClientInstanceName="btn_AppForward" Text="Approve and Forward">
+                                            <ClientSideEvents Click="function(s, e) {
+	if(ASPxClientEdit.ValidateGroup('RFPApproval')) ApproveForPopup.Show();
+}" />
+                                            <Border BorderColor="#006DD6" />
                                         </dx:ASPxButton>
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
@@ -1230,6 +1297,126 @@ approveClick();
                                 <dx:ASPxButton ID="ASPxFormLayout1_E10" runat="server" Text="Cancel" AutoPostBack="False" BackColor="White" ForeColor="Gray">
                                     <ClientSideEvents Click="function(s, e) {
 	ApprovePopup.Hide();
+}" />
+                                    <Border BorderColor="Gray" />
+                                </dx:ASPxButton>
+                            </dx:LayoutItemNestedControlContainer>
+                        </LayoutItemNestedControlCollection>
+                    </dx:LayoutItem>
+                </Items>
+            </dx:LayoutGroup>
+        </Items>
+    </dx:ASPxFormLayout>
+            </dx:PopupControlContentControl>
+</ContentCollection>
+    </dx:ASPxPopupControl>
+        <dx:ASPxPopupControl ID="ApproveForPopup" runat="server" HeaderText="Forward this Document?" Modal="True" AllowDragging="True" AutoUpdatePosition="True" ClientInstanceName="ApproveForPopup" CloseAction="CloseButton" CloseOnEscape="True" EnableViewState="False" PopupAnimationType="None" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" Width="800px">
+        <SettingsAdaptivity VerticalAlign="WindowCenter" />
+        <ContentCollection>
+<dx:PopupControlContentControl runat="server">
+    <dx:ASPxFormLayout ID="ASPxFormLayout5" runat="server" Width="100%">
+        <Items>
+            <dx:LayoutItem ColSpan="1" HorizontalAlign="Center" ShowCaption="False">
+                <LayoutItemNestedControlCollection>
+                    <dx:LayoutItemNestedControlContainer runat="server">
+                        <dx:ASPxImage ID="ASPxImage1" runat="server" Height="50px" ImageAlign="Middle" ImageUrl="~/Content/Images/warning.png" Width="50px">
+                        </dx:ASPxImage>
+                    </dx:LayoutItemNestedControlContainer>
+                </LayoutItemNestedControlCollection>
+            </dx:LayoutItem>
+            <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Center">
+                <LayoutItemNestedControlCollection>
+                    <dx:LayoutItemNestedControlContainer runat="server">
+                        <dx:ASPxLabel ID="ASPxLabel1" runat="server" Text="Are you sure you want to forward this document?" Font-Size="Medium">
+                        </dx:ASPxLabel>
+                    </dx:LayoutItemNestedControlContainer>
+                </LayoutItemNestedControlCollection>
+            </dx:LayoutItem>
+            <dx:EmptyLayoutItem ColSpan="1">
+            </dx:EmptyLayoutItem>
+            <dx:LayoutItem Caption="Forward to" ColSpan="1">
+                <LayoutItemNestedControlCollection>
+                    <dx:LayoutItemNestedControlContainer runat="server">
+                        <dx:ASPxComboBox ID="drpdown_ForwardWF" runat="server" ClientInstanceName="drpdown_ForwardWF" Width="100%">
+                            <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	OnFowardWFChanged(s.GetValue());
+}" />
+                            <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ApproveForwardGroup">
+                                <ErrorImage IconID="iconbuilder_security_warningcircled2_svg_16x16">
+                                </ErrorImage>
+                                <RequiredField ErrorText="Required" IsRequired="True" />
+                            </ValidationSettings>
+                        </dx:ASPxComboBox>
+                    </dx:LayoutItemNestedControlContainer>
+                </LayoutItemNestedControlCollection>
+            </dx:LayoutItem>
+            <dx:EmptyLayoutItem ColSpan="1">
+            </dx:EmptyLayoutItem>
+            <dx:LayoutGroup Caption="Workflow Details" ColSpan="1">
+                <Items>
+                    <dx:LayoutItem Caption="" ColSpan="1">
+                        <LayoutItemNestedControlCollection>
+                            <dx:LayoutItemNestedControlContainer runat="server">
+                                <dx:ASPxGridView ID="WFSequenceGrid0" runat="server" AutoGenerateColumns="False" ClientInstanceName="WFSequenceGrid0" DataSourceID="SqlWFSequenceForward" Width="100%" OnCustomCallback="WFSequenceGrid0_CustomCallback">
+                                    <SettingsEditing Mode="Batch">
+                                    </SettingsEditing>
+                                    <SettingsDataSecurity AllowDelete="False" AllowEdit="False" AllowInsert="False" />
+                                    <SettingsPopup>
+                                        <FilterControl AutoUpdatePosition="False">
+                                        </FilterControl>
+                                    </SettingsPopup>
+                                    <Columns>
+                                        <dx:GridViewDataTextColumn Caption="Sequence" FieldName="Sequence" ShowInCustomizationForm="True" VisibleIndex="1">
+                                        </dx:GridViewDataTextColumn>
+                                        <dx:GridViewDataComboBoxColumn Caption="Approver" FieldName="FullName" ShowInCustomizationForm="True" VisibleIndex="2">
+                                            <PropertiesComboBox TextFormatString="{0}" ValueField="TerritoryID">
+                                                <Columns>
+                                                    <dx:ListBoxColumn Caption="Territory" FieldName="TerritoryDescription">
+                                                    </dx:ListBoxColumn>
+                                                    <dx:ListBoxColumn Caption="Region" FieldName="RegionID">
+                                                    </dx:ListBoxColumn>
+                                                </Columns>
+                                            </PropertiesComboBox>
+                                        </dx:GridViewDataComboBoxColumn>
+                                    </Columns>
+                                </dx:ASPxGridView>
+                            </dx:LayoutItemNestedControlContainer>
+                        </LayoutItemNestedControlCollection>
+                    </dx:LayoutItem>
+                </Items>
+            </dx:LayoutGroup>
+            <dx:LayoutItem ColSpan="1" HorizontalAlign="Center" ShowCaption="False" Width="80%">
+                <LayoutItemNestedControlCollection>
+                    <dx:LayoutItemNestedControlContainer runat="server">
+                        <dx:ASPxMemo ID="txt_forward_remarks" runat="server" Caption="Remarks" Width="100%" ClientInstanceName="txt_forward_remarks">
+                        </dx:ASPxMemo>
+                    </dx:LayoutItemNestedControlContainer>
+                </LayoutItemNestedControlCollection>
+            </dx:LayoutItem>
+            <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="HeadingLine" HorizontalAlign="Center">
+                <Items>
+                    <dx:LayoutItem Caption="" ColSpan="1">
+                        <LayoutItemNestedControlCollection>
+                            <dx:LayoutItemNestedControlContainer runat="server">
+                                <dx:ASPxButton ID="mdlBtnApproveForward" runat="server" Text="Confirm Forward" BackColor="#006DD6" AutoPostBack="False" ClientInstanceName="mdlBtnApproveForward">
+                                    <ClientSideEvents Click="function(s, e) {
+
+if(ASPxClientEdit.ValidateGroup('ApproveForwardGroup')){
+ApproveForPopup.Hide();
+approveForwardClick();
+}
+}" />
+                                    <Border BorderColor="#006DD6" />
+                                </dx:ASPxButton>
+                            </dx:LayoutItemNestedControlContainer>
+                        </LayoutItemNestedControlCollection>
+                    </dx:LayoutItem>
+                    <dx:LayoutItem Caption="" ColSpan="1">
+                        <LayoutItemNestedControlCollection>
+                            <dx:LayoutItemNestedControlContainer runat="server">
+                                <dx:ASPxButton ID="ASPxButton9" runat="server" Text="Cancel" AutoPostBack="False" BackColor="White" ForeColor="Gray">
+                                    <ClientSideEvents Click="function(s, e) {
+	ApproveForPopup.Hide();
 }" />
                                     <Border BorderColor="Gray" />
                                 </dx:ASPxButton>
@@ -2320,4 +2507,10 @@ DisapproveClick(); DisapprovePopup.Hide();
     <asp:SqlDataSource ID="SqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [CompanyMaster]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlPaymethod" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_PayMethod]"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlWFSequenceForward" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_RS_Workflow_Sequence] WHERE ([WF_Id] = @WF_Id) ORDER BY [Sequence]">
+            <SelectParameters>
+                <asp:Parameter Name="WF_Id" Type="Int32" />
+            </SelectParameters>
+        </asp:SqlDataSource>
+
 </asp:Content>

@@ -17,6 +17,8 @@
         }
 
         function approveForwardClick() {
+            LoadingPanel.SetText('Processing&hellip;');
+            LoadingPanel.Show();
             var secureToken = new URLSearchParams(window.location.search).get('secureToken');
             var forwardWF = drpdown_ForwardWF.GetValue() != null ? drpdown_ForwardWF.GetValue() : "";
             var remarks = txt_forward_remarks.GetValue() != null ? txt_forward_remarks.GetValue() : "";
@@ -1429,6 +1431,11 @@ approveClick();
                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	OnFowardWFChanged(s.GetValue());
 }" />
+                            <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ApproveForwardGroup">
+                                <ErrorImage IconID="iconbuilder_security_warningcircled2_svg_16x16">
+                                </ErrorImage>
+                                <RequiredField ErrorText="Required" IsRequired="True" />
+                            </ValidationSettings>
                         </dx:ASPxComboBox>
                     </dx:LayoutItemNestedControlContainer>
                 </LayoutItemNestedControlCollection>
@@ -1483,8 +1490,11 @@ approveClick();
                             <dx:LayoutItemNestedControlContainer runat="server">
                                 <dx:ASPxButton ID="mdlBtnApproveForward" runat="server" Text="Confirm Approve and Forward" BackColor="#006DD6" AutoPostBack="False" ClientInstanceName="mdlBtnApproveForward">
                                     <ClientSideEvents Click="function(s, e) {
-	ApproveForPopup.Hide();
+	
+if(ASPxClientEdit.ValidateGroup('ApproveForwardGroup')){
+ApproveForPopup.Hide();
 approveForwardClick();
+}
 }" />
                                     <Border BorderColor="#006DD6" />
                                 </dx:ASPxButton>

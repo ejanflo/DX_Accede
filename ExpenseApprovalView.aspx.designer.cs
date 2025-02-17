@@ -33,6 +33,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxButton btnApprove;
 
         /// <summary>
+        /// btn_AppForward control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton btn_AppForward;
+
+        /// <summary>
         /// btnReturn control.
         /// </summary>
         /// <remarks>

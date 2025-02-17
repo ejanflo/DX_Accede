@@ -51,16 +51,19 @@ namespace DX_WebTemplate
 
                             int actID = Convert.ToInt32(Decrypt(encryptedID));
                             
-                            var wfDetails = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == Convert.ToInt32(actID)).FirstOrDefault();
-                            Session["ExpId"] = wfDetails.Document_Id;
-                            sqlMain.SelectParameters["ID"].DefaultValue = wfDetails.Document_Id.ToString();
-                            SqlDocs.SelectParameters["Doc_ID"].DefaultValue = wfDetails.Document_Id.ToString();
-                            SqlCADetails.SelectParameters["Exp_ID"].DefaultValue = wfDetails.Document_Id.ToString();
-                            SqlReimDetails.SelectParameters["Exp_ID"].DefaultValue = wfDetails.Document_Id.ToString();
-                            SqlExpDetails.SelectParameters["ExpenseMain_ID"].DefaultValue = wfDetails.Document_Id.ToString();
-                            SqlWFActivity.SelectParameters["Document_Id"].DefaultValue = wfDetails.Document_Id.ToString();
+                            var actDetails = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == Convert.ToInt32(actID)).FirstOrDefault();
+                            Session["ExpId"] = actDetails.Document_Id;
+                            sqlMain.SelectParameters["ID"].DefaultValue = actDetails.Document_Id.ToString();
+                            SqlDocs.SelectParameters["Doc_ID"].DefaultValue = actDetails.Document_Id.ToString();
+                            SqlCADetails.SelectParameters["Exp_ID"].DefaultValue = actDetails.Document_Id.ToString();
+                            SqlReimDetails.SelectParameters["Exp_ID"].DefaultValue = actDetails.Document_Id.ToString();
+                            SqlExpDetails.SelectParameters["ExpenseMain_ID"].DefaultValue = actDetails.Document_Id.ToString();
+                            SqlWFActivity.SelectParameters["Document_Id"].DefaultValue = actDetails.Document_Id.ToString();
 
-                            var exp = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(wfDetails.Document_Id)).FirstOrDefault();
+                            var exp = _DataContext.ACCEDE_T_ExpenseMains
+                                .Where(x => x.ID == Convert.ToInt32(actDetails.Document_Id))
+                                .FirstOrDefault();
+
                             SqlWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp.WF_Id).ToString();
                             SqlFAPWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp.FAPWF_Id).ToString();
 
@@ -82,7 +85,7 @@ namespace DX_WebTemplate
                                 myLayoutGroup.Caption = exp.DocNo.ToString() + " (View)";
                             }
 
-                            var RFPCA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(wfDetails.Document_Id)).Where(x => x.IsExpenseCA == true);
+                            var RFPCA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(actDetails.Document_Id)).Where(x => x.IsExpenseCA == true);
                             decimal totalCA = 0;
                             foreach (var item in RFPCA)
                             {
@@ -90,7 +93,7 @@ namespace DX_WebTemplate
                             }
                             caTotal.Text = totalCA.ToString("#,##0.00") + "  " + exp.Exp_Currency + " ";
 
-                            var ExpDetails = _DataContext.ACCEDE_T_ExpenseDetails.Where(x => x.ExpenseMain_ID == Convert.ToInt32(wfDetails.Document_Id));
+                            var ExpDetails = _DataContext.ACCEDE_T_ExpenseDetails.Where(x => x.ExpenseMain_ID == Convert.ToInt32(actDetails.Document_Id));
                             decimal totalExp = 0;
                             foreach (var item in ExpDetails)
                             {
@@ -108,6 +111,96 @@ namespace DX_WebTemplate
                             {
                                 var dueField = FormExpApprovalView.FindItemOrGroupByName("due_lbl") as LayoutItem;
                                 dueField.Caption = "Net Due to Company";
+                            }
+
+                            //APPROVE AND FORWARD BUTTON AND GENERATE AAF WF
+                            var wfDetails = _DataContext.ITP_S_WorkflowDetails.Where(x => x.WF_Id == actDetails.WF_Id)
+                                .Where(x => x.WFD_Id == actDetails.WFD_Id).FirstOrDefault();
+
+                            var nxWFDetails = _DataContext.ITP_S_WorkflowDetails.Where(x => x.WF_Id == actDetails.WF_Id)
+                                .Where(x => x.Sequence == (Convert.ToInt32(wfDetails.Sequence) + 1)).FirstOrDefault();
+
+                            var if_WF_isRA = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.WF_Id == wfDetails.WF_Id).FirstOrDefault();
+
+
+                            var aaf = FormExpApprovalView.FindItemOrGroupByName("AAF") as LayoutItem;
+
+                            if (nxWFDetails == null && if_WF_isRA.IsRA != true)
+                            {
+                                aaf.ClientVisible = true;
+                            }
+
+                            var FinExecVerify = _DataContext.vw_ACCEDE_FinApproverVerifies.Where(x => x.UserId == empCode)
+                                .Where(x => x.Role_Name == "Accede Finance Executive").FirstOrDefault();
+
+                            var FinCFOVerify = _DataContext.vw_ACCEDE_FinApproverVerifies.Where(x => x.UserId == empCode)
+                                .Where(x => x.Role_Name == "Accede CFO").FirstOrDefault();
+
+                            if (FinExecVerify != null)
+                            {
+                                var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
+                                    .Where(x => x.Name.Contains("forward cfo"))
+                                    .Where(x => x.App_Id == 1032)
+                                    .ToList();
+
+                                if (forwardWFList.Any()) // Ensure there's data before binding
+                                {
+                                    drpdown_ForwardWF.DataSource = forwardWFList;
+                                    drpdown_ForwardWF.ValueField = "WF_Id";
+                                    drpdown_ForwardWF.TextField = "Name";
+                                    drpdown_ForwardWF.DataBind();
+
+                                    if (drpdown_ForwardWF.Items.Count == 1)
+                                    {
+                                        drpdown_ForwardWF.SelectedIndex = 0;
+                                        SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
+
+                                    }
+                                }
+                            }
+                            else if (FinCFOVerify != null)
+                            {
+                                var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
+                                    .Where(x => x.Name.Contains("forward pres"))
+                                    .Where(x => x.App_Id == 1032)
+                                    .ToList();
+
+                                if (forwardWFList.Any()) // Ensure there's data before binding
+                                {
+                                    drpdown_ForwardWF.DataSource = forwardWFList;
+                                    drpdown_ForwardWF.ValueField = "WF_Id";
+                                    drpdown_ForwardWF.TextField = "Name";
+                                    drpdown_ForwardWF.DataBind();
+
+                                    if (drpdown_ForwardWF.Items.Count == 1)
+                                    {
+                                        drpdown_ForwardWF.SelectedIndex = 0;
+                                        SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
+
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
+                                    .Where(x => x.Name.Contains("forward exec"))
+                                    .Where(x => x.App_Id == 1032)
+                                    .ToList();
+
+                                if (forwardWFList.Any()) // Ensure there's data before binding
+                                {
+                                    drpdown_ForwardWF.DataSource = forwardWFList;
+                                    drpdown_ForwardWF.ValueField = "WF_Id";
+                                    drpdown_ForwardWF.TextField = "Name";
+                                    drpdown_ForwardWF.DataBind();
+
+                                    if (drpdown_ForwardWF.Items.Count == 1)
+                                    {
+                                        drpdown_ForwardWF.SelectedIndex = 0;
+                                        SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
+
+                                    }
+                                }
                             }
 
 
@@ -938,7 +1031,7 @@ namespace DX_WebTemplate
         [WebMethod]
         public static string btnApproveForwardAJAX(string secureToken, string forwardWF, string remarks)
         {
-            RFPApprovalView rfp = new RFPApprovalView();
+            ExpenseApprovalView rfp = new ExpenseApprovalView();
 
             return rfp.btnApproveForward(secureToken, forwardWF, remarks);
 
@@ -953,17 +1046,20 @@ namespace DX_WebTemplate
                 if (!string.IsNullOrEmpty(encryptedID))
                 {
                     var actID = Convert.ToInt32(Decrypt(encryptedID));
-                    var exp_id = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == actID).FirstOrDefault();
-                    var finance_wf_data = _DataContext.ITP_S_WorkflowHeaders
+                    var exp_ActDetails = _DataContext.ITP_T_WorkflowActivities
+                        .Where(x => x.WFA_Id == actID)
+                        .FirstOrDefault();
+
+                    var aaf_wf_data = _DataContext.ITP_S_WorkflowHeaders
                         .Where(x => x.WF_Id == Convert.ToInt32(forwardWF))
                         .FirstOrDefault();
 
                     var exp_main = _DataContext.ACCEDE_T_ExpenseMains
-                        .Where(x => x.ID == exp_id.Document_Id)
+                        .Where(x => x.ID == exp_ActDetails.Document_Id)
                         .FirstOrDefault();
 
                     var rfp_main = _DataContext.ACCEDE_T_RFPMains
-                        .Where(x => x.Exp_ID == exp_id.Document_Id)
+                        .Where(x => x.Exp_ID == exp_ActDetails.Document_Id)
                         .Where(x => x.Status != 4)
                         .Where(x => x.IsExpenseReim == true)
                         .FirstOrDefault();
@@ -973,7 +1069,32 @@ namespace DX_WebTemplate
                         .Where(x => x.App_Id == 1032)
                         .FirstOrDefault();
 
-                    var exp_app_doctype = exp_id.AppDocTypeId;
+                    var exp_app_doctype = exp_ActDetails.AppDocTypeId;
+
+                    int reimId = 0;
+                    if (rfp_main != null)
+                    {
+                        reimId = rfp_main.ID;
+                    }
+                    var reimActDetails = _DataContext.ITP_T_WorkflowActivities
+                        .Where(x => x.AppDocTypeId == Convert.ToInt32(rfp_app_docType.DCT_Id))
+                        .Where(x => x.AppId == 1032)
+                        .Where(x => x.Document_Id == reimId)
+                        .Where(x => x.Status == 1)
+                        .FirstOrDefault();
+
+                    if(reimActDetails != null)
+                    {
+                        reimActDetails.Status = 7;
+                        reimActDetails.Remarks = Session["AuthUser"].ToString() + ": " + remarks + ";";
+                        reimActDetails.ActedBy_User_Id = Session["userID"].ToString();
+                        reimActDetails.DateAction = DateTime.Now;
+                    }
+
+                    exp_ActDetails.Status = 7;
+                    exp_ActDetails.Remarks = Session["AuthUser"].ToString() + ": " + remarks + ";";
+                    exp_ActDetails.ActedBy_User_Id = Session["userID"].ToString();
+                    exp_ActDetails.DateAction = DateTime.Now;
 
                     var payMethod = "";
                     var tranType = "";
@@ -990,7 +1111,7 @@ namespace DX_WebTemplate
                     else
                     {
                         var rfp_main_ca = _DataContext.ACCEDE_T_RFPMains
-                            .Where(x => x.Exp_ID == exp_id.Document_Id)
+                            .Where(x => x.Exp_ID == exp_ActDetails.Document_Id)
                             .Where(x => x.IsExpenseCA == true)
                             .FirstOrDefault();
                         payMethod = _DataContext.ACCEDE_S_PayMethods
@@ -1001,9 +1122,9 @@ namespace DX_WebTemplate
                             .FirstOrDefault().RFPTranType_Name;
                     }
 
-                    if (finance_wf_data != null)
+                    if (aaf_wf_data != null)
                     {
-                        var fin_wfDetail_data = _DataContext.ITP_S_WorkflowDetails.Where(x => x.WF_Id == finance_wf_data.WF_Id).Where(x => x.Sequence == 1).FirstOrDefault();
+                        var fin_wfDetail_data = _DataContext.ITP_S_WorkflowDetails.Where(x => x.WF_Id == aaf_wf_data.WF_Id).Where(x => x.Sequence == 1).FirstOrDefault();
                         var org_id = fin_wfDetail_data.OrgRole_Id;
                         var date2day = DateTime.Now;
                         //DELEGATE CHECK
@@ -1066,6 +1187,8 @@ namespace DX_WebTemplate
                             SendEmailTo(exp_main.ID, nexApprover_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Pending", payMethod.ToString(), tranType.ToString());
 
                         }
+
+                        _DataContext.SubmitChanges();
                         return "success";
                     }
                 }
