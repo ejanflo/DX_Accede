@@ -362,7 +362,7 @@ namespace DX_WebTemplate
 
                         ITP_T_WorkflowActivity new_activity = new ITP_T_WorkflowActivity();
                         {
-                            new_activity.Status = Cashier_status.STS_Id;
+                            new_activity.Status = 7;
                             new_activity.AppId = 1032;
                             new_activity.CompanyId = rfp_main.Company_ID;
                             new_activity.Document_Id = rfp_main.ID;
