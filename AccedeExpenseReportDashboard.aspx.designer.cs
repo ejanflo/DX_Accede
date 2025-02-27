@@ -78,13 +78,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxFormLayout ASPxFormLayout2;
 
         /// <summary>
-        /// drpdown_Comp control.
+        /// drpdown_CTComp control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox drpdown_Comp;
+        protected global::DevExpress.Web.ASPxComboBox drpdown_CTComp;
 
         /// <summary>
         /// drpdown_EmpId control.
@@ -105,13 +105,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxDateEdit date_expDate;
 
         /// <summary>
-        /// drpdown_Department control.
+        /// drpdown_CTDepartment control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox drpdown_Department;
+        protected global::DevExpress.Web.ASPxComboBox drpdown_CTDepartment;
 
         /// <summary>
         /// drpdown_PayType control.
@@ -193,6 +193,24 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxMemo memo_Purpose;
+
+        /// <summary>
+        /// drpdown_Comp control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox drpdown_Comp;
+
+        /// <summary>
+        /// drpdown_Department control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox drpdown_Department;
 
         /// <summary>
         /// btnSaveExpense control.
@@ -321,15 +339,6 @@ namespace DX_WebTemplate
         protected global::System.Web.UI.WebControls.SqlDataSource SqlExpCat;
 
         /// <summary>
-        /// SqlCostCenter control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.SqlDataSource SqlCostCenter;
-
-        /// <summary>
         /// SqlCA control.
         /// </summary>
         /// <remarks>
@@ -418,5 +427,23 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlClassification;
+
+        /// <summary>
+        /// SqlCTDepartment control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlCTDepartment;
+
+        /// <summary>
+        /// SqlCostCenter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlCostCenter;
     }
 }

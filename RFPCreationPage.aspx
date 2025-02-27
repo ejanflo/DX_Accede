@@ -237,27 +237,31 @@
         }
 
         function onDeptChanged() {
-            var dept_id = drpdown_Department.GetValue();
-            $.ajax({
-                type: "POST",
-                url: "RFPCreationPage.aspx/CostCenterUpdateField",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                data: JSON.stringify({ dept_id: dept_id }),
-                success: function (response) {
-                    // Update the description text box with the response value
-                    if (response) {
-                        txtbox_costCenter.SetValue(response.d);
-                        txtbox_costCenter.Validate();
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.log("Error:", error);
-                }
-            });
-
+            
             drpdown_WF.PerformCallback();
             drpdwn_FAPWF.PerformCallback();
+        }
+
+        function onCTDeptChanged() {
+            var dept_id = drpdown_CTDepartment.GetValue();
+            drpdown_CostCenter.PerformCallback(dept_id);
+            //$.ajax({
+            //    type: "POST",
+            //    url: "RFPCreationPage.aspx/CostCenterUpdateField",
+            //    contentType: "application/json; charset=utf-8",
+            //    dataType: "json",
+            //    data: JSON.stringify({ dept_id: dept_id }),
+            //    success: function (response) {
+            //        // Update the description text box with the response value
+            //        if (response) {
+            //            txtbox_costCenter.SetValue(response.d);
+            //            txtbox_costCenter.Validate();
+            //        }
+            //    },
+            //    error: function (xhr, status, error) {
+            //        console.log("Error:", error);
+            //    }
+            //});
         }
 
         var WFisExpanded = false;
@@ -269,7 +273,7 @@
             var Paymethod = drpdown_PayMethod.GetValue();
             var tranType = drpdown_TranType.GetValue();
             var isTrav = rdButton_Trav.GetValue();
-            var costCenter = txtbox_costCenter.GetValue();
+            var costCenter = drpdown_CostCenter.GetValue();
             var io = txtbox_IO.GetValue() != null ? txtbox_IO.GetValue() : "";
             var payee = drpdown_Payee.GetValue();
             var lastDay = dateEdit_lastDayTran.GetValue() != null ? dateEdit_lastDayTran.GetValue() : "";
@@ -287,6 +291,8 @@
             //var remarks = txtbox_remarks.GetValue() != null ? txtbox_remarks.GetValue() : "";
             var curr = drpdown_currency.GetValue();
             var classification = drpdown_classification.GetValue() != null ? drpdown_classification.GetValue() : "";
+            var CTCompanyId = drpdown_CTCompany.GetValue() != null ? drpdown_CTCompany.GetValue() : "";
+            var CTDepartmentId = drpdown_CTDepartment.GetValue() != null ? drpdown_CTDepartment.GetValue() : "";
 
             if (wf_id == null || fap == null) {
                 var layoutControl = window["formRFP"];
@@ -331,7 +337,9 @@
                         //remarks: remarks,
                         curr: curr,
                         travType: travType,
-                        classification: classification
+                        classification: classification,
+                        CTCompanyId: CTCompanyId,
+                        CTDepartmentId: CTDepartmentId
                     }),
                     success: function (response) {
                         // Update the description text box with the response value
@@ -491,16 +499,18 @@
                             </Caption>
                         </GroupBoxStyle>
                         <Items>
-                            <dx:LayoutItem ColSpan="2" Caption="Company" ColumnSpan="2" Width="100%">
+                            <dx:LayoutItem Caption="Charged To Company" ColSpan="2" ColumnSpan="2" Width="100%">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="drpdown_Company" runat="server" ClientInstanceName="drpdown_Company" DataSourceID="SqlCompany" TextField="CompanyShortName" ValueField="CompanyId" Width="100%">
+                                        <dx:ASPxComboBox ID="drpdown_CTCompany" runat="server" ClientInstanceName="drpdown_CTCompany" DataSourceID="SqlCompany" TextField="CompanyShortName" ValueField="CompanyId" Width="100%">
                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	drpdown_Department.PerformCallback();
-drpdown_Payee.PerformCallback();
-drpdown_WF.PerformCallback();
+	drpdown_CTDepartment.PerformCallback(s.GetValue());
+drpdown_Payee.PerformCallback(s.GetValue());
+//drpdown_WF.PerformCallback();
 ifComp_is_DLI();
 onAmountChanged(drpdown_PayMethod.GetValue());
+drpdown_Company.SetValue(s.GetValue());
+drpdown_Department.PerformCallback();
 }" />
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                 <RequiredField ErrorText="This field is required." IsRequired="True" />
@@ -508,7 +518,6 @@ onAmountChanged(drpdown_PayMethod.GetValue());
                                         </dx:ASPxComboBox>
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
                             </dx:LayoutItem>
                             <dx:LayoutItem ColSpan="2" Caption="Payment Method" ColumnSpan="2" Width="100%">
                                 <LayoutItemNestedControlCollection>
@@ -654,12 +663,12 @@ onTravelClick();
                             </Caption>
                         </GroupBoxStyle>
                         <Items>
-                            <dx:LayoutItem ColSpan="1" Caption="Deparment">
+                            <dx:LayoutItem Caption="Charged To Department" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="drpdown_Department" runat="server" ClientInstanceName="drpdown_Department" DataSourceID="SqlDepartment" OnCallback="formRFP_E4_Callback" TextField="DepDesc" ValueField="ID" Width="100%">
+                                        <dx:ASPxComboBox ID="drpdown_CTDepartment" runat="server" ClientInstanceName="drpdown_CTDepartment" DataSourceID="SqlCTDepartment" OnCallback="drpdown_CTDepartment_Callback" TextField="DepDesc" ValueField="ID" Width="100%">
                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	onDeptChanged();
+	onCTDeptChanged();
 }" />
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                 <RequiredField ErrorText="This field is required." IsRequired="True" />
@@ -667,16 +676,15 @@ onTravelClick();
                                         </dx:ASPxComboBox>
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
                             </dx:LayoutItem>
                             <dx:LayoutItem ColSpan="1" Caption="Cost Center">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="txtbox_costCenter" runat="server" Width="100%" ClientInstanceName="txtbox_costCenter">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
-                                                <RequiredField ErrorText="This field is required." IsRequired="True" />
+                                        <dx:ASPxComboBox ID="drpdown_CostCenter" runat="server" ClientInstanceName="drpdown_CostCenter" Width="100%" DataSourceID="SqlCostCenter" OnCallback="drpdown_CostCenter_Callback" TextField="CostCenter" ValueField="CostCenter">
+                                            <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="CreationForm">
+                                                <RequiredField ErrorText="*Required" IsRequired="True" />
                                             </ValidationSettings>
-                                        </dx:ASPxTextBox>
+                                        </dx:ASPxComboBox>
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
                                 <CaptionSettings HorizontalAlign="Right" />
@@ -714,7 +722,10 @@ onTravelClick();
                             <dx:LayoutItem Caption="Payee" ColSpan="1" Name="Payee">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="drpdown_Payee" runat="server" ClientInstanceName="drpdown_Payee" DataSourceID="SqlUser" OnCallback="drpdown_Payee_Callback" TextField="FullName" ValueField="DelegateFor_UserID" Width="100%">
+                                        <dx:ASPxComboBox ID="drpdown_Payee" runat="server" ClientInstanceName="drpdown_Payee" OnCallback="drpdown_Payee_Callback" TextField="FullName" ValueField="DelegateFor_UserID" Width="100%">
+                                            <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="CreationForm">
+                                                <RequiredField ErrorText="*Required" IsRequired="True" />
+                                            </ValidationSettings>
                                         </dx:ASPxComboBox>
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
@@ -937,6 +948,44 @@ onTravelClick();
                     </dx:LayoutGroup>
                     <dx:LayoutGroup Caption="Workflow" ColSpan="2" ColumnSpan="2" Width="100%" GroupBoxDecoration="HeadingLine" ColCount="4" ColumnCount="4">
                         <Items>
+                            <dx:LayoutGroup Caption="" ColCount="4" ColSpan="1" ColumnCount="4" Width="100%">
+                                <Items>
+                                    <dx:LayoutItem Caption="Company" ColSpan="1" Width="50%">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxComboBox ID="drpdown_Company" runat="server" ClientInstanceName="drpdown_Company" DataSourceID="SqlCompany" TextField="CompanyShortName" ValueField="CompanyId" Width="100%">
+                                                    <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	drpdown_Department.PerformCallback();
+drpdown_Payee.PerformCallback();
+drpdown_WF.PerformCallback();
+ifComp_is_DLI();
+onAmountChanged(drpdown_PayMethod.GetValue());
+}" />
+                                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
+                                                        <RequiredField ErrorText="This field is required." IsRequired="True" />
+                                                    </ValidationSettings>
+                                                </dx:ASPxComboBox>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                        <CaptionSettings HorizontalAlign="Right" />
+                                    </dx:LayoutItem>
+                                    <dx:LayoutItem Caption="Deparment" ColSpan="1" Width="50%">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxComboBox ID="drpdown_Department" runat="server" ClientInstanceName="drpdown_Department" DataSourceID="SqlDepartment" OnCallback="formRFP_E4_Callback" TextField="DepDesc" ValueField="ID" Width="100%">
+                                                    <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	onDeptChanged();
+}" />
+                                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
+                                                        <RequiredField ErrorText="This field is required." IsRequired="True" />
+                                                    </ValidationSettings>
+                                                </dx:ASPxComboBox>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                        <CaptionSettings HorizontalAlign="Right" />
+                                    </dx:LayoutItem>
+                                </Items>
+                            </dx:LayoutGroup>
                             <dx:LayoutItem Caption="" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
@@ -1516,6 +1565,16 @@ SavePopup.Hide();
     <asp:SqlDataSource ID="SqlClassification" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_ExpenseClassification] WHERE ([isActive] = @isActive) ORDER BY [ClassificationName]">
         <SelectParameters>
             <asp:Parameter DefaultValue="true" Name="isActive" Type="Boolean" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlCTDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([Company_ID] = @Company_ID)">
+        <SelectParameters>
+            <asp:Parameter Name="Company_ID" Type="Int32" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_CostCenter] WHERE ([DepartmentId] = @DepartmentId)">
+        <SelectParameters>
+            <asp:Parameter Name="DepartmentId" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
 </asp:Content>

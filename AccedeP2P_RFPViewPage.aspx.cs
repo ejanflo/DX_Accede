@@ -53,6 +53,8 @@ namespace DX_WebTemplate
 
                     var pld = formRFP.FindItemOrGroupByName("PLD") as LayoutItem;
                     var wbs = formRFP.FindItemOrGroupByName("WBS") as LayoutItem;
+                    var cType = formRFP.FindItemOrGroupByName("ClassType") as LayoutItem;
+                    var tType = formRFP.FindItemOrGroupByName("TravType") as LayoutItem;
 
                     myLayoutGroup.Caption = "Request For Payment (View) - " + rfp_details.RFP_DocNum;
 
@@ -62,11 +64,13 @@ namespace DX_WebTemplate
                         {
                             rdButton_Trav.Checked = true;
                             rdButton_NonTrav.Checked = false;
+                            cType.ClientVisible = false;
                         }
                         else
                         {
                             rdButton_Trav.Checked = false;
                             rdButton_NonTrav.Checked = true;
+                            tType.ClientVisible = false;
                         }
                         var test = rfp_details.IsExpenseReim;
                         if ((rfp_details.Status == 3 || rfp_details.Status == 13 || rfp_details.Status == 15) && rfp_details.User_ID == empCode && rfp_details.IsExpenseReim != true)
@@ -97,6 +101,15 @@ namespace DX_WebTemplate
                         else
                         {
                             ExpBtn.Visible = false;
+                        }
+
+                        if (rfp_details.isForeignTravel != null && rfp_details.isForeignTravel == true)
+                        {
+                            txtbox_TravType.Value = "Foreign";
+                        }
+                        else
+                        {
+                            txtbox_TravType.Value = "Domestic";
                         }
 
                         amount_lbl.Text = rfp_details.Currency + " " + Convert.ToDecimal(rfp_details.Amount).ToString("#,##0.00");
@@ -136,6 +149,9 @@ namespace DX_WebTemplate
                     SqlActivity.SelectParameters["Document_Id"].DefaultValue = rfp_id.ToString();
                     SqlRFPDocs.SelectParameters["Doc_ID"].DefaultValue = rfp_id.ToString();
                     SqlRFPDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType != null ? app_docType.DCT_Id.ToString() : "";
+                    SqlCompany.SelectParameters["UserId"].DefaultValue = rfp_details.User_ID.ToString();
+                    SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = rfp_details.ChargedTo_CompanyId.ToString();
+                    SqlCostCenter.SelectParameters["DepartmentId"].DefaultValue = rfp_details.ChargedTo_DeptId.ToString();
 
                     if (rfp_details.Status == 1 && rfp_details.User_ID == empCode)
                     {
@@ -310,24 +326,34 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static string SaveP2PChangesAJAX(string SAPDoc, int stats)
+        public static string SaveP2PChangesAJAX(string SAPDoc, int stats, string CTComp_id, string CTDept_id, string CostCenter, string ClassType, string payMethod, string io, string acctCharged)
         {
             AccedeP2P_RFPViewPage rfp = new AccedeP2P_RFPViewPage();
 
-            return rfp.SaveP2PChanges(SAPDoc, stats);
+            return rfp.SaveP2PChanges(SAPDoc, stats, CTComp_id, CTDept_id, CostCenter, ClassType, payMethod, io, acctCharged);
         }
 
-        public string SaveP2PChanges(string SAPDoc, int stats)
+        public string SaveP2PChanges(string SAPDoc, int stats, string CTComp_id, string CTDept_id, string CostCenter, string ClassType, string payMethod, string io, string acctCharged)
         {
             try
             {
                 var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP").Where(x => x.App_Id == 1032).FirstOrDefault();
                 var rfp_main = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == Convert.ToInt32(Session["passP2PRFPID"])).FirstOrDefault();
                 var Cashier_status = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Pending at Cashier").FirstOrDefault();
-                var P2PWF = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Name == "ACDE P2P").Where(x => x.Company_Id == Convert.ToInt32(rfp_main.Company_ID)).FirstOrDefault();
+                var P2PWF = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Name.Contains("ACDE P2P")).Where(x => x.Company_Id == Convert.ToInt32(rfp_main.ChargedTo_CompanyId)).FirstOrDefault();
                 var P2PWFDetail = _DataContext.ITP_S_WorkflowDetails.Where(x => x.WF_Id == Convert.ToInt32(P2PWF.WF_Id)).FirstOrDefault();
                 var orgRole = _DataContext.ITP_S_SecurityUserOrgRoles.Where(x => x.OrgRoleId == Convert.ToInt32(P2PWFDetail.OrgRole_Id)).Where(x => x.UserId == Session["userID"].ToString()).FirstOrDefault();
+                
                 rfp_main.SAPDocNo = SAPDoc;
+                rfp_main.ChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
+                rfp_main.ChargedTo_DeptId = Convert.ToInt32(CTDept_id);
+                rfp_main.SAPCostCenter = CostCenter;
+                rfp_main.Classification_Type_Id = Convert.ToInt32(ClassType);
+                rfp_main.PayMethod = Convert.ToInt32(payMethod);
+                rfp_main.IO_Num = io;
+                rfp_main.AcctCharged = Convert.ToInt32(acctCharged);
+
+                Session["passRFPID"] = Session["passP2PRFPID"];
 
                 if (stats == 1)
                 {
@@ -652,6 +678,35 @@ namespace DX_WebTemplate
             }
             else
                 return new { FileName = fileName, ContentType = contentType, Data = bytes };
+        }
+
+        protected void edit_Department_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var comp_id = e.Parameter.ToString();
+            SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = comp_id;
+            SqlCTDepartment.DataBind();
+
+            edit_Department.DataSourceID = null;
+            edit_Department.DataSource = SqlCTDepartment;
+            edit_Department.DataBind();
+
+        }
+
+        protected void drpdown_CostCenter_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var Dept_id = e.Parameter.ToString();
+
+            SqlCostCenter.SelectParameters["DepartmentId"].DefaultValue = Dept_id;
+            SqlCostCenter.DataBind();
+
+            drpdown_CostCenter.DataSourceID = null;
+            drpdown_CostCenter.DataSource = SqlCostCenter;
+            drpdown_CostCenter.DataBind();
+
+            var count = drpdown_CostCenter.Items.Count;
+            if (count == 1)
+                drpdown_CostCenter.SelectedIndex = 0; drpdown_CostCenter.DataBind();
+
         }
     }
 

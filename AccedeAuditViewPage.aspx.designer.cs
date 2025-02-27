@@ -87,13 +87,40 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox txt_ExpName;
 
         /// <summary>
-        /// txt_Comp control.
+        /// txt_CreatorName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox txt_Comp;
+        protected global::DevExpress.Web.ASPxTextBox txt_CreatorName;
+
+        /// <summary>
+        /// txt_CTCompany control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox txt_CTCompany;
+
+        /// <summary>
+        /// txt_CTDepartment control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox txt_CTDepartment;
+
+        /// <summary>
+        /// txt_CostCenter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox txt_CostCenter;
 
         /// <summary>
         /// txt_ExpType control.
@@ -112,6 +139,15 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxTextBox txt_ExpCat;
+
+        /// <summary>
+        /// txt_ExpName3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox txt_ExpName3;
 
         /// <summary>
         /// pnlRadioButtons control.
@@ -175,6 +211,15 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxTextBox dueTotal;
+
+        /// <summary>
+        /// txt_CTDepartment0 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox txt_CTDepartment0;
 
         /// <summary>
         /// txt_remarks control.
@@ -265,6 +310,24 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.GridViewCommandColumnCustomButton btnDownloadFile;
+
+        /// <summary>
+        /// txt_Comp control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox txt_Comp;
+
+        /// <summary>
+        /// txt_Comp0 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox txt_Comp0;
 
         /// <summary>
         /// txt_WF control.

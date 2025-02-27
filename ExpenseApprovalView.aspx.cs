@@ -63,11 +63,53 @@ namespace DX_WebTemplate
                             var exp = _DataContext.ACCEDE_T_ExpenseMains
                                 .Where(x => x.ID == Convert.ToInt32(actDetails.Document_Id))
                                 .FirstOrDefault();
+                            SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = exp.ExpChargedTo_CompanyId.ToString();
+                            SqlCompany.SelectParameters["UserId"].DefaultValue = exp.ExpenseName.ToString();
 
                             SqlWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp.WF_Id).ToString();
                             SqlFAPWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp.FAPWF_Id).ToString();
 
+                            SqlCostCenterCT.SelectParameters["DepartmentId"].DefaultValue = Convert.ToInt32(exp.ExpChargedTo_DeptId).ToString();
+
+                            var FinApproverVerify = _DataContext.vw_ACCEDE_FinApproverVerifies.Where(x => x.UserId == empCode)
+                                .Where(x => x.Role_Name == "Accede Finance Approver").FirstOrDefault();
+
+                            var lbl_CTcomp = FormExpApprovalView.FindItemOrGroupByName("txt_CTComp") as LayoutItem;
+                            var lbl_CTdept = FormExpApprovalView.FindItemOrGroupByName("txt_CTDept") as LayoutItem;
+                            var lbl_CostCenter = FormExpApprovalView.FindItemOrGroupByName("txt_CostCenter") as LayoutItem;
+                            var edit_CTcomp = FormExpApprovalView.FindItemOrGroupByName("edit_CTComp") as LayoutItem;
+                            var edit_CTdept = FormExpApprovalView.FindItemOrGroupByName("edit_CTDept") as LayoutItem;
+                            var edit_CostCenter = FormExpApprovalView.FindItemOrGroupByName("edit_CostCenter") as LayoutItem;
+                            var lbl_classType = FormExpApprovalView.FindItemOrGroupByName("txt_ClassType") as LayoutItem;
+                            var edit_classType = FormExpApprovalView.FindItemOrGroupByName("edit_ClassType") as LayoutItem;
+
                             var expType = _DataContext.ACCEDE_S_ExpenseTypes.Where(x => x.ExpenseType_ID == Convert.ToInt32(exp.ExpenseType_ID)).FirstOrDefault();
+                            
+                            if(FinApproverVerify != null)
+                            {
+                                lbl_CTcomp.ClientVisible = false;
+                                lbl_CTdept.ClientVisible = false;
+                                lbl_CostCenter.ClientVisible = false;
+                                edit_CTcomp.ClientVisible = true;
+                                edit_CTdept.ClientVisible = true;
+                                edit_CostCenter.ClientVisible = true;
+
+                                edit_classType.ClientVisible = true;
+                                lbl_classType.ClientVisible = false;
+                            }
+                            else
+                            {
+                                lbl_CTcomp.ClientVisible = true;
+                                lbl_CTdept.ClientVisible = true;
+                                lbl_CostCenter.ClientVisible = true;
+                                edit_CTcomp.ClientVisible = false;
+                                edit_CTdept.ClientVisible = false;
+                                edit_CostCenter.ClientVisible = false;
+
+                                edit_classType.ClientVisible = false;
+                                lbl_classType.ClientVisible = true;
+                            }
+
                             if (Convert.ToBoolean(exp.isTravel) != true)
                             {
                                 txt_ExpType.Text = expType.Description + " - Non Travel";
@@ -111,6 +153,12 @@ namespace DX_WebTemplate
                             {
                                 var dueField = FormExpApprovalView.FindItemOrGroupByName("due_lbl") as LayoutItem;
                                 dueField.Caption = "Net Due to Company";
+
+                                if(dueComp > 0)
+                                {
+                                    var AR_Reference = FormExpApprovalView.FindItemOrGroupByName("ARNo") as LayoutItem;
+                                    AR_Reference.ClientVisible = true;
+                                }
                             }
 
                             //APPROVE AND FORWARD BUTTON AND GENERATE AAF WF
@@ -278,14 +326,14 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static string btnApproveClickAjax(string approve_remarks, string secureToken)
+        public static string btnApproveClickAjax(string approve_remarks, string secureToken, string CTComp_id, string CTDept_id, string costCenter, string ClassType)
         {
             ExpenseApprovalView rfp = new ExpenseApprovalView();
-            var isApprove = rfp.btnApproveClick(approve_remarks, secureToken);
+            var isApprove = rfp.btnApproveClick(approve_remarks, secureToken, CTComp_id, CTDept_id, costCenter, ClassType);
             return isApprove;
         }
 
-        public string btnApproveClick(string remarks, string secureToken)
+        public string btnApproveClick(string remarks, string secureToken, string CTComp_id, string CTDept_id, string costCenter, string ClassType)
         {
             try
             {
@@ -307,10 +355,20 @@ namespace DX_WebTemplate
                     var payMethod = "";
                     var tranType = "";
 
+                    exp_main.ExpChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
+                    exp_main.ExpChargedTo_DeptId = Convert.ToInt32(CTDept_id);
+                    exp_main.CostCenter = costCenter;
+                    exp_main.ExpenseClassification = Convert.ToInt32(ClassType);
+
                     if (rfp_main != null)
                     {
                         payMethod = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == rfp_main.PayMethod).FirstOrDefault().PMethod_name;
                         tranType = _DataContext.ACCEDE_S_RFPTranTypes.Where(x => x.ID == rfp_main.TranType).FirstOrDefault().RFPTranType_Name;
+
+                        rfp_main.ChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
+                        rfp_main.ChargedTo_DeptId = Convert.ToInt32(CTDept_id);
+                        rfp_main.SAPCostCenter = costCenter;
+                        rfp_main.Classification_Type_Id = Convert.ToInt32(ClassType);
                     }
                     else
                     {
@@ -557,13 +615,13 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static string btnReturnClickAjax(string return_remarks, string secureToken)
+        public static string btnReturnClickAjax(string return_remarks, string secureToken, string CTComp_id, string CTDept_id, string costCenter, string ClassType)
         {
             ExpenseApprovalView rfp = new ExpenseApprovalView();
-            return rfp.btnReturnClick(return_remarks, secureToken);
+            return rfp.btnReturnClick(return_remarks, secureToken, CTComp_id, CTDept_id, costCenter, ClassType);
         }
 
-        public string btnReturnClick(string remarks, string secureToken)
+        public string btnReturnClick(string remarks, string secureToken, string CTComp_id, string CTDept_id, string costCenter, string ClassType)
         {
             try
             {
@@ -584,6 +642,11 @@ namespace DX_WebTemplate
                     //var payMethod = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == rfp_main.PayMethod).FirstOrDefault();
                     var tranType = _DataContext.ACCEDE_S_ExpenseTypes.Where(x => x.ExpenseType_ID == exp_main.ExpenseType_ID).FirstOrDefault();
 
+                    exp_main.ExpChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
+                    exp_main.ExpChargedTo_DeptId = Convert.ToInt32(CTDept_id);
+                    exp_main.CostCenter = costCenter;
+                    exp_main.ExpenseClassification = Convert.ToInt32(ClassType);
+
                     if (rfp_main != null)
                     {
                         var rfp_app_docType = _DataContext.ITP_S_DocumentTypes
@@ -597,6 +660,11 @@ namespace DX_WebTemplate
                             .Where(x => x.Status == 1)
                             .Where(x => x.Document_Id == rfp_main.ID)
                             .FirstOrDefault();
+
+                        rfp_main.ChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
+                        rfp_main.ChargedTo_DeptId = Convert.ToInt32(CTDept_id);
+                        rfp_main.SAPCostCenter = costCenter;
+                        rfp_main.Classification_Type_Id = Convert.ToInt32(ClassType);
 
                         if (reimActDetails != null)
                         {
@@ -666,6 +734,11 @@ namespace DX_WebTemplate
                     //var payMethod = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == rfp_main.PayMethod).FirstOrDefault();
                     var tranType = _DataContext.ACCEDE_S_ExpenseTypes.Where(x => x.ExpenseType_ID == exp_main.ExpenseType_ID).FirstOrDefault();
 
+                    //exp_main.ExpChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
+                    //exp_main.ExpChargedTo_DeptId = Convert.ToInt32(CTDept_id);
+                    //exp_main.CostCenter = costCenter;
+                    //exp_main.ExpenseClassification = Convert.ToInt32(ClassType);
+
                     if (rfp_main != null)
                     {
                         var rfp_app_docType = _DataContext.ITP_S_DocumentTypes
@@ -679,6 +752,11 @@ namespace DX_WebTemplate
                             .Where(x => x.Status == 1)
                             .Where(x => x.Document_Id == rfp_main.ID)
                             .FirstOrDefault();
+
+                        //rfp_main.ChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
+                        //rfp_main.ChargedTo_DeptId = Convert.ToInt32(CTDept_id);
+                        //rfp_main.SAPCostCenter = costCenter;
+                        //rfp_main.Classification_Type_Id = Convert.ToInt32(ClassType);
 
                         if (reimActDetails != null)
                         {
@@ -1029,15 +1107,15 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static string btnApproveForwardAJAX(string secureToken, string forwardWF, string remarks)
+        public static string btnApproveForwardAJAX(string secureToken, string forwardWF, string remarks, string CTComp_id, string CTDept_id, string costCenter, string ClassType)
         {
             ExpenseApprovalView rfp = new ExpenseApprovalView();
 
-            return rfp.btnApproveForward(secureToken, forwardWF, remarks);
+            return rfp.btnApproveForward(secureToken, forwardWF, remarks, CTComp_id, CTDept_id, costCenter, ClassType);
 
         }
 
-        public string btnApproveForward(string secureToken, string forwardWF, string remarks)
+        public string btnApproveForward(string secureToken, string forwardWF, string remarks, string CTComp_id, string CTDept_id, string costCenter, string ClassType)
         {
             try
             {
@@ -1071,10 +1149,20 @@ namespace DX_WebTemplate
 
                     var exp_app_doctype = exp_ActDetails.AppDocTypeId;
 
+                    exp_main.ExpChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
+                    exp_main.ExpChargedTo_DeptId = Convert.ToInt32(CTDept_id);
+                    exp_main.CostCenter = costCenter;
+                    exp_main.ExpenseClassification = Convert.ToInt32(ClassType);
+
                     int reimId = 0;
                     if (rfp_main != null)
                     {
                         reimId = rfp_main.ID;
+
+                        rfp_main.ChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
+                        rfp_main.ChargedTo_DeptId = Convert.ToInt32(CTDept_id);
+                        rfp_main.SAPCostCenter = costCenter;
+                        rfp_main.Classification_Type_Id = Convert.ToInt32(ClassType);
                     }
                     var reimActDetails = _DataContext.ITP_T_WorkflowActivities
                         .Where(x => x.AppDocTypeId == Convert.ToInt32(rfp_app_docType.DCT_Id))
@@ -1200,6 +1288,33 @@ namespace DX_WebTemplate
                 return ex.Message;
             }
 
+        }
+
+        protected void drpdown_CTDepartment_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var comp_id = e.Parameter.ToString();
+            SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = comp_id;
+            SqlCTDepartment.DataBind();
+
+            drpdown_CTDepartment.DataSourceID = null;
+            drpdown_CTDepartment.DataSource = SqlCTDepartment;
+            drpdown_CTDepartment.DataBind();
+        }
+
+        protected void drpdown_CostCenter_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var Dept_id = e.Parameter.ToString();
+
+            SqlCostCenterCT.SelectParameters["DepartmentId"].DefaultValue = Dept_id;
+            SqlCostCenterCT.DataBind();
+
+            drpdown_CostCenter.DataSourceID = null;
+            drpdown_CostCenter.DataSource = SqlCostCenterCT;
+            drpdown_CostCenter.DataBind();
+
+            var count = drpdown_CostCenter.Items.Count;
+            if (count == 1)
+                drpdown_CostCenter.SelectedIndex = 0; drpdown_CostCenter.DataBind();
         }
     }
 

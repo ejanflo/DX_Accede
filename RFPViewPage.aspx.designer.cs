@@ -87,13 +87,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxButton btnCancel;
 
         /// <summary>
-        /// ASPxTextBox1 control.
+        /// ASPxTextBox18 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox1;
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox18;
 
         /// <summary>
         /// ASPxTextBox2 control.
@@ -121,15 +121,6 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxTextBox PLD_lbl;
-
-        /// <summary>
-        /// ASPxTextBox16 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox16;
 
         /// <summary>
         /// rdButton_Trav control.
@@ -213,13 +204,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox edit_SAPDocNo;
 
         /// <summary>
-        /// ASPxTextBox5 control.
+        /// ASPxTextBox19 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox5;
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox19;
 
         /// <summary>
         /// ASPxTextBox6 control.
@@ -337,6 +328,24 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.GridViewCommandColumnCustomButton btnRemove;
+
+        /// <summary>
+        /// ASPxTextBox1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox1;
+
+        /// <summary>
+        /// ASPxTextBox5 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox5;
 
         /// <summary>
         /// WFbtnToggle control.

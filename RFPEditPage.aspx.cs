@@ -54,46 +54,59 @@ namespace DX_WebTemplate
 
                     Session["Doc_No"] = rfp_details.RFP_DocNum.ToString();
 
-                    SqlCompany.SelectParameters["UserId"].DefaultValue = empCode;
-                    SqlDepartment.SelectParameters["UserId"].DefaultValue = empCode;
-                    SqlDepartment.SelectParameters["CompanyId"].DefaultValue = rfp_details.Company_ID.ToString();
-                    SqlWF.SelectParameters["UserId"].DefaultValue = empCode;
-                    SqlWF.SelectParameters["CompanyId"].DefaultValue = rfp_details.Company_ID.ToString();
-                    SqlExpense.SelectParameters["UserId"].DefaultValue = empCode;
-                    SqlCAHistory.SelectParameters["User_ID"].DefaultValue = empCode;
-
-                    SqlUserSelf.SelectParameters["EmpCode"].DefaultValue = empCode;
-
-                    SqlMain.SelectParameters["ID"].DefaultValue = rfp_id.ToString();
-                    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = rfp_details.WF_Id.ToString();
-                    SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = rfp_details.FAPWF_Id.ToString();
-                    SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = rfp_details.FAPWF_Id.ToString();
-                    SqlDocs.SelectParameters["Doc_ID"].DefaultValue = rfp_id.ToString();
-                    SqlDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType != null ? app_docType.DCT_Id.ToString() : null;
-
-                    var depCode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x=>x.ID == rfp_details.Department_ID).FirstOrDefault();
-                    SqlWF.SelectParameters["DepCode"].DefaultValue = depCode.DepCode.ToString();
-
-                    SqlUser.SelectParameters["Company_ID"].DefaultValue = rfp_details.Company_ID.ToString();
-                    SqlUser.SelectParameters["DelegateTo_UserID"].DefaultValue = Session["userID"].ToString();
-                    SqlUser.SelectParameters["DateFrom"].DefaultValue = DateTime.Now.ToString();
-                    SqlUser.SelectParameters["DateTo"].DefaultValue = DateTime.Now.ToString();
-                    drpdown_Payee.DataSourceID = null;
-                    drpdown_Payee.DataSource = SqlUser;
-                    drpdown_Payee.DataBind();
-
-                    if(drpdown_Payee.Items.Count() > 0)
+                    if (!IsPostBack)
                     {
-                        drpdown_Payee.Value = rfp_details.Payee.ToString();
-                        drpdown_Payee.DataBind();
-                    }
-                    else
-                    {
+                        SqlCompany.SelectParameters["UserId"].DefaultValue = empCode;
+                        SqlDepartment.SelectParameters["UserId"].DefaultValue = empCode;
+                        SqlDepartment.SelectParameters["CompanyId"].DefaultValue = rfp_details.Company_ID.ToString();
+                        SqlWF.SelectParameters["UserId"].DefaultValue = empCode;
+                        SqlWF.SelectParameters["CompanyId"].DefaultValue = rfp_details.Company_ID.ToString();
+                        SqlExpense.SelectParameters["UserId"].DefaultValue = empCode;
+                        SqlCAHistory.SelectParameters["User_ID"].DefaultValue = empCode;
+                        SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = rfp_details.ChargedTo_CompanyId != null ? rfp_details.ChargedTo_CompanyId.ToString() : "";
+
+                        SqlUserSelf.SelectParameters["EmpCode"].DefaultValue = empCode;
+
+                        SqlMain.SelectParameters["ID"].DefaultValue = rfp_id.ToString();
+                        SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = rfp_details.WF_Id.ToString();
+                        SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = rfp_details.FAPWF_Id.ToString();
+                        SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = rfp_details.FAPWF_Id.ToString();
+                        SqlDocs.SelectParameters["Doc_ID"].DefaultValue = rfp_id.ToString();
+                        SqlDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType != null ? app_docType.DCT_Id.ToString() : null;
+
+                        var depCode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == rfp_details.Department_ID).FirstOrDefault();
+                        SqlWF.SelectParameters["DepCode"].DefaultValue = depCode.DepCode.ToString();
+
+                        SqlUser.SelectParameters["Company_ID"].DefaultValue = rfp_details.Company_ID.ToString();
+                        SqlUser.SelectParameters["DelegateTo_UserID"].DefaultValue = Session["userID"].ToString();
+                        SqlUser.SelectParameters["DateFrom"].DefaultValue = DateTime.Now.ToString();
+                        SqlUser.SelectParameters["DateTo"].DefaultValue = DateTime.Now.ToString();
                         drpdown_Payee.DataSourceID = null;
-                        drpdown_Payee.DataSource = SqlUserSelf;
-                        drpdown_Payee.Value = rfp_details.Payee.ToString();
+                        drpdown_Payee.DataSource = SqlUser;
                         drpdown_Payee.DataBind();
+
+                        // Get the existing data from SqlDataSource
+                        DataView dv = SqlUser.Select(DataSourceSelectArguments.Empty) as DataView;
+
+                        if (dv != null)
+                        {
+                            // Convert DataView to DataTable to modify it
+                            DataTable dt = dv.ToTable();
+
+                            // Add a new row manually
+                            DataRow newRow = dt.NewRow();
+                            newRow["DelegateFor_UserID"] = Session["userID"].ToString();
+                            newRow["FullName"] = Session["userFullName"].ToString();
+                            dt.Rows.Add(newRow);
+
+                            // Rebind the ComboBox with the updated list
+                            drpdown_Payee.DataSource = dt;
+                            drpdown_Payee.TextField = "FullName";   // Ensure text field is set correctly
+                            drpdown_Payee.ValueField = "DelegateFor_UserID"; // Ensure value field is set correctly
+                            drpdown_Payee.DataBind();
+                        }
                     }
+                    
 
                     PLD.MinDate = DateTime.Now;
 
@@ -153,13 +166,13 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static int UpdateRFPMainAjax(string Comp_ID, string Dept_ID, string Paymethod, string tranType, bool isTrav, string costCenter, string io, string payee, string lastDay, string amount, string purpose, string wf_id, string status, string exp_id, string fap, string wbs, string pld, string curr, string travType, string classification)
+        public static int UpdateRFPMainAjax(string Comp_ID, string Dept_ID, string Paymethod, string tranType, bool isTrav, string costCenter, string io, string payee, string lastDay, string amount, string purpose, string wf_id, string status, string exp_id, string fap, string wbs, string pld, string curr, string travType, string classification, string CTComp_ID, string CTDept_ID)
         {
             RFPEditPage rfp = new RFPEditPage();
-            return rfp.UpdateRFPMain(Convert.ToInt32(Comp_ID), Convert.ToInt32(Dept_ID), Convert.ToInt32(Paymethod), Convert.ToInt32(tranType), isTrav, costCenter, io, payee, lastDay, Convert.ToDecimal(amount), purpose, Convert.ToInt32(wf_id), Convert.ToInt32(status), Convert.ToInt32(exp_id), Convert.ToInt32(fap), wbs, pld, curr, travType, classification);
+            return rfp.UpdateRFPMain(Convert.ToInt32(Comp_ID), Convert.ToInt32(Dept_ID), Convert.ToInt32(Paymethod), Convert.ToInt32(tranType), isTrav, costCenter, io, payee, lastDay, Convert.ToDecimal(amount), purpose, Convert.ToInt32(wf_id), Convert.ToInt32(status), Convert.ToInt32(exp_id), Convert.ToInt32(fap), wbs, pld, curr, travType, classification, CTComp_ID, CTDept_ID);
         }
 
-        public int UpdateRFPMain(int Comp_ID, int Dept_ID, int Paymethod, int tranType, bool isTrav, string costCenter, string io, string payee, string lastDay, decimal amount, string purpose, int wf_id, int status, int exp_id, int fap, string wbs, string pld, string curr, string travType, string classification)
+        public int UpdateRFPMain(int Comp_ID, int Dept_ID, int Paymethod, int tranType, bool isTrav, string costCenter, string io, string payee, string lastDay, decimal amount, string purpose, int wf_id, int status, int exp_id, int fap, string wbs, string pld, string curr, string travType, string classification, string CTComp_ID, string CTDept_ID)
         {
             var rfp_main = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == Convert.ToInt32(Session["EditRFPID"])).FirstOrDefault();
             
@@ -242,6 +255,9 @@ namespace DX_WebTemplate
                 {
                     rfp_main.Classification_Type_Id = Convert.ToInt32(classification);
                 }
+
+                rfp_main.ChargedTo_CompanyId = Convert.ToInt32(CTComp_ID);
+                rfp_main.ChargedTo_DeptId = Convert.ToInt32(CTDept_ID);
                 
                 //if(remarks != "")
                 //{
@@ -285,14 +301,14 @@ namespace DX_WebTemplate
 
         protected void formRFP_E4_Callback(object sender, DevExpress.Web.CallbackEventArgsBase e)
         {
-            SqlDepartment.SelectParameters["CompanyId"].DefaultValue = drpdown_Company.Value.ToString();
+            SqlDepartment.SelectParameters["CompanyId"].DefaultValue = e.Parameter.ToString();
             SqlDepartment.DataBind();
 
             drpdown_Department.DataSourceID = null;
             drpdown_Department.DataSource = SqlDepartment;
             drpdown_Department.DataBind();
 
-            var dept = _DataContext.ITP_S_SecurityAppUserCompanyDepts.Where(x => x.CompanyId == Convert.ToInt32(drpdown_Company.Value))
+            var dept = _DataContext.ITP_S_SecurityAppUserCompanyDepts.Where(x => x.CompanyId == Convert.ToInt32(e.Parameter))
                 .Where(x => x.UserId == Session["userID"].ToString());
 
             if (dept != null)
@@ -559,30 +575,32 @@ namespace DX_WebTemplate
 
         protected void drpdown_Payee_Callback(object sender, CallbackEventArgsBase e)
         {
-            var comp_id = drpdown_Company.Value != null ? Convert.ToInt32(drpdown_Company.Value) : 0;
-            if (comp_id != 0)
+            var comp_id = e.Parameter.ToString();
+            if (comp_id != "")
             {
                 SqlUser.SelectParameters["Company_ID"].DefaultValue = comp_id.ToString();
                 SqlUser.SelectParameters["DelegateTo_UserID"].DefaultValue = Session["userID"].ToString();
                 SqlUser.SelectParameters["DateFrom"].DefaultValue = DateTime.Now.ToString();
                 SqlUser.SelectParameters["DateTo"].DefaultValue = DateTime.Now.ToString();
             }
-            drpdown_Payee.DataSourceID = null;
-            drpdown_Payee.DataSource = SqlUser;
+            // Get the existing data from SqlDataSource
+            DataView dv = SqlUser.Select(DataSourceSelectArguments.Empty) as DataView;
 
-            drpdown_Payee.Value = Session["userID"].ToString();
-            drpdown_Payee.DataBind();
+            if (dv != null)
+            {
+                // Convert DataView to DataTable to modify it
+                DataTable dt = dv.ToTable();
 
-            if (drpdown_Payee.Items.Count() > 0)
-            {
-                drpdown_Payee.Value = Session["userID"].ToString();
-                drpdown_Payee.DataBind();
-            }
-            else
-            {
-                drpdown_Payee.DataSourceID = null;
-                drpdown_Payee.DataSource = SqlUserSelf;
-                drpdown_Payee.Value = Session["userID"].ToString();
+                // Add a new row manually
+                DataRow newRow = dt.NewRow();
+                newRow["DelegateFor_UserID"] = Session["userID"].ToString();
+                newRow["FullName"] = Session["userFullName"].ToString();
+                dt.Rows.Add(newRow);
+
+                // Rebind the ComboBox with the updated list
+                drpdown_Payee.DataSource = dt;
+                drpdown_Payee.TextField = "FullName";   // Ensure text field is set correctly
+                drpdown_Payee.ValueField = "DelegateFor_UserID"; // Ensure value field is set correctly
                 drpdown_Payee.DataBind();
             }
         }
@@ -603,6 +621,40 @@ namespace DX_WebTemplate
                 drpdown_currency.Value = PHPCurrency.ID.ToString();
                 drpdown_currency.Text = PHPCurrency.CurrDescription.ToString();
                 drpdown_currency.DataBind();
+            }
+        }
+
+        protected void drpdown_CostCenter_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var Dept_id = e.Parameter.ToString();
+
+            SqlCostCenter.SelectParameters["DepartmentId"].DefaultValue = Dept_id;
+            SqlCostCenter.DataBind();
+
+            drpdown_CostCenter.DataSourceID = null;
+            drpdown_CostCenter.DataSource = SqlCostCenter;
+            drpdown_CostCenter.DataBind();
+
+            var count = drpdown_CostCenter.Items.Count;
+            if (count == 1)
+                drpdown_CostCenter.SelectedIndex = 0; drpdown_CostCenter.DataBind();
+        }
+
+        protected void drpdown_CTDepartment_Callback(object sender, CallbackEventArgsBase e)
+        {
+            SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = e.Parameter.ToString();
+            SqlCTDepartment.DataBind();
+
+            drpdown_CTDepartment.DataSourceID = null;
+            drpdown_CTDepartment.DataSource = SqlCTDepartment;
+            drpdown_CTDepartment.DataBind();
+
+            var dept = _DataContext.ITP_S_SecurityAppUserCompanyDepts.Where(x => x.CompanyId == Convert.ToInt32(e.Parameter))
+                .Where(x => x.UserId == Session["userID"].ToString());
+
+            if (dept != null)
+            {
+                drpdown_CTDepartment.SelectedIndex = 0;
             }
         }
     }

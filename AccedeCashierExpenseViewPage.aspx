@@ -570,6 +570,19 @@
                                     </dx:EmptyLayoutItem>
                                     <dx:EmptyLayoutItem ColSpan="1">
                                     </dx:EmptyLayoutItem>
+                                    <dx:LayoutItem Caption="AR Reference No." ClientVisible="False" ColSpan="1" FieldName="AR_Reference_No" Name="ARNo">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxTextBox ID="txt_CTDepartment0" runat="server" ClientInstanceName="txt_CTDepartment" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
+                                                    <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                        <RequiredField ErrorText="*Required" />
+                                                    </ValidationSettings>
+                                                    <Border BorderStyle="None" />
+                                                    <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                </dx:ASPxTextBox>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                    </dx:LayoutItem>
                                     <dx:LayoutItem Caption="P2P Remarks" ColSpan="1" FieldName="remarks">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
@@ -581,7 +594,7 @@
                                         </LayoutItemNestedControlCollection>
                                         <CaptionSettings HorizontalAlign="Right" />
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="SAP Doc. No." ColSpan="1">
+                                    <dx:LayoutItem Caption="SAP Doc. No." ColSpan="1" ClientVisible="False" Name="SAPDoc">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxTextBox ID="edit_SAPDocNo" runat="server" ClientInstanceName="edit_SAPDocNo" Width="100%">

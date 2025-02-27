@@ -225,15 +225,15 @@ namespace DX_WebTemplate
     partial void InsertACCEDE_S_ExpenseClassification(ACCEDE_S_ExpenseClassification instance);
     partial void UpdateACCEDE_S_ExpenseClassification(ACCEDE_S_ExpenseClassification instance);
     partial void DeleteACCEDE_S_ExpenseClassification(ACCEDE_S_ExpenseClassification instance);
+    partial void InsertACCEDE_T_TravelExpenseMain(ACCEDE_T_TravelExpenseMain instance);
+    partial void UpdateACCEDE_T_TravelExpenseMain(ACCEDE_T_TravelExpenseMain instance);
+    partial void DeleteACCEDE_T_TravelExpenseMain(ACCEDE_T_TravelExpenseMain instance);
     partial void InsertACCEDE_T_RFPMain(ACCEDE_T_RFPMain instance);
     partial void UpdateACCEDE_T_RFPMain(ACCEDE_T_RFPMain instance);
     partial void DeleteACCEDE_T_RFPMain(ACCEDE_T_RFPMain instance);
     partial void InsertACCEDE_T_ExpenseMain(ACCEDE_T_ExpenseMain instance);
     partial void UpdateACCEDE_T_ExpenseMain(ACCEDE_T_ExpenseMain instance);
     partial void DeleteACCEDE_T_ExpenseMain(ACCEDE_T_ExpenseMain instance);
-    partial void InsertACCEDE_T_TravelExpenseMain(ACCEDE_T_TravelExpenseMain instance);
-    partial void UpdateACCEDE_T_TravelExpenseMain(ACCEDE_T_TravelExpenseMain instance);
-    partial void DeleteACCEDE_T_TravelExpenseMain(ACCEDE_T_TravelExpenseMain instance);
     #endregion
 		
 		public ITPORTALDataContext(string connection) : 
@@ -860,19 +860,19 @@ namespace DX_WebTemplate
 			}
 		}
 		
+		public System.Data.Linq.Table<ACCEDE_T_TravelExpenseMain> ACCEDE_T_TravelExpenseMains
+		{
+			get
+			{
+				return this.GetTable<ACCEDE_T_TravelExpenseMain>();
+			}
+		}
+		
 		public System.Data.Linq.Table<ACCEDE_T_RFPMain> ACCEDE_T_RFPMains
 		{
 			get
 			{
 				return this.GetTable<ACCEDE_T_RFPMain>();
-			}
-		}
-		
-		public System.Data.Linq.Table<ACCEDE_T_ExpenseMain> ACCEDE_T_ExpenseMains
-		{
-			get
-			{
-				return this.GetTable<ACCEDE_T_ExpenseMain>();
 			}
 		}
 		
@@ -884,11 +884,11 @@ namespace DX_WebTemplate
 			}
 		}
 		
-		public System.Data.Linq.Table<ACCEDE_T_TravelExpenseMain> ACCEDE_T_TravelExpenseMains
+		public System.Data.Linq.Table<ACCEDE_T_ExpenseMain> ACCEDE_T_ExpenseMains
 		{
 			get
 			{
-				return this.GetTable<ACCEDE_T_TravelExpenseMain>();
+				return this.GetTable<ACCEDE_T_ExpenseMain>();
 			}
 		}
 	}
@@ -22131,6 +22131,524 @@ namespace DX_WebTemplate
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_T_TravelExpenseMain")]
+	public partial class ACCEDE_T_TravelExpenseMain : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private System.Nullable<int> _Status;
+		
+		private string _Doc_No;
+		
+		private System.Nullable<int> _Employee_Id;
+		
+		private System.Nullable<int> _Preparer_Id;
+		
+		private System.Nullable<int> _Company_Id;
+		
+		private string _Trip_To;
+		
+		private string _Purpose;
+		
+		private System.Nullable<int> _WF_Id;
+		
+		private System.Nullable<int> _FAPWF_Id;
+		
+		private string _Remarks;
+		
+		private string _Dep_Code;
+		
+		private System.Nullable<System.DateTime> _Date_From;
+		
+		private System.Nullable<System.DateTime> _Date_To;
+		
+		private System.Nullable<System.DateTime> _Date_Created;
+		
+		private System.Nullable<System.TimeSpan> _Time_Departed;
+		
+		private System.Nullable<System.TimeSpan> _Time_Arrived;
+		
+		private System.Nullable<int> _ExpenseType_ID;
+		
+		private string _ForeignDomestic;
+		
+		private System.Nullable<int> _ChargedTo;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnStatusChanging(System.Nullable<int> value);
+    partial void OnStatusChanged();
+    partial void OnDoc_NoChanging(string value);
+    partial void OnDoc_NoChanged();
+    partial void OnEmployee_IdChanging(System.Nullable<int> value);
+    partial void OnEmployee_IdChanged();
+    partial void OnPreparer_IdChanging(System.Nullable<int> value);
+    partial void OnPreparer_IdChanged();
+    partial void OnCompany_IdChanging(System.Nullable<int> value);
+    partial void OnCompany_IdChanged();
+    partial void OnTrip_ToChanging(string value);
+    partial void OnTrip_ToChanged();
+    partial void OnPurposeChanging(string value);
+    partial void OnPurposeChanged();
+    partial void OnWF_IdChanging(System.Nullable<int> value);
+    partial void OnWF_IdChanged();
+    partial void OnFAPWF_IdChanging(System.Nullable<int> value);
+    partial void OnFAPWF_IdChanged();
+    partial void OnRemarksChanging(string value);
+    partial void OnRemarksChanged();
+    partial void OnDep_CodeChanging(string value);
+    partial void OnDep_CodeChanged();
+    partial void OnDate_FromChanging(System.Nullable<System.DateTime> value);
+    partial void OnDate_FromChanged();
+    partial void OnDate_ToChanging(System.Nullable<System.DateTime> value);
+    partial void OnDate_ToChanged();
+    partial void OnDate_CreatedChanging(System.Nullable<System.DateTime> value);
+    partial void OnDate_CreatedChanged();
+    partial void OnTime_DepartedChanging(System.Nullable<System.TimeSpan> value);
+    partial void OnTime_DepartedChanged();
+    partial void OnTime_ArrivedChanging(System.Nullable<System.TimeSpan> value);
+    partial void OnTime_ArrivedChanged();
+    partial void OnExpenseType_IDChanging(System.Nullable<int> value);
+    partial void OnExpenseType_IDChanged();
+    partial void OnForeignDomesticChanging(string value);
+    partial void OnForeignDomesticChanged();
+    partial void OnChargedToChanging(System.Nullable<int> value);
+    partial void OnChargedToChanged();
+    #endregion
+		
+		public ACCEDE_T_TravelExpenseMain()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Status", DbType="Int")]
+		public System.Nullable<int> Status
+		{
+			get
+			{
+				return this._Status;
+			}
+			set
+			{
+				if ((this._Status != value))
+				{
+					this.OnStatusChanging(value);
+					this.SendPropertyChanging();
+					this._Status = value;
+					this.SendPropertyChanged("Status");
+					this.OnStatusChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Doc_No", DbType="NVarChar(50)")]
+		public string Doc_No
+		{
+			get
+			{
+				return this._Doc_No;
+			}
+			set
+			{
+				if ((this._Doc_No != value))
+				{
+					this.OnDoc_NoChanging(value);
+					this.SendPropertyChanging();
+					this._Doc_No = value;
+					this.SendPropertyChanged("Doc_No");
+					this.OnDoc_NoChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Employee_Id", DbType="Int")]
+		public System.Nullable<int> Employee_Id
+		{
+			get
+			{
+				return this._Employee_Id;
+			}
+			set
+			{
+				if ((this._Employee_Id != value))
+				{
+					this.OnEmployee_IdChanging(value);
+					this.SendPropertyChanging();
+					this._Employee_Id = value;
+					this.SendPropertyChanged("Employee_Id");
+					this.OnEmployee_IdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Preparer_Id", DbType="Int")]
+		public System.Nullable<int> Preparer_Id
+		{
+			get
+			{
+				return this._Preparer_Id;
+			}
+			set
+			{
+				if ((this._Preparer_Id != value))
+				{
+					this.OnPreparer_IdChanging(value);
+					this.SendPropertyChanging();
+					this._Preparer_Id = value;
+					this.SendPropertyChanged("Preparer_Id");
+					this.OnPreparer_IdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Company_Id", DbType="Int")]
+		public System.Nullable<int> Company_Id
+		{
+			get
+			{
+				return this._Company_Id;
+			}
+			set
+			{
+				if ((this._Company_Id != value))
+				{
+					this.OnCompany_IdChanging(value);
+					this.SendPropertyChanging();
+					this._Company_Id = value;
+					this.SendPropertyChanged("Company_Id");
+					this.OnCompany_IdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Trip_To", DbType="NVarChar(MAX)")]
+		public string Trip_To
+		{
+			get
+			{
+				return this._Trip_To;
+			}
+			set
+			{
+				if ((this._Trip_To != value))
+				{
+					this.OnTrip_ToChanging(value);
+					this.SendPropertyChanging();
+					this._Trip_To = value;
+					this.SendPropertyChanged("Trip_To");
+					this.OnTrip_ToChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Purpose", DbType="NVarChar(MAX)")]
+		public string Purpose
+		{
+			get
+			{
+				return this._Purpose;
+			}
+			set
+			{
+				if ((this._Purpose != value))
+				{
+					this.OnPurposeChanging(value);
+					this.SendPropertyChanging();
+					this._Purpose = value;
+					this.SendPropertyChanged("Purpose");
+					this.OnPurposeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WF_Id", DbType="Int")]
+		public System.Nullable<int> WF_Id
+		{
+			get
+			{
+				return this._WF_Id;
+			}
+			set
+			{
+				if ((this._WF_Id != value))
+				{
+					this.OnWF_IdChanging(value);
+					this.SendPropertyChanging();
+					this._WF_Id = value;
+					this.SendPropertyChanged("WF_Id");
+					this.OnWF_IdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FAPWF_Id", DbType="Int")]
+		public System.Nullable<int> FAPWF_Id
+		{
+			get
+			{
+				return this._FAPWF_Id;
+			}
+			set
+			{
+				if ((this._FAPWF_Id != value))
+				{
+					this.OnFAPWF_IdChanging(value);
+					this.SendPropertyChanging();
+					this._FAPWF_Id = value;
+					this.SendPropertyChanged("FAPWF_Id");
+					this.OnFAPWF_IdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Remarks", DbType="NVarChar(MAX)")]
+		public string Remarks
+		{
+			get
+			{
+				return this._Remarks;
+			}
+			set
+			{
+				if ((this._Remarks != value))
+				{
+					this.OnRemarksChanging(value);
+					this.SendPropertyChanging();
+					this._Remarks = value;
+					this.SendPropertyChanged("Remarks");
+					this.OnRemarksChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Dep_Code", DbType="NVarChar(50)")]
+		public string Dep_Code
+		{
+			get
+			{
+				return this._Dep_Code;
+			}
+			set
+			{
+				if ((this._Dep_Code != value))
+				{
+					this.OnDep_CodeChanging(value);
+					this.SendPropertyChanging();
+					this._Dep_Code = value;
+					this.SendPropertyChanged("Dep_Code");
+					this.OnDep_CodeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Date_From", DbType="DateTime")]
+		public System.Nullable<System.DateTime> Date_From
+		{
+			get
+			{
+				return this._Date_From;
+			}
+			set
+			{
+				if ((this._Date_From != value))
+				{
+					this.OnDate_FromChanging(value);
+					this.SendPropertyChanging();
+					this._Date_From = value;
+					this.SendPropertyChanged("Date_From");
+					this.OnDate_FromChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Date_To", DbType="DateTime")]
+		public System.Nullable<System.DateTime> Date_To
+		{
+			get
+			{
+				return this._Date_To;
+			}
+			set
+			{
+				if ((this._Date_To != value))
+				{
+					this.OnDate_ToChanging(value);
+					this.SendPropertyChanging();
+					this._Date_To = value;
+					this.SendPropertyChanged("Date_To");
+					this.OnDate_ToChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Date_Created", DbType="DateTime")]
+		public System.Nullable<System.DateTime> Date_Created
+		{
+			get
+			{
+				return this._Date_Created;
+			}
+			set
+			{
+				if ((this._Date_Created != value))
+				{
+					this.OnDate_CreatedChanging(value);
+					this.SendPropertyChanging();
+					this._Date_Created = value;
+					this.SendPropertyChanged("Date_Created");
+					this.OnDate_CreatedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Time_Departed", DbType="Time")]
+		public System.Nullable<System.TimeSpan> Time_Departed
+		{
+			get
+			{
+				return this._Time_Departed;
+			}
+			set
+			{
+				if ((this._Time_Departed != value))
+				{
+					this.OnTime_DepartedChanging(value);
+					this.SendPropertyChanging();
+					this._Time_Departed = value;
+					this.SendPropertyChanged("Time_Departed");
+					this.OnTime_DepartedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Time_Arrived", DbType="Time")]
+		public System.Nullable<System.TimeSpan> Time_Arrived
+		{
+			get
+			{
+				return this._Time_Arrived;
+			}
+			set
+			{
+				if ((this._Time_Arrived != value))
+				{
+					this.OnTime_ArrivedChanging(value);
+					this.SendPropertyChanging();
+					this._Time_Arrived = value;
+					this.SendPropertyChanged("Time_Arrived");
+					this.OnTime_ArrivedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExpenseType_ID", DbType="Int")]
+		public System.Nullable<int> ExpenseType_ID
+		{
+			get
+			{
+				return this._ExpenseType_ID;
+			}
+			set
+			{
+				if ((this._ExpenseType_ID != value))
+				{
+					this.OnExpenseType_IDChanging(value);
+					this.SendPropertyChanging();
+					this._ExpenseType_ID = value;
+					this.SendPropertyChanged("ExpenseType_ID");
+					this.OnExpenseType_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForeignDomestic", DbType="NVarChar(10)")]
+		public string ForeignDomestic
+		{
+			get
+			{
+				return this._ForeignDomestic;
+			}
+			set
+			{
+				if ((this._ForeignDomestic != value))
+				{
+					this.OnForeignDomesticChanging(value);
+					this.SendPropertyChanging();
+					this._ForeignDomestic = value;
+					this.SendPropertyChanged("ForeignDomestic");
+					this.OnForeignDomesticChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ChargedTo", DbType="Int")]
+		public System.Nullable<int> ChargedTo
+		{
+			get
+			{
+				return this._ChargedTo;
+			}
+			set
+			{
+				if ((this._ChargedTo != value))
+				{
+					this.OnChargedToChanging(value);
+					this.SendPropertyChanging();
+					this._ChargedTo = value;
+					this.SendPropertyChanged("ChargedTo");
+					this.OnChargedToChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_T_RFPMain")]
 	public partial class ACCEDE_T_RFPMain : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -22148,6 +22666,10 @@ namespace DX_WebTemplate
 		private System.Nullable<int> _TranType;
 		
 		private System.Nullable<bool> _isTravel;
+		
+		private System.Nullable<int> _ChargedTo_CompanyId;
+		
+		private System.Nullable<int> _ChargedTo_DeptId;
 		
 		private string _SAPCostCenter;
 		
@@ -22215,6 +22737,10 @@ namespace DX_WebTemplate
     partial void OnTranTypeChanged();
     partial void OnisTravelChanging(System.Nullable<bool> value);
     partial void OnisTravelChanged();
+    partial void OnChargedTo_CompanyIdChanging(System.Nullable<int> value);
+    partial void OnChargedTo_CompanyIdChanged();
+    partial void OnChargedTo_DeptIdChanging(System.Nullable<int> value);
+    partial void OnChargedTo_DeptIdChanged();
     partial void OnSAPCostCenterChanging(string value);
     partial void OnSAPCostCenterChanged();
     partial void OnIO_NumChanging(string value);
@@ -22388,6 +22914,46 @@ namespace DX_WebTemplate
 					this._isTravel = value;
 					this.SendPropertyChanged("isTravel");
 					this.OnisTravelChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ChargedTo_CompanyId", DbType="Int")]
+		public System.Nullable<int> ChargedTo_CompanyId
+		{
+			get
+			{
+				return this._ChargedTo_CompanyId;
+			}
+			set
+			{
+				if ((this._ChargedTo_CompanyId != value))
+				{
+					this.OnChargedTo_CompanyIdChanging(value);
+					this.SendPropertyChanging();
+					this._ChargedTo_CompanyId = value;
+					this.SendPropertyChanged("ChargedTo_CompanyId");
+					this.OnChargedTo_CompanyIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ChargedTo_DeptId", DbType="Int")]
+		public System.Nullable<int> ChargedTo_DeptId
+		{
+			get
+			{
+				return this._ChargedTo_DeptId;
+			}
+			set
+			{
+				if ((this._ChargedTo_DeptId != value))
+				{
+					this.OnChargedTo_DeptIdChanging(value);
+					this.SendPropertyChanging();
+					this._ChargedTo_DeptId = value;
+					this.SendPropertyChanged("ChargedTo_DeptId");
+					this.OnChargedTo_DeptIdChanged();
 				}
 			}
 		}
@@ -22913,6 +23479,123 @@ namespace DX_WebTemplate
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.vw_ACCEDE_I_ApproveForwardWF")]
+	public partial class vw_ACCEDE_I_ApproveForwardWF
+	{
+		
+		private int _WF_Id;
+		
+		private string _Name;
+		
+		private string _EmpCode;
+		
+		private string _FullName;
+		
+		private System.Nullable<int> _App_Id;
+		
+		private System.Nullable<int> _Company_Id;
+		
+		public vw_ACCEDE_I_ApproveForwardWF()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WF_Id", DbType="Int NOT NULL")]
+		public int WF_Id
+		{
+			get
+			{
+				return this._WF_Id;
+			}
+			set
+			{
+				if ((this._WF_Id != value))
+				{
+					this._WF_Id = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(50)")]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this._Name = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EmpCode", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string EmpCode
+		{
+			get
+			{
+				return this._EmpCode;
+			}
+			set
+			{
+				if ((this._EmpCode != value))
+				{
+					this._EmpCode = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FullName", DbType="NVarChar(404) NOT NULL", CanBeNull=false)]
+		public string FullName
+		{
+			get
+			{
+				return this._FullName;
+			}
+			set
+			{
+				if ((this._FullName != value))
+				{
+					this._FullName = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_App_Id", DbType="Int")]
+		public System.Nullable<int> App_Id
+		{
+			get
+			{
+				return this._App_Id;
+			}
+			set
+			{
+				if ((this._App_Id != value))
+				{
+					this._App_Id = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Company_Id", DbType="Int")]
+		public System.Nullable<int> Company_Id
+		{
+			get
+			{
+				return this._Company_Id;
+			}
+			set
+			{
+				if ((this._Company_Id != value))
+				{
+					this._Company_Id = value;
+				}
+			}
+		}
+	}
+	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_T_ExpenseMain")]
 	public partial class ACCEDE_T_ExpenseMain : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -22934,6 +23617,10 @@ namespace DX_WebTemplate
 		private System.Nullable<System.DateTime> _ReportDate;
 		
 		private System.Nullable<int> _PaymentType;
+		
+		private System.Nullable<int> _ExpChargedTo_CompanyId;
+		
+		private System.Nullable<int> _ExpChargedTo_DeptId;
 		
 		private string _CostCenter;
 		
@@ -22959,6 +23646,8 @@ namespace DX_WebTemplate
 		
 		private System.Nullable<int> _ExpenseClassification;
 		
+		private string _AR_Reference_No;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -22979,6 +23668,10 @@ namespace DX_WebTemplate
     partial void OnReportDateChanged();
     partial void OnPaymentTypeChanging(System.Nullable<int> value);
     partial void OnPaymentTypeChanged();
+    partial void OnExpChargedTo_CompanyIdChanging(System.Nullable<int> value);
+    partial void OnExpChargedTo_CompanyIdChanged();
+    partial void OnExpChargedTo_DeptIdChanging(System.Nullable<int> value);
+    partial void OnExpChargedTo_DeptIdChanged();
     partial void OnCostCenterChanging(string value);
     partial void OnCostCenterChanged();
     partial void OnCompanyIdChanging(System.Nullable<int> value);
@@ -23003,6 +23696,8 @@ namespace DX_WebTemplate
     partial void OnDept_IdChanged();
     partial void OnExpenseClassificationChanging(System.Nullable<int> value);
     partial void OnExpenseClassificationChanged();
+    partial void OnAR_Reference_NoChanging(string value);
+    partial void OnAR_Reference_NoChanged();
     #endregion
 		
 		public ACCEDE_T_ExpenseMain()
@@ -23166,6 +23861,46 @@ namespace DX_WebTemplate
 					this._PaymentType = value;
 					this.SendPropertyChanged("PaymentType");
 					this.OnPaymentTypeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExpChargedTo_CompanyId", DbType="Int")]
+		public System.Nullable<int> ExpChargedTo_CompanyId
+		{
+			get
+			{
+				return this._ExpChargedTo_CompanyId;
+			}
+			set
+			{
+				if ((this._ExpChargedTo_CompanyId != value))
+				{
+					this.OnExpChargedTo_CompanyIdChanging(value);
+					this.SendPropertyChanging();
+					this._ExpChargedTo_CompanyId = value;
+					this.SendPropertyChanged("ExpChargedTo_CompanyId");
+					this.OnExpChargedTo_CompanyIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExpChargedTo_DeptId", DbType="Int")]
+		public System.Nullable<int> ExpChargedTo_DeptId
+		{
+			get
+			{
+				return this._ExpChargedTo_DeptId;
+			}
+			set
+			{
+				if ((this._ExpChargedTo_DeptId != value))
+				{
+					this.OnExpChargedTo_DeptIdChanging(value);
+					this.SendPropertyChanging();
+					this._ExpChargedTo_DeptId = value;
+					this.SendPropertyChanged("ExpChargedTo_DeptId");
+					this.OnExpChargedTo_DeptIdChanged();
 				}
 			}
 		}
@@ -23410,619 +24145,22 @@ namespace DX_WebTemplate
 			}
 		}
 		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.vw_ACCEDE_I_ApproveForwardWF")]
-	public partial class vw_ACCEDE_I_ApproveForwardWF
-	{
-		
-		private int _WF_Id;
-		
-		private string _Name;
-		
-		private string _EmpCode;
-		
-		private string _FullName;
-		
-		private System.Nullable<int> _App_Id;
-		
-		public vw_ACCEDE_I_ApproveForwardWF()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WF_Id", DbType="Int NOT NULL")]
-		public int WF_Id
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AR_Reference_No", DbType="VarChar(50)")]
+		public string AR_Reference_No
 		{
 			get
 			{
-				return this._WF_Id;
+				return this._AR_Reference_No;
 			}
 			set
 			{
-				if ((this._WF_Id != value))
+				if ((this._AR_Reference_No != value))
 				{
-					this._WF_Id = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(50)")]
-		public string Name
-		{
-			get
-			{
-				return this._Name;
-			}
-			set
-			{
-				if ((this._Name != value))
-				{
-					this._Name = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EmpCode", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
-		public string EmpCode
-		{
-			get
-			{
-				return this._EmpCode;
-			}
-			set
-			{
-				if ((this._EmpCode != value))
-				{
-					this._EmpCode = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FullName", DbType="NVarChar(404) NOT NULL", CanBeNull=false)]
-		public string FullName
-		{
-			get
-			{
-				return this._FullName;
-			}
-			set
-			{
-				if ((this._FullName != value))
-				{
-					this._FullName = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_App_Id", DbType="Int")]
-		public System.Nullable<int> App_Id
-		{
-			get
-			{
-				return this._App_Id;
-			}
-			set
-			{
-				if ((this._App_Id != value))
-				{
-					this._App_Id = value;
-				}
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_T_TravelExpenseMain")]
-	public partial class ACCEDE_T_TravelExpenseMain : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _ID;
-		
-		private System.Nullable<int> _Status;
-		
-		private string _Doc_No;
-		
-		private System.Nullable<int> _Employee_Id;
-		
-		private System.Nullable<int> _Preparer_Id;
-		
-		private System.Nullable<int> _Company_Id;
-		
-		private string _Trip_To;
-		
-		private string _Purpose;
-		
-		private System.Nullable<int> _WF_Id;
-		
-		private System.Nullable<int> _FAPWF_Id;
-		
-		private string _Remarks;
-		
-		private string _Dep_Code;
-		
-		private System.Nullable<System.DateTime> _Date_From;
-		
-		private System.Nullable<System.DateTime> _Date_To;
-		
-		private System.Nullable<System.DateTime> _Date_Created;
-		
-		private System.Nullable<System.TimeSpan> _Time_Departed;
-		
-		private System.Nullable<System.TimeSpan> _Time_Arrived;
-		
-		private System.Nullable<int> _ExpenseType_ID;
-		
-		private string _ForeignDomestic;
-		
-		private System.Nullable<int> _ChargedTo;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIDChanging(int value);
-    partial void OnIDChanged();
-    partial void OnStatusChanging(System.Nullable<int> value);
-    partial void OnStatusChanged();
-    partial void OnDoc_NoChanging(string value);
-    partial void OnDoc_NoChanged();
-    partial void OnEmployee_IdChanging(System.Nullable<int> value);
-    partial void OnEmployee_IdChanged();
-    partial void OnPreparer_IdChanging(System.Nullable<int> value);
-    partial void OnPreparer_IdChanged();
-    partial void OnCompany_IdChanging(System.Nullable<int> value);
-    partial void OnCompany_IdChanged();
-    partial void OnTrip_ToChanging(string value);
-    partial void OnTrip_ToChanged();
-    partial void OnPurposeChanging(string value);
-    partial void OnPurposeChanged();
-    partial void OnWF_IdChanging(System.Nullable<int> value);
-    partial void OnWF_IdChanged();
-    partial void OnFAPWF_IdChanging(System.Nullable<int> value);
-    partial void OnFAPWF_IdChanged();
-    partial void OnRemarksChanging(string value);
-    partial void OnRemarksChanged();
-    partial void OnDep_CodeChanging(string value);
-    partial void OnDep_CodeChanged();
-    partial void OnDate_FromChanging(System.Nullable<System.DateTime> value);
-    partial void OnDate_FromChanged();
-    partial void OnDate_ToChanging(System.Nullable<System.DateTime> value);
-    partial void OnDate_ToChanged();
-    partial void OnDate_CreatedChanging(System.Nullable<System.DateTime> value);
-    partial void OnDate_CreatedChanged();
-    partial void OnTime_DepartedChanging(System.Nullable<System.TimeSpan> value);
-    partial void OnTime_DepartedChanged();
-    partial void OnTime_ArrivedChanging(System.Nullable<System.TimeSpan> value);
-    partial void OnTime_ArrivedChanged();
-    partial void OnExpenseType_IDChanging(System.Nullable<int> value);
-    partial void OnExpenseType_IDChanged();
-    partial void OnForeignDomesticChanging(string value);
-    partial void OnForeignDomesticChanged();
-    partial void OnChargedToChanging(System.Nullable<int> value);
-    partial void OnChargedToChanged();
-    #endregion
-		
-		public ACCEDE_T_TravelExpenseMain()
-		{
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int ID
-		{
-			get
-			{
-				return this._ID;
-			}
-			set
-			{
-				if ((this._ID != value))
-				{
-					this.OnIDChanging(value);
+					this.OnAR_Reference_NoChanging(value);
 					this.SendPropertyChanging();
-					this._ID = value;
-					this.SendPropertyChanged("ID");
-					this.OnIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Status", DbType="Int")]
-		public System.Nullable<int> Status
-		{
-			get
-			{
-				return this._Status;
-			}
-			set
-			{
-				if ((this._Status != value))
-				{
-					this.OnStatusChanging(value);
-					this.SendPropertyChanging();
-					this._Status = value;
-					this.SendPropertyChanged("Status");
-					this.OnStatusChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Doc_No", DbType="NVarChar(50)")]
-		public string Doc_No
-		{
-			get
-			{
-				return this._Doc_No;
-			}
-			set
-			{
-				if ((this._Doc_No != value))
-				{
-					this.OnDoc_NoChanging(value);
-					this.SendPropertyChanging();
-					this._Doc_No = value;
-					this.SendPropertyChanged("Doc_No");
-					this.OnDoc_NoChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Employee_Id", DbType="Int")]
-		public System.Nullable<int> Employee_Id
-		{
-			get
-			{
-				return this._Employee_Id;
-			}
-			set
-			{
-				if ((this._Employee_Id != value))
-				{
-					this.OnEmployee_IdChanging(value);
-					this.SendPropertyChanging();
-					this._Employee_Id = value;
-					this.SendPropertyChanged("Employee_Id");
-					this.OnEmployee_IdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Preparer_Id", DbType="Int")]
-		public System.Nullable<int> Preparer_Id
-		{
-			get
-			{
-				return this._Preparer_Id;
-			}
-			set
-			{
-				if ((this._Preparer_Id != value))
-				{
-					this.OnPreparer_IdChanging(value);
-					this.SendPropertyChanging();
-					this._Preparer_Id = value;
-					this.SendPropertyChanged("Preparer_Id");
-					this.OnPreparer_IdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Company_Id", DbType="Int")]
-		public System.Nullable<int> Company_Id
-		{
-			get
-			{
-				return this._Company_Id;
-			}
-			set
-			{
-				if ((this._Company_Id != value))
-				{
-					this.OnCompany_IdChanging(value);
-					this.SendPropertyChanging();
-					this._Company_Id = value;
-					this.SendPropertyChanged("Company_Id");
-					this.OnCompany_IdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Trip_To", DbType="NVarChar(MAX)")]
-		public string Trip_To
-		{
-			get
-			{
-				return this._Trip_To;
-			}
-			set
-			{
-				if ((this._Trip_To != value))
-				{
-					this.OnTrip_ToChanging(value);
-					this.SendPropertyChanging();
-					this._Trip_To = value;
-					this.SendPropertyChanged("Trip_To");
-					this.OnTrip_ToChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Purpose", DbType="NVarChar(MAX)")]
-		public string Purpose
-		{
-			get
-			{
-				return this._Purpose;
-			}
-			set
-			{
-				if ((this._Purpose != value))
-				{
-					this.OnPurposeChanging(value);
-					this.SendPropertyChanging();
-					this._Purpose = value;
-					this.SendPropertyChanged("Purpose");
-					this.OnPurposeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WF_Id", DbType="Int")]
-		public System.Nullable<int> WF_Id
-		{
-			get
-			{
-				return this._WF_Id;
-			}
-			set
-			{
-				if ((this._WF_Id != value))
-				{
-					this.OnWF_IdChanging(value);
-					this.SendPropertyChanging();
-					this._WF_Id = value;
-					this.SendPropertyChanged("WF_Id");
-					this.OnWF_IdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FAPWF_Id", DbType="Int")]
-		public System.Nullable<int> FAPWF_Id
-		{
-			get
-			{
-				return this._FAPWF_Id;
-			}
-			set
-			{
-				if ((this._FAPWF_Id != value))
-				{
-					this.OnFAPWF_IdChanging(value);
-					this.SendPropertyChanging();
-					this._FAPWF_Id = value;
-					this.SendPropertyChanged("FAPWF_Id");
-					this.OnFAPWF_IdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Remarks", DbType="NVarChar(MAX)")]
-		public string Remarks
-		{
-			get
-			{
-				return this._Remarks;
-			}
-			set
-			{
-				if ((this._Remarks != value))
-				{
-					this.OnRemarksChanging(value);
-					this.SendPropertyChanging();
-					this._Remarks = value;
-					this.SendPropertyChanged("Remarks");
-					this.OnRemarksChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Dep_Code", DbType="NVarChar(50)")]
-		public string Dep_Code
-		{
-			get
-			{
-				return this._Dep_Code;
-			}
-			set
-			{
-				if ((this._Dep_Code != value))
-				{
-					this.OnDep_CodeChanging(value);
-					this.SendPropertyChanging();
-					this._Dep_Code = value;
-					this.SendPropertyChanged("Dep_Code");
-					this.OnDep_CodeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Date_From", DbType="DateTime")]
-		public System.Nullable<System.DateTime> Date_From
-		{
-			get
-			{
-				return this._Date_From;
-			}
-			set
-			{
-				if ((this._Date_From != value))
-				{
-					this.OnDate_FromChanging(value);
-					this.SendPropertyChanging();
-					this._Date_From = value;
-					this.SendPropertyChanged("Date_From");
-					this.OnDate_FromChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Date_To", DbType="DateTime")]
-		public System.Nullable<System.DateTime> Date_To
-		{
-			get
-			{
-				return this._Date_To;
-			}
-			set
-			{
-				if ((this._Date_To != value))
-				{
-					this.OnDate_ToChanging(value);
-					this.SendPropertyChanging();
-					this._Date_To = value;
-					this.SendPropertyChanged("Date_To");
-					this.OnDate_ToChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Date_Created", DbType="DateTime")]
-		public System.Nullable<System.DateTime> Date_Created
-		{
-			get
-			{
-				return this._Date_Created;
-			}
-			set
-			{
-				if ((this._Date_Created != value))
-				{
-					this.OnDate_CreatedChanging(value);
-					this.SendPropertyChanging();
-					this._Date_Created = value;
-					this.SendPropertyChanged("Date_Created");
-					this.OnDate_CreatedChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Time_Departed", DbType="Time")]
-		public System.Nullable<System.TimeSpan> Time_Departed
-		{
-			get
-			{
-				return this._Time_Departed;
-			}
-			set
-			{
-				if ((this._Time_Departed != value))
-				{
-					this.OnTime_DepartedChanging(value);
-					this.SendPropertyChanging();
-					this._Time_Departed = value;
-					this.SendPropertyChanged("Time_Departed");
-					this.OnTime_DepartedChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Time_Arrived", DbType="Time")]
-		public System.Nullable<System.TimeSpan> Time_Arrived
-		{
-			get
-			{
-				return this._Time_Arrived;
-			}
-			set
-			{
-				if ((this._Time_Arrived != value))
-				{
-					this.OnTime_ArrivedChanging(value);
-					this.SendPropertyChanging();
-					this._Time_Arrived = value;
-					this.SendPropertyChanged("Time_Arrived");
-					this.OnTime_ArrivedChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExpenseType_ID", DbType="Int")]
-		public System.Nullable<int> ExpenseType_ID
-		{
-			get
-			{
-				return this._ExpenseType_ID;
-			}
-			set
-			{
-				if ((this._ExpenseType_ID != value))
-				{
-					this.OnExpenseType_IDChanging(value);
-					this.SendPropertyChanging();
-					this._ExpenseType_ID = value;
-					this.SendPropertyChanged("ExpenseType_ID");
-					this.OnExpenseType_IDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForeignDomestic", DbType="NVarChar(10)")]
-		public string ForeignDomestic
-		{
-			get
-			{
-				return this._ForeignDomestic;
-			}
-			set
-			{
-				if ((this._ForeignDomestic != value))
-				{
-					this.OnForeignDomesticChanging(value);
-					this.SendPropertyChanging();
-					this._ForeignDomestic = value;
-					this.SendPropertyChanged("ForeignDomestic");
-					this.OnForeignDomesticChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ChargedTo", DbType="Int")]
-		public System.Nullable<int> ChargedTo
-		{
-			get
-			{
-				return this._ChargedTo;
-			}
-			set
-			{
-				if ((this._ChargedTo != value))
-				{
-					this.OnChargedToChanging(value);
-					this.SendPropertyChanging();
-					this._ChargedTo = value;
-					this.SendPropertyChanged("ChargedTo");
-					this.OnChargedToChanged();
+					this._AR_Reference_No = value;
+					this.SendPropertyChanged("AR_Reference_No");
+					this.OnAR_Reference_NoChanged();
 				}
 			}
 		}

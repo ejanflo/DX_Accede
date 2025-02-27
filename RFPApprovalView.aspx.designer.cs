@@ -159,6 +159,42 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox lbl_wbs;
 
         /// <summary>
+        /// lbl_ClassType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox lbl_ClassType;
+
+        /// <summary>
+        /// drpdown_classification control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox drpdown_classification;
+
+        /// <summary>
+        /// lbl_TravType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox lbl_TravType;
+
+        /// <summary>
+        /// lbl_LDOT control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox lbl_LDOT;
+
+        /// <summary>
         /// lbl_Purpose control.
         /// </summary>
         /// <remarks>
@@ -213,13 +249,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox lbl_CostCenter;
 
         /// <summary>
-        /// txt_CostCenter control.
+        /// drpdown_CostCenter control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox txt_CostCenter;
+        protected global::DevExpress.Web.ASPxComboBox drpdown_CostCenter;
 
         /// <summary>
         /// lbl_IO control.
@@ -355,6 +391,24 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.GridViewCommandColumnCustomButton btnDownloadFile;
+
+        /// <summary>
+        /// lbl_WFCompany control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox lbl_WFCompany;
+
+        /// <summary>
+        /// lbl_WFDepartment control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox lbl_WFDepartment;
 
         /// <summary>
         /// ASPxTextBox1 control.
@@ -868,5 +922,32 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlWFSequenceForward;
+
+        /// <summary>
+        /// SqlCTDepartment control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlCTDepartment;
+
+        /// <summary>
+        /// SqlCostCenter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlCostCenter;
+
+        /// <summary>
+        /// SqlClassification control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlClassification;
     }
 }

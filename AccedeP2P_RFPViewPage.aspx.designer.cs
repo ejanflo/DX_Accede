@@ -87,22 +87,22 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxButton btnCancel;
 
         /// <summary>
-        /// ASPxTextBox1 control.
+        /// edit_Company control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox1;
+        protected global::DevExpress.Web.ASPxComboBox edit_Company;
 
         /// <summary>
-        /// ASPxTextBox2 control.
+        /// edit_PayMethod control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox2;
+        protected global::DevExpress.Web.ASPxComboBox edit_PayMethod;
 
         /// <summary>
         /// ASPxTextBox3 control.
@@ -139,6 +139,24 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxRadioButton rdButton_NonTrav;
+
+        /// <summary>
+        /// txtbox_TravType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox txtbox_TravType;
+
+        /// <summary>
+        /// drpdown_classification control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox drpdown_classification;
 
         /// <summary>
         /// ASPxTextBox11 control.
@@ -186,31 +204,31 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox edit_SAPDocNo;
 
         /// <summary>
-        /// ASPxTextBox5 control.
+        /// edit_Department control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox5;
+        protected global::DevExpress.Web.ASPxComboBox edit_Department;
 
         /// <summary>
-        /// ASPxTextBox6 control.
+        /// drpdown_CostCenter control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox6;
+        protected global::DevExpress.Web.ASPxComboBox drpdown_CostCenter;
 
         /// <summary>
-        /// ASPxTextBox7 control.
+        /// edit_IO control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox7;
+        protected global::DevExpress.Web.ASPxTextBox edit_IO;
 
         /// <summary>
         /// ASPxTextBox8 control.
@@ -229,6 +247,15 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxTextBox ASPxTextBox9;
+
+        /// <summary>
+        /// edit_AcctCharged control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox edit_AcctCharged;
 
         /// <summary>
         /// amount_lbl control.
@@ -310,6 +337,24 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.GridViewCommandColumnCustomButton btnRemove;
+
+        /// <summary>
+        /// ASPxTextBox1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox1;
+
+        /// <summary>
+        /// ASPxTextBox5 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox5;
 
         /// <summary>
         /// WFbtnToggle control.
@@ -580,5 +625,59 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlRFPDocs;
+
+        /// <summary>
+        /// SqlCompany control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlCompany;
+
+        /// <summary>
+        /// SqlPayMethod control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlPayMethod;
+
+        /// <summary>
+        /// SqlAcctCharged control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlAcctCharged;
+
+        /// <summary>
+        /// SqlCTDepartment control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlCTDepartment;
+
+        /// <summary>
+        /// SqlCostCenter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlCostCenter;
+
+        /// <summary>
+        /// SqlClassification control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlClassification;
     }
 }

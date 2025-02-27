@@ -51,13 +51,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxButton btnCancel;
 
         /// <summary>
-        /// drpdown_Company control.
+        /// drpdown_CTCompany control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox drpdown_Company;
+        protected global::DevExpress.Web.ASPxComboBox drpdown_CTCompany;
 
         /// <summary>
         /// drpdown_PayMethod control.
@@ -150,22 +150,22 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxMemo memo_Purpose;
 
         /// <summary>
-        /// drpdown_Department control.
+        /// drpdown_CTDepartment control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox drpdown_Department;
+        protected global::DevExpress.Web.ASPxComboBox drpdown_CTDepartment;
 
         /// <summary>
-        /// txtbox_costCenter control.
+        /// drpdown_CostCenter control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox txtbox_costCenter;
+        protected global::DevExpress.Web.ASPxComboBox drpdown_CostCenter;
 
         /// <summary>
         /// txtbox_IO control.
@@ -274,6 +274,24 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.GridViewCommandColumnCustomButton btnDownload;
+
+        /// <summary>
+        /// drpdown_Company control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox drpdown_Company;
+
+        /// <summary>
+        /// drpdown_Department control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox drpdown_Department;
 
         /// <summary>
         /// WFbtnToggle control.
@@ -679,5 +697,23 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlClassification;
+
+        /// <summary>
+        /// SqlCTDepartment control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlCTDepartment;
+
+        /// <summary>
+        /// SqlCostCenter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlCostCenter;
     }
 }

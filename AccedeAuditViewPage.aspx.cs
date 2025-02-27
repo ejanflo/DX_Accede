@@ -93,6 +93,12 @@ namespace DX_WebTemplate
                     {
                         var dueField = FormExpApprovalView.FindItemOrGroupByName("due_lbl") as LayoutItem;
                         dueField.Caption = "Net Due to Company";
+
+                        if (dueComp > 0)
+                        {
+                            var AR_Reference = FormExpApprovalView.FindItemOrGroupByName("ARNo") as LayoutItem;
+                            AR_Reference.ClientVisible = true;
+                        }
                     }
 
 
@@ -100,6 +106,7 @@ namespace DX_WebTemplate
 
                     //GENERATE AAF WF
                     var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
+                                    .Where(x => x.Company_Id == exp_details.CompanyId)
                                     .Where(x => x.Name.Contains("forward cfo") || x.Name.Contains("forward exec") || x.Name.Contains("forward pres"))
                                     .Where(x => x.App_Id == 1032)
                                     .ToList();

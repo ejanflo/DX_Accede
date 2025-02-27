@@ -74,19 +74,20 @@ namespace DX_WebTemplate
                             tType.ClientVisible = false;
                         }
                         var test = rfp_details.IsExpenseReim;
+                        var CA_tranType = _DataContext.ACCEDE_S_RFPTranTypes.Where(x=>x.RFPTranType_Name == "Cash Advance").FirstOrDefault();
                         if((rfp_details.Status == 3 || rfp_details.Status == 13 || rfp_details.Status == 15) && rfp_details.User_ID == empCode && rfp_details.IsExpenseReim != true)
                         {
                             btnEdit.Visible = true;
                             btnSub.Visible = true;
                         }
 
-                        if (rfp_details.TranType == 1)
+                        if (rfp_details.TranType == CA_tranType.ID)
                         {
-                            pld.Visible = true;
+                            pld.ClientVisible = true;
                             if (rfp_details.PLDate != null)
                             {
                                 DateTime date = Convert.ToDateTime(rfp_details.PLDate.ToString());
-                                PLD_lbl.Text = date.ToString("MM/dd/yyyy");
+                                PLD_lbl.Text = date.ToString("MMMM dd, yyyy");
                             }
                         }
 

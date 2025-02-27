@@ -87,11 +87,26 @@ namespace DX_WebTemplate
                     {
                         var dueField = FormExpApprovalView.FindItemOrGroupByName("due_lbl") as LayoutItem;
                         dueField.Caption = "Net Due to Employee";
+
+                        var reimRFP = _DataContext.ACCEDE_T_RFPMains.Where(x => x.IsExpenseReim == true).Where(x => x.Status != 4).Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]));
+
+                        if(reimRFP != null)
+                        {
+                            var SAPdoc = FormExpApprovalView.FindItemOrGroupByName("SAPDoc") as LayoutItem;
+                            SAPdoc.ClientVisible = true;
+                        }
+
                     }
                     else
                     {
                         var dueField = FormExpApprovalView.FindItemOrGroupByName("due_lbl") as LayoutItem;
                         dueField.Caption = "Net Due to Company";
+
+                        if (dueComp > 0)
+                        {
+                            var AR_Reference = FormExpApprovalView.FindItemOrGroupByName("ARNo") as LayoutItem;
+                            AR_Reference.ClientVisible = true;
+                        }
                     }
 
                     dueTotal.Text = FormatDecimal(dueComp) + "  PHP ";

@@ -606,16 +606,15 @@
                                     </Caption>
                                 </GroupBoxStyle>
                                 <Items>
-                                    <dx:LayoutItem Caption="Company" ColSpan="2" Width="100%" ColumnSpan="2" FieldName="CompanyShortName">
+                                    <dx:LayoutItem Caption="Charged To Company" ColSpan="2" Width="100%" ColumnSpan="2" FieldName="CTCompName">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxTextBox ID="ASPxTextBox1" runat="server" Font-Bold="True" Font-Size="Medium" ReadOnly="True" Width="100%">
+                                                <dx:ASPxTextBox ID="ASPxTextBox18" runat="server" Font-Bold="True" Font-Size="Medium" ReadOnly="True" Width="100%">
                                                     <Border BorderStyle="None" />
                                                     <BorderBottom BorderColor="#333333" BorderStyle="Solid" BorderWidth="1px" />
                                                 </dx:ASPxTextBox>
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
-                                        <CaptionSettings HorizontalAlign="Right" />
                                     </dx:LayoutItem>
                                     <dx:LayoutItem Caption="Payment Method" ColSpan="2" Width="100%" ColumnSpan="2" FieldName="PMethod_name">
                                         <LayoutItemNestedControlCollection>
@@ -639,20 +638,10 @@
                                         </LayoutItemNestedControlCollection>
                                         <CaptionSettings HorizontalAlign="Right" />
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Projected Liquidation Date" ColSpan="2" ColumnSpan="2" Name="PLD" ShowCaption="True" Visible="False" Width="100%">
+                                    <dx:LayoutItem Caption="Projected Liquidation Date" ColSpan="2" ColumnSpan="2" Name="PLD" ShowCaption="True" Width="100%" ClientVisible="False">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxTextBox ID="PLD_lbl" runat="server" Font-Bold="True" Font-Size="Medium" ReadOnly="True" Width="100%">
-                                                    <Border BorderStyle="None" />
-                                                    <BorderBottom BorderColor="#333333" BorderStyle="Solid" BorderWidth="1px" />
-                                                </dx:ASPxTextBox>
-                                            </dx:LayoutItemNestedControlContainer>
-                                        </LayoutItemNestedControlCollection>
-                                    </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Projected Liquidation Date" ColSpan="2" ColumnSpan="2" Width="100%">
-                                        <LayoutItemNestedControlCollection>
-                                            <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxTextBox ID="ASPxTextBox16" runat="server" Font-Bold="True" Font-Size="Medium" ReadOnly="True" Width="100%">
                                                     <Border BorderStyle="None" />
                                                     <BorderBottom BorderColor="#333333" BorderStyle="Solid" BorderWidth="1px" />
                                                 </dx:ASPxTextBox>
@@ -763,7 +752,7 @@ onTravelClick();
                                     <dx:LayoutItem Caption="SAP Document No." ColSpan="1" FieldName="SAPDocNo" Name="lbl_SAPDoc">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxTextBox ID="lbl_SAPDocNo" runat="server" ClientInstanceName="lbl_SAPDocNo" Font-Bold="True" ReadOnly="True" Width="100%">
+                                                <dx:ASPxTextBox ID="lbl_SAPDocNo" runat="server" ClientInstanceName="lbl_SAPDocNo" Font-Bold="True" ReadOnly="True" Width="100%" Font-Size="Medium">
                                                     <Border BorderStyle="None" />
                                                     <BorderLeft BorderStyle="None" />
                                                     <BorderTop BorderStyle="None" />
@@ -777,7 +766,7 @@ onTravelClick();
                                     <dx:LayoutItem Caption="SAP Document No." ClientVisible="False" ColSpan="1" FieldName="SAPDocNo" Name="edit_SAPDoc">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxTextBox ID="edit_SAPDocNo" runat="server" ClientInstanceName="edit_SAPDocNo" Width="100%">
+                                                <dx:ASPxTextBox ID="edit_SAPDocNo" runat="server" ClientInstanceName="edit_SAPDocNo" Width="100%" Font-Bold="True" Font-Size="Medium">
                                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="ViewFormCashier">
                                                         <RequiredField ErrorText="This field is required." IsRequired="True" />
                                                     </ValidationSettings>
@@ -787,16 +776,15 @@ onTravelClick();
                                         </LayoutItemNestedControlCollection>
                                         <CaptionSettings HorizontalAlign="Right" />
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Deparment" ColSpan="1" FieldName="DepDesc">
+                                    <dx:LayoutItem Caption="Charge To Department" ColSpan="1" FieldName="CTDeptName">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxTextBox ID="ASPxTextBox5" runat="server" Font-Bold="True" Font-Size="Medium" ReadOnly="True" Width="100%">
+                                                <dx:ASPxTextBox ID="ASPxTextBox19" runat="server" Font-Bold="True" Font-Size="Medium" ReadOnly="True" Width="100%">
                                                     <Border BorderStyle="None" />
                                                     <BorderBottom BorderColor="#333333" BorderStyle="Solid" BorderWidth="1px" />
                                                 </dx:ASPxTextBox>
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
-                                        <CaptionSettings HorizontalAlign="Right" />
                                     </dx:LayoutItem>
                                     <dx:LayoutItem Caption="Cost Center" ColSpan="1" FieldName="SAPCostCenter">
                                         <LayoutItemNestedControlCollection>
@@ -979,6 +967,32 @@ onTravelClick();
                     </dx:EmptyLayoutItem>
                     <dx:LayoutGroup Caption="Workflow" ColSpan="2" Width="100%" ColCount="3" ColumnCount="3" ColumnSpan="2" GroupBoxDecoration="HeadingLine">
                         <Items>
+                            <dx:LayoutGroup Caption="" ColCount="2" ColSpan="3" ColumnCount="2" ColumnSpan="3" GroupBoxDecoration="None" Width="100%">
+                                <Items>
+                                    <dx:LayoutItem Caption="Company" ColSpan="1" FieldName="CompanyShortName" Width="50%">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxTextBox ID="ASPxTextBox1" runat="server" Font-Bold="True" Font-Size="Medium" ReadOnly="True" Width="100%">
+                                                    <Border BorderStyle="None" />
+                                                    <BorderBottom BorderColor="#333333" BorderStyle="Solid" BorderWidth="1px" />
+                                                </dx:ASPxTextBox>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                        <CaptionSettings HorizontalAlign="Right" />
+                                    </dx:LayoutItem>
+                                    <dx:LayoutItem Caption="Deparment" ColSpan="1" FieldName="DepDesc" Width="50%">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxTextBox ID="ASPxTextBox5" runat="server" Font-Bold="True" Font-Size="Medium" ReadOnly="True" Width="100%">
+                                                    <Border BorderStyle="None" />
+                                                    <BorderBottom BorderColor="#333333" BorderStyle="Solid" BorderWidth="1px" />
+                                                </dx:ASPxTextBox>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                        <CaptionSettings HorizontalAlign="Right" />
+                                    </dx:LayoutItem>
+                                </Items>
+                            </dx:LayoutGroup>
                             <dx:LayoutItem Caption="" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">

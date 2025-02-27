@@ -150,6 +150,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox dueTotal;
 
         /// <summary>
+        /// txt_CTDepartment0 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox txt_CTDepartment0;
+
+        /// <summary>
         /// memo_remarks control.
         /// </summary>
         /// <remarks>

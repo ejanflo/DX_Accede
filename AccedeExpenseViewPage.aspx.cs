@@ -92,6 +92,12 @@ namespace DX_WebTemplate
                     {
                         var dueField = FormExpApprovalView.FindItemOrGroupByName("due_lbl") as LayoutItem;
                         dueField.Caption = "Net Due to Company";
+
+                        if (dueComp > 0)
+                        {
+                            var AR_Reference = FormExpApprovalView.FindItemOrGroupByName("ARNo") as LayoutItem;
+                            AR_Reference.ClientVisible = true;
+                        }
                     }
 
                     dueTotal.Text = FormatDecimal(dueComp) + "  PHP ";

@@ -55,7 +55,7 @@
 
            if (e.item.name === "addExpense") {
 
-               costCenter.SetValue(txtbox_CostCenter.GetValue());
+               costCenter.SetValue(drpdown_CostCenter.GetValue());
                expensePopup1.Show();
 
            } 
@@ -94,30 +94,36 @@
             }
         }
 
+        function OnCTDeptChanged(dept_id) {
+            drpdown_CostCenter.PerformCallback(dept_id);
+        }
+
         function OnDeptChanged(dept_id) {
             drpdown_WF.PerformCallback();
             //exp_costCenter.PerformCallback();
-            $.ajax({
-                type: "POST",
-                url: "AccedeExpenseReportDashboard.aspx/GetCosCenterFrmDeptAJAX",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                data: JSON.stringify({
-                    dept_id: dept_id
-                }),
-                success: function (response) {
-                    // Update the description text box with the response value
-                    console.log(response.d);
-                    txtbox_CostCenter.SetValue(response.d);
-                    
-                },
-                error: function (xhr, status, error) {
-                    console.log("Error:", error);
-                }
-            });
+            //$.ajax({
+            //    type: "POST",
+            //    url: "AccedeExpenseReportDashboard.aspx/GetCosCenterFrmDeptAJAX",
+            //    contentType: "application/json; charset=utf-8",
+            //    dataType: "json",
+            //    data: JSON.stringify({
+            //        dept_id: dept_id
+            //    }),
+            //    success: function (response) {
+            //        // Update the description text box with the response value
+            //        console.log(response.d);
+            //        txtbox_CostCenter.SetValue(response.d);
+
+            //    },
+            //    error: function (xhr, status, error) {
+            //        console.log("Error:", error);
+            //    }
+            //});
+            //drpdown_CostCenter.PerformCallback(dept_id);
         }
 
         function removeFromExp(item_id, btnCommand) {
+            SaveExpenseReport("Save2");
             $.ajax({
                 type: "POST",
                 url: "AccedeExpenseReportEdit1.aspx/RemoveFromExp_AJAX",
@@ -210,7 +216,7 @@
                var currency = exp_Currency.GetValue() != null ? exp_Currency.GetValue() : "";
                var io = IO.GetValue() != null ? IO.GetValue() : "";
                var wbs = WBS.GetValue() != null ? WBS.GetValue() : "";
-
+               SaveExpenseReport("Save2");
                LoadingPanel.Show();
 
                $.ajax({
@@ -297,7 +303,7 @@
                 var payMethod = drpdown_payType.GetValue();
                 var purpose = memo_Purpose.GetValue();
                 var dept_id = exp_Department.GetValue();
-                var cCenter = txtbox_CostCenter.GetValue();
+                var cCenter = drpdown_CostCenter.GetValue();
                 var io = io_reim.GetValue() != null ? io_reim.GetValue() : "";
                 var payee = exp_EmpId.GetValue();
                 var acctCharge = drpdown_ExpCategory.GetValue();
@@ -307,7 +313,10 @@
                 var wbs = wbs_reim.GetValue() != null ? wbs_reim.GetValue() : "";
                 var currency = exp_Currency.GetValue();
                 var classification = drpdown_classification.GetValue() != null ? drpdown_classification.GetValue() : "";
+                var CTComp_id = exp_CTCompany.GetValue();
+                var CTDept_id = exp_CTDepartment.GetValue();
 
+                SaveExpenseReport("Save2");
                 console.log(dept_id);
 
                 $.ajax({
@@ -327,7 +336,9 @@
                         isTravelrfp: isTravelrfp,
                         wbs: wbs,
                         currency: currency,
-                        classification: classification
+                        classification: classification,
+                        CTComp_id: CTComp_id,
+                        CTDept_id: CTDept_id
 
                     }),
                     contentType: "application/json; charset=utf-8",
@@ -375,7 +386,10 @@
             var department = exp_Department.GetValue();
             var payType = drpdown_payType.GetValue();
             var classification = drpdown_classification.GetValue();
-            
+            var costCenter = drpdown_CostCenter.GetValue();
+            var CTCompany_id = exp_CTCompany.GetValue();
+            var CTDept_id = exp_CTDepartment.GetValue();
+            var AR = txt_AR.GetValue() != null ? txt_AR.GetValue() : "";
 
             $.ajax({
                 type: "POST",
@@ -395,7 +409,11 @@
                     department: department,
                     payType: payType,
                     btn: btn,
-                    classification: classification
+                    classification: classification,
+                    costCenter: costCenter,
+                    CTCompany_id: CTCompany_id,
+                    CTDept_id: CTDept_id,
+                    AR: AR
 
                 }),
                 contentType: "application/json; charset=utf-8",
@@ -410,11 +428,17 @@
                             LoadingPanel.SetText("Expense report successfully submitted. Redirecting&hellip;");
                             LoadingPanel.Show();
                             window.location.href = 'AccedeExpenseReportDashboard.aspx';
-                        }
-                        else {
+                        } else if (btn == "Save") {
                             LoadingPanel.SetText("Expense report successfully saved. Redirecting&hellip;");
                             LoadingPanel.Show();
                             window.location.href = 'AccedeExpenseReportDashboard.aspx';
+                        } else if (btn == "Submit") {
+                            LoadingPanel.SetText("Expense report successfully submitted. Redirecting&hellip;");
+                            LoadingPanel.Show();
+                            window.location.href = 'AccedeExpenseReportDashboard.aspx';
+                        } else {
+                        
+                            
                         }
                         
                     } else if (response.d == "require CA") {
@@ -566,7 +590,7 @@
                 var currency = exp_Currency.GetValue() != null ? exp_Currency.GetValue() : "";
                 var io = io_edit.GetValue() != null ? io_edit.GetValue() : "";
                 var wbs = wbs_edit.GetValue() != null ? wbs_edit.GetValue() : "";
-
+                SaveExpenseReport("Save2");
                 LoadingPanel.Show();
 
                 $.ajax({
@@ -987,27 +1011,16 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings HorizontalAlign="Right" />
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Employee Name" ColSpan="1" FieldName="ExpenseName">
+                                                <dx:LayoutItem Caption="Charged To Company" ColSpan="1" FieldName="ExpChargedTo_CompanyId">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxComboBox ID="exp_EmpId" runat="server" ClientInstanceName="exp_EmpId" DataSourceID="SqlUser" EnableTheming="True" Font-Bold="True" Font-Size="Small" TextField="FullName" ValueField="DelegateFor_UserID" Width="100%">
-                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
-                                                                    <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                                </ValidationSettings>
-                                                                <Border BorderStyle="None" />
-                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                            </dx:ASPxComboBox>
-                                                        </dx:LayoutItemNestedControlContainer>
-                                                    </LayoutItemNestedControlCollection>
-                                                    <CaptionSettings HorizontalAlign="Right" />
-                                                </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Company" ColSpan="1" FieldName="CompanyId">
-                                                    <LayoutItemNestedControlCollection>
-                                                        <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxComboBox ID="exp_Company" runat="server" ClientInstanceName="exp_Company" DataSourceID="SqlCompany" EnableTheming="True" Font-Bold="True" Font-Size="Small" OnCallback="exp_Company_Callback" ReadOnly="True" TextField="CompanyDesc" ValueField="CompanyId" Width="100%">
+                                                            <dx:ASPxComboBox ID="exp_CTCompany" runat="server" ClientInstanceName="exp_CTCompany" DataSourceID="SqlCompany" EnableTheming="True" Font-Bold="True" Font-Size="Small" OnCallback="exp_Company_Callback" TextField="CompanyDesc" ValueField="CompanyId" Width="100%">
                                                                 <ClientSideEvents SelectedIndexChanged="function(s, e) {
-drpdown_Company.SetValue(exp_Company.GetValue());
-	costCenter.PerformCallback();
+//exp_Company.SetValue(s.GetValue());
+	//costCenter.PerformCallback();
+exp_CTDepartment.PerformCallback(s.GetValue());
+drpdown_CostCenter.SetValue(&quot;&quot;);
+exp_EmpId.PerformCallback(s.GetValue());
 }" />
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
@@ -1019,12 +1032,26 @@ drpdown_Company.SetValue(exp_Company.GetValue());
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings HorizontalAlign="Right" />
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Department" ColSpan="1" FieldName="Dept_Id">
+                                                <dx:LayoutItem Caption="Employee Name" ColSpan="1" FieldName="ExpenseName">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxComboBox ID="exp_Department" runat="server" ClientInstanceName="exp_Department" DataSourceID="sqlDept" EnableTheming="True" Font-Bold="True" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" OnCallback="exp_Department_Callback" TextField="DepDesc" TextFormatString="{0} - {1}" ValueField="ID" Width="100%">
+                                                            <dx:ASPxComboBox ID="exp_EmpId" runat="server" ClientInstanceName="exp_EmpId" EnableTheming="True" Font-Bold="True" Font-Size="Small" TextField="FullName" ValueField="DelegateFor_UserID" Width="100%" OnCallback="exp_EmpId_Callback">
+                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                                    <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                </ValidationSettings>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                            </dx:ASPxComboBox>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionSettings HorizontalAlign="Right" />
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Charged To Department" ColSpan="1" FieldName="ExpChargedTo_DeptId">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxComboBox ID="exp_CTDepartment" runat="server" ClientInstanceName="exp_CTDepartment" DataSourceID="SqlCTDepartment" EnableTheming="True" Font-Bold="True" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" OnCallback="exp_CTDepartment_Callback" TextField="DepDesc" TextFormatString="{0} - {1}" ValueField="ID" Width="100%">
                                                                 <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	OnDeptChanged(s.GetValue());
+	OnCTDeptChanged(s.GetValue());
 }" />
                                                                 <Columns>
                                                                     <dx:ListBoxColumn Caption="Code" FieldName="DepCode">
@@ -1045,13 +1072,13 @@ drpdown_Company.SetValue(exp_Company.GetValue());
                                                 <dx:LayoutItem Caption="Cost Center" ColSpan="1" FieldName="CostCenter">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxTextBox ID="txtbox_CostCenter" runat="server" ClientInstanceName="txtbox_CostCenter" Font-Size="Small" Width="100%" Font-Bold="True">
-                                                                <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" ValidationGroup="CreateForm">
-                                                                    <RequiredField ErrorText="This field is required." IsRequired="True" />
+                                                            <dx:ASPxComboBox ID="drpdown_CostCenter" runat="server" ClientInstanceName="drpdown_CostCenter" DataSourceID="SqlCostCenter" Font-Bold="True" Font-Size="Small" OnCallback="drpdown_CostCenter_Callback" TextField="CostCenter" ValueField="CostCenter" Width="100%">
+                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                                    <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
                                                                 <Border BorderStyle="None" />
                                                                 <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                            </dx:ASPxTextBox>
+                                                            </dx:ASPxComboBox>
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings HorizontalAlign="Right" />
@@ -1085,7 +1112,7 @@ drpdown_Company.SetValue(exp_Company.GetValue());
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings HorizontalAlign="Right" />
-                                                    <CaptionStyle Font-Bold="True">
+                                                    <CaptionStyle Font-Bold="False">
                                                     </CaptionStyle>
                                                 </dx:LayoutItem>
                                                 <dx:LayoutItem Caption="Classification" ColSpan="1" FieldName="ExpenseClassification">
@@ -1103,6 +1130,7 @@ drpdown_Company.SetValue(exp_Company.GetValue());
                                                             </dx:ASPxComboBox>
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
+                                                    <CaptionSettings HorizontalAlign="Right" />
                                                 </dx:LayoutItem>
                                                 <dx:LayoutItem Caption="Purpose" ColSpan="1" FieldName="Purpose">
                                                     <LayoutItemNestedControlCollection>
@@ -1226,6 +1254,19 @@ reim_Currency.SetValue(s.GetValue);
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings HorizontalAlign="Right" />
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="AR Reference No." ClientVisible="False" ColSpan="1" Name="ARNo" FieldName="AR_Reference_No">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxTextBox ID="txt_AR" runat="server" ClientInstanceName="txt_AR" Font-Bold="True" Font-Size="Small" Width="100%">
+                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                                    <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                </ValidationSettings>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                            </dx:ASPxTextBox>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
                                                 </dx:LayoutItem>
                                                 <dx:LayoutItem Caption="" ClientVisible="False" ColSpan="1" HorizontalAlign="Right" Name="reimItem">
                                                     <LayoutItemNestedControlCollection>
@@ -1708,6 +1749,51 @@ ReimbursementTrap2();
                                                 </Caption>
                                             </GroupBoxStyle>
                                             <Items>
+                                                <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="None">
+                                                    <Items>
+                                                        <dx:LayoutItem Caption="Company" ColSpan="1" FieldName="CompanyId">
+                                                            <LayoutItemNestedControlCollection>
+                                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                                    <dx:ASPxComboBox ID="exp_Company" runat="server" ClientInstanceName="exp_Company" DataSourceID="SqlCompany" EnableTheming="True" Font-Bold="True" Font-Size="Small" OnCallback="exp_Company_Callback" ReadOnly="True" TextField="CompanyDesc" ValueField="CompanyId" Width="100%">
+                                                                        <ClientSideEvents SelectedIndexChanged="function(s, e) {
+drpdown_Company.SetValue(exp_Company.GetValue());
+	costCenter.PerformCallback();
+}" />
+                                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                        </ValidationSettings>
+                                                                        <Border BorderStyle="None" />
+                                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                    </dx:ASPxComboBox>
+                                                                </dx:LayoutItemNestedControlContainer>
+                                                            </LayoutItemNestedControlCollection>
+                                                            <CaptionSettings HorizontalAlign="Right" />
+                                                        </dx:LayoutItem>
+                                                        <dx:LayoutItem Caption="Department" ColSpan="1" FieldName="Dept_Id">
+                                                            <LayoutItemNestedControlCollection>
+                                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                                    <dx:ASPxComboBox ID="exp_Department" runat="server" ClientInstanceName="exp_Department" DataSourceID="sqlDept" EnableTheming="True" Font-Bold="True" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" OnCallback="exp_Department_Callback" TextField="DepDesc" TextFormatString="{0} - {1}" ValueField="ID" Width="100%">
+                                                                        <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	OnDeptChanged(s.GetValue());
+}" />
+                                                                        <Columns>
+                                                                            <dx:ListBoxColumn Caption="Code" FieldName="DepCode">
+                                                                            </dx:ListBoxColumn>
+                                                                            <dx:ListBoxColumn Caption="Description" FieldName="DepDesc">
+                                                                            </dx:ListBoxColumn>
+                                                                        </Columns>
+                                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                        </ValidationSettings>
+                                                                        <Border BorderStyle="None" />
+                                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                    </dx:ASPxComboBox>
+                                                                </dx:LayoutItemNestedControlContainer>
+                                                            </LayoutItemNestedControlCollection>
+                                                            <CaptionSettings HorizontalAlign="Right" />
+                                                        </dx:LayoutItem>
+                                                    </Items>
+                                                </dx:LayoutGroup>
                                                 <dx:LayoutItem Caption="" ColSpan="1">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
@@ -3512,12 +3598,12 @@ computeNetAmount(&quot;edit&quot;);
             </UpdateParameters>
         </asp:SqlDataSource>
     <asp:SqlDataSource ID="sqlAccountCharged" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_AccountCharged]"></asp:SqlDataSource>
-        <asp:SqlDataSource ID="sqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_CostCenter] WHERE (([CompanyId] = @CompanyId) AND ([DepartmentId] = @DepartmentId))">
+       <%-- <asp:SqlDataSource ID="sqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_CostCenter] WHERE (([CompanyId] = @CompanyId) AND ([DepartmentId] = @DepartmentId))">
             <SelectParameters>
                 <asp:Parameter Name="CompanyId" Type="Int32" />
                 <asp:Parameter Name="DepartmentId" Type="Int32" />
             </SelectParameters>
-    </asp:SqlDataSource>
+    </asp:SqlDataSource>--%>
     <asp:SqlDataSource ID="SqlPayMethod" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_PayMethod] WHERE ([isActive] = @isActive)">
         <SelectParameters>
             <asp:Parameter DefaultValue="true" Name="isActive" Type="Boolean" />
@@ -3587,6 +3673,16 @@ computeNetAmount(&quot;edit&quot;);
         <asp:SqlDataSource ID="SqlUserSelf" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT EmpCode, FullName FROM [ITP_S_UserMaster] WHERE ([EmpCode] = @EmpCode)">
         <SelectParameters>
             <asp:Parameter Name="EmpCode" Type="String" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+        <asp:SqlDataSource ID="SqlCTDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([Company_ID] = @Company_ID)">
+        <SelectParameters>
+            <asp:Parameter Name="Company_ID" Type="Int32" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="sqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_CostCenter] WHERE ([DepartmentId] = @DepartmentId)">
+        <SelectParameters>
+            <asp:Parameter Name="DepartmentId" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
 </asp:Content>

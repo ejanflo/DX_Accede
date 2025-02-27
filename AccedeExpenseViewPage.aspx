@@ -248,7 +248,7 @@
                             </Caption>
                         </GroupBoxStyle>
                         <Items>
-                            <dx:LayoutItem ColSpan="1" FieldName="ExpenseName" Caption="Report Name">
+                            <dx:LayoutItem ColSpan="1" FieldName="FullName" Caption="Report Name">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxTextBox ID="ASPxTextBox1" runat="server" Font-Bold="True" Font-Size="Small" Width="100%">
@@ -270,16 +270,35 @@
                                 </LayoutItemNestedControlCollection>
                                 <CaptionSettings HorizontalAlign="Right" />
                             </dx:LayoutItem>
-                            <dx:LayoutItem ColSpan="1" FieldName="CompanyShortName" Caption="Company">
+                            <dx:LayoutItem ColSpan="1" FieldName="CTCompName" Caption="Charged To Company">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="ASPxTextBox3" runat="server" Font-Bold="True" Font-Size="Small" Width="100%">
+                                        <dx:ASPxTextBox ID="ASPxTextBox12" runat="server" Font-Bold="True" Font-Size="Small" Width="100%">
                                             <Border BorderStyle="None" />
                                             <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                         </dx:ASPxTextBox>
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
+                            </dx:LayoutItem>
+                            <dx:LayoutItem Caption="Charged To Department" ColSpan="1" FieldName="CTDeptName">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxTextBox ID="ASPxTextBox13" runat="server" Font-Bold="True" Font-Size="Small" Width="100%">
+                                            <Border BorderStyle="None" />
+                                            <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                        </dx:ASPxTextBox>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                            </dx:LayoutItem>
+                            <dx:LayoutItem Caption="Cost Center" ColSpan="1" FieldName="CostCenter">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxTextBox ID="ASPxTextBox14" runat="server" Font-Bold="True" Font-Size="Small" Width="100%">
+                                            <Border BorderStyle="None" />
+                                            <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                        </dx:ASPxTextBox>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
                             </dx:LayoutItem>
                             <dx:LayoutItem ColSpan="1" FieldName="ExpTypeName" Caption="Expense">
                                 <LayoutItemNestedControlCollection>
@@ -362,6 +381,19 @@
                             </dx:EmptyLayoutItem>
                             <dx:EmptyLayoutItem ColSpan="1">
                             </dx:EmptyLayoutItem>
+                            <dx:LayoutItem Caption="AR Reference No." ClientVisible="False" ColSpan="1" FieldName="AR_Reference_No" Name="ARNo">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxTextBox ID="txt_CTDepartment0" runat="server" ClientInstanceName="txt_CTDepartment" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
+                                            <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                <RequiredField ErrorText="*Required" />
+                                            </ValidationSettings>
+                                            <Border BorderStyle="None" />
+                                            <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                        </dx:ASPxTextBox>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                            </dx:LayoutItem>
                             <dx:LayoutItem Caption="P2P Remarks" ColSpan="1" FieldName="remarks">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
@@ -471,7 +503,7 @@
                                                         </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataTextColumn FieldName="InvoiceOR" ShowInCustomizationForm="True" Visible="False" VisibleIndex="8">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Particulars" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                        <dx:GridViewDataTextColumn FieldName="P_Name" ShowInCustomizationForm="True" VisibleIndex="0" Caption="Particulars">
                                                         </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataTextColumn FieldName="AccountToCharged" ShowInCustomizationForm="True" Visible="False" VisibleIndex="9">
                                                         </dx:GridViewDataTextColumn>
@@ -612,6 +644,31 @@
                     </dx:LayoutGroup>
                     <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2" Width="100%">
                     </dx:EmptyLayoutItem>
+                    <dx:LayoutGroup Caption="WORKFLOW" ColCount="2" ColSpan="2" ColumnCount="2" ColumnSpan="2" Width="100%">
+                        <Items>
+                            <dx:LayoutItem Caption="Company" ColSpan="1" FieldName="CompanyShortName">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxTextBox ID="ASPxTextBox3" runat="server" Font-Bold="True" Font-Size="Small" Width="100%">
+                                            <Border BorderStyle="None" />
+                                            <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                        </dx:ASPxTextBox>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                                <CaptionSettings HorizontalAlign="Right" />
+                            </dx:LayoutItem>
+                            <dx:LayoutItem Caption="Department" ColSpan="1" FieldName="DepDesc">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxTextBox ID="ASPxTextBox15" runat="server" Font-Bold="True" Font-Size="Small" Width="100%">
+                                            <Border BorderStyle="None" />
+                                            <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                        </dx:ASPxTextBox>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                            </dx:LayoutItem>
+                        </Items>
+                    </dx:LayoutGroup>
                     <dx:LayoutGroup Caption="WORKFLOW DETAILS" ColSpan="1" GroupBoxDecoration="HeadingLine">
                         <GroupBoxStyle>
                             <Caption Font-Bold="True">
@@ -783,7 +840,7 @@
             <asp:Parameter DefaultValue="" Name="Exp_ID" Type="Int32" />
         </SelectParameters>
      </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlExpDetails" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_ExpenseDetails] WHERE ([ExpenseMain_ID] = @ExpenseMain_ID)">
+    <asp:SqlDataSource ID="SqlExpDetails" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_ExpenseDetails] WHERE ([ExpenseMain_ID] = @ExpenseMain_ID)">
         <SelectParameters>
             <asp:Parameter Name="ExpenseMain_ID" Type="Int32" />
         </SelectParameters>

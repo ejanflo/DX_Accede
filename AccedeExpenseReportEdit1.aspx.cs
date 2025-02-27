@@ -1,5 +1,6 @@
 ﻿using DevExpress.Pdf.Native.BouncyCastle.Ocsp;
 using DevExpress.Web;
+using DevExpress.Web.ASPxHtmlEditor.Internal;
 using DevExpress.Web.Bootstrap;
 using DevExpress.Web.Internal.XmlProcessor;
 using DevExpress.Xpo;
@@ -50,41 +51,59 @@ namespace DX_WebTemplate
                     SqlDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType != null ? app_docType.DCT_Id.ToString() : null;
 
                     SqlCompany.SelectParameters["UserId"].DefaultValue = mainExp.ExpenseName.ToString();
-                    SqlCostCenterAll.SelectParameters["CompanyId"].DefaultValue = mainExp.CompanyId.ToString();
+                    SqlCostCenterAll.SelectParameters["CompanyId"].DefaultValue = mainExp.ExpChargedTo_CompanyId.ToString();
+                    sqlCostCenter.SelectParameters["DepartmentId"].DefaultValue = mainExp.ExpChargedTo_DeptId.ToString();
 
                     SqlDepartment.SelectParameters["UserId"].DefaultValue = mainExp.ExpenseName.ToString();
-                    sqlCostCenter.SelectParameters["CompanyId"].DefaultValue = mainExp.CompanyId.ToString();
+                    //sqlCostCenter.SelectParameters["CompanyId"].DefaultValue = mainExp.CompanyId.ToString();
                     SqlRFPMainReim.SelectParameters["Exp_ID"].DefaultValue = Session["ExpenseId"].ToString();
                     sqlDept.SelectParameters["CompanyId"].DefaultValue = mainExp.CompanyId.ToString();
                     sqlDept.SelectParameters["UserId"].DefaultValue = mainExp.ExpenseName.ToString();
+                    SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = mainExp.ExpChargedTo_CompanyId.ToString();
 
-                    SqlUser.SelectParameters["Company_ID"].DefaultValue = mainExp.CompanyId.ToString();
+                    SqlUser.SelectParameters["Company_ID"].DefaultValue = mainExp.ExpChargedTo_CompanyId.ToString();
                     SqlUser.SelectParameters["DelegateTo_UserID"].DefaultValue = mainExp.ExpenseName.ToString();
                     SqlUser.SelectParameters["DateFrom"].DefaultValue = DateTime.Now.ToString();
                     SqlUser.SelectParameters["DateTo"].DefaultValue = DateTime.Now.ToString();
 
                     SqlUserSelf.SelectParameters["EmpCode"].DefaultValue = EmpCode;
 
-                    exp_EmpId.DataSourceID = null;
-                    exp_EmpId.DataSource = SqlUser;
+                    // Get the existing data from SqlDataSource
+                    DataView dv = SqlUser.Select(DataSourceSelectArguments.Empty) as DataView;
 
-                    exp_EmpId.Value = Session["userID"].ToString();
-                    exp_EmpId.DataBind();
-
-                    if (exp_EmpId.Items.Count() > 0)
+                    if (dv != null)
                     {
-                        exp_EmpId.Value = Session["userID"].ToString();
+                        // Convert DataView to DataTable to modify it
+                        DataTable dt = dv.ToTable();
+
+                        // Add a new row manually
+                        DataRow newRow = dt.NewRow();
+                        newRow["DelegateFor_UserID"] = EmpCode;
+                        newRow["FullName"] = Session["userFullName"].ToString();
+                        dt.Rows.Add(newRow);
+
+                        // Rebind the ComboBox with the updated list
+                        exp_EmpId.DataSource = dt;
+                        exp_EmpId.TextField = "FullName";   // Ensure text field is set correctly
+                        exp_EmpId.ValueField = "DelegateFor_UserID"; // Ensure value field is set correctly
                         exp_EmpId.DataBind();
                     }
-                    else
-                    {
-                        exp_EmpId.DataSourceID = null;
-                        exp_EmpId.DataSource = SqlUserSelf;
-                        exp_EmpId.ValueField = "EmpCode";
 
-                        exp_EmpId.DataBind();
-                        exp_EmpId.SelectedIndex = 0;
-                    }
+
+                    //if (exp_EmpId.Items.Count() > 0)
+                    //{
+                    //    exp_EmpId.Value = Session["userID"].ToString();
+                    //    exp_EmpId.DataBind();
+                    //}
+                    //else
+                    //{
+                    //    exp_EmpId.DataSourceID = null;
+                    //    exp_EmpId.DataSource = SqlUserSelf;
+                    //    exp_EmpId.ValueField = "EmpCode";
+
+                    //    exp_EmpId.DataBind();
+                    //    exp_EmpId.SelectedIndex = 0;
+                    //}
 
                     var pay_released = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Disbursed").FirstOrDefault();
                     sqlRFPMainCA.SelectParameters["User_ID"].DefaultValue = mainExp.ExpenseName.ToString();
@@ -165,6 +184,12 @@ namespace DX_WebTemplate
                         lbl_dueTotal.Text = totalDue.ToString("#,##0.00") + "  " + mainExp.Exp_Currency;
                         var dueField = ExpenseEditForm.FindItemOrGroupByName("due_lbl") as LayoutItem;
                         dueField.Caption = "Net Due to Company";
+
+                        if(totalDue > 0)
+                        {
+                            var AR_Reference = ExpenseEditForm.FindItemOrGroupByName("ARNo") as LayoutItem;
+                            AR_Reference.ClientVisible = true;
+                        }
 
                         if (reimRFP.Count() != 0)
                         {
@@ -407,7 +432,7 @@ namespace DX_WebTemplate
                     docs.Description = file.FileName.Split('.').First();
                     docs.FileSize = filesizeStr;
                     docs.Doc_No = Session["DocNo"].ToString();
-                    docs.Company_ID = Convert.ToInt32(exp_Company.Value);
+                    docs.Company_ID = Convert.ToInt32(exp_EmpId.Value);
                     docs.DateUploaded = DateTime.Now;
                     docs.DocType_Id = app_docType != null ? app_docType.DCT_Id : 0;
                 };
@@ -932,14 +957,14 @@ namespace DX_WebTemplate
 
         protected void costCenter_Callback(object sender, CallbackEventArgsBase e)
         {
-            sqlCostCenter.SelectParameters["CompanyId"].DefaultValue = exp_Company.Value.ToString();
+            sqlCostCenter.SelectParameters["CompanyId"].DefaultValue = exp_EmpId.Value.ToString();
             sqlCostCenter.DataBind();
 
         }
 
         protected void dept_reim_Callback(object sender, CallbackEventArgsBase e)
         {
-            SqlDepartment.SelectParameters["CompanyId"].DefaultValue = exp_Company.Value.ToString();
+            SqlDepartment.SelectParameters["CompanyId"].DefaultValue = exp_EmpId.Value.ToString();
             SqlDepartment.DataBind();
 
             dept_reim.DataSourceID = null;
@@ -957,16 +982,16 @@ namespace DX_WebTemplate
 
         [WebMethod]
         public static bool AddRFPReimburseAJAX(string comp_id, string payMethod, string purpose, string dept_id, string cCenter,
-            string io, string payee, string acctCharge, string amount, string remarks, bool isTravelrfp, string wbs, string currency, string classification)
+            string io, string payee, string acctCharge, string amount, string remarks, bool isTravelrfp, string wbs, string currency, string classification, string CTComp_id, string CTDept_id)
         {
             AccedeExpenseReportEdit1 exp = new AccedeExpenseReportEdit1();
 
             return exp.AddRFPReimburse(comp_id, payMethod, purpose, dept_id, cCenter,
-            io, payee, acctCharge, amount, remarks, isTravelrfp, wbs, currency, classification);
+            io, payee, acctCharge, amount, remarks, isTravelrfp, wbs, currency, classification, CTComp_id, CTDept_id);
         }
 
         public bool AddRFPReimburse(string comp_id, string payMethod, string purpose, string dept_id, string cCenter,
-            string io, string payee, string acctCharge, string amount, string remarks, bool isTravelrfp, string wbs, string currency, string classification)
+            string io, string payee, string acctCharge, string amount, string remarks, bool isTravelrfp, string wbs, string currency, string classification, string CTComp_id, string CTDept_id)
         {
             try
             {
@@ -1030,6 +1055,8 @@ namespace DX_WebTemplate
                         rfp.Currency = currency;
                         rfp.Status = expMain.Status;
                         rfp.Classification_Type_Id = Convert.ToInt32(classification);
+                        rfp.ChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
+                        rfp.ChargedTo_DeptId = Convert.ToInt32(CTDept_id);
 
                     }
 
@@ -1049,14 +1076,14 @@ namespace DX_WebTemplate
 
         [WebMethod]
         public static string UpdateExpenseAJAX(string dateFile, string repName, string comp_id, string expType, string expCat,
-            string purpose, bool trav, string wf, string fapwf, string currency, string department, string payType, string btn, string classification)
+            string purpose, bool trav, string wf, string fapwf, string currency, string department, string payType, string btn, string classification, string costCenter, string CTCompany_id, string CTDept_id, string AR)
         {
             AccedeExpenseReportEdit1 exp = new AccedeExpenseReportEdit1();
-            return exp.UpdateExpense(dateFile, repName, comp_id, expType, expCat,purpose, trav, wf, fapwf, currency, department, payType, btn, classification);
+            return exp.UpdateExpense(dateFile, repName, comp_id, expType, expCat,purpose, trav, wf, fapwf, currency, department, payType, btn, classification, costCenter, CTCompany_id, CTDept_id, AR);
         }
 
         public string UpdateExpense(string dateFile, string repName, string comp_id, string expType, string expCat,
-            string purpose, bool trav, string wf, string fapwf, string currency, string department, string payType, string btn, string classification)
+            string purpose, bool trav, string wf, string fapwf, string currency, string department, string payType, string btn, string classification, string costCenter, string CTCompany_id, string CTDept_id, string AR)
         {
             try
             {
@@ -1065,7 +1092,7 @@ namespace DX_WebTemplate
                 var expCA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"])).Where(x=>x.IsExpenseCA == true).FirstOrDefault();
                 if (expType == "1")
                 {
-                    if(expCA == null)
+                    if(expCA == null && btn != "Save" && btn != "Save2")
                     {
                         return "require CA";
                     }
@@ -1078,7 +1105,7 @@ namespace DX_WebTemplate
                     }
                 }
 
-                if(expCA == null && reim == null)
+                if(expCA == null && reim == null && btn != "Save" && btn != "Save2")
                 {
                     return "This transaction cannot be submitted. Please check your Cash Advance, Expense Items, or Reimbursement.";
                 }
@@ -1098,9 +1125,18 @@ namespace DX_WebTemplate
                 exp.Exp_Currency = currency;
                 exp.Dept_Id = Convert.ToInt32(department);
                 exp.ExpenseClassification = Convert.ToInt32(classification);
+                exp.CostCenter = costCenter;
+                exp.ExpChargedTo_CompanyId = Convert.ToInt32(CTCompany_id);
+                exp.ExpChargedTo_DeptId = Convert.ToInt32(CTDept_id);
+                exp.PaymentType = Convert.ToInt32(payType);
                 if(payType != null)
                 {
                     exp.PaymentType = Convert.ToInt32(payType);
+                }
+
+                if(AR != "")
+                {
+                    exp.AR_Reference_No = AR;
                 }
 
                 //Update reimbursement Workflows
@@ -1779,7 +1815,7 @@ namespace DX_WebTemplate
 
         protected void exp_Department_Callback(object sender, CallbackEventArgsBase e)
         {
-            var comp_id = exp_Company.Value;
+            var comp_id = exp_EmpId.Value;
 
             sqlDept.SelectParameters["Company_ID"].DefaultValue = comp_id.ToString();
 
@@ -2001,7 +2037,7 @@ namespace DX_WebTemplate
             //    .FirstOrDefault();
 
             // Fetch data using the stored procedure
-            DataTable rawf = GetWorkflowHeadersByExpenseAndDepartment(exp_EmpId.ToString(), Convert.ToInt32(exp_Company.Value), totalExp, depcode != null ? depcode.DepCode : "0", 1032);
+            DataTable rawf = GetWorkflowHeadersByExpenseAndDepartment(exp_EmpId.ToString(), Convert.ToInt32(exp_EmpId.Value), totalExp, depcode != null ? depcode.DepCode : "0", 1032);
 
             if (rawf != null && rawf.Rows.Count > 0)
             {
@@ -2027,7 +2063,7 @@ namespace DX_WebTemplate
 
         protected void exp_costCenter_Callback(object sender, CallbackEventArgsBase e)
         {
-            sqlCostCenter.SelectParameters["CompanyId"].DefaultValue = exp_Company.Value != null ? exp_Company.Value.ToString() : "";
+            sqlCostCenter.SelectParameters["CompanyId"].DefaultValue = exp_EmpId.Value != null ? exp_EmpId.Value.ToString() : "";
             sqlCostCenter.SelectParameters["DepartmentId"].DefaultValue = exp_Department.Value != null ? exp_Department.Value.ToString() : "";
             sqlCostCenter.DataBind();
 
@@ -2070,6 +2106,66 @@ namespace DX_WebTemplate
             }
 
             return dataTable;
+        }
+
+        protected void exp_CTDepartment_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var comp_id = e.Parameter.ToString();
+            SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = comp_id;
+            SqlCTDepartment.DataBind();
+
+            exp_CTDepartment.DataSourceID = null;
+            exp_CTDepartment.DataSource = SqlCTDepartment;
+            exp_CTDepartment.DataBind();
+        }
+
+        protected void drpdown_CostCenter_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var Dept_id = e.Parameter.ToString();
+
+            sqlCostCenter.SelectParameters["DepartmentId"].DefaultValue = Dept_id;
+            sqlCostCenter.DataBind();
+
+            drpdown_CostCenter.DataSourceID = null;
+            drpdown_CostCenter.DataSource = sqlCostCenter;
+            drpdown_CostCenter.DataBind();
+
+            var count = drpdown_CostCenter.Items.Count;
+            if (count == 1)
+                drpdown_CostCenter.SelectedIndex = 0; drpdown_CostCenter.DataBind();
+        }
+
+        protected void exp_EmpId_Callback(object sender, CallbackEventArgsBase e)
+        {
+            //var comp_id = drpdown_Comp.Value != null ? Convert.ToInt32(drpdown_Comp.Value) : 0;
+            var comp_id = e.Parameter.ToString();
+            if (comp_id != "")
+            {
+                SqlUser.SelectParameters["Company_ID"].DefaultValue = comp_id.ToString();
+                SqlUser.SelectParameters["DelegateTo_UserID"].DefaultValue = Session["userID"].ToString();
+                SqlUser.SelectParameters["DateFrom"].DefaultValue = DateTime.Now.ToString();
+                SqlUser.SelectParameters["DateTo"].DefaultValue = DateTime.Now.ToString();
+            }
+            // Get the existing data from SqlDataSource
+            DataView dv = SqlUser.Select(DataSourceSelectArguments.Empty) as DataView;
+
+            if (dv != null)
+            {
+                // Convert DataView to DataTable to modify it
+                DataTable dt = dv.ToTable();
+
+                // Add a new row manually
+                DataRow newRow = dt.NewRow();
+                newRow["DelegateFor_UserID"] = Session["userID"].ToString();
+                newRow["FullName"] = Session["userFullName"].ToString();
+                dt.Rows.Add(newRow);
+
+                // Rebind the ComboBox with the updated list
+                exp_EmpId.DataSource = dt;
+                exp_EmpId.TextField = "FullName";   // Ensure text field is set correctly
+                exp_EmpId.ValueField = "DelegateFor_UserID"; // Ensure value field is set correctly
+                exp_EmpId.DataBind();
+            }
         }
     }
 }

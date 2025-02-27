@@ -24,7 +24,7 @@
         function OnCompanyChanged(comp) {
             //drpdown_CostCenter.PerformCallback();
             drpdown_Department.PerformCallback(comp);
-            drpdown_EmpId.PerformCallback();
+            drpdown_EmpId.PerformCallback(comp);
         }
         function OnDeptChanged(dept_id) {
             $.ajax({
@@ -71,6 +71,8 @@
             var currency = txt_Currency.GetValue();
             var department = drpdown_Department.GetValue();
             var classification = drpdown_classification.GetValue();
+            var CTComp_id = drpdown_CTComp.GetValue();
+            var CTDept_id = drpdown_CTDepartment.GetValue();
 
             console.log(payType);
 
@@ -90,7 +92,9 @@
                     currency: currency,
                     department: department,
                     payType: payType,
-                    classification: classification
+                    classification: classification,
+                    CTComp_id: CTComp_id,
+                    CTDept_id: CTDept_id
                 }),
                 success: function (response) {
                     // Update the description text box with the response value
@@ -529,12 +533,15 @@
                 <Items>
                     <dx:LayoutGroup Caption="Expense Report Header" ColSpan="2" ColCount="2" ColumnCount="2" ColumnSpan="2" GroupBoxDecoration="HeadingLine">
                         <Items>
-                            <dx:LayoutItem Caption="Company" ColSpan="1">
+                            <dx:LayoutItem Caption="Charged To Company" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="drpdown_Comp" runat="server" Width="100%" DataSourceID="SqlUserCompany" TextField="CompanyShortName" ValueField="CompanyId" ClientInstanceName="drpdown_Comp" OnCallback="drpdown_Comp_Callback">
+                                        <dx:ASPxComboBox ID="drpdown_CTComp" runat="server" Width="100%" DataSourceID="SqlUserCompany" TextField="CompanyShortName" ValueField="CompanyId" ClientInstanceName="drpdown_CTComp" OnCallback="drpdown_Comp_Callback">
                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	OnCompanyChanged(s.GetValue());
+	drpdown_CTDepartment.PerformCallback(s.GetValue());
+drpdown_Department.PerformCallback(s.GetValue());
+OnCompanyChanged(s.GetValue());
+drpdown_Comp.SetValue(s.GetValue());
 }" />
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreateForm">
                                                 <RequiredField ErrorText="Required field." IsRequired="True" />
@@ -546,7 +553,7 @@
                             <dx:LayoutItem Caption="Employee Name" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="drpdown_EmpId" runat="server" ClientInstanceName="drpdown_EmpId" DataSourceID="SqlUser" TextField="FullName" ValueField="DelegateFor_UserID" Width="100%" OnCallback="drpdown_EmpId_Callback">
+                                        <dx:ASPxComboBox ID="drpdown_EmpId" runat="server" ClientInstanceName="drpdown_EmpId" TextField="FullName" ValueField="DelegateFor_UserID" Width="100%" OnCallback="drpdown_EmpId_Callback">
                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	OnUserChanged(s.GetValue(), drpdown_Comp.GetValue());
 }" />
@@ -568,10 +575,10 @@
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
                             </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Department" ColSpan="1">
+                            <dx:LayoutItem Caption="Charged To Department" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="drpdown_Department" runat="server" ClientInstanceName="drpdown_Department" DataSourceID="sqlDept" NullValueItemDisplayText="{1}" OnCallback="drpdown_Department_Callback" TextField="DepDesc" TextFormatString="{1}" ValueField="ID" Width="100%" DropDownWidth="500px">
+                                        <dx:ASPxComboBox ID="drpdown_CTDepartment" runat="server" ClientInstanceName="drpdown_CTDepartment" DataSourceID="sqlDept" DropDownWidth="500px" NullValueItemDisplayText="{1}" OnCallback="drpdown_CTDepartment_Callback" TextField="DepDesc" TextFormatString="{1}" ValueField="ID" Width="100%">
                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	OnDeptChanged(s.GetValue());
 }" />
@@ -686,6 +693,46 @@
                             </dx:LayoutItem>
 
 
+                            <dx:LayoutGroup Caption="Workflow" ColCount="2" ColSpan="2" ColumnCount="2" ColumnSpan="2" Width="100%">
+                                <Items>
+                                    <dx:LayoutItem Caption="Company" ColSpan="1">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxComboBox ID="drpdown_Comp" runat="server" ClientInstanceName="drpdown_Comp" DataSourceID="SqlUserCompany" OnCallback="drpdown_Comp_Callback" TextField="CompanyShortName" ValueField="CompanyId" Width="100%">
+                                                    <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	OnCompanyChanged(s.GetValue());
+}" />
+                                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreateForm">
+                                                        <RequiredField ErrorText="Required field." IsRequired="True" />
+                                                    </ValidationSettings>
+                                                </dx:ASPxComboBox>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                    </dx:LayoutItem>
+                                    <dx:LayoutItem Caption="Department" ColSpan="1">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxComboBox ID="drpdown_Department" runat="server" ClientInstanceName="drpdown_Department" DataSourceID="sqlDept" DropDownWidth="500px" NullValueItemDisplayText="{1}" OnCallback="drpdown_Department_Callback" TextField="DepDesc" TextFormatString="{1}" ValueField="ID" Width="100%">
+                                                    <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	//OnDeptChanged(s.GetValue());
+}" />
+                                                    <Columns>
+                                                        <dx:ListBoxColumn Caption="Code" FieldName="DepCode" Width="30%">
+                                                        </dx:ListBoxColumn>
+                                                        <dx:ListBoxColumn Caption="Description" FieldName="DepDesc" Width="70%">
+                                                        </dx:ListBoxColumn>
+                                                    </Columns>
+                                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreateForm">
+                                                        <RequiredField ErrorText="Required field." IsRequired="True" />
+                                                    </ValidationSettings>
+                                                </dx:ASPxComboBox>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                    </dx:LayoutItem>
+                                </Items>
+                            </dx:LayoutGroup>
+
+
                         </Items>
                     </dx:LayoutGroup>
                     <dx:LayoutGroup Caption="" ColCount="2" ColSpan="2" ColumnCount="2" ColumnSpan="2" HorizontalAlign="Right" GroupBoxDecoration="None">
@@ -760,12 +807,12 @@
             <asp:Parameter DefaultValue="ExpCat" Name="Code" Type="String" />
         </SelectParameters>
         </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_CostCenter] WHERE (([CompanyId] = @CompanyId) AND ([DepartmentId] = @DepartmentId))">
+    <%--<asp:SqlDataSource ID="SqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_CostCenter] WHERE (([CompanyId] = @CompanyId) AND ([DepartmentId] = @DepartmentId))">
         <SelectParameters>
             <asp:Parameter Name="CompanyId" Type="Int32" />
             <asp:Parameter Name="DepartmentId" Type="Int32" />
         </SelectParameters>
-        </asp:SqlDataSource>
+        </asp:SqlDataSource>--%>
     <asp:SqlDataSource ID="SqlCA" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_RFPMain] WHERE (([IsExpenseCA] = @IsExpenseCA) AND ([TranType] = @TranType) AND ([Exp_ID] = @Exp_ID))">
         <SelectParameters>
             <asp:Parameter DefaultValue="True" Name="IsExpenseCA" Type="Boolean" />
@@ -815,6 +862,16 @@
     <asp:SqlDataSource ID="SqlClassification" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_ExpenseClassification] WHERE ([isActive] = @isActive) ORDER BY [ClassificationName]">
         <SelectParameters>
             <asp:Parameter DefaultValue="true" Name="isActive" Type="Boolean" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlCTDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([Company_ID] = @Company_ID)">
+        <SelectParameters>
+            <asp:Parameter Name="Company_ID" Type="Int32" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_CostCenter] WHERE ([DepartmentId] = @DepartmentId)">
+        <SelectParameters>
+            <asp:Parameter Name="DepartmentId" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
 </asp:Content>
