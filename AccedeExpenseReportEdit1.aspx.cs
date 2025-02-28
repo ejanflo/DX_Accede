@@ -130,7 +130,7 @@ namespace DX_WebTemplate
                     var totalExp = new decimal (0.00);
                     foreach(var item in expDetail)
                     {
-                        totalExp += Convert.ToDecimal(item.GrossAmount);
+                        totalExp += Convert.ToDecimal(item.NetAmount);
                     }
                     lbl_expenseTotal.Text = totalExp.ToString("#,##0.00") + "  " + mainExp.Exp_Currency;
 
