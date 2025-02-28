@@ -60,6 +60,9 @@ namespace DX_WebTemplate
 
                     if (mainExp != null)
                     {
+                        Session["isForeignTravel"] = mainExp.ForeignDomestic == "Foreign" ? 1 : 0;
+                        Session["ford"] = mainExp.ForeignDomestic;
+                        Session["currency"] = mainExp.ForeignDomestic == "Domestic" ? '₱' : mainExp.ForeignDomestic == "Foreign" ? '$' : ' ';
                         status = _DataContext.ITP_S_Status.Where(x => x.STS_Id == Convert.ToInt32(mainExp.Status)).Select(x => x.STS_Description).FirstOrDefault();
                         Session["doc_stat2"] = status;
 
@@ -306,7 +309,15 @@ namespace DX_WebTemplate
                 SqlWF.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
                 SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
 
-                Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && (x.IsRA == false || x.IsRA == null && totExpCA >= x.Minimum && totExpCA <= x.Maximum)).Select(x => x.WF_Id).FirstOrDefault());
+                if (Convert.ToString(Session["ford"]) == "Foreign")
+                {
+                    Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.Description == "Foreign Test WF Finance Exec>CFO/Pres" && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
+                }
+                else
+                {
+                    Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && (x.IsRA == false || x.IsRA == null && totExpCA >= x.Minimum && totExpCA <= x.Maximum)).Select(x => x.WF_Id).FirstOrDefault());
+                }
+
                 SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
                 SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
 
@@ -848,20 +859,40 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static bool AJAXApproveDocument(string remarks)
+        public static bool AJAXApproveDocument(string remarks, int chargedcomp, int chargeddept)
         {
             TravelExpenseReview rev = new TravelExpenseReview();
-            rev.ApproveDocument(remarks);
+            rev.ApproveDocument(remarks, chargedcomp, chargeddept);
 
             return true;
         }
 
-        public void ApproveDocument(string remarks)
+        public void ApproveDocument(string remarks, int chargedcomp, int chargeddept)
         {
             try
             {
                 int docID = Convert.ToInt32(Session["TravelExp_Id"]);
+
+                var updTraMain = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == docID);
+
+                foreach (var item in updTraMain)
+                {
+                    item.ChargedToComp = Convert.ToInt32(chargedcomp);
+                    item.ChargedToDept = Convert.ToInt32(chargeddept);
+                }
+                _DataContext.SubmitChanges();
+
                 int reim_docID = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == docID && x.IsExpenseReim == true).Where(x => x.isTravel == true).Select(x => x.ID).FirstOrDefault();
+
+                var updRfpMain = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == reim_docID);
+
+                foreach (var item in updRfpMain)
+                {
+                    item.ChargedTo_CompanyId = Convert.ToInt32(chargedcomp);
+                    item.ChargedTo_DeptId = Convert.ToInt32(chargeddept);
+                }
+                _DataContext.SubmitChanges();
+
                 var doctype_id = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).Select(x => x.DCT_Id).FirstOrDefault();
                 var pmid = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == docID && x.IsExpenseReim == true).Where(x => x.isTravel == true).Select(x => x.PayMethod).FirstOrDefault();
                 var reimPayMethod = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == pmid).Select(x => x.PMethod_name).FirstOrDefault();

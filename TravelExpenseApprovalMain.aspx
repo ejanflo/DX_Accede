@@ -347,6 +347,10 @@
                                                     <CellStyle Font-Bold="True" ForeColor="#006838">
                                                     </CellStyle>
                                                 </dx:GridViewFormatConditionHighlight>
+                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 41" FieldName="Status" Format="Custom">
+                                                    <CellStyle Font-Bold="True" ForeColor="#878787">
+                                                    </CellStyle>
+                                                </dx:GridViewFormatConditionHighlight>
                                             </FormatConditions>
                                             <Styles>
                                                 <Header Font-Bold="True" HorizontalAlign="Center" BackColor="#E9ECEF">
@@ -373,7 +377,7 @@
     <asp:SqlDataSource ID="sqlName" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT [FullName], [EmpCode] FROM [ITP_S_UserMaster]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="sqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [CompanyMaster] WHERE ([WASSId] IS NOT NULL)"></asp:SqlDataSource>
     <asp:SqlDataSource ID="sqlStatus" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_Status]"></asp:SqlDataSource>
-    <asp:SqlDataSource ID="sqlTravelExp" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_TravelPendingApproval] WHERE (([UserId] = @UserId) AND ([STS_Description] IN ('Pending', 'Pending at Audit', 'Pending at Finance'))) ORDER BY [WFA_Id] DESC">
+    <asp:SqlDataSource ID="sqlTravelExp" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_TravelPendingApproval] WHERE (([UserId] = @UserId) AND ([STS_Description] IN ('Pending', 'Pending at Audit', 'Pending at Finance', 'Forwarded'))) ORDER BY [WFA_Id] DESC">
         <SelectParameters>
             <asp:SessionParameter Name="UserId" SessionField="userID" Type="String" />
         </SelectParameters>

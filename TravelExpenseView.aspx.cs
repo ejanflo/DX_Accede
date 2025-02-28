@@ -52,10 +52,15 @@ namespace DX_WebTemplate
 
                     var mainExp = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).FirstOrDefault();
                     var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).FirstOrDefault();
-                    var status = _DataContext.ITP_S_Status.Where(x => x.STS_Id == Convert.ToInt32(mainExp.Status)).Select(x => x.STS_Description).FirstOrDefault();
+                    var status = "";
 
                     if (mainExp != null)
                     {
+                        Session["isForeignTravel"] = mainExp.ForeignDomestic == "Foreign" ? 1 : 0;
+                        Session["ford"] = mainExp.ForeignDomestic;
+                        Session["currency"] = mainExp.ForeignDomestic == "Domestic" ? '₱' : mainExp.ForeignDomestic == "Foreign" ? '$' : ' ';
+                        status = _DataContext.ITP_S_Status.Where(x => x.STS_Id == Convert.ToInt32(mainExp.Status)).Select(x => x.STS_Description).FirstOrDefault();
+
                         ExpenseEditForm.Items[0].Caption = status != null ? "Travel Expense Document No.: " + mainExp.Doc_No + " (" + status + ")" : "Travel Expense Document No.: " + mainExp.Doc_No;
 
                         var chargedComp = Convert.ToString(_DataContext.CompanyMasters.Where(x => x.WASSId == mainExp.ChargedToComp).Select(x => x.CompanyShortName).FirstOrDefault());
@@ -178,7 +183,15 @@ namespace DX_WebTemplate
                 SqlWF.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
                 SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
 
-                Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && (x.IsRA == false || x.IsRA == null && totExpCA >= x.Minimum && totExpCA <= x.Maximum)).Select(x => x.WF_Id).FirstOrDefault());
+                if (Convert.ToString(Session["ford"]) == "Foreign")
+                {
+                    Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.Description == "Foreign Test WF Finance Exec>CFO/Pres" && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
+                }
+                else
+                {
+                    Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && (x.IsRA == false || x.IsRA == null && totExpCA >= x.Minimum && totExpCA <= x.Maximum)).Select(x => x.WF_Id).FirstOrDefault());
+                }
+
                 SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
                 SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
 
