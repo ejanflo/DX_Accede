@@ -1101,30 +1101,6 @@
       <Column Name="withFAPLogic" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
     </Type>
   </Table>
-  <Table Name="dbo.ACCEDE_T_TravelExpenseMain" Member="ACCEDE_T_TravelExpenseMains">
-    <Type Name="ACCEDE_T_TravelExpenseMain">
-      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Status" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Doc_No" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="Employee_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Preparer_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Company_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Trip_To" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="Purpose" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="WF_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="FAPWF_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Remarks" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="Dep_Code" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="Date_From" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="Date_To" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="Date_Created" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="Time_Departed" Type="System.TimeSpan" DbType="Time" CanBeNull="true" />
-      <Column Name="Time_Arrived" Type="System.TimeSpan" DbType="Time" CanBeNull="true" />
-      <Column Name="ExpenseType_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="ForeignDomestic" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
-      <Column Name="ChargedTo" Type="System.Int32" DbType="Int" CanBeNull="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.ACCEDE_T_RFPMain" Member="ACCEDE_T_RFPMains">
     <Type Name="ACCEDE_T_RFPMain">
       <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -1197,6 +1173,31 @@
       <Column Name="Dept_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="ExpenseClassification" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="AR_Reference_No" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_T_TravelExpenseMain" Member="ACCEDE_T_TravelExpenseMains">
+    <Type Name="ACCEDE_T_TravelExpenseMain">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Status" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Doc_No" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Employee_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Preparer_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Company_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Trip_To" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Purpose" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="WF_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="FAPWF_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Remarks" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Dep_Code" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Date_From" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Date_To" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Date_Created" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Time_Departed" Type="System.TimeSpan" DbType="Time" CanBeNull="true" />
+      <Column Name="Time_Arrived" Type="System.TimeSpan" DbType="Time" CanBeNull="true" />
+      <Column Name="ExpenseType_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ForeignDomestic" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="ChargedToComp" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ChargedToDept" Type="System.Int32" DbType="Int" CanBeNull="true" />
     </Type>
   </Table>
 </Database>

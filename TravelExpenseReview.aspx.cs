@@ -800,8 +800,8 @@ namespace DX_WebTemplate
                 
                 foreach (var item in updRfpMain)
                 {
-                    item. = Convert.ToInt32(chargedcomp);
-                    item.ChargedToDept = Convert.ToInt32(chargeddept);
+                    item.ChargedTo_CompanyId = Convert.ToInt32(chargedcomp);
+                    item.ChargedTo_DeptId = Convert.ToInt32(chargeddept);
                 }
                 _DataContext.SubmitChanges();
 
