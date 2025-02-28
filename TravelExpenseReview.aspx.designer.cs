@@ -96,6 +96,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox departmentCB;
 
         /// <summary>
+        /// reportdateDE control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxDateEdit reportdateDE;
+
+        /// <summary>
         /// fordCB control.
         /// </summary>
         /// <remarks>
@@ -123,13 +132,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox chargedCB;
 
         /// <summary>
-        /// reportdateDE control.
+        /// chargedCB0 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxDateEdit reportdateDE;
+        protected global::DevExpress.Web.ASPxComboBox chargedCB0;
 
         /// <summary>
         /// datefromDE control.
@@ -1005,6 +1014,87 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxButton ASPxFormLayout1_E4;
 
         /// <summary>
+        /// ForwardPopup control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxPopupControl ForwardPopup;
+
+        /// <summary>
+        /// ASPxFormLayout16 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxFormLayout ASPxFormLayout16;
+
+        /// <summary>
+        /// ASPxFormLayout1_E11 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxImage ASPxFormLayout1_E11;
+
+        /// <summary>
+        /// ASPxFormLayout1_E12 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxLabel ASPxFormLayout1_E12;
+
+        /// <summary>
+        /// forwardRemarks control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxMemo forwardRemarks;
+
+        /// <summary>
+        /// drpdown_ForwardWF control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox drpdown_ForwardWF;
+
+        /// <summary>
+        /// ForwardSequenceGrid control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxGridView ForwardSequenceGrid;
+
+        /// <summary>
+        /// forwardPopBtn control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton forwardPopBtn;
+
+        /// <summary>
+        /// ASPxFormLayout1_E13 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton ASPxFormLayout1_E13;
+
+        /// <summary>
         /// ReturnPopup control.
         /// </summary>
         /// <remarks>
@@ -1489,5 +1579,14 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlTravelForAccounting;
+
+        /// <summary>
+        /// SqlWFSequenceForward control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlWFSequenceForward;
     }
 }

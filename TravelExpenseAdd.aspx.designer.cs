@@ -105,6 +105,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox chargedCB;
 
         /// <summary>
+        /// chargedCB0 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox chargedCB0;
+
+        /// <summary>
         /// reportdateDE control.
         /// </summary>
         /// <remarks>
@@ -438,139 +447,22 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxPopupControl reimbursePopup;
 
         /// <summary>
-        /// FormReimburse control.
+        /// docPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxFormLayout FormReimburse;
+        protected global::DevExpress.Web.ASPxCallbackPanel docPanel;
 
         /// <summary>
-        /// company_reim control.
+        /// ASPxWebDocumentViewer1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox company_reim;
-
-        /// <summary>
-        /// reim_PayMethod control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox reim_PayMethod;
-
-        /// <summary>
-        /// ASPxTextBox5 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox5;
-
-        /// <summary>
-        /// wbs_reim control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox wbs_reim;
-
-        /// <summary>
-        /// purpose_reim control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxMemo purpose_reim;
-
-        /// <summary>
-        /// dept_reim control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox dept_reim;
-
-        /// <summary>
-        /// costCenter_reim control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox costCenter_reim;
-
-        /// <summary>
-        /// io_reim control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox io_reim;
-
-        /// <summary>
-        /// payee_reim control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox payee_reim;
-
-        /// <summary>
-        /// acctCharge_reim control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox acctCharge_reim;
-
-        /// <summary>
-        /// rfpAmount_reim control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxSpinEdit rfpAmount_reim;
-
-        /// <summary>
-        /// remarks_reim control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxMemo remarks_reim;
-
-        /// <summary>
-        /// popupSubmitBtn1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxButton popupSubmitBtn1;
-
-        /// <summary>
-        /// popupCancelBtn1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxButton popupCancelBtn1;
+        protected global::DevExpress.XtraReports.Web.ASPxWebDocumentViewer ASPxWebDocumentViewer1;
 
         /// <summary>
         /// reimbursePopup2 control.

@@ -53,45 +53,192 @@ namespace DX_WebTemplate
                     ApplyStylesToGrid(ASPxGridView22, colorCode);
                     ApplyStylesToGrid(ASPxGridView22, colorCode);
 
+                    string empCode = Session["userID"].ToString();
                     var mainExp = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).FirstOrDefault();
                     var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).FirstOrDefault();
-                    var status = _DataContext.ITP_S_Status.Where(x => x.STS_Id == Convert.ToInt32(mainExp.Status)).Select(x => x.STS_Description).FirstOrDefault();
-                    Session["doc_stat2"] = status;
+                    var status = ""; 
 
                     if (mainExp != null)
                     {
-                        ExpenseEditForm.Items[0].Caption = "Travel Expense Document No.: " + mainExp.Doc_No + " (" + status + ")";
+                        status = _DataContext.ITP_S_Status.Where(x => x.STS_Id == Convert.ToInt32(mainExp.Status)).Select(x => x.STS_Description).FirstOrDefault();
+                        Session["doc_stat2"] = status;
 
+                        ExpenseEditForm.Items[0].Caption = "Travel Expense Document No.: " + mainExp.Doc_No + " (" + status + ")";
+                        
+                        if (status == "Pending at Finance" || status == "Pending at P2P")
+                        {
+                            chargedCB.ClientEnabled = true;
+                            chargedCB0.ClientEnabled = true;
+                            chargedCB.DropDownButton.Visible = true;
+                            chargedCB0.DropDownButton.Visible = true;
+                        }
+                        else
+                        {
+                            chargedCB.ClientEnabled = false;
+                            chargedCB0.ClientEnabled = false;
+                            chargedCB.DropDownButton.Visible = false;
+                            chargedCB0.DropDownButton.Visible = false;
+                        }
+
+                        //var chargedComp = Convert.ToString(_DataContext.CompanyMasters.Where(x => x.WASSId == mainExp.ChargedToComp).Select(x => x.CompanyShortName).FirstOrDefault());
+                        //var chargedDept = Convert.ToString(_DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == mainExp.ChargedToDept).Select(x => x.DepCode).FirstOrDefault());
+
+                        //if (!string.IsNullOrEmpty(chargedComp) && !string.IsNullOrEmpty(chargedDept))
+                        //    chargedCB.Text = chargedComp + " - " + chargedDept;
+                        //else if (!string.IsNullOrEmpty(chargedComp) && string.IsNullOrEmpty(chargedDept))
+                        //    chargedCB.Text = chargedComp;
+                        //else if (string.IsNullOrEmpty(chargedComp) && !string.IsNullOrEmpty(chargedDept))
+                        //    chargedCB.Text = chargedDept;
+                        
                         SqlMain.SelectParameters["ID"].DefaultValue = mainExp.ID.ToString();
                         timedepartTE.DateTime = DateTime.Parse(mainExp.Time_Departed.ToString());
                         timearriveTE.DateTime = DateTime.Parse(mainExp.Time_Arrived.ToString());
                         Session["DocNo"] = mainExp.Doc_No.ToString();
+
+                        var forAccounting = ExpenseEditForm.FindItemOrGroupByName("forAccounting") as LayoutGroup;
+                        if (status.Contains("Pending at Finance"))
+                            forAccounting.ClientVisible = true;
+                        else
+                            forAccounting.ClientVisible = false;
+
+                        var disapproveItem = ExpenseEditForm.FindItemOrGroupByName("disapproveItem") as LayoutItem;
+                        var returnItem = ExpenseEditForm.FindItemOrGroupByName("returnItem") as LayoutItem;
+                        var forwardItem = ExpenseEditForm.FindItemOrGroupByName("forwardItem") as LayoutItem;
+
+                        // GET WORKFLOW ID 
+                        var wfID = Convert.ToInt32(Session["wf"]);
+                        // GET WORKFLOWDETAILS ID
+                        var wfdID = Convert.ToInt32(Session["wfd"]);
+                        // GET SEQUENCE
+                        var sequence = _DataContext.ITP_S_WorkflowDetails
+                            .Where(x => x.WFD_Id == wfdID)
+                            .Select(x => x.Sequence)
+                            .FirstOrDefault() + 1;
+                        // GET ORGROLE ID
+                        var orgRoleID = _DataContext.ITP_S_WorkflowDetails
+                            .Where(x => x.WF_Id == wfID && x.Sequence == sequence)
+                            .Select(x => x.OrgRole_Id)
+                            .FirstOrDefault();
+
+                        if ((status == "Pending at Finance") && orgRoleID == null)
+                        {
+                            forwardItem.Visible = true;
+
+                            var FinExecVerify = _DataContext.vw_ACCEDE_FinApproverVerifies.Where(x => x.UserId == empCode)
+                                .Where(x => x.Role_Name == "Accede Finance Executive").FirstOrDefault();
+
+                            var FinCFOVerify = _DataContext.vw_ACCEDE_FinApproverVerifies.Where(x => x.UserId == empCode)
+                                .Where(x => x.Role_Name == "Accede CFO").FirstOrDefault();
+
+                            if (FinExecVerify != null)
+                            {
+                                var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
+                                    .Where(x => x.Name.Contains("forward cfo") && x.App_Id == 1032)
+                                    .ToList();
+
+                                if (forwardWFList.Any()) // Ensure there's data before binding
+                                {
+                                    drpdown_ForwardWF.DataSource = forwardWFList;
+                                    drpdown_ForwardWF.ValueField = "WF_Id";
+                                    drpdown_ForwardWF.TextField = "Name";
+                                    drpdown_ForwardWF.DataBind();
+
+                                    if (drpdown_ForwardWF.Items.Count == 1)
+                                    {
+                                        drpdown_ForwardWF.SelectedIndex = 0;
+                                        SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
+
+                                    }
+                                }
+                            }
+                            else if (FinCFOVerify != null)
+                            {
+                                var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
+                                    .Where(x => x.Name.Contains("forward pres") && x.App_Id == 1032)
+                                    .ToList();
+
+                                if (forwardWFList.Any()) // Ensure there's data before binding
+                                {
+                                    drpdown_ForwardWF.DataSource = forwardWFList;
+                                    drpdown_ForwardWF.ValueField = "WF_Id";
+                                    drpdown_ForwardWF.TextField = "Name";
+                                    drpdown_ForwardWF.DataBind();
+
+                                    if (drpdown_ForwardWF.Items.Count == 1)
+                                    {
+                                        drpdown_ForwardWF.SelectedIndex = 0;
+                                        SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
+
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
+                                    .Where(x => x.Name.Contains("forward exec") && x.App_Id == 1032)
+                                    .ToList();
+
+                                if (forwardWFList.Any()) // Ensure there's data before binding
+                                {
+                                    drpdown_ForwardWF.DataSource = forwardWFList;
+                                    drpdown_ForwardWF.ValueField = "WF_Id";
+                                    drpdown_ForwardWF.TextField = "Name";
+                                    drpdown_ForwardWF.DataBind();
+
+                                    if (drpdown_ForwardWF.Items.Count == 1)
+                                    {
+                                        drpdown_ForwardWF.SelectedIndex = 0;
+                                        SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
+
+                                    }
+                                }
+                            }
+                        }
+                        else if ((status == "Pending at Audit" || status == "Forwarded") && orgRoleID == null)
+                        {
+                            forwardItem.Visible = true;
+
+                            var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
+                                    .Where(x => x.Name.Contains("forward"))
+                                    .Where(x => x.App_Id == 1032)
+                                    .ToList();
+
+                            if (forwardWFList.Any()) // Ensure there's data before binding
+                            {
+                                drpdown_ForwardWF.DataSource = forwardWFList;
+                                drpdown_ForwardWF.ValueField = "WF_Id";
+                                drpdown_ForwardWF.TextField = "Name";
+                                drpdown_ForwardWF.DataBind();
+
+                                if (drpdown_ForwardWF.Items.Count == 1)
+                                {
+                                    drpdown_ForwardWF.SelectedIndex = 0;
+                                    SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
+
+                                }
+                            }
+                        }
+                        else
+                        {
+                            forwardItem.Visible = false;
+                        }
+
+                        if (status == "Pending at Finance" || status == "Pending at P2P" || status == "Pending at Audit" || mainExp.ExpenseType_ID != 1)
+                        {
+                            disapproveItem.Visible = false;
+                        }
+
+                        if (status == "Pending at Cashier")
+                        {
+                            disapproveItem.Visible = false;
+                            returnItem.Visible = false;
+                        }
                     }
 
                     CAGrid.DataBind();
                     ExpenseGrid.DataBind();
 
                     InitializeExpCA(mainExp);
-
-                    var forAccounting = ExpenseEditForm.FindItemOrGroupByName("forAccounting") as LayoutGroup;
-                    if (status.Contains("Pending at Finance"))
-                        forAccounting.ClientVisible = true;
-                    else
-                        forAccounting.ClientVisible = false;
-
-                    var disapproveItem = ExpenseEditForm.FindItemOrGroupByName("disapproveItem") as LayoutItem;
-                    var returnItem = ExpenseEditForm.FindItemOrGroupByName("returnItem") as LayoutItem;
-
-                    if (status == "Pending at Finance" || status == "Pending at P2P" || status == "Pending at Audit" || mainExp.ExpenseType_ID != 1)
-                    {
-                        disapproveItem.Visible = false;
-                    }
-
-                    if (status == "Pending at Cashier")
-                    {
-                        disapproveItem.Visible = false;
-                        returnItem.Visible = false;
-                    }
                 }
                 else
                     Response.Redirect("~/Logon.aspx");
@@ -624,6 +771,81 @@ namespace DX_WebTemplate
             }
         }
 
+        [WebMethod]
+        public static bool AJAXForwardDocument(string forwardWF, string aforwardRemarks, int chargedcomp, int chargeddept)
+        {
+            TravelExpenseReview tra = new TravelExpenseReview();
+
+            return tra.ForwardDocument(forwardWF, aforwardRemarks, chargedcomp, chargeddept);
+        }
+
+        public bool ForwardDocument(string forwardWF, string aforwardRemarks, int chargedcomp, int chargeddept)
+        {
+            try
+            {
+                int docID = Convert.ToInt32(Session["TravelExp_Id"]);
+
+                var updTraMain = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == docID);
+
+                foreach (var item in updTraMain)
+                {
+                    item.ChargedToComp = Convert.ToInt32(chargedcomp);
+                    item.ChargedToDept = Convert.ToInt32(chargeddept);
+                }
+                _DataContext.SubmitChanges();
+
+                int reim_docID = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == docID && x.IsExpenseReim == true).Where(x => x.isTravel == true).Select(x => x.ID).FirstOrDefault();
+
+                var updRfpMain = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == reim_docID);
+                
+                foreach (var item in updRfpMain)
+                {
+                    item. = Convert.ToInt32(chargedcomp);
+                    item.ChargedToDept = Convert.ToInt32(chargeddept);
+                }
+                _DataContext.SubmitChanges();
+
+                var doctype_id = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).Select(x => x.DCT_Id).FirstOrDefault();
+                var pmid = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == docID && x.IsExpenseReim == true).Where(x => x.isTravel == true).Select(x => x.PayMethod).FirstOrDefault();
+                var reimPayMethod = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == pmid).Select(x => x.PMethod_name).FirstOrDefault();
+                string userID = Convert.ToString(Session["userID"]);
+                int preparerID = Convert.ToInt32(Session["prep"]);
+                var cc = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Convert.ToString(Session["empid"])).Select(x => x.Email).FirstOrDefault();
+                int usercompanyID = Convert.ToInt32(Session["userCompanyID"]);
+                int companyID = int.Parse(Session["comp"].ToString());
+                
+                var travelmain = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == docID).FirstOrDefault();
+
+                var fin_wfDetail_data = _DataContext.ITP_S_WorkflowDetails.Where(x => x.WF_Id == Convert.ToInt32(forwardWF)).Where(x => x.Sequence == 1).FirstOrDefault();
+
+                var wfID = Convert.ToInt32(Session["wf"]);
+                var wfaID = Convert.ToInt32(Session["wfa"]);
+
+                var org_id = fin_wfDetail_data.OrgRole_Id;
+
+                var date2day = DateTime.Now;
+                //DELEGATE CHECK
+                foreach (var del in _DataContext.ITP_S_TaskDelegations.Where(x => x.OrgRole_ID_Orig == fin_wfDetail_data.OrgRole_Id).Where(x => x.DateFrom <= date2day).Where(x => x.DateTo >= date2day).Where(x => x.isActive == true))
+                {
+                    if (del != null)
+                    {
+                        org_id = Convert.ToInt32(del.OrgRole_ID_Delegate);
+                    }
+                }
+
+                var fstatus = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Forwarded").Select(x => x.STS_Id).FirstOrDefault();
+
+                updateWA(docID, wfID, wfaID, 7, "", aforwardRemarks, userID, DateTime.Now, reim_docID);
+                insertWA(Convert.ToInt32(fin_wfDetail_data.WF_Id), Convert.ToInt32(fin_wfDetail_data.WFD_Id), Convert.ToInt32(org_id), Convert.ToInt32(travelmain.ID), Convert.ToInt32(travelmain.Company_Id), Convert.ToInt32(fstatus), reim_docID);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+                throw ex;
+            }
+        }
 
         [WebMethod]
         public static bool AJAXApproveDocument(string remarks)
@@ -1133,6 +1355,18 @@ namespace DX_WebTemplate
                 if (Convert.ToString(e.Value) == "0" || Convert.ToString(e.Value) == "0.00")
                     e.DisplayText = string.Empty;
             }
+        }
+
+        protected void ForwardSequenceGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            var wf_id = e.Parameters.ToString();
+
+            SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = wf_id;
+            SqlWFSequenceForward.DataBind();
+
+            ForwardSequenceGrid.DataSourceID = null;
+            ForwardSequenceGrid.DataSource = SqlWFSequenceForward;
+            ForwardSequenceGrid.DataBind();
         }
     }
 }

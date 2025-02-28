@@ -178,14 +178,17 @@
                         <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2">
                         </dx:EmptyLayoutItem>
                         <dx:LayoutGroup Caption="" ColSpan="2" GroupBoxDecoration="None" ColCount="2" ColumnCount="2" ColumnSpan="2">
-                            <Paddings PaddingBottom="20px" />
+                            <Paddings PaddingBottom="35px" />
                             <Items>
-                                <dx:LayoutGroup Caption="REPORT HEADER DETAILS" ColSpan="1" GroupBoxDecoration="HeadingLine" Width="65%" ColCount="2" ColumnCount="2" RowSpan="2">
+                                <dx:LayoutGroup Caption="REPORT HEADER DETAILS" ColSpan="1" GroupBoxDecoration="Box" Width="65%" ColCount="2" ColumnCount="2" RowSpan="2">
+                                    <GroupBoxStyle>
+                                        <Border BorderColor="#006838" />
+                                    </GroupBoxStyle>
                                     <Items>
                                         <dx:LayoutItem Caption="Employee Name" ColSpan="2" FieldName="Employee_Id" ColumnSpan="2">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="empnameCB" runat="server" DataSourceID="SqlEmpName" Font-Bold="True" TextField="FullName" ValueField="EmpCode" Width="100%" AllowMouseWheel="False" ClientInstanceName="empnameCB" ClientEnabled="False">
+                                                    <dx:ASPxComboBox ID="empnameCB" runat="server" DataSourceID="SqlEmpName" Font-Bold="True" TextField="FullName" ValueField="EmpCode" Width="55%" AllowMouseWheel="False" ClientInstanceName="empnameCB" ClientEnabled="False">
                                                         <DropDownButton Visible="False">
                                                         </DropDownButton>
                                                         <Border BorderStyle="None" />
@@ -268,17 +271,15 @@
                                             <CaptionStyle Font-Bold="False" Font-Size="Small">
                                             </CaptionStyle>
                                         </dx:LayoutItem>
-                                        <dx:LayoutItem ColSpan="1" FieldName="ChargedTo">
+                                        <dx:LayoutItem ColSpan="1" Caption="Charged To">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="chargedCB" runat="server" ClientEnabled="False" ClientInstanceName="chargedCB" DataSourceID="SqlCompany" Font-Bold="True" NullValueItemDisplayText="{0}" TextField="CompanyShortName" TextFormatString="{0}" ValueField="WASSId" Width="100%">
-                                                        <DropDownButton Visible="False">
-                                                        </DropDownButton>
+                                                    <dx:ASPxTextBox ID="chargedCB" runat="server" ClientEnabled="False" ClientInstanceName="chargedCB" Font-Bold="True" Width="100%">
                                                         <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                                         <DisabledStyle ForeColor="#222222">
                                                         </DisabledStyle>
-                                                    </dx:ASPxComboBox>
+                                                    </dx:ASPxTextBox>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                             <CaptionStyle Font-Bold="False" Font-Italic="False" Font-Size="Small">
@@ -382,6 +383,7 @@
                                                     </dx:ASPxMemo>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
+                                            <Paddings PaddingBottom="15px" />
                                             <CaptionStyle Font-Bold="False" Font-Size="Small">
                                             </CaptionStyle>
                                         </dx:LayoutItem>
@@ -399,6 +401,7 @@
                                                     </dx:ASPxMemo>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
+                                            <Paddings PaddingBottom="15px" />
                                             <CaptionStyle Font-Bold="False" Font-Size="Small">
                                             </CaptionStyle>
                                         </dx:LayoutItem>
@@ -416,13 +419,16 @@
                                                     </dx:ASPxMemo>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
-                                            <Paddings PaddingTop="15px" />
+                                            <Paddings PaddingTop="15px" PaddingBottom="15px" />
                                         </dx:LayoutItem>
                                     </Items>
                                     <ParentContainerStyle Font-Bold="True" Font-Size="Medium">
                                     </ParentContainerStyle>
                                 </dx:LayoutGroup>
-                                <dx:LayoutGroup ColSpan="1" Caption="CASH ADVANCE DETAILS" GroupBoxDecoration="HeadingLine">
+                                <dx:LayoutGroup ColSpan="1" Caption="CASH ADVANCE DETAILS" GroupBoxDecoration="Box">
+                                    <GroupBoxStyle>
+                                        <Border BorderColor="#006838" />
+                                    </GroupBoxStyle>
                                     <Items>
                                         <dx:LayoutItem Caption="Cash Advance" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
@@ -522,7 +528,7 @@
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                             <CaptionSettings Location="Top" />
-                                            <Paddings Padding="0px" />
+                                            <Paddings PaddingBottom="15px" PaddingTop="15px" />
                                             <CaptionCellStyle>
                                                 <Paddings PaddingBottom="10px" />
                                             </CaptionCellStyle>

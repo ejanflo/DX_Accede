@@ -54,9 +54,19 @@ namespace DX_WebTemplate
                     var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).FirstOrDefault();
                     var status = _DataContext.ITP_S_Status.Where(x => x.STS_Id == Convert.ToInt32(mainExp.Status)).Select(x => x.STS_Description).FirstOrDefault();
 
-                    if (mainExp != null && status != null)
+                    if (mainExp != null)
                     {
-                        ExpenseEditForm.Items[0].Caption = "Travel Expense Document No.: " + mainExp.Doc_No + " (" + status + ")";
+                        ExpenseEditForm.Items[0].Caption = status != null ? "Travel Expense Document No.: " + mainExp.Doc_No + " (" + status + ")" : "Travel Expense Document No.: " + mainExp.Doc_No;
+
+                        var chargedComp = Convert.ToString(_DataContext.CompanyMasters.Where(x => x.WASSId == mainExp.ChargedToComp).Select(x => x.CompanyShortName).FirstOrDefault());
+                        var chargedDept = Convert.ToString(_DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == mainExp.ChargedToDept).Select(x => x.DepCode).FirstOrDefault());
+
+                        if (!string.IsNullOrEmpty(chargedComp) && !string.IsNullOrEmpty(chargedDept))
+                            chargedCB.Text = chargedComp + " - " + chargedDept;
+                        else if (!string.IsNullOrEmpty(chargedComp) && string.IsNullOrEmpty(chargedDept))
+                            chargedCB.Text = chargedComp;
+                        else if (string.IsNullOrEmpty(chargedComp) && !string.IsNullOrEmpty(chargedDept))
+                            chargedCB.Text = chargedDept;
 
                         SqlMain.SelectParameters["ID"].DefaultValue = mainExp.ID.ToString();
                         timedepartTE.DateTime = DateTime.Parse(mainExp.Time_Departed.ToString());

@@ -873,6 +873,12 @@
     <Compile Include="XtraReports\AccedeTravelMain.Designer.cs">
       <DependentUpon>AccedeTravelMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="XtraReports\QRGenerator.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="XtraReports\QRGenerator.Designer.cs">
+      <DependentUpon>QRGenerator.cs</DependentUpon>
+    </Compile>
     <Compile Include="XtraReports\ReportViewer.aspx.cs">
       <DependentUpon>ReportViewer.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -924,6 +930,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="XtraReports\AccedeTravelMain.resx">
       <DependentUpon>AccedeTravelMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="XtraReports\QRGenerator.resx">
+      <DependentUpon>QRGenerator.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="XtraReports\xrTest.resx">
       <DependentUpon>xrTest.cs</DependentUpon>

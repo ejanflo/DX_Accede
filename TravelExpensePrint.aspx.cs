@@ -63,7 +63,16 @@ namespace DX_WebTemplate
                         var empdate = DateTime.Now;
                         var department = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(travel.Dep_Code)).Select(x => x.DepDesc).FirstOrDefault().ToUpper();
                         var purpose = travel.Purpose.ToUpper();
-                        var chargedto = context.CompanyMasters.Where(x => x.WASSId == Convert.ToInt32(travel.ChargedTo)).Select(x => x.CompanyShortName).FirstOrDefault().ToUpper();
+                        var chargedto = "";
+                        var cComp = (context.CompanyMasters.Where(x => x.WASSId == travel.ChargedToComp).Select(x => x.CompanyShortName).FirstOrDefault() ?? string.Empty).ToUpper();
+                        var cDept = (context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == travel.ChargedToDept).Select(x => x.DepCode).FirstOrDefault() ?? string.Empty).ToUpper();
+
+                        if (!string.IsNullOrEmpty(cComp) && !string.IsNullOrEmpty(cDept))
+                            chargedto = cComp + " - " + cDept;
+                        else if (!string.IsNullOrEmpty(cComp) && string.IsNullOrEmpty(cDept))
+                            chargedto = cComp;
+                        else if (string.IsNullOrEmpty(cComp) && !string.IsNullOrEmpty(cDept))
+                            chargedto = cDept;
 
                         report.Parameters["id"].Value = id;
                         report.Parameters["companyid"].Value = companyid;
@@ -87,7 +96,6 @@ namespace DX_WebTemplate
                         report.Parameters["finapprdate"].Value = finapprdate;
                         report.Parameters["depapprname"].Value = depapprname;
                         report.Parameters["depapprdate"].Value = depapprdate;
-
                     }
 
                     // Create report and generate its document.

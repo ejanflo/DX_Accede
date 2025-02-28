@@ -21,6 +21,10 @@
     </style>
 
     <script>
+        function OnFowardWFChanged(wf_id) {
+            ForwardSequenceGrid.PerformCallback(wf_id);
+        }
+
         function saveRFPChanges() {
             LoadingPanel.Show();
             var PayMethod = rfpPayMethod.GetValue();
@@ -182,6 +186,36 @@
             });
         }
 
+        function ForwardDoc() {
+            LoadingPanel.Show();
+
+            var forwardWF = drpdown_ForwardWF.GetValue();
+            var aforwardRemarks = forwardRemarks.GetText();
+            var chargedComp = chargedCB.GetValue();
+            var chargedDept = chargedCB0.GetValue();
+
+            $.ajax({
+                type: "POST",
+                url: "TravelExpenseReview.aspx/AJAXForwardDocument",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({
+                    forwardWF: forwardWF,
+                    aforwardRemarks: aforwardRemarks,
+                    chargedcomp: chargedComp,
+                    chargeddept: chargedDept
+                }),
+                success: function (response) {
+                    // Update the description text box with the response value
+                    ForwardPopup.Hide();
+                    window.open('TravelExpenseApprovalMain.aspx', '_self');
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                }
+            });
+        }
+
         function ApproveDoc() {
             LoadingPanel.Show();
             var remarks = approveRemarks.GetText();
@@ -254,14 +288,14 @@
                     <Items>
                         <dx:LayoutGroup ColSpan="2" GroupBoxDecoration="None" HorizontalAlign="Right" ColCount="5" ColumnCount="5" ColumnSpan="2">
                             <Items>
-                                <dx:LayoutItem Caption="" ClientVisible="False" ColSpan="1" Name="forwardItem">
+                                <dx:LayoutItem Caption="" ColSpan="1" Name="forwardItem">
                                     <LayoutItemNestedControlCollection>
                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                            <dx:ASPxButton ID="forwardBtn" runat="server" AutoPostBack="False" BackColor="#006838" ClientInstanceName="forwardBtn" Font-Bold="True" Font-Size="Small" Text="Approve &amp; Forward" UseSubmitBehavior="False" ValidationGroup="submitValid">
+                                            <dx:ASPxButton ID="forwardBtn" runat="server" AutoPostBack="False" BackColor="#006DD6" ClientInstanceName="forwardBtn" Font-Bold="True" Font-Size="Small" Text="Approve &amp; Forward" UseSubmitBehavior="False" ValidationGroup="submitValid">
                                                 <ClientSideEvents Click="function(s, e) {
-	 ApprovePopup.Show();
+	 ForwardPopup.Show();
 }" />
-                                                <Border BorderColor="#006838" />
+                                                <Border BorderColor="#006DD6" />
                                             </dx:ASPxButton>
                                         </dx:LayoutItemNestedControlContainer>
                                     </LayoutItemNestedControlCollection>
@@ -321,14 +355,17 @@
                         <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2">
                         </dx:EmptyLayoutItem>
                         <dx:LayoutGroup Caption="" ColSpan="2" GroupBoxDecoration="None" ColCount="2" ColumnCount="2" ColumnSpan="2">
-                            <Paddings PaddingBottom="20px" />
+                            <Paddings PaddingBottom="35px" />
                             <Items>
-                                <dx:LayoutGroup Caption="REPORT HEADER DETAILS" ColSpan="1" GroupBoxDecoration="HeadingLine" Width="65%" ColCount="2" ColumnCount="2" RowSpan="2">
+                                <dx:LayoutGroup Caption="REPORT HEADER DETAILS" ColSpan="1" GroupBoxDecoration="Box" Width="65%" ColCount="2" ColumnCount="2" RowSpan="2">
+                                    <GroupBoxStyle>
+                                        <Border BorderColor="#006838" />
+                                    </GroupBoxStyle>
                                     <Items>
                                         <dx:LayoutItem Caption="Employee Name" ColSpan="2" FieldName="Employee_Id" ColumnSpan="2">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="empnameCB" runat="server" DataSourceID="SqlEmpName" Font-Bold="True" TextField="FullName" ValueField="EmpCode" Width="100%" AllowMouseWheel="False" ClientInstanceName="empnameCB" ClientEnabled="False">
+                                                    <dx:ASPxComboBox ID="empnameCB" runat="server" DataSourceID="SqlEmpName" Font-Bold="True" TextField="FullName" ValueField="EmpCode" Width="55%" AllowMouseWheel="False" ClientInstanceName="empnameCB" ClientEnabled="False">
                                                         <DropDownButton Visible="False">
                                                         </DropDownButton>
                                                         <Border BorderStyle="None" />
@@ -378,6 +415,28 @@
                                         </dx:LayoutItem>
                                         <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2">
                                         </dx:EmptyLayoutItem>
+                                        <dx:LayoutItem Caption="Report Date" ColSpan="1" FieldName="Date_Created">
+                                            <LayoutItemNestedControlCollection>
+                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                    <dx:ASPxDateEdit ID="reportdateDE" runat="server" ClientEnabled="False" ClientInstanceName="reportdateDE" DisplayFormatString="MMMM dd, yyyy" Enabled="False" Font-Bold="True" Width="100%">
+                                                        <DropDownButton Visible="False">
+                                                        </DropDownButton>
+                                                        <ValidationSettings ValidationGroup="ExpenseEdit">
+                                                        </ValidationSettings>
+                                                        <BorderLeft BorderStyle="None" />
+                                                        <BorderTop BorderStyle="None" />
+                                                        <BorderRight BorderStyle="None" />
+                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                        <DisabledStyle Font-Bold="True" Font-Overline="False" ForeColor="#222222">
+                                                        </DisabledStyle>
+                                                    </dx:ASPxDateEdit>
+                                                </dx:LayoutItemNestedControlContainer>
+                                            </LayoutItemNestedControlCollection>
+                                            <CaptionStyle Font-Bold="False" Font-Size="Small">
+                                            </CaptionStyle>
+                                        </dx:LayoutItem>
+                                        <dx:EmptyLayoutItem ColSpan="1">
+                                        </dx:EmptyLayoutItem>
                                         <dx:LayoutItem Caption="Travel" ColSpan="1" FieldName="ForeignDomestic">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
@@ -411,41 +470,43 @@
                                             <CaptionStyle Font-Bold="False" Font-Size="Small">
                                             </CaptionStyle>
                                         </dx:LayoutItem>
-                                        <dx:LayoutItem ColSpan="1" FieldName="ChargedTo">
+                                        <dx:LayoutItem ColSpan="1" Caption="Charged To Company" FieldName="ChargedToComp">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="chargedCB" runat="server" ClientEnabled="False" ClientInstanceName="chargedCB" DataSourceID="SqlCompany" Font-Bold="True" NullValueItemDisplayText="{0}" TextField="CompanyShortName" TextFormatString="{0}" ValueField="WASSId" Width="100%">
+                                                    <dx:ASPxComboBox ID="chargedCB" runat="server" ClientEnabled="False" ClientInstanceName="chargedCB" DataSourceID="SqlCompany" EnableTheming="True" Font-Bold="True" TextField="CompanyShortName" ValueField="WASSId" Width="100%">
                                                         <DropDownButton Visible="False">
                                                         </DropDownButton>
+                                                        <ValidationSettings>
+                                                            <RequiredField ErrorText="*Required" />
+                                                        </ValidationSettings>
                                                         <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                        <DisabledStyle ForeColor="#222222">
+                                                        <DisabledStyle Font-Bold="True" ForeColor="#222222">
                                                         </DisabledStyle>
                                                     </dx:ASPxComboBox>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
+                                            <CaptionSettings Location="Top" />
                                             <CaptionStyle Font-Bold="False" Font-Size="Small">
                                             </CaptionStyle>
                                         </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Report Date" ColSpan="1" FieldName="Date_Created">
+                                        <dx:LayoutItem Caption="Charged To Department" ColSpan="1" FieldName="ChargedToDept">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxDateEdit ID="reportdateDE" runat="server" ClientInstanceName="reportdateDE" DisplayFormatString="MMMM dd, yyyy" Font-Bold="True" Width="100%" Enabled="False" ClientEnabled="False">
+                                                    <dx:ASPxComboBox ID="chargedCB0" runat="server" ClientEnabled="False" ClientInstanceName="chargedCB0" DataSourceID="SqlDepartment" EnableTheming="True" Font-Bold="True" TextField="DepCode" ValueField="ID" Width="100%">
                                                         <DropDownButton Visible="False">
                                                         </DropDownButton>
-                                                        <ValidationSettings ValidationGroup="ExpenseEdit">
+                                                        <ValidationSettings>
+                                                            <RequiredField ErrorText="*Required" />
                                                         </ValidationSettings>
-                                                        <BorderLeft BorderStyle="None" />
-                                                        <BorderTop BorderStyle="None" />
-                                                        <BorderRight BorderStyle="None" />
+                                                        <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                        <DisabledStyle ForeColor="#222222" Font-Bold="True" Font-Overline="False">
+                                                        <DisabledStyle Font-Bold="True" ForeColor="#222222">
                                                         </DisabledStyle>
-                                                    </dx:ASPxDateEdit>
+                                                    </dx:ASPxComboBox>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
-                                            <CaptionStyle Font-Bold="False" Font-Size="Small">
-                                            </CaptionStyle>
+                                            <CaptionSettings Location="Top" />
                                         </dx:LayoutItem>
                                         <dx:LayoutItem Caption="Date From" ColSpan="1" FieldName="Date_From">
                                             <LayoutItemNestedControlCollection>
@@ -525,6 +586,7 @@
                                                     </dx:ASPxMemo>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
+                                            <Paddings PaddingBottom="15px" />
                                             <CaptionStyle Font-Bold="False" Font-Size="Small">
                                             </CaptionStyle>
                                         </dx:LayoutItem>
@@ -542,6 +604,7 @@
                                                     </dx:ASPxMemo>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
+                                            <Paddings PaddingBottom="15px" />
                                             <CaptionStyle Font-Bold="False" Font-Size="Small">
                                             </CaptionStyle>
                                         </dx:LayoutItem>
@@ -565,7 +628,10 @@
                                     <ParentContainerStyle Font-Bold="True" Font-Size="Medium">
                                     </ParentContainerStyle>
                                 </dx:LayoutGroup>
-                                <dx:LayoutGroup ColSpan="1" Caption="CASH ADVANCE DETAILS" GroupBoxDecoration="HeadingLine">
+                                <dx:LayoutGroup ColSpan="1" Caption="CASH ADVANCE DETAILS" GroupBoxDecoration="Box">
+                                    <GroupBoxStyle>
+                                        <Border BorderColor="#006838" />
+                                    </GroupBoxStyle>
                                     <Items>
                                         <dx:LayoutItem Caption="Cash Advance" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
@@ -665,7 +731,7 @@
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                             <CaptionSettings Location="Top" />
-                                            <Paddings Padding="0px" />
+                                            <Paddings Padding="0px" PaddingBottom="15px" />
                                             <CaptionCellStyle>
                                                 <Paddings PaddingBottom="10px" />
                                             </CaptionCellStyle>
@@ -3592,6 +3658,140 @@ onTravelClick();
             </ContentCollection>
         </dx:ASPxPopupControl>
 
+        <dx:ASPxPopupControl ID="ForwardPopup" runat="server" HeaderText="Approve &amp; Forward Expense Report" Modal="True" AutoUpdatePosition="True" ClientInstanceName="ForwardPopup" CloseAction="CloseButton" CloseOnEscape="True" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" PopupAnimationType="None">
+            <SettingsAdaptivity Mode="Always" VerticalAlign="WindowCenter" />
+            <ContentCollection>
+                <dx:PopupControlContentControl runat="server">
+                    <dx:ASPxFormLayout ID="ASPxFormLayout16" runat="server" Width="100%">
+                        <Items>
+                            <dx:LayoutItem ColSpan="1" ShowCaption="False" HorizontalAlign="Center">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxImage ID="ASPxFormLayout1_E11" runat="server" Height="50px" ImageAlign="Middle" ImageUrl="~/Content/Images/warning.png" Width="50px">
+                                        </dx:ASPxImage>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                                <CaptionSettings Location="Top" />
+                                <TabImage IconID="businessobjects_bo_attention_svg_16x16">
+                                </TabImage>
+                            </dx:LayoutItem>
+                            <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Center" Width="100%">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxLabel ID="ASPxFormLayout1_E12" runat="server" Text="Are you sure to approve and forward document?" Font-Size="Medium" Width="100%">
+                                        </dx:ASPxLabel>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                                <CaptionSettings Location="Top" />
+                            </dx:LayoutItem>
+                            <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Center" Width="100%">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxMemo ID="forwardRemarks" runat="server" ClientInstanceName="forwardRemarks" Height="71px" NullText="Remarks (Required)" Width="100%">
+                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="forwardValid">
+                                                <RequiredField ErrorText="*Required" IsRequired="True" />
+                                            </ValidationSettings>
+                                        </dx:ASPxMemo>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                                <CaptionSettings Location="Top" />
+                            </dx:LayoutItem>
+                            <dx:EmptyLayoutItem ColSpan="1" HorizontalAlign="Center">
+                            </dx:EmptyLayoutItem>
+                            <dx:LayoutItem Caption="Forward To" ColSpan="1" HorizontalAlign="Center" Width="100%">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxComboBox ID="drpdown_ForwardWF" runat="server" Width="100%" ClientInstanceName="drpdown_ForwardWF">
+                                            <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	OnFowardWFChanged(s.GetValue());
+}
+" />
+                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="forwardValid">
+                                                <RequiredField ErrorText="*Required" IsRequired="True" />
+                                            </ValidationSettings>
+                                        </dx:ASPxComboBox>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                                <CaptionSettings Location="Top" />
+                            </dx:LayoutItem>
+                            <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Center" Width="100%">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxGridView ID="ForwardSequenceGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="ForwardSequenceGrid" DataSourceID="SqlWFSequenceForward" Theme="MaterialCompact" Width="100%" OnCustomCallback="ForwardSequenceGrid_CustomCallback">
+                                            <SettingsEditing Mode="Batch">
+                                            </SettingsEditing>
+                                            <SettingsDataSecurity AllowDelete="False" AllowEdit="False" AllowInsert="False" />
+                                            <SettingsPopup>
+                                                <FilterControl AutoUpdatePosition="False">
+                                                </FilterControl>
+                                            </SettingsPopup>
+                                            <SettingsLoadingPanel Mode="Disabled" />
+                                            <Columns>
+                                                <dx:GridViewDataComboBoxColumn Caption="Approver" FieldName="FullName" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                    <PropertiesComboBox TextFormatString="{0}" ValueField="TerritoryID">
+                                                        <Columns>
+                                                            <dx:ListBoxColumn Caption="Territory" FieldName="TerritoryDescription">
+                                                            </dx:ListBoxColumn>
+                                                            <dx:ListBoxColumn Caption="Region" FieldName="RegionID">
+                                                            </dx:ListBoxColumn>
+                                                        </Columns>
+                                                    </PropertiesComboBox>
+                                                </dx:GridViewDataComboBoxColumn>
+                                                <dx:GridViewDataTextColumn Caption="Sequence" FieldName="Sequence" ShowInCustomizationForm="True" VisibleIndex="1">
+                                                </dx:GridViewDataTextColumn>
+                                            </Columns>
+                                            <Styles>
+                                                <Header>
+                                                    <Paddings PaddingBottom="4px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="4px" />
+                                                </Header>
+                                                <Cell>
+                                                    <Paddings Padding="7px" />
+                                                </Cell>
+                                            </Styles>
+                                        </dx:ASPxGridView>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                                <CaptionSettings Location="Top" />
+                            </dx:LayoutItem>
+                            <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="HeadingLine" HorizontalAlign="Center" Width="100%">
+                                <Paddings Padding="0px" />
+                                <Items>
+                                    <dx:LayoutItem Caption="" ColSpan="1" Width="0px">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxButton ID="forwardPopBtn" runat="server" Text="Approve &amp; Forward" BackColor="#0D6943" ClientInstanceName="forwardPopBtn" AutoPostBack="False" UseSubmitBehavior="False" ValidationGroup="forwardValid">
+                                                    <ClientSideEvents Click="function(s, e) {
+               if(ASPxClientEdit.ValidateGroup('forwardValid')){
+	          ForwardDoc();
+               }
+}" />
+                                                    <Border BorderColor="#0D6943" />
+                                                </dx:ASPxButton>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                        <Paddings Padding="0px" />
+                                    </dx:LayoutItem>
+                                    <dx:LayoutItem Caption="" ColSpan="1" Width="0px">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxButton ID="ASPxFormLayout1_E13" runat="server" Text="Cancel" AutoPostBack="False" BackColor="White" ForeColor="Gray" UseSubmitBehavior="False">
+                                                    <ClientSideEvents Click="function(s, e) {
+	ForwardPopup.Hide();
+}" />
+                                                    <Border BorderColor="Gray" />
+                                                </dx:ASPxButton>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                    </dx:LayoutItem>
+                                </Items>
+                            </dx:LayoutGroup>
+                        </Items>
+                        <SettingsItems HorizontalAlign="Center" />
+                    </dx:ASPxFormLayout>
+                </dx:PopupControlContentControl>
+            </ContentCollection>
+        </dx:ASPxPopupControl>
+
         <dx:ASPxPopupControl ID="ReturnPopup" runat="server" HeaderText="Return Expense Report" Modal="True" AutoUpdatePosition="True" ClientInstanceName="ReturnPopup" CloseAction="CloseButton" CloseOnEscape="True" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" PopupAnimationType="None">
             <SettingsAdaptivity Mode="Always" VerticalAlign="WindowCenter" />
             <ContentCollection>
@@ -4091,4 +4291,9 @@ onTravelClick();
             <asp:Parameter Name="ID" Type="Int32" />
         </UpdateParameters>
     </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlWFSequenceForward" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_RS_Workflow_Sequence] WHERE ([WF_Id] = @WF_Id) ORDER BY [Sequence]">
+            <SelectParameters>
+                <asp:Parameter Name="WF_Id" Type="Int32" />
+            </SelectParameters>
+        </asp:SqlDataSource>
 </asp:Content>

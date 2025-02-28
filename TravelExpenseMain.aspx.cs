@@ -27,13 +27,20 @@ namespace DX_WebTemplate
 
                 employeeCB.Value = Session["userID"];
                 compCB.Value = Convert.ToString(Session["userCompanyID"]);
-                var depcode = context.ITP_S_UserMasters.Where(x => x.EmpCode == Convert.ToString(Session["userID"])).Select(x => x.DepCode).FirstOrDefault();
-                var isdep = Convert.ToString(context.ITP_S_OrgDepartmentMasters.Where(x => x.DepCode == depcode && x.Company_ID == Convert.ToInt32(Session["userCompanyID"])).Select(x => x.ID).FirstOrDefault());
+                //var depcode = context.ITP_S_UserMasters.Where(x => x.EmpCode == Convert.ToString(Session["userID"])).Select(x => x.DepCode).FirstOrDefault();
+                //var isdep = Convert.ToString(context.ITP_S_OrgDepartmentMasters.Where(x => x.DepCode == depcode && x.Company_ID == Convert.ToInt32(Session["userCompanyID"])).Select(x => x.ID).FirstOrDefault());
                 
-                if (isdep == "0")
-                    chargedCB.SelectedIndex = -1;
-                else
-                    chargedCB.Value = isdep;
+                //if (isdep == "0")
+                //    chargedCB.SelectedIndex = -1;
+                //else
+                //    chargedCB.Value = isdep;
+
+
+                SqlDepartmentEdit.SelectParameters["UserId"].DefaultValue = Convert.ToString(Session["userID"]);
+                SqlCompanyEdit.SelectParameters["UserId"].DefaultValue = Convert.ToString(Session["userID"]);
+
+                SqlDepartmentEdit.SelectParameters["CompanyId"].DefaultValue = Convert.ToString(compCB.Value);
+                SqlDepartmentEdit.DataBind();
             }
             else
                 Response.Redirect("~/Logon.aspx");
@@ -51,12 +58,12 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static bool AJAXSaveTravelExpense(string empcode, string companyid, string department_code, string chargedto, string tripto, DateTime datefrom, DateTime dateto, string timedepart, string timearrive, string purpose, string ford)
+        public static bool AJAXSaveTravelExpense(string empcode, string companyid, string department_code, string chargedtoComp, string chargedtoDept, string tripto, DateTime datefrom, DateTime dateto, string timedepart, string timearrive, string purpose, string ford)
         {
             DateTime timeDepart = Convert.ToDateTime(timedepart);
             DateTime timeArrive = Convert.ToDateTime(timearrive);
             TravelExpense travel = new TravelExpense();
-            return travel.SaveTravelExpense(empcode, companyid, department_code, chargedto, tripto, datefrom, dateto, timeDepart.ToString("HH:mm"), timeArrive.ToString("HH:mm"), purpose, ford, DateTime.Now);
+            return travel.SaveTravelExpense(empcode, companyid, department_code, chargedtoComp, chargedtoDept, tripto, datefrom, dateto, timeDepart.ToString("HH:mm"), timeArrive.ToString("HH:mm"), purpose, ford, DateTime.Now);
         }
 
         public UserInfo GetUserInfo(string fullname)
@@ -85,7 +92,7 @@ namespace DX_WebTemplate
             return user;
         }
 
-        public bool SaveTravelExpense(string empcode, string companyid, string department_code, string chargedto, string tripto, DateTime datefrom, DateTime dateto, string timedepart, string timearrive, string purpose, string ford, DateTime datecreated)
+        public bool SaveTravelExpense(string empcode, string companyid, string department_code, string chargedtoComp, string chargedtoDept, string tripto, DateTime datefrom, DateTime dateto, string timedepart, string timearrive, string purpose, string ford, DateTime datecreated)
         {
             try
             {
@@ -99,7 +106,8 @@ namespace DX_WebTemplate
                     travelMain.Employee_Id = Convert.ToInt32(empcode);
                     travelMain.Company_Id = Convert.ToInt32(companyid);
                     travelMain.Dep_Code = department_code;
-                    travelMain.ChargedTo = Convert.ToInt32(chargedto);
+                    travelMain.ChargedToComp = Convert.ToInt32(chargedtoComp) == 0 ? Convert.ToInt32(null) : Convert.ToInt32(chargedtoComp);
+                    travelMain.ChargedToDept = Convert.ToInt32(chargedtoDept) == 0 ? Convert.ToInt32(null) : Convert.ToInt32(chargedtoDept);
                     travelMain.Trip_To = tripto;
                     travelMain.Date_From = datefrom;
                     travelMain.Date_To = dateto;
@@ -206,6 +214,21 @@ namespace DX_WebTemplate
                     e.Visible = DevExpress.Utils.DefaultBoolean.True;
                 else
                     e.Visible = DevExpress.Utils.DefaultBoolean.False;
+            }
+        }
+
+        protected void depCB_Callback(object sender, CallbackEventArgsBase e)
+        {
+            if (e != null && e.Parameter != "")
+            {
+                Session["CompID"] = context.CompanyMasters.Where(x => x.WASSId == Convert.ToInt32(e.Parameter)).FirstOrDefault();
+            }
+
+            if (Session["CompID"] != null)
+            {
+                SqlDepartmentEdit.SelectParameters["CompanyId"].DefaultValue = Session["CompID"].ToString();
+                SqlDepartmentEdit.DataBind();
+                depCB.DataBind();
             }
         }
     }

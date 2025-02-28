@@ -3,6 +3,7 @@ using DevExpress.Web;
 using DevExpress.Web.Data;
 using DevExpress.Web.Internal.XmlProcessor;
 using DevExpress.XtraPrinting;
+using DX_WebTemplate.XtraReports;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -481,8 +482,8 @@ namespace DX_WebTemplate
 
             // Bind the data set to the grid view
             Session["UploadedFilesTable"] = ImgDS.Tables[0];
-            ASPxGridView22.DataSource = ImgDS.Tables[0];
-            ASPxGridView22.DataBind();
+            TraDocuGrid.DataSource = ImgDS.Tables[0];   
+            TraDocuGrid.DataBind();
         }
 
         protected void capopGrid_CustomCallback(object sender, DevExpress.Web.ASPxGridViewCustomCallbackEventArgs e)
@@ -719,12 +720,12 @@ namespace DX_WebTemplate
 
         protected void dept_reim_Callback(object sender, CallbackEventArgsBase e)
         {
-            SqlDepartment.SelectParameters["CompanyId"].DefaultValue = chargedCB.Value.ToString();
-            SqlDepartment.DataBind();
+            //SqlDepartment.SelectParameters["CompanyId"].DefaultValue = chargedCB.Value.ToString();
+            //SqlDepartment.DataBind();
 
-            dept_reim.DataSourceID = null;
-            dept_reim.DataSource = SqlDepartment;
-            dept_reim.DataBind();
+            //dept_reim.DataSourceID = null;
+            //dept_reim.DataSource = SqlDepartment;
+            //dept_reim.DataBind();
         }
 
         [WebMethod]
@@ -809,28 +810,28 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static object SaveSubmitTravelExpenseAJAX(string empname, DateTime reportdate, string company, string department, string chargedto, DateTime datefrom, DateTime dateto, DateTime timedepart, DateTime timearrive, string trip, string ford, string purpose, string expenseType, string btnaction)
+        public static object SaveSubmitTravelExpenseAJAX(string empname, DateTime reportdate, string company, string department, string chargedComp, string chargedDept, DateTime datefrom, DateTime dateto, DateTime timedepart, DateTime timearrive, string trip, string ford, string purpose, string expenseType, string btnaction)
         {
             TravelExpenseAdd tra = new TravelExpenseAdd();
-            return tra.SaveSubmitTravelExpense(empname, reportdate, company, department, chargedto, datefrom, dateto, timedepart, timearrive, trip, ford, purpose, expenseType, btnaction);
+            return tra.SaveSubmitTravelExpense(empname, reportdate, company, department, chargedComp, chargedDept, datefrom, dateto, timedepart, timearrive, trip, ford, purpose, expenseType, btnaction);
         }
 
-        public object SaveSubmitTravelExpense(string empname, DateTime reportdate, string company, string department, string chargedto, DateTime datefrom, DateTime dateto, DateTime timedepart, DateTime timearrive, string trip, string ford, string purpose, string expenseType, string btnaction)
+        public object SaveSubmitTravelExpense(string empname, DateTime reportdate, string company, string department, string chargedComp, string chargedDept, DateTime datefrom, DateTime dateto, DateTime timedepart, DateTime timearrive, string trip, string ford, string purpose, string expenseType, string btnaction)
         {
             try
             {
                 var expCA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"])).Where(x => x.IsExpenseCA == true).Where(x => x.isTravel == true).FirstOrDefault();
 
-                if (expenseType == "1")
-                {
-                    if (expCA == null)
-                        return new { message = "require CA" };
-                }
-                else
-                {
-                    if (expCA != null)
-                        return new { message = "This transaction should be a Liquidation since you attached a Cash Advance." };
-                }
+                //if (expenseType == "1")
+                //{
+                //    if (expCA == null)
+                //        return new { message = "require CA" };
+                //}
+                //else
+                //{
+                //    if (expCA != null)
+                //        return new { message = "This transaction should be a Liquidation since you attached a Cash Advance." };
+                //}
 
                 var doc_status = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).Select(x => x.Status).FirstOrDefault();
                 var doc_desc = _DataContext.ITP_S_Status.Where(x => x.STS_Id == doc_status).Select(x => x.STS_Description).FirstOrDefault();
@@ -851,7 +852,8 @@ namespace DX_WebTemplate
                 exp.Time_Arrived = timearrive.TimeOfDay;
                 exp.Trip_To = trip;
                 exp.ForeignDomestic = ford;
-                exp.ChargedTo = Convert.ToInt32(chargedto);
+                exp.ChargedToComp = Convert.ToInt32(chargedComp);
+                exp.ChargedToDept = Convert.ToInt32(chargedDept);
                 exp.Purpose = purpose;
                 exp.ExpenseType_ID = Convert.ToInt32(tranType.ExpenseType_ID);
                 exp.WF_Id = Convert.ToInt32(Session["mainwfid"]);
@@ -1717,7 +1719,7 @@ namespace DX_WebTemplate
                             foreach (DataColumn column in table.Columns)
                             {
                                 object value = row[column];
-                                if (value != DBNull.Value && !string.IsNullOrWhiteSpace(value.ToString()) && Convert.ToDecimal(value) != 0)
+                                if (value != DBNull.Value || !string.IsNullOrWhiteSpace(value.ToString()) || Convert.ToDecimal(value) != 0)
                                 {
                                     isEmptyRow = false;
                                     break;
@@ -2137,6 +2139,50 @@ namespace DX_WebTemplate
             var total = ASPxGridView22.GetTotalSummaryValue(ASPxGridView22.TotalSummary["ReimTranspo_Amount1"]);
 
             return new { total };
+        }
+
+        protected void chargedCB_DataBound(object sender, EventArgs e)
+        {
+            ASPxComboBox combo = sender as ASPxComboBox;
+
+            if (combo != null)
+            {
+                // Example: Check if the selected value is 0
+                if (combo.Value != null && combo.Value.ToString() == "0")
+                {
+                    combo.Value = null; // Set to null if value is 0
+                }
+            }
+        }
+
+        protected void chargedCB0_DataBound(object sender, EventArgs e)
+        {
+            ASPxComboBox combo = sender as ASPxComboBox;
+
+            if (combo != null)
+            {
+                // Example: Check if the selected value is 0
+                if (combo.Value != null && combo.Value.ToString() == "0")
+                {
+                    combo.Value = null; // Set to null if value is 0
+                }
+            }
+        }
+
+        protected void docPanel_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var code = e.Parameter as string;
+
+            if (code != null) 
+            {
+                QRGenerator qrReport = new QRGenerator();
+
+                qrReport.Parameters["code"].Value = code;
+
+                qrReport.CreateDocument();
+
+                ASPxWebDocumentViewer1.OpenReport(qrReport);
+            }
         }
     }
 }

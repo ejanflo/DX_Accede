@@ -89,8 +89,9 @@
             loadPanel.Show();      
         }
 
-        function OnCompanyChanged(comp) {
-            drpdown_CostCenter.PerformCallback(comp);
+        function OnCompanyChanged(s, e) {
+            depCB.PerformCallback(s.GetValue());
+
         }
 
         function onToolbarItemClick(s, e) { 
@@ -134,7 +135,8 @@
             var empcode = employeeCB.GetValue();
             var companyid = compCB.GetValue();
             var department_code = depCB.GetValue();
-            var chargedto = chargedCB.GetValue();
+            var chargedtoComp = chargedCB.GetValue();
+            var chargedtoDept = chargedCB0.GetValue();
             var tripto = triptoTB.GetValue();
             var datefrom = datefromDE.GetValue();
             var dateto = datetoDE.GetValue();
@@ -152,7 +154,8 @@
                     empcode: empcode,
                     companyid: companyid,
                     department_code: department_code,
-                    chargedto: chargedto,
+                    chargedtoComp: chargedtoComp,
+                    chargedtoDept: chargedtoDept,
                     tripto: tripto,
                     datefrom: datefrom,
                     dateto: dateto,
@@ -318,12 +321,9 @@
                                                     <CellStyle HorizontalAlign="Left">
                                                     </CellStyle>
                                                 </dx:GridViewCommandColumn>
-                                                <dx:GridViewDataTextColumn ShowInCustomizationForm="True" VisibleIndex="1" FieldName="ID" ReadOnly="True" Visible="False">
-                                                    <EditFormSettings Visible="False" />
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn FieldName="Doc_No" ShowInCustomizationForm="True" VisibleIndex="2" Caption="Document No.">
+                                                <dx:GridViewDataTextColumn ShowInCustomizationForm="True" VisibleIndex="2" FieldName="Doc_No" Caption="Document No.">
                                                     <Columns>
-                                                        <dx:GridViewDataComboBoxColumn Caption="Employee Name" FieldName="Employee_Id" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                        <dx:GridViewDataComboBoxColumn Caption="Employee Name" FieldName="Employee_Id" ShowInCustomizationForm="True" VisibleIndex="1">
                                                             <PropertiesComboBox DataSourceID="sqlName" TextField="FullName" ValueField="EmpCode">
                                                             </PropertiesComboBox>
                                                             <CellStyle Font-Bold="True">
@@ -387,6 +387,9 @@
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:GridViewDataComboBoxColumn>
+                                                <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
+                                                    <EditFormSettings Visible="False" />
+                                                </dx:GridViewDataTextColumn>
                                             </Columns>
                                             <Toolbars>
                                                 <dx:GridViewToolbar ItemAlign="Right">
@@ -521,7 +524,7 @@
         </ContentStyle>
         <ContentCollection>
 <dx:PopupControlContentControl runat="server">
-    <dx:ASPxFormLayout ID="ASPxFormLayout2" runat="server" Width="1000px" Font-Bold="False">
+    <dx:ASPxFormLayout ID="ASPxFormLayout2" runat="server" Width="1000px" Font-Bold="False" style="margin-top: 0px">
         <Items>
             <dx:LayoutGroup Caption="" ColCount="4" ColSpan="1" ColumnCount="4" GroupBoxDecoration="None" CssClass="mb-4">
                 <Paddings Padding="0px" />
@@ -530,7 +533,6 @@
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
                                 <dx:ASPxComboBox ID="employeeCB" runat="server" DataSourceID="SqlUsersDelegated" TextField="FullName" ValueField="DelegateTo_UserID" Width="100%" ClientInstanceName="employeeCB" Font-Bold="True">
-                                    <ClientSideEvents SelectedIndexChanged="OnFnameSelected" />
                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="CreateForm">
                                         <RequiredField ErrorText="*Required field" IsRequired="True" />
                                     </ValidationSettings>
@@ -558,10 +560,8 @@
                     <dx:LayoutItem Caption="Company" ColSpan="1" VerticalAlign="Top" Width="30%">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
-                                <dx:ASPxComboBox ID="compCB" runat="server" ClientInstanceName="compCB" TextField="CompanyShortName" ValueField="WASSId" Width="100%" DataSourceID="sqlCompany" Font-Bold="True">
-                                    <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	OnCompanyChanged(s.GetValue());
-}" />
+                                <dx:ASPxComboBox ID="compCB" runat="server" ClientInstanceName="compCB" TextField="CompanyShortName" ValueField="CompanyId" Width="100%" DataSourceID="SqlCompanyEdit" Font-Bold="True">
+                                    <ClientSideEvents SelectedIndexChanged="OnCompanyChanged" ValueChanged="OnCompanyChanged" />
                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="CreateForm">
                                         <RequiredField ErrorText="*Required field" IsRequired="True" />
                                     </ValidationSettings>
@@ -573,7 +573,7 @@
                     <dx:LayoutItem Caption="Department" ColSpan="1" VerticalAlign="Top" Width="30%">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
-                                <dx:ASPxComboBox ID="depCB" runat="server" ClientInstanceName="depCB" DataSourceID="SqlDepartment" Font-Bold="True" TextField="DepCode" ValueField="ID" Width="100%">
+                                <dx:ASPxComboBox ID="depCB" runat="server" ClientInstanceName="depCB" DataSourceID="SqlDepartmentEdit" Font-Bold="True" TextField="DepCode" ValueField="ID" Width="100%" OnCallback="depCB_Callback">
                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="CreateForm">
                                         <RequiredField ErrorText="*Required field" IsRequired="True" />
                                     </ValidationSettings>
@@ -600,18 +600,34 @@
     <CaptionSettings Location="Top" />
 
 </dx:LayoutItem>
-                    <dx:LayoutItem Caption="Charged to:" ColSpan="2" ColumnSpan="2" Width="60%">
+                    <dx:LayoutItem Caption="Charged to:" ColSpan="1" Width="30%">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
-                                <dx:ASPxComboBox ID="chargedCB" runat="server" TextField="CompanyShortName" ValueField="WASSId" Width="100%" DataSourceID="sqlCompany" Font-Bold="True" ClientInstanceName="chargedCB">
+                                <dx:ASPxComboBox ID="chargedCB" runat="server" TextField="CompanyShortName" ValueField="WASSId" Width="100%" DataSourceID="sqlCompany" Font-Bold="True" ClientInstanceName="chargedCB" NullText="Select Company">
+                                    <ClearButton DisplayMode="Always">
+                                    </ClearButton>
+                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="CreateForm">
+                                        <RequiredField ErrorText="*Required field" />
+                                    </ValidationSettings>
+                                </dx:ASPxComboBox>
+                            </dx:LayoutItemNestedControlContainer>
+                        </LayoutItemNestedControlCollection>
+                        <CaptionSettings Location="Top" />
+                    </dx:LayoutItem>
+                    <dx:LayoutItem Caption="  " ColSpan="1" Width="30%">
+                        <LayoutItemNestedControlCollection>
+                            <dx:LayoutItemNestedControlContainer runat="server">
+                                <dx:ASPxComboBox ID="chargedCB0" runat="server" ClientInstanceName="chargedCB0" DataSourceID="SqlDepartment" Font-Bold="True" NullText="Select Department" NullValueItemDisplayText="{0}" TextField="DepCode" TextFormatString="{0}" ValueField="ID" Width="100%">
                                     <Columns>
-                                        <dx:ListBoxColumn Caption="Company" FieldName="CompanyShortName" Width="60px">
+                                        <dx:ListBoxColumn Caption="Dept Code" FieldName="DepCode" Width="90px">
                                         </dx:ListBoxColumn>
-                                        <dx:ListBoxColumn Caption="Company Description" FieldName="CompanyDesc" Width="130px">
+                                        <dx:ListBoxColumn Caption="Dept Description" FieldName="DepDesc" Width="280px">
                                         </dx:ListBoxColumn>
                                     </Columns>
+                                    <ClearButton DisplayMode="Always">
+                                    </ClearButton>
                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="CreateForm">
-                                        <RequiredField ErrorText="*Required field" IsRequired="True" />
+                                        <RequiredField ErrorText="*Required field" />
                                     </ValidationSettings>
                                 </dx:ASPxComboBox>
                             </dx:LayoutItemNestedControlContainer>
@@ -768,4 +784,20 @@
     <asp:SqlDataSource ID="SqlUser" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_UserMaster]">
         </asp:SqlDataSource>
 
+     <asp:SqlDataSource ID="SqlDepartmentEdit" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_SecurityUserDept] WHERE (([AppId] = @AppId) AND ([IsActive] = @IsActive) AND ([UserId] = @UserId) AND ([CompanyId] = @CompanyId))">
+        <SelectParameters>
+            <asp:Parameter DefaultValue="1032" Name="AppId" Type="Int32" />
+            <asp:Parameter DefaultValue="true" Name="IsActive" Type="Boolean" />
+            <asp:Parameter DefaultValue="" Name="UserId" Type="String" />
+            <asp:Parameter DefaultValue="" Name="CompanyId" Type="Int32" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlCompanyEdit" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_SecurityUserComp] WHERE (([AppId] = @AppId) AND ([IsActive] = @IsActive) AND ([UserId] = @UserId))">
+        <SelectParameters>
+            <asp:Parameter DefaultValue="1032" Name="AppId" Type="Int32" />
+            <asp:Parameter DefaultValue="true" Name="IsActive" Type="Boolean" />
+            <asp:Parameter DefaultValue="" Name="UserId" Type="String" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+     
 </asp:Content>
