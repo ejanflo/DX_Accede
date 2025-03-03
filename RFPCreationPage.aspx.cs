@@ -468,10 +468,26 @@ namespace DX_WebTemplate
                 var rfp_main_query = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == RFP_ID).FirstOrDefault();
                 var payMethod = _DataContext.ACCEDE_S_PayMethods.Where(x=>x.ID == rfp_main_query.PayMethod).FirstOrDefault();
                 var tranType = _DataContext.ACCEDE_S_RFPTranTypes.Where(x=>x.ID == rfp_main_query.TranType).FirstOrDefault();
+                var sequence = 1;
+
+                //IF DOCUMENT WAS RECALLED
+                if(rfp_main_query.Status == 15)//15 IS A RECALL STATUS
+                {
+                    var rfpDoctype = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP").FirstOrDefault();
+                    var wfAct = _DataContext.ITP_T_WorkflowActivities.Where(x => x.Document_Id == rfp_main_query.ID)
+                        .Where(x => x.AppId == 1032)
+                        .Where(x => x.AppDocTypeId == rfpDoctype.DCT_Id)
+                        .Where(x => x.Status == 15)//15 IS A RECALL STATUS
+                        .FirstOrDefault();
+
+                    var wfDetail = _DataContext.ITP_S_WorkflowDetails.Where(x=>x.WFD_Id == wfAct.WFD_Id).FirstOrDefault();
+                    sequence = Convert.ToInt32(wfDetail.Sequence);
+                }
+                //END RECALL PROCESS
 
                 var Approver = from app in _DataContext.vw_ACCEDE_I_WFSetups
                                where app.WF_Id == rfp_main_query.WF_Id
-                               where app.Sequence == 1
+                               where app.Sequence == sequence
                                select app;
 
                 ITP_T_WorkflowActivity activity = new ITP_T_WorkflowActivity();

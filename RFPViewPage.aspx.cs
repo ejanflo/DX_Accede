@@ -49,6 +49,7 @@ namespace DX_WebTemplate
 
                     var btnSub = formRFP.FindItemOrGroupByName("btnSubmit") as LayoutItem;
                     var btnEdit = formRFP.FindItemOrGroupByName("btnEditRFP") as LayoutItem;
+                    var btnRecall = formRFP.FindItemOrGroupByName("recallBtn") as LayoutItem;
                     var myLayoutGroup = formRFP.FindItemOrGroupByName("PageTitle") as LayoutGroup;
 
                     var pld = formRFP.FindItemOrGroupByName("PLD") as LayoutItem;
@@ -113,6 +114,12 @@ namespace DX_WebTemplate
                         {
                             txtbox_TravType.Value = "Domestic";
                         }
+
+                        if(rfp_details.Status == 1 && rfp_details.User_ID == empCode)
+                        {
+                            btnRecall.ClientVisible = true;
+                        }
+
                         amount_lbl.Text = rfp_details.Currency + " " + Convert.ToDecimal(rfp_details.Amount).ToString("#,##0.00");
                     }
                     var release_cash_status = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Disbursed").FirstOrDefault();
@@ -701,6 +708,181 @@ namespace DX_WebTemplate
             }
             else
                 return new { FileName = fileName, ContentType = contentType, Data = bytes };
+        }
+
+        [WebMethod]
+        public static string RecallRFPMainAJAX(string remarks)
+        {
+            RFPViewPage rfp = new RFPViewPage();
+            return rfp.RecallRFPMain(remarks);
+        }
+
+        public string RecallRFPMain(string remarks)
+        {
+            try
+            {
+                string remarksInput = remarks.Trim();
+                var doc_id = Convert.ToInt32(Session["passRFPID"]);
+                var approver_org_id = 0;
+                var rfpDoctype = _DataContext.ITP_S_DocumentTypes.Where(x=>x.DCT_Name == "ACDE RFP").FirstOrDefault();
+
+                if (!string.IsNullOrEmpty(remarksInput))
+                {
+                    foreach (var rs in _DataContext.ITP_T_WorkflowActivities
+                        .Where(x => x.Document_Id == doc_id)
+                        .Where(x=>x.AppDocTypeId == rfpDoctype.DCT_Id)
+                        .Where(x => x.AppId == 1032)
+                        .Where(x => x.Status == 1))
+                    {
+                        rs.Status = 15;
+                        rs.DateAction = DateTime.Now;
+                        rs.Remarks = Session["AuthUser"].ToString() + ": " + remarksInput;
+                        approver_org_id = Convert.ToInt32(rs.OrgRole_Id.ToString());
+                    }
+
+                    var comp_id = 0;
+                    var doc_no = "";
+                    var date_created = "";
+                    var document_purpose = "";
+                    var creator_email = "";
+                    var creator_fullname = "";
+                    var approver_id = "";
+                    var payMethod = "";
+                    var tranType = "";
+
+                    foreach (var item in _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == doc_id))
+                    {
+                        item.Status = 15;
+
+                        comp_id = Convert.ToInt32(item.Company_ID);
+                        doc_no = item.RFP_DocNum.ToString();
+                        date_created = item.DateCreated.ToString();
+                        document_purpose = item.Purpose;
+
+                        approver_id = _DataContext.ITP_S_SecurityUserOrgRoles.Where(x => x.Id == approver_org_id).FirstOrDefault().UserId;
+                        creator_fullname = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == item.User_ID).FirstOrDefault().FullName;
+                        creator_email = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == item.User_ID).FirstOrDefault().Email;
+
+                        if(item.PayMethod != null)
+                        {
+                            payMethod = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == item.PayMethod).FirstOrDefault().PMethod_name;
+                        }
+
+                        if(item.TranType != null)
+                        {
+                            tranType = _DataContext.ACCEDE_S_RFPTranTypes.Where(x => x.ID == item.TranType).FirstOrDefault().RFPTranType_Name;
+                        }
+                    }
+                    _DataContext.SubmitChanges();
+
+                    
+
+                    ///////---START EMAIL PROCESS-----////////
+
+                    var user_email = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Session["UserID"].ToString())
+                              .FirstOrDefault();
+
+                    foreach (var item in _DataContext.ITP_S_SecurityUserOrgRoles.Where(x => x.OrgRoleId == approver_org_id))
+                    {
+                        var receiver_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == item.UserId)
+                              .FirstOrDefault();
+
+                        SendEmailToApprover(approver_id.ToString(), comp_id, creator_fullname, creator_email, doc_no, date_created, document_purpose, payMethod, tranType, remarks, "Recalled");
+                        
+                    }
+
+                }
+
+                return "success";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        public bool SendEmailToApprover(string approver_id, int Comp_id, string creator_fullname, string creator_email, string doc_no, string date_created, string document_purpose, string payMethod, string tranType, string remarks, string status)
+        {
+            try
+            {
+                ///////---START EMAIL PROCESS-----////////
+                //foreach (var user in _DataContext.ITP_S_SecurityUserOrgRoles.Where(x => x.OrgRoleId == org_id))
+                //{
+                var user_email = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == approver_id)
+                                    .FirstOrDefault();
+
+                var comp_name = _DataContext.CompanyMasters.Where(x => x.WASSId == Comp_id)
+                            .FirstOrDefault();
+
+                //Start--   Get Text info
+                var queryText =
+                        from texts in _DataContext.ITP_S_Texts
+                        where texts.Type == "Email" && texts.Name == status
+                        select texts;
+
+                var emailMessage = "";
+                var emailSubMessage = "";
+                var emailColor = "";
+                var emailSubjectText3 = "";
+
+                foreach (var text in queryText)
+                {
+                    emailSubMessage = text.Text2.ToString();
+                    emailColor = text.Color.ToString();
+                    emailMessage = text.Text1.ToString();
+                    if(text.Text3 != null)
+                    {
+                        emailSubjectText3 = text.Text3.ToString();
+                    }
+                }
+                //End--     Get Text info
+
+                string appName = "Request For Payment (RFP)";
+                string recipientName = user_email.FName;
+                string senderName = creator_fullname;
+                string emailSender = creator_email;
+                string emailSite = "https://devapps.anflocor.com";
+                string sendEmailTo = user_email.Email;
+                string emailSubject = doc_no + ": "+ emailSubjectText3;
+
+
+                ANFLO anflo = new ANFLO();
+
+                //Body Details Sample
+                string emailDetails = "";
+
+                emailDetails = "<table border='1' cellpadding='2' cellspacing='0' width='100%' class='main' style='border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;background:#fff;border-radius:3px;width:100%;'>";
+                emailDetails += "<tr><td>Company</td><td><strong>" + comp_name.CompanyShortName + "</strong></td></tr>";
+                emailDetails += "<tr><td>Document Date</td><td><strong>" + date_created + "</strong></td></tr>";
+                emailDetails += "<tr><td>Document No.</td><td><strong>" + doc_no + "</strong></td></tr>";
+                emailDetails += "<tr><td>Requestor</td><td><strong>" + senderName + "</strong></td></tr>";
+                emailDetails += "<tr><td>Pay Method</td><td><strong>" + payMethod + "</strong></td></tr>";
+                emailDetails += "<tr><td>Transaction Type</td><td><strong>" + tranType + "</strong></td></tr>";
+                emailDetails += "<tr><td>Status</td><td><strong>" + "Pending" + "</strong></td></tr>";
+                emailDetails += "<tr><td>Document Purpose</td><td><strong>" + document_purpose + "</strong></td></tr>";
+                emailDetails += "</table>";
+                emailDetails += "<br>";
+
+                emailDetails += "</table>";
+                //End of Body Details Sample
+
+                //}
+                string emailTemplate = anflo.Email_Content_Formatter(appName, recipientName, emailMessage, emailSubMessage, senderName, emailSender, emailDetails, remarks, emailSite, emailColor);
+
+                if (anflo.Send_Email(emailSubject, emailTemplate, sendEmailTo))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
         }
     }
 }

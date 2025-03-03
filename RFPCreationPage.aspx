@@ -193,7 +193,7 @@
                         //Update the description text box with the response value
                         if (response.d != 0 && amount > response.d) {
                             warning_txt.SetText("Amount entered is beyond company's system limit. Please use SAP Concur instead or continue with this transaction.");
-                            PetCashPopup.Show();
+                            //PetCashPopup.Show();
                             //spinEdit_Amount.SetValue("");
                         }
 
@@ -506,6 +506,7 @@
                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	drpdown_CTDepartment.PerformCallback(s.GetValue());
 drpdown_Payee.PerformCallback(s.GetValue());
+drpdown_CostCenter.SetValue(&quot;&quot;);
 //drpdown_WF.PerformCallback();
 ifComp_is_DLI();
 onAmountChanged(drpdown_PayMethod.GetValue());

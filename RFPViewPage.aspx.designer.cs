@@ -42,6 +42,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxButton btnEdit;
 
         /// <summary>
+        /// btnRecall control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton btnRecall;
+
+        /// <summary>
         /// btnPrint control.
         /// </summary>
         /// <remarks>
@@ -517,6 +526,69 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxButton ASPxButton2;
+
+        /// <summary>
+        /// RecallPopup control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxPopupControl RecallPopup;
+
+        /// <summary>
+        /// ASPxFormLayout4 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxFormLayout ASPxFormLayout4;
+
+        /// <summary>
+        /// ASPxFormLayout1_E11 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxImage ASPxFormLayout1_E11;
+
+        /// <summary>
+        /// ASPxFormLayout1_E12 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxLabel ASPxFormLayout1_E12;
+
+        /// <summary>
+        /// txtBox_recallRemarks control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxMemo txtBox_recallRemarks;
+
+        /// <summary>
+        /// mdlBtnReject control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton mdlBtnReject;
+
+        /// <summary>
+        /// ASPxFormLayout1_E15 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton ASPxFormLayout1_E15;
 
         /// <summary>
         /// LoadingPanel control.

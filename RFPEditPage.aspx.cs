@@ -268,6 +268,7 @@ namespace DX_WebTemplate
 
             if (status == 1)
             {
+
                 RFPCreationPage rfpCreatePage = new RFPCreationPage();
                 var Approver = from app in _DataContext.vw_ACCEDE_I_WFSetups
                                 where app.WF_Id == Convert.ToInt32(wf_id)

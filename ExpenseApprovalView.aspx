@@ -1528,6 +1528,8 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                             </dx:LayoutGroup>
                         </Items>
                     </dx:TabbedLayoutGroup>
+                    <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2" Width="100%">
+                    </dx:EmptyLayoutItem>
                     <dx:TabbedLayoutGroup ColSpan="1">
                         <Items>
                             <dx:LayoutGroup Caption="WORKFLOW DETAILS" ColSpan="1" GroupBoxDecoration="None" Width="50%">
