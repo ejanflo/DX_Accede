@@ -924,6 +924,7 @@
                         <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2">
                         </dx:EmptyLayoutItem>
                         <dx:LayoutGroup Caption="" ColSpan="2" GroupBoxDecoration="None" ColCount="2" ColumnCount="2" ColumnSpan="2">
+                            <Paddings PaddingBottom="25px" />
                             <Items>
                                 <dx:LayoutGroup Caption="REPORT HEADER DETAILS" ColSpan="1" GroupBoxDecoration="Box" Width="65%" ColCount="2" ColumnCount="2" RowSpan="2">
                                     <GroupBoxStyle>

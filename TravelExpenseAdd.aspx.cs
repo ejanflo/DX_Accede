@@ -858,6 +858,7 @@ namespace DX_WebTemplate
                 exp.ExpenseType_ID = Convert.ToInt32(tranType.ExpenseType_ID);
                 exp.WF_Id = Convert.ToInt32(Session["mainwfid"]);
                 exp.FAPWF_Id = Convert.ToInt32(Session["fapwfid"]);
+                exp.Preparer_Id = Convert.ToInt32(Session["userID"]);
 
                 //Update reimbursement Workflows
                 var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.IsExpenseReim == true).Where(x => x.isTravel == true).FirstOrDefault();
@@ -1256,7 +1257,7 @@ namespace DX_WebTemplate
 
             ds = (DataSet)Session["DataSet"];
             ASPxGridView gridView = (ASPxGridView)sender;
-            DataTable dataTable = gridView.GetMasterRowKeyValue() != null ? ds.Tables[1] : ds.Tables[0];
+            DataTable dataTable = gridView.GetMasterRowKeyValue() != null ? ds.Tables[0] : ds.Tables[0];
             DataRow row = dataTable.NewRow();
             e.NewValues["TravelExpenseDetailMap_ID"] = GetNewId1();
 
@@ -1281,7 +1282,7 @@ namespace DX_WebTemplate
         {
             ds = (DataSet)Session["DataSet"];
             ASPxGridView gridView = (ASPxGridView)sender;
-            DataTable dataTable = gridView.GetMasterRowKeyValue() != null ? ds.Tables[1] : ds.Tables[0];
+            DataTable dataTable = gridView.GetMasterRowKeyValue() != null ? ds.Tables[0] : ds.Tables[0];
             DataRow row = dataTable.Rows.Find(e.Keys[0]);
 
             // Check if all new values are empty or null
@@ -2066,7 +2067,7 @@ namespace DX_WebTemplate
 
             dsDoc = (DataSet)Session["DataSetDoc"];
             ASPxGridView gridView = (ASPxGridView)sender;
-            DataTable dataTable = gridView.GetMasterRowKeyValue() != null ? dsDoc.Tables[1] : dsDoc.Tables[0];
+            DataTable dataTable = gridView.GetMasterRowKeyValue() != null ? dsDoc.Tables[0] : dsDoc.Tables[0];
             DataRow row = dataTable.Rows.Find(e.Keys[0]);
             IDictionaryEnumerator enumerator = e.NewValues.GetEnumerator();
             enumerator.Reset();

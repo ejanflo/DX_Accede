@@ -2004,7 +2004,7 @@
             // xrLabel47
             // 
             this.xrLabel47.Font = new DevExpress.Drawing.DXFont("Arial", 4F, DevExpress.Drawing.DXFontStyle.Bold);
-            this.xrLabel47.LocationFloat = new DevExpress.Utils.PointFloat(684.2172F, 4.122196F);
+            this.xrLabel47.LocationFloat = new DevExpress.Utils.PointFloat(680.3482F, 4.122195F);
             this.xrLabel47.Multiline = true;
             this.xrLabel47.Name = "xrLabel47";
             this.xrLabel47.Padding = new DevExpress.XtraPrinting.PaddingInfo(2, 2, 0, 0, 100F);
@@ -2017,14 +2017,14 @@
             // xrLabel35
             // 
             this.xrLabel35.Font = new DevExpress.Drawing.DXFont("Arial", 4F, DevExpress.Drawing.DXFontStyle.Italic);
-            this.xrLabel35.LocationFloat = new DevExpress.Utils.PointFloat(717.6455F, 4.122196F);
+            this.xrLabel35.LocationFloat = new DevExpress.Utils.PointFloat(713.7765F, 4.122195F);
             this.xrLabel35.Multiline = true;
             this.xrLabel35.Name = "xrLabel35";
             this.xrLabel35.Padding = new DevExpress.XtraPrinting.PaddingInfo(2, 2, 0, 0, 100F);
-            this.xrLabel35.SizeF = new System.Drawing.SizeF(94.35443F, 6.850014F);
+            this.xrLabel35.SizeF = new System.Drawing.SizeF(98.22351F, 6.850015F);
             this.xrLabel35.StylePriority.UseFont = false;
             this.xrLabel35.StylePriority.UseTextAlignment = false;
-            this.xrLabel35.Text = "Developed by RTGarcia | EMAlburo";
+            this.xrLabel35.Text = "-  Developed by RTGarcia | EMAlburo";
             this.xrLabel35.TextAlignment = DevExpress.XtraPrinting.TextAlignment.TopLeft;
             // 
             // AccedeRFPForm

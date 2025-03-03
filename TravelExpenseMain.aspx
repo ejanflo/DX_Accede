@@ -34,46 +34,46 @@
     </style>
     <script>
         function onKeyPress(s, e) {
-            var input = s.GetInputElement();  // Get the textbox input element
-            var query = input.value.trim();
-            var suggestionBox = document.getElementById("locationSuggestions");
+            //var input = s.GetInputElement();  // Get the textbox input element
+            //var query = input.value.trim();
+            //var suggestionBox = document.getElementById("locationSuggestions");
 
-            if (query.length < 3) {
-                suggestionBox.innerHTML = "";
-                suggestionBox.style.display = "none";
-                return;
-            }
+            //if (query.length < 3) {
+            //    suggestionBox.innerHTML = "";
+            //    suggestionBox.style.display = "none";
+            //    return;
+            //}
 
-            // Fetch location suggestions from OpenStreetMap (Nominatim API)
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`)
-                .then(response => response.json())
-                .then(data => {
-                    suggestionBox.innerHTML = "";
-                    suggestionBox.style.display = "block";
+            //// Fetch location suggestions from OpenStreetMap (Nominatim API)
+            //fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`)
+            //    .then(response => response.json())
+            //    .then(data => {
+            //        suggestionBox.innerHTML = "";
+            //        suggestionBox.style.display = "block";
 
-                    data.forEach(item => {
-                        var div = document.createElement("div");
-                        div.textContent = item.display_name;
-                        div.classList.add("suggestion-item");
+            //        data.forEach(item => {
+            //            var div = document.createElement("div");
+            //            div.textContent = item.display_name;
+            //            div.classList.add("suggestion-item");
 
-                        // Handle click event to select a location
-                        div.addEventListener("click", function () {
-                            s.SetText(item.display_name);  // Set the selected location in ASPxTextBox
+            //            // Handle click event to select a location
+            //            div.addEventListener("click", function () {
+            //                s.SetText(item.display_name);  // Set the selected location in ASPxTextBox
 
-                            // Check if the location is in the Philippines
-                            //if (item.address && item.address.country_code !== "ph") 
-                            //    ForD.SetValue('Foreign');
-                            //else
-                            //    ForD.SetValue('Domestic');
+            //                // Check if the location is in the Philippines
+            //                //if (item.address && item.address.country_code !== "ph") 
+            //                //    ForD.SetValue('Foreign');
+            //                //else
+            //                //    ForD.SetValue('Domestic');
 
-                            suggestionBox.innerHTML = "";
-                            suggestionBox.style.display = "none";
-                        });
+            //                suggestionBox.innerHTML = "";
+            //                suggestionBox.style.display = "none";
+            //            });
 
-                        suggestionBox.appendChild(div);
-                    });
-                })
-                .catch(error => console.error("Error fetching locations:", error));
+            //            suggestionBox.appendChild(div);
+            //        });
+            //    })
+            //    .catch(error => console.error("Error fetching locations:", error));
         }
 
         // Hide suggestions when clicking outside
@@ -496,6 +496,10 @@
                                                 </dx:GridViewFormatConditionHighlight>
                                                 <dx:GridViewFormatConditionHighlight Expression="[Status] = 37" FieldName="Status" Format="Custom">
                                                     <CellStyle Font-Bold="True" ForeColor="#E67C0E">
+                                                    </CellStyle>
+                                                </dx:GridViewFormatConditionHighlight>
+                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 41" FieldName="Status" Format="Custom">
+                                                    <CellStyle Font-Bold="True" ForeColor="#878787">
                                                     </CellStyle>
                                                 </dx:GridViewFormatConditionHighlight>
                                             </FormatConditions>

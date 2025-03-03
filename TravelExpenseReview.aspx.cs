@@ -136,7 +136,7 @@ namespace DX_WebTemplate
                             if (FinExecVerify != null)
                             {
                                 var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
-                                    .Where(x => x.Name.Contains("forward cfo") && x.App_Id == 1032)
+                                    .Where(x => x.Name.Contains("forward cfo") && x.App_Id == 1032 && (x.Company_Id == mainExp.Company_Id || x.Company_Id == mainExp.ChargedToComp))
                                     .ToList();
 
                                 if (forwardWFList.Any()) // Ensure there's data before binding
@@ -157,7 +157,7 @@ namespace DX_WebTemplate
                             else if (FinCFOVerify != null)
                             {
                                 var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
-                                    .Where(x => x.Name.Contains("forward pres") && x.App_Id == 1032)
+                                    .Where(x => x.Name.Contains("forward pres") && x.App_Id == 1032 && (x.Company_Id == mainExp.Company_Id || x.Company_Id == mainExp.ChargedToComp))
                                     .ToList();
 
                                 if (forwardWFList.Any()) // Ensure there's data before binding
@@ -178,7 +178,7 @@ namespace DX_WebTemplate
                             else
                             {
                                 var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
-                                    .Where(x => x.Name.Contains("forward exec") && x.App_Id == 1032)
+                                    .Where(x => x.Name.Contains("forward exec") && x.App_Id == 1032 && (x.Company_Id == mainExp.Company_Id || x.Company_Id == mainExp.ChargedToComp))
                                     .ToList();
 
                                 if (forwardWFList.Any()) // Ensure there's data before binding
@@ -204,6 +204,7 @@ namespace DX_WebTemplate
                             var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
                                     .Where(x => x.Name.Contains("forward"))
                                     .Where(x => x.App_Id == 1032)
+                                    .Where(x => (x.Company_Id == mainExp.Company_Id || x.Company_Id == mainExp.ChargedToComp))
                                     .ToList();
 
                             if (forwardWFList.Any()) // Ensure there's data before binding
@@ -802,6 +803,7 @@ namespace DX_WebTemplate
                 {
                     item.ChargedToComp = Convert.ToInt32(chargedcomp);
                     item.ChargedToDept = Convert.ToInt32(chargeddept);
+                    item.Remarks = aforwardRemarks;
                 }
                 _DataContext.SubmitChanges();
 
@@ -813,6 +815,7 @@ namespace DX_WebTemplate
                 {
                     item.ChargedTo_CompanyId = Convert.ToInt32(chargedcomp);
                     item.ChargedTo_DeptId = Convert.ToInt32(chargeddept);
+                    item.Remarks = aforwardRemarks;
                 }
                 _DataContext.SubmitChanges();
 
@@ -879,6 +882,7 @@ namespace DX_WebTemplate
                 {
                     item.ChargedToComp = Convert.ToInt32(chargedcomp);
                     item.ChargedToDept = Convert.ToInt32(chargeddept);
+                    item.Remarks = remarks;
                 }
                 _DataContext.SubmitChanges();
 
@@ -890,6 +894,7 @@ namespace DX_WebTemplate
                 {
                     item.ChargedTo_CompanyId = Convert.ToInt32(chargedcomp);
                     item.ChargedTo_DeptId = Convert.ToInt32(chargeddept);
+                    item.Remarks = remarks;
                 }
                 _DataContext.SubmitChanges();
 

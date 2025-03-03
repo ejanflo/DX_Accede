@@ -1259,6 +1259,10 @@
                                                                                                                             <CellStyle Font-Bold="True" ForeColor="#006DD6">
                                                                                                                             </CellStyle>
                                                                                                                         </dx:GridViewFormatConditionHighlight>
+                                                                                                                        <dx:GridViewFormatConditionHighlight Expression="[Status] = 41" FieldName="Status" Format="Custom">
+                                                                                                                            <CellStyle Font-Bold="True" ForeColor="#878787">
+                                                                                                                            </CellStyle>
+                                                                                                                        </dx:GridViewFormatConditionHighlight>
                                                                                                                     </FormatConditions>
                                                                                                                     <Styles>
                                                                                                                         <Header>

@@ -1468,6 +1468,10 @@
                                                                                                                             <CellStyle Font-Bold="True" ForeColor="#006DD6">
                                                                                                                             </CellStyle>
                                                                                                                         </dx:GridViewFormatConditionHighlight>
+                                                                                                                        <dx:GridViewFormatConditionHighlight Expression="[Status] = 41" FieldName="Status" Format="Custom">
+                                                                                                                            <CellStyle Font-Bold="True" ForeColor="#878787">
+                                                                                                                            </CellStyle>
+                                                                                                                        </dx:GridViewFormatConditionHighlight>
                                                                                                                     </FormatConditions>
                                                                                                                     <Styles>
                                                                                                                         <Header>
@@ -3721,7 +3725,7 @@ onTravelClick();
                             <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Center" Width="100%">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxGridView ID="ForwardSequenceGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="ForwardSequenceGrid" DataSourceID="SqlWFSequenceForward" Theme="MaterialCompact" Width="100%" OnCustomCallback="ForwardSequenceGrid_CustomCallback">
+                                        <dx:ASPxGridView ID="ForwardSequenceGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="ForwardSequenceGrid" DataSourceID="SqlWFSequenceForward" Theme="MaterialCompact" Width="100%" OnCustomCallback="ForwardSequenceGrid_CustomCallback" EnableCallbackAnimation="True">
                                             <SettingsEditing Mode="Batch">
                                             </SettingsEditing>
                                             <SettingsDataSecurity AllowDelete="False" AllowEdit="False" AllowInsert="False" />
