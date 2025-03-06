@@ -51,6 +51,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxButton cancelBtn;
 
         /// <summary>
+        /// forAccountingGrid control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxGridView forAccountingGrid;
+
+        /// <summary>
         /// empnameCB control.
         /// </summary>
         /// <remarks>
@@ -238,15 +247,6 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxButtonEdit reimTB;
-
-        /// <summary>
-        /// forAccountingGrid control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxGridView forAccountingGrid;
 
         /// <summary>
         /// ExpenseGrid control.

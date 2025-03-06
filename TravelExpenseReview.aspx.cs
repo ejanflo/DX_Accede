@@ -197,7 +197,7 @@ namespace DX_WebTemplate
                                 }
                             }
                         }
-                        else if ((status == "Pending at Audit" || status == "Forwarded") && orgRoleID == null)
+                        else if ((status == "Forwarded") && orgRoleID == null)
                         {
                             forwardItem.Visible = true;
 
@@ -300,9 +300,9 @@ namespace DX_WebTemplate
                 }
 
                 departmentCB.Value = expType;
-                lbl_caTotal.Text = totalca.ToString();
-                lbl_expenseTotal.Text = totalexp.ToString();
-                lbl_dueTotal.Text = totalexp > totalca ? $"({(totalexp - totalca):N2})" : (totalca - totalexp).ToString("N2");
+                lbl_caTotal.Text = Convert.ToString(Session["currency"]) + totalca.ToString("N2");
+                lbl_expenseTotal.Text = Convert.ToString(Session["currency"]) + totalexp.ToString("N2");
+                lbl_dueTotal.Text = totalexp > totalca ? "(" + Convert.ToString(Session["currency"]) + "" + (totalexp - totalca).ToString("N2") + ")" : Convert.ToString(Session["currency"]) + (totalca - totalexp).ToString("N2");
 
                 var totExpCA = totalexp > totalca ? Convert.ToDecimal(totalexp - totalca) : Convert.ToDecimal(totalca - totalexp);
 
@@ -738,8 +738,9 @@ namespace DX_WebTemplate
                 _DataContext.SubmitChanges();
 
                 //UPDATE Workflow Activity 
+                var rfpapp_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP").Where(x => x.App_Id == 1032).FirstOrDefault();
                 var updateRFPWFA = _DataContext.ITP_T_WorkflowActivities
-                    .Where(e => e.Document_Id == rfpid && e.AppId == 1032 && e.AppDocTypeId == 1011 && e.WFA_Id == wfa);
+                    .Where(e => e.Document_Id == rfpid && e.AppId == 1032 && e.AppDocTypeId == rfpapp_docType.DCT_Id && e.WFA_Id == wfa);
 
                 foreach (ITP_T_WorkflowActivity e in updateRFPWFA)
                 {

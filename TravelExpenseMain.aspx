@@ -352,11 +352,11 @@
                                                 <dx:GridViewDataTextColumn FieldName="FAPWF_Id" ShowInCustomizationForm="True" Visible="False" VisibleIndex="15">
                                                 </dx:GridViewDataTextColumn>
                                                 <dx:GridViewDataComboBoxColumn Caption="Company" FieldName="Company_Id" ShowInCustomizationForm="True" VisibleIndex="3">
-                                                    <PropertiesComboBox DataSourceID="sqlCompany" TextField="CompanyShortName" ValueField="WASSId">
+                                                    <PropertiesComboBox DataSourceID="sqlCompanyList" TextField="CompanyShortName" ValueField="WASSId">
                                                     </PropertiesComboBox>
                                                     <Columns>
                                                         <dx:GridViewDataComboBoxColumn Caption="Department" FieldName="Dep_Code" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                            <PropertiesComboBox DataSourceID="SqlDepartment" TextField="DepCode" ValueField="ID">
+                                                            <PropertiesComboBox DataSourceID="SqlDepartmentList" TextField="DepCode" ValueField="ID">
                                                             </PropertiesComboBox>
                                                         </dx:GridViewDataComboBoxColumn>
                                                     </Columns>
@@ -536,7 +536,7 @@
                     <dx:LayoutItem Caption="Employee Name" ColSpan="2" ColumnSpan="2" VerticalAlign="Top" Width="60%">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
-                                <dx:ASPxComboBox ID="employeeCB" runat="server" DataSourceID="SqlUsersDelegated" TextField="FullName" ValueField="DelegateTo_UserID" Width="100%" ClientInstanceName="employeeCB" Font-Bold="True">
+                                <dx:ASPxComboBox ID="employeeCB" runat="server" DataSourceID="SqlUsersDelegated" TextField="FullName" ValueField="DelegateFor_UserID" Width="100%" ClientInstanceName="employeeCB" Font-Bold="True">
                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="CreateForm">
                                         <RequiredField ErrorText="*Required field" IsRequired="True" />
                                     </ValidationSettings>
@@ -561,7 +561,7 @@
                         </LayoutItemNestedControlCollection>
                         <CaptionSettings Location="Top" />
                     </dx:LayoutItem>
-                    <dx:LayoutItem Caption="Company" ColSpan="1" VerticalAlign="Top" Width="30%">
+                    <dx:LayoutItem Caption="Workflow Company" ColSpan="1" VerticalAlign="Top" Width="30%">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
                                 <dx:ASPxComboBox ID="compCB" runat="server" ClientInstanceName="compCB" TextField="CompanyShortName" ValueField="CompanyId" Width="100%" DataSourceID="SqlCompanyEdit" Font-Bold="True">
@@ -574,7 +574,7 @@
                         </LayoutItemNestedControlCollection>
                         <CaptionSettings Location="Top" />
                     </dx:LayoutItem>
-                    <dx:LayoutItem Caption="Department" ColSpan="1" VerticalAlign="Top" Width="30%">
+                    <dx:LayoutItem Caption="Workflow Department" ColSpan="1" VerticalAlign="Top" Width="30%">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
                                 <dx:ASPxComboBox ID="depCB" runat="server" ClientInstanceName="depCB" DataSourceID="SqlDepartmentEdit" Font-Bold="True" TextField="DepCode" ValueField="ID" Width="100%" OnCallback="depCB_Callback">
@@ -604,24 +604,27 @@
     <CaptionSettings Location="Top" />
 
 </dx:LayoutItem>
-                    <dx:LayoutItem Caption="Charged to:" ColSpan="1" Width="30%">
+                    <dx:LayoutItem Caption="Charged to Company:" ColSpan="1" Width="30%">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
-                                <dx:ASPxComboBox ID="chargedCB" runat="server" TextField="CompanyShortName" ValueField="WASSId" Width="100%" DataSourceID="sqlCompany" Font-Bold="True" ClientInstanceName="chargedCB" NullText="Select Company">
+                                <dx:ASPxComboBox ID="chargedCB" runat="server" TextField="CompanyShortName" ValueField="CompanyId" Width="100%" DataSourceID="sqlCompany" Font-Bold="True" ClientInstanceName="chargedCB">
+                                    <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	chargedCB0.PerformCallback(s.GetValue());
+}" />
                                     <ClearButton DisplayMode="Always">
                                     </ClearButton>
                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="CreateForm">
-                                        <RequiredField ErrorText="*Required field" />
+                                        <RequiredField ErrorText="*Required field" IsRequired="True" />
                                     </ValidationSettings>
                                 </dx:ASPxComboBox>
                             </dx:LayoutItemNestedControlContainer>
                         </LayoutItemNestedControlCollection>
                         <CaptionSettings Location="Top" />
                     </dx:LayoutItem>
-                    <dx:LayoutItem Caption="  " ColSpan="1" Width="30%">
+                    <dx:LayoutItem Caption="  Charged to Department:" ColSpan="1" Width="30%">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
-                                <dx:ASPxComboBox ID="chargedCB0" runat="server" ClientInstanceName="chargedCB0" DataSourceID="SqlDepartment" Font-Bold="True" NullText="Select Department" NullValueItemDisplayText="{0}" TextField="DepCode" TextFormatString="{0}" ValueField="ID" Width="100%">
+                                <dx:ASPxComboBox ID="chargedCB0" runat="server" ClientInstanceName="chargedCB0" DataSourceID="SqlDepartment" Font-Bold="True" NullValueItemDisplayText="{0}" TextField="DepCode" TextFormatString="{0}" ValueField="ID" Width="100%" OnCallback="chargedCB0_Callback">
                                     <Columns>
                                         <dx:ListBoxColumn Caption="Dept Code" FieldName="DepCode" Width="90px">
                                         </dx:ListBoxColumn>
@@ -631,7 +634,7 @@
                                     <ClearButton DisplayMode="Always">
                                     </ClearButton>
                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="CreateForm">
-                                        <RequiredField ErrorText="*Required field" />
+                                        <RequiredField ErrorText="*Required field" IsRequired="True" />
                                     </ValidationSettings>
                                 </dx:ASPxComboBox>
                             </dx:LayoutItemNestedControlContainer>
@@ -771,7 +774,15 @@
     <dx:ASPxLoadingPanel ID="loadPanel" ClientInstanceName="loadPanel" Modal="true" runat="server" Theme="MaterialCompact" Text=""></dx:ASPxLoadingPanel>
 
         <asp:SqlDataSource ID="sqlName" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT [FullName], [EmpCode] FROM [ITP_S_UserMaster]"></asp:SqlDataSource>
-        <asp:SqlDataSource ID="sqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [CompanyMaster] WHERE ([WASSId] IS NOT NULL) ORDER BY CompanyDesc ASC"></asp:SqlDataSource>
+        <asp:SqlDataSource ID="sqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_SecurityUserComp] WHERE (([AppId] = @AppId) AND ([IsActive] = @IsActive) AND ([UserId] = @UserId))">
+            <SelectParameters>
+                <asp:Parameter DefaultValue="1032" Name="AppId" />
+                <asp:Parameter DefaultValue="true" Name="IsActive" />
+                <asp:Parameter DefaultValue="" Name="UserId" />
+            </SelectParameters>
+    </asp:SqlDataSource>
+        <asp:SqlDataSource ID="sqlCompanyList" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [CompanyMaster] WHERE ([WASSId] IS NOT NULL)">
+    </asp:SqlDataSource>
         <asp:SqlDataSource ID="sqlStatus" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_Status]"></asp:SqlDataSource>
         <asp:SqlDataSource ID="sqlTravelExp" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_TravelExpenseMain] WHERE ([Preparer_Id] = @Preparer_Id) OR ([Employee_Id] = @Employee_Id)">
             <SelectParameters>
@@ -779,7 +790,13 @@
                 <asp:Parameter Name="Employee_Id" />
             </SelectParameters>
         </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([DepCode] IS NOT NULL)"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([Company_ID] = @Company_ID)">
+        <SelectParameters>
+            <asp:Parameter Name="Company_ID" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlDepartmentList" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([DepCode] IS NOT NULL)">
+    </asp:SqlDataSource>
         <asp:SqlDataSource ID="SqlUsersDelegated" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_UserDelegationUMaster] WHERE ([DelegateTo_UserID] = @DelegateTo_UserID)">
             <SelectParameters>
                 <asp:SessionParameter Name="DelegateTo_UserID" SessionField="userID" Type="String" />

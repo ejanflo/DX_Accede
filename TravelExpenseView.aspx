@@ -178,365 +178,8 @@
                         <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2">
                         </dx:EmptyLayoutItem>
                         <dx:LayoutGroup Caption="" ColSpan="2" GroupBoxDecoration="None" ColCount="2" ColumnCount="2" ColumnSpan="2">
-                            <Paddings PaddingBottom="35px" />
+                            <Paddings PaddingBottom="35px" PaddingTop="35px" />
                             <Items>
-                                <dx:LayoutGroup Caption="REPORT HEADER DETAILS" ColSpan="1" GroupBoxDecoration="Box" Width="65%" ColCount="2" ColumnCount="2" RowSpan="2">
-                                    <GroupBoxStyle>
-                                        <Border BorderColor="#006838" />
-                                    </GroupBoxStyle>
-                                    <Items>
-                                        <dx:LayoutItem Caption="Employee Name" ColSpan="2" FieldName="Employee_Id" ColumnSpan="2">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="empnameCB" runat="server" DataSourceID="SqlEmpName" Font-Bold="True" TextField="FullName" ValueField="EmpCode" Width="55%" AllowMouseWheel="False" ClientInstanceName="empnameCB" ClientEnabled="False">
-                                                        <DropDownButton Visible="False">
-                                                        </DropDownButton>
-                                                        <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                        <DisabledStyle Font-Bold="True" ForeColor="#222222">
-                                                        </DisabledStyle>
-                                                    </dx:ASPxComboBox>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <CaptionStyle Font-Bold="False" Font-Size="Small">
-                                            </CaptionStyle>
-                                        </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Company" ColSpan="1" FieldName="Company_Id">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="companyCB" runat="server" ClientInstanceName="companyCB" DataSourceID="SqlCompany" EnableTheming="True" Font-Bold="True" TextField="CompanyShortName" ValueField="WASSId" Width="100%" ClientEnabled="False">
-                                                        <DropDownButton Visible="False">
-                                                        </DropDownButton>
-                                                        <ValidationSettings>
-                                                            <RequiredField ErrorText="*Required" />
-                                                        </ValidationSettings>
-                                                        <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                        <DisabledStyle Font-Bold="True" ForeColor="#222222">
-                                                        </DisabledStyle>
-                                                    </dx:ASPxComboBox>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <CaptionStyle Font-Bold="False" Font-Size="Small">
-                                            </CaptionStyle>
-                                        </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Department" ColSpan="1" FieldName="Dep_Code">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="departmentCB" runat="server" Font-Bold="True" Width="100%" ClientInstanceName="departmentCB" DataSourceID="SqlDepartment" TextField="DepCode" ValueField="ID" ClientEnabled="False">
-                                                        <DropDownButton Visible="False">
-                                                        </DropDownButton>
-                                                        <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                        <DisabledStyle Font-Bold="True" ForeColor="#222222">
-                                                        </DisabledStyle>
-                                                    </dx:ASPxComboBox>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <CaptionStyle Font-Bold="False" Font-Size="Small">
-                                            </CaptionStyle>
-                                        </dx:LayoutItem>
-                                        <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2">
-                                        </dx:EmptyLayoutItem>
-                                        <dx:LayoutItem Caption="Travel" ColSpan="1" FieldName="ForeignDomestic">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxTextBox ID="fordCB" runat="server" ClientEnabled="False" ClientInstanceName="fordCB" Font-Bold="True" Width="100%">
-                                                        <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                        <DisabledStyle ForeColor="#222222">
-                                                        </DisabledStyle>
-                                                    </dx:ASPxTextBox>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <CaptionStyle Font-Bold="False" Font-Italic="False" Font-Size="Small">
-                                            </CaptionStyle>
-                                        </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Transaction Type" ColSpan="1" FieldName="ExpenseType_ID">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="drpdown_expenseType" runat="server" ClientInstanceName="drpdown_expenseType" DataSourceID="SqlTranType" Font-Bold="True" HorizontalAlign="Left" TextField="Description" ValueField="ExpenseType_ID" Width="100%" ReadOnly="True" ClientEnabled="False">
-                                                        <DropDownButton Visible="False">
-                                                        </DropDownButton>
-                                                        <ValidationSettings>
-                                                            <RequiredField ErrorText="*Required" />
-                                                        </ValidationSettings>
-                                                        <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                        <DisabledStyle Font-Bold="True" ForeColor="#222222">
-                                                        </DisabledStyle>
-                                                    </dx:ASPxComboBox>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <CaptionStyle Font-Bold="False" Font-Size="Small">
-                                            </CaptionStyle>
-                                        </dx:LayoutItem>
-                                        <dx:LayoutItem ColSpan="1" Caption="Charged To">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxTextBox ID="chargedCB" runat="server" ClientEnabled="False" ClientInstanceName="chargedCB" Font-Bold="True" Width="100%">
-                                                        <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                        <DisabledStyle ForeColor="#222222">
-                                                        </DisabledStyle>
-                                                    </dx:ASPxTextBox>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <CaptionStyle Font-Bold="False" Font-Italic="False" Font-Size="Small">
-                                            </CaptionStyle>
-                                        </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Report Date" ColSpan="1" FieldName="Date_Created">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxDateEdit ID="reportdateDE" runat="server" ClientInstanceName="reportdateDE" DisplayFormatString="MMMM dd, yyyy" Font-Bold="True" Width="100%" Enabled="False" ClientEnabled="False">
-                                                        <DropDownButton Visible="False">
-                                                        </DropDownButton>
-                                                        <ValidationSettings ValidationGroup="ExpenseEdit">
-                                                        </ValidationSettings>
-                                                        <BorderLeft BorderStyle="None" />
-                                                        <BorderTop BorderStyle="None" />
-                                                        <BorderRight BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                        <DisabledStyle ForeColor="#222222" Font-Bold="True" Font-Overline="False">
-                                                        </DisabledStyle>
-                                                    </dx:ASPxDateEdit>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <CaptionStyle Font-Bold="False" Font-Size="Small">
-                                            </CaptionStyle>
-                                        </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Date From" ColSpan="1" FieldName="Date_From">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxDateEdit ID="datefromDE" runat="server" Font-Bold="True" Width="100%" DisplayFormatString="MMMM dd, yyyy" ClientInstanceName="datefromDE" ClientEnabled="False">
-                                                        <DropDownButton Visible="False">
-                                                        </DropDownButton>
-                                                        <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                        <DisabledStyle Font-Bold="True" ForeColor="#222222">
-                                                        </DisabledStyle>
-                                                    </dx:ASPxDateEdit>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <CaptionStyle Font-Bold="False" Font-Size="Small">
-                                            </CaptionStyle>
-                                        </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Date To" ColSpan="1" FieldName="Date_To">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxDateEdit ID="datetoDE" runat="server" Font-Bold="True" Width="100%" DisplayFormatString="MMMM dd, yyyy" ClientInstanceName="datetoDE" ClientEnabled="False">
-                                                        <DropDownButton Visible="False">
-                                                        </DropDownButton>
-                                                        <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                        <DisabledStyle Font-Bold="True" ForeColor="#222222">
-                                                        </DisabledStyle>
-                                                    </dx:ASPxDateEdit>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <CaptionStyle Font-Bold="False" Font-Size="Small">
-                                            </CaptionStyle>
-                                        </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Time Departed" ColSpan="1">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxTimeEdit ID="timedepartTE" runat="server" ClientInstanceName="timedepartTE" Font-Bold="True" Width="100%" ClientEnabled="False">
-                                                        <SpinButtons ClientVisible="False">
-                                                        </SpinButtons>
-                                                        <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                        <DisabledStyle Font-Bold="True" ForeColor="#222222">
-                                                        </DisabledStyle>
-                                                    </dx:ASPxTimeEdit>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <CaptionStyle Font-Bold="False" Font-Size="Small">
-                                            </CaptionStyle>
-                                        </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Time Arrived" ColSpan="1">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxTimeEdit ID="timearriveTE" runat="server" Font-Bold="True" Width="100%" ClientInstanceName="timearriveTE" ClientEnabled="False">
-                                                        <SpinButtons ClientVisible="False">
-                                                        </SpinButtons>
-                                                        <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                        <DisabledStyle Font-Bold="True" ForeColor="#222222">
-                                                        </DisabledStyle>
-                                                    </dx:ASPxTimeEdit>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <CaptionStyle Font-Bold="False" Font-Size="Small">
-                                            </CaptionStyle>
-                                        </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Trip To" ColSpan="1" FieldName="Trip_To">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxMemo ID="tripMemo" runat="server" Font-Bold="True" Width="100%" ClientInstanceName="tripMemo" ClientEnabled="False">
-                                                        <ValidationSettings>
-                                                            <RequiredField ErrorText="*Required" />
-                                                        </ValidationSettings>
-                                                        <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                        <DisabledStyle Font-Bold="True" ForeColor="#222222">
-                                                        </DisabledStyle>
-                                                    </dx:ASPxMemo>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <Paddings PaddingBottom="15px" />
-                                            <CaptionStyle Font-Bold="False" Font-Size="Small">
-                                            </CaptionStyle>
-                                        </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Purpose" ColSpan="1" FieldName="Purpose">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxMemo ID="purposeMemo" runat="server" ClientInstanceName="purposeMemo" Font-Bold="True" HorizontalAlign="Left" Width="100%" ClientEnabled="False">
-                                                        <ValidationSettings>
-                                                            <RequiredField ErrorText="*Required" />
-                                                        </ValidationSettings>
-                                                        <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                        <DisabledStyle Font-Bold="True" ForeColor="#222222">
-                                                        </DisabledStyle>
-                                                    </dx:ASPxMemo>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <Paddings PaddingBottom="15px" />
-                                            <CaptionStyle Font-Bold="False" Font-Size="Small">
-                                            </CaptionStyle>
-                                        </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Remarks" ClientVisible="False" ColSpan="2" ColumnSpan="2" FieldName="remarks" Name="remItem">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxMemo ID="memo_remarks" runat="server" ClientInstanceName="memo_remarks" Font-Bold="True" HorizontalAlign="Left" Width="100%">
-                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
-                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                        </ValidationSettings>
-                                                        <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                        <DisabledStyle Font-Bold="True" ForeColor="#222222">
-                                                        </DisabledStyle>
-                                                    </dx:ASPxMemo>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <Paddings PaddingTop="15px" PaddingBottom="15px" />
-                                        </dx:LayoutItem>
-                                    </Items>
-                                    <ParentContainerStyle Font-Bold="True" Font-Size="Medium">
-                                    </ParentContainerStyle>
-                                </dx:LayoutGroup>
-                                <dx:LayoutGroup ColSpan="1" Caption="CASH ADVANCE DETAILS" GroupBoxDecoration="Box">
-                                    <GroupBoxStyle>
-                                        <Border BorderColor="#006838" />
-                                    </GroupBoxStyle>
-                                    <Items>
-                                        <dx:LayoutItem Caption="Cash Advance" ColSpan="1">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxCallbackPanel ID="caTotalCallback" runat="server" ClientInstanceName="caTotalCallback" Width="100%">
-                                                        <SettingsLoadingPanel Delay="0" Enabled="False" />
-                                                        <PanelCollection>
-                                                            <dx:PanelContent runat="server">
-                                                                <dx:ASPxTextBox ID="lbl_caTotal" runat="server" ClientInstanceName="lbl_caTotal" Font-Bold="True" Font-Size="Large" HorizontalAlign="Right" ReadOnly="True" Width="100%" DisplayFormatString="#,##0.00" ClientEnabled="False">
-                                                                    <Border BorderStyle="None" />
-                                                                    <DisabledStyle Font-Bold="True" ForeColor="#222222">
-                                                                    </DisabledStyle>
-                                                                </dx:ASPxTextBox>
-                                                            </dx:PanelContent>
-                                                        </PanelCollection>
-                                                    </dx:ASPxCallbackPanel>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <CaptionStyle Font-Size="Medium">
-                                            </CaptionStyle>
-                                            <ParentContainerStyle Font-Bold="True">
-                                            </ParentContainerStyle>
-                                        </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Total Expenses" ColSpan="1">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxCallbackPanel ID="expTotalCallback" runat="server" ClientInstanceName="expTotalCallback" Width="100%">
-                                                        <SettingsLoadingPanel Delay="0" Enabled="False" />
-                                                        <PanelCollection>
-                                                            <dx:PanelContent runat="server">
-                                                                <dx:ASPxTextBox ID="lbl_expenseTotal" runat="server" ClientInstanceName="lbl_expenseTotal" Font-Bold="True" Font-Size="Large" HorizontalAlign="Right" ReadOnly="True" Width="100%" DisplayFormatString="#,##0.00" ClientEnabled="False">
-                                                                    <Border BorderStyle="None" />
-                                                                    <BorderBottom BorderColor="#CCCCCC" BorderStyle="Solid" BorderWidth="2px" />
-                                                                    <DisabledStyle Font-Bold="True" ForeColor="#222222">
-                                                                    </DisabledStyle>
-                                                                </dx:ASPxTextBox>
-                                                            </dx:PanelContent>
-                                                        </PanelCollection>
-                                                    </dx:ASPxCallbackPanel>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <CaptionStyle Font-Size="Medium">
-                                            </CaptionStyle>
-                                            <ParentContainerStyle Font-Bold="True">
-                                            </ParentContainerStyle>
-                                        </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Due to/(from) Company" ColSpan="1" Name="due_lbl">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxCallbackPanel ID="dueTotalCallback" runat="server" ClientInstanceName="dueTotalCallback" Width="100%">
-                                                        <SettingsLoadingPanel Delay="0" Text="Please Wait: Summing Up&amp;hellip;" />
-                                                        <Styles>
-                                                            <LoadingPanel CssClass="position-relative">
-                                                            </LoadingPanel>
-                                                        </Styles>
-                                                        <LoadingPanelStyle CssClass="position-relative">
-                                                        </LoadingPanelStyle>
-                                                        <PanelCollection>
-                                                            <dx:PanelContent runat="server">
-                                                                <dx:ASPxTextBox ID="lbl_dueTotal" runat="server" ClientInstanceName="lbl_dueTotal" Font-Bold="True" Font-Size="Large" HorizontalAlign="Right" ReadOnly="True" Width="100%" ClientEnabled="False">
-                                                                    <Border BorderStyle="None" />
-                                                                    <DisabledStyle Font-Bold="True" ForeColor="#222222">
-                                                                    </DisabledStyle>
-                                                                </dx:ASPxTextBox>
-                                                            </dx:PanelContent>
-                                                        </PanelCollection>
-                                                    </dx:ASPxCallbackPanel>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <CaptionStyle Font-Size="Medium">
-                                            </CaptionStyle>
-                                            <ParentContainerStyle Font-Bold="True">
-                                            </ParentContainerStyle>
-                                        </dx:LayoutItem>
-                                        <dx:EmptyLayoutItem ColSpan="1">
-                                            <BorderBottom BorderColor="#878787" BorderStyle="Solid" BorderWidth="1px" />
-                                            <ParentContainerStyle>
-                                                <Paddings PaddingBottom="15px" />
-                                            </ParentContainerStyle>
-                                        </dx:EmptyLayoutItem>
-                                        <dx:LayoutItem Caption="Reimbursement Details" ClientVisible="False" ColSpan="1" Name="reimDetails" Width="100%">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxButtonEdit ID="reimTB" runat="server" ClientInstanceName="reimTB" Font-Bold="True" ReadOnly="True" Width="100%">
-                                                        <ClientSideEvents ButtonClick="linkToRFP" />
-                                                        <Buttons>
-                                                            <dx:EditButton ToolTip="View RFP Details" Width="60px">
-                                                                <Image IconID="actions_open2_svg_white_16x16">
-                                                                </Image>
-                                                            </dx:EditButton>
-                                                        </Buttons>
-                                                        <ButtonStyle BackColor="#006838">
-                                                        </ButtonStyle>
-                                                        <DisabledStyle Font-Bold="True" Font-Size="Small" ForeColor="#222222">
-                                                        </DisabledStyle>
-                                                    </dx:ASPxButtonEdit>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <CaptionSettings Location="Top" />
-                                            <Paddings PaddingBottom="15px" PaddingTop="15px" />
-                                            <CaptionCellStyle>
-                                                <Paddings PaddingBottom="10px" />
-                                            </CaptionCellStyle>
-                                        </dx:LayoutItem>
-                                    </Items>
-                                    <ParentContainerStyle Font-Bold="True" Font-Size="Medium">
-                                    </ParentContainerStyle>
-                                </dx:LayoutGroup>
                                 <dx:LayoutGroup Caption="For Accounting Department Use Only" ColSpan="1" GroupBoxDecoration="HeadingLine" Name="forAccounting" Visible="False">
                                     <Items>
                                         <dx:LayoutItem Caption="" ColSpan="1" Width="100%">
@@ -597,6 +240,371 @@
                                     <ParentContainerStyle Font-Bold="True" Font-Size="Medium">
                                     </ParentContainerStyle>
                                 </dx:LayoutGroup>
+                                <dx:TabbedLayoutGroup ColSpan="1" VerticalAlign="Top">
+                                    <Items>
+                                        <dx:LayoutGroup Caption="REPORT HEADER DETAILS" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="None" RowSpan="2">
+                                            <GroupBoxStyle>
+                                                <Border BorderColor="#006838" />
+                                            </GroupBoxStyle>
+                                            <Items>
+                                                <dx:LayoutItem Caption="Employee Name" ColSpan="2" ColumnSpan="2" FieldName="Employee_Id">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxComboBox ID="empnameCB" runat="server" AllowMouseWheel="False" ClientEnabled="False" ClientInstanceName="empnameCB" DataSourceID="SqlEmpName" Font-Bold="True" TextField="FullName" ValueField="EmpCode" Width="55%">
+                                                                <DropDownButton Visible="False">
+                                                                </DropDownButton>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <DisabledStyle Font-Bold="True" ForeColor="#222222">
+                                                                </DisabledStyle>
+                                                            </dx:ASPxComboBox>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionStyle Font-Bold="False" Font-Size="Small">
+                                                    </CaptionStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Workflow Company" ColSpan="1" FieldName="Company_Id">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxComboBox ID="companyCB" runat="server" ClientEnabled="False" ClientInstanceName="companyCB" DataSourceID="SqlCompany" EnableTheming="True" Font-Bold="True" TextField="CompanyShortName" ValueField="WASSId" Width="100%">
+                                                                <DropDownButton Visible="False">
+                                                                </DropDownButton>
+                                                                <ValidationSettings>
+                                                                    <RequiredField ErrorText="*Required" />
+                                                                </ValidationSettings>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <DisabledStyle Font-Bold="True" ForeColor="#222222">
+                                                                </DisabledStyle>
+                                                            </dx:ASPxComboBox>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionStyle Font-Bold="False" Font-Size="Small">
+                                                    </CaptionStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Workflow Department" ColSpan="1" FieldName="Dep_Code">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxComboBox ID="departmentCB" runat="server" ClientEnabled="False" ClientInstanceName="departmentCB" DataSourceID="SqlDepartment" Font-Bold="True" TextField="DepCode" ValueField="ID" Width="100%">
+                                                                <DropDownButton Visible="False">
+                                                                </DropDownButton>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <DisabledStyle Font-Bold="True" ForeColor="#222222">
+                                                                </DisabledStyle>
+                                                            </dx:ASPxComboBox>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionStyle Font-Bold="False" Font-Size="Small">
+                                                    </CaptionStyle>
+                                                </dx:LayoutItem>
+                                                <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2">
+                                                </dx:EmptyLayoutItem>
+                                                <dx:LayoutItem Caption="Travel" ColSpan="1" FieldName="ForeignDomestic">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxTextBox ID="fordCB" runat="server" ClientEnabled="False" ClientInstanceName="fordCB" Font-Bold="True" Width="100%">
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <DisabledStyle ForeColor="#222222">
+                                                                </DisabledStyle>
+                                                            </dx:ASPxTextBox>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionStyle Font-Bold="False" Font-Italic="False" Font-Size="Small">
+                                                    </CaptionStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Transaction Type" ColSpan="1" FieldName="ExpenseType_ID">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxComboBox ID="drpdown_expenseType" runat="server" ClientEnabled="False" ClientInstanceName="drpdown_expenseType" DataSourceID="SqlTranType" Font-Bold="True" HorizontalAlign="Left" ReadOnly="True" TextField="Description" ValueField="ExpenseType_ID" Width="100%">
+                                                                <DropDownButton Visible="False">
+                                                                </DropDownButton>
+                                                                <ValidationSettings>
+                                                                    <RequiredField ErrorText="*Required" />
+                                                                </ValidationSettings>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <DisabledStyle Font-Bold="True" ForeColor="#222222">
+                                                                </DisabledStyle>
+                                                            </dx:ASPxComboBox>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionStyle Font-Bold="False" Font-Size="Small">
+                                                    </CaptionStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Charged To" ColSpan="1">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxTextBox ID="chargedCB" runat="server" ClientEnabled="False" ClientInstanceName="chargedCB" Font-Bold="True" Width="100%">
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <DisabledStyle ForeColor="#222222">
+                                                                </DisabledStyle>
+                                                            </dx:ASPxTextBox>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionStyle Font-Bold="False" Font-Italic="False" Font-Size="Small">
+                                                    </CaptionStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Report Date" ColSpan="1" FieldName="Date_Created">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxDateEdit ID="reportdateDE" runat="server" ClientEnabled="False" ClientInstanceName="reportdateDE" DisplayFormatString="MMMM dd, yyyy" Enabled="False" Font-Bold="True" Width="100%">
+                                                                <DropDownButton Visible="False">
+                                                                </DropDownButton>
+                                                                <ValidationSettings ValidationGroup="ExpenseEdit">
+                                                                </ValidationSettings>
+                                                                <BorderLeft BorderStyle="None" />
+                                                                <BorderTop BorderStyle="None" />
+                                                                <BorderRight BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <DisabledStyle Font-Bold="True" Font-Overline="False" ForeColor="#222222">
+                                                                </DisabledStyle>
+                                                            </dx:ASPxDateEdit>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionStyle Font-Bold="False" Font-Size="Small">
+                                                    </CaptionStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Date From" ColSpan="1" FieldName="Date_From">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxDateEdit ID="datefromDE" runat="server" ClientEnabled="False" ClientInstanceName="datefromDE" DisplayFormatString="MMMM dd, yyyy" Font-Bold="True" Width="100%">
+                                                                <DropDownButton Visible="False">
+                                                                </DropDownButton>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <DisabledStyle Font-Bold="True" ForeColor="#222222">
+                                                                </DisabledStyle>
+                                                            </dx:ASPxDateEdit>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionStyle Font-Bold="False" Font-Size="Small">
+                                                    </CaptionStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Date To" ColSpan="1" FieldName="Date_To">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxDateEdit ID="datetoDE" runat="server" ClientEnabled="False" ClientInstanceName="datetoDE" DisplayFormatString="MMMM dd, yyyy" Font-Bold="True" Width="100%">
+                                                                <DropDownButton Visible="False">
+                                                                </DropDownButton>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <DisabledStyle Font-Bold="True" ForeColor="#222222">
+                                                                </DisabledStyle>
+                                                            </dx:ASPxDateEdit>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionStyle Font-Bold="False" Font-Size="Small">
+                                                    </CaptionStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Time Departed" ColSpan="1">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxTimeEdit ID="timedepartTE" runat="server" ClientEnabled="False" ClientInstanceName="timedepartTE" Font-Bold="True" Width="100%">
+                                                                <SpinButtons ClientVisible="False">
+                                                                </SpinButtons>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <DisabledStyle Font-Bold="True" ForeColor="#222222">
+                                                                </DisabledStyle>
+                                                            </dx:ASPxTimeEdit>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionStyle Font-Bold="False" Font-Size="Small">
+                                                    </CaptionStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Time Arrived" ColSpan="1">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxTimeEdit ID="timearriveTE" runat="server" ClientEnabled="False" ClientInstanceName="timearriveTE" Font-Bold="True" Width="100%">
+                                                                <SpinButtons ClientVisible="False">
+                                                                </SpinButtons>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <DisabledStyle Font-Bold="True" ForeColor="#222222">
+                                                                </DisabledStyle>
+                                                            </dx:ASPxTimeEdit>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionStyle Font-Bold="False" Font-Size="Small">
+                                                    </CaptionStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Trip To" ColSpan="1" FieldName="Trip_To">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxMemo ID="tripMemo" runat="server" ClientEnabled="False" ClientInstanceName="tripMemo" Font-Bold="True" Width="100%">
+                                                                <ValidationSettings>
+                                                                    <RequiredField ErrorText="*Required" />
+                                                                </ValidationSettings>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <DisabledStyle Font-Bold="True" ForeColor="#222222">
+                                                                </DisabledStyle>
+                                                            </dx:ASPxMemo>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <Paddings PaddingBottom="15px" />
+                                                    <CaptionStyle Font-Bold="False" Font-Size="Small">
+                                                    </CaptionStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Purpose" ColSpan="1" FieldName="Purpose">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxMemo ID="purposeMemo" runat="server" ClientEnabled="False" ClientInstanceName="purposeMemo" Font-Bold="True" HorizontalAlign="Left" Width="100%">
+                                                                <ValidationSettings>
+                                                                    <RequiredField ErrorText="*Required" />
+                                                                </ValidationSettings>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <DisabledStyle Font-Bold="True" ForeColor="#222222">
+                                                                </DisabledStyle>
+                                                            </dx:ASPxMemo>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <Paddings PaddingBottom="15px" />
+                                                    <CaptionStyle Font-Bold="False" Font-Size="Small">
+                                                    </CaptionStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Remarks" ClientVisible="False" ColSpan="2" ColumnSpan="2" FieldName="remarks" Name="remItem">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxMemo ID="memo_remarks" runat="server" ClientInstanceName="memo_remarks" Font-Bold="True" HorizontalAlign="Left" Width="100%">
+                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                                    <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                </ValidationSettings>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <DisabledStyle Font-Bold="True" ForeColor="#222222">
+                                                                </DisabledStyle>
+                                                            </dx:ASPxMemo>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <Paddings PaddingBottom="15px" PaddingTop="15px" />
+                                                </dx:LayoutItem>
+                                            </Items>
+                                            <ParentContainerStyle Font-Bold="True" Font-Size="Medium">
+                                            </ParentContainerStyle>
+                                        </dx:LayoutGroup>
+                                    </Items>
+                                </dx:TabbedLayoutGroup>
+                                <dx:TabbedLayoutGroup ColSpan="1" VerticalAlign="Top">
+                                    <Items>
+                                        <dx:LayoutGroup Caption="CASH ADVANCE DETAILS" ColSpan="1" GroupBoxDecoration="None">
+                                            <GroupBoxStyle>
+                                                <Border BorderColor="#006838" />
+                                            </GroupBoxStyle>
+                                            <Items>
+                                                <dx:LayoutItem Caption="Cash Advance" ColSpan="1">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxCallbackPanel ID="caTotalCallback" runat="server" ClientInstanceName="caTotalCallback" Width="100%">
+                                                                <SettingsLoadingPanel Delay="0" Enabled="False" />
+                                                                <PanelCollection>
+                                                                    <dx:PanelContent runat="server">
+                                                                        <dx:ASPxTextBox ID="lbl_caTotal" runat="server" ClientEnabled="False" ClientInstanceName="lbl_caTotal" DisplayFormatString="#,##0.00" Font-Bold="True" Font-Size="Large" HorizontalAlign="Right" ReadOnly="True" Width="100%">
+                                                                            <Border BorderStyle="None" />
+                                                                            <DisabledStyle Font-Bold="True" ForeColor="#222222">
+                                                                            </DisabledStyle>
+                                                                        </dx:ASPxTextBox>
+                                                                    </dx:PanelContent>
+                                                                </PanelCollection>
+                                                            </dx:ASPxCallbackPanel>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionStyle Font-Size="Medium">
+                                                    </CaptionStyle>
+                                                    <ParentContainerStyle Font-Bold="True">
+                                                    </ParentContainerStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Total Expenses" ColSpan="1">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxCallbackPanel ID="expTotalCallback" runat="server" ClientInstanceName="expTotalCallback" Width="100%">
+                                                                <SettingsLoadingPanel Delay="0" Enabled="False" />
+                                                                <PanelCollection>
+                                                                    <dx:PanelContent runat="server">
+                                                                        <dx:ASPxTextBox ID="lbl_expenseTotal" runat="server" ClientEnabled="False" ClientInstanceName="lbl_expenseTotal" DisplayFormatString="#,##0.00" Font-Bold="True" Font-Size="Large" HorizontalAlign="Right" ReadOnly="True" Width="100%">
+                                                                            <Border BorderStyle="None" />
+                                                                            <BorderBottom BorderColor="#CCCCCC" BorderStyle="Solid" BorderWidth="2px" />
+                                                                            <DisabledStyle Font-Bold="True" ForeColor="#222222">
+                                                                            </DisabledStyle>
+                                                                        </dx:ASPxTextBox>
+                                                                    </dx:PanelContent>
+                                                                </PanelCollection>
+                                                            </dx:ASPxCallbackPanel>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionStyle Font-Size="Medium">
+                                                    </CaptionStyle>
+                                                    <ParentContainerStyle Font-Bold="True">
+                                                    </ParentContainerStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Due to/(from) Company" ColSpan="1" Name="due_lbl">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxCallbackPanel ID="dueTotalCallback" runat="server" ClientInstanceName="dueTotalCallback" Width="100%">
+                                                                <SettingsLoadingPanel Delay="0" Text="Please Wait: Summing Up&amp;hellip;" />
+                                                                <Styles>
+                                                                    <LoadingPanel CssClass="position-relative">
+                                                                    </LoadingPanel>
+                                                                </Styles>
+                                                                <LoadingPanelStyle CssClass="position-relative">
+                                                                </LoadingPanelStyle>
+                                                                <PanelCollection>
+                                                                    <dx:PanelContent runat="server">
+                                                                        <dx:ASPxTextBox ID="lbl_dueTotal" runat="server" ClientEnabled="False" ClientInstanceName="lbl_dueTotal" Font-Bold="True" Font-Size="Large" HorizontalAlign="Right" ReadOnly="True" Width="100%">
+                                                                            <Border BorderStyle="None" />
+                                                                            <DisabledStyle Font-Bold="True" ForeColor="#222222">
+                                                                            </DisabledStyle>
+                                                                        </dx:ASPxTextBox>
+                                                                    </dx:PanelContent>
+                                                                </PanelCollection>
+                                                            </dx:ASPxCallbackPanel>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionStyle Font-Size="Medium">
+                                                    </CaptionStyle>
+                                                    <ParentContainerStyle Font-Bold="True">
+                                                    </ParentContainerStyle>
+                                                </dx:LayoutItem>
+                                                <dx:EmptyLayoutItem ColSpan="1">
+                                                    <BorderBottom BorderColor="#878787" BorderStyle="Solid" BorderWidth="1px" />
+                                                    <ParentContainerStyle>
+                                                        <Paddings PaddingBottom="15px" />
+                                                    </ParentContainerStyle>
+                                                </dx:EmptyLayoutItem>
+                                                <dx:LayoutItem Caption="Reimbursement Details" ClientVisible="False" ColSpan="1" Name="reimDetails" Width="100%">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxButtonEdit ID="reimTB" runat="server" ClientInstanceName="reimTB" Font-Bold="True" ReadOnly="True" Width="100%">
+                                                                <ClientSideEvents ButtonClick="linkToRFP" />
+                                                                <Buttons>
+                                                                    <dx:EditButton ToolTip="View RFP Details" Width="60px">
+                                                                        <Image IconID="actions_open2_svg_white_16x16">
+                                                                        </Image>
+                                                                    </dx:EditButton>
+                                                                </Buttons>
+                                                                <ButtonStyle BackColor="#006838">
+                                                                </ButtonStyle>
+                                                                <DisabledStyle Font-Bold="True" Font-Size="Small" ForeColor="#222222">
+                                                                </DisabledStyle>
+                                                            </dx:ASPxButtonEdit>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionSettings Location="Top" />
+                                                    <Paddings PaddingBottom="15px" PaddingTop="15px" />
+                                                    <CaptionCellStyle>
+                                                        <Paddings PaddingBottom="10px" />
+                                                    </CaptionCellStyle>
+                                                </dx:LayoutItem>
+                                            </Items>
+                                            <ParentContainerStyle Font-Bold="True" Font-Size="Medium">
+                                            </ParentContainerStyle>
+                                        </dx:LayoutGroup>
+                                    </Items>
+                                </dx:TabbedLayoutGroup>
                             </Items>
                         </dx:LayoutGroup>
                         <dx:LayoutGroup ColSpan="2" ColumnSpan="2" GroupBoxDecoration="None" Width="100%">
@@ -2136,12 +2144,12 @@
                                                                         </CellStyle>
                                                                     </dx:GridViewCommandColumn>
                                                                     <dx:GridViewBandColumn Caption="FIXED ALLOWANCES" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" BackColor="#CCCCCC" />
+                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
                                                                         <Columns>
                                                                             <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="FixedAllow_Amount" ShowInCustomizationForm="True" VisibleIndex="3" Width="90px">
                                                                                 <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
                                                                                 </PropertiesSpinEdit>
-                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <HeaderStyle HorizontalAlign="Center">
                                                                                 <Border BorderStyle="Solid" />
                                                                                 </HeaderStyle>
                                                                                 <CellStyle>
@@ -2156,7 +2164,7 @@
                                                                                         <dx:ListEditItem Text="Partial" Value="P" />
                                                                                     </Items>
                                                                                 </PropertiesComboBox>
-                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <HeaderStyle HorizontalAlign="Center">
                                                                                 <Border BorderStyle="Solid" />
                                                                                 </HeaderStyle>
                                                                                 <CellStyle>
@@ -2166,7 +2174,7 @@
                                                                         </Columns>
                                                                     </dx:GridViewBandColumn>
                                                                     <dx:GridViewBandColumn Caption="REIMBURSABLE TRANSPORTATION" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" BackColor="#CCCCCC" />
+                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
                                                                         <Columns>
                                                                             <dx:GridViewDataComboBoxColumn Caption=" Type" CellRowSpan="3" FieldName="ReimTranspo_Type1" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
                                                                                 <PropertiesComboBox DataSourceID="SqlReimTranspo" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
@@ -2179,7 +2187,7 @@
                                                                                 </PropertiesComboBox>
                                                                                 <EditFormCaptionStyle HorizontalAlign="Center">
                                                                                 </EditFormCaptionStyle>
-                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <HeaderStyle HorizontalAlign="Center">
                                                                                 <Border BorderStyle="Solid" />
                                                                                 </HeaderStyle>
                                                                                 <CellStyle>
@@ -2187,12 +2195,12 @@
                                                                                     <BorderTop BorderColor="Black" BorderStyle="Solid" />
                                                                                 </CellStyle>
                                                                             </dx:GridViewDataComboBoxColumn>
-                                                                            <dx:GridViewDataSpinEditColumn Caption=" Amount" CellRowSpan="3" FieldName="ReimTranspo_Amount1" ShowInCustomizationForm="True" VisibleIndex="5" Width="90px">
+                                                                            <dx:GridViewDataSpinEditColumn Caption=" Amount" CellRowSpan="3" FieldName="ReimTranspo_Amount1" ShowInCustomizationForm="True" VisibleIndex="1" Width="90px">
                                                                                 <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
                                                                                 </PropertiesSpinEdit>
                                                                                 <EditFormCaptionStyle HorizontalAlign="Center">
                                                                                 </EditFormCaptionStyle>
-                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <HeaderStyle HorizontalAlign="Center">
                                                                                 <Border BorderStyle="Solid" />
                                                                                 </HeaderStyle>
                                                                                 <CellStyle>
@@ -2200,7 +2208,7 @@
                                                                                     <BorderRight BorderColor="Black" BorderStyle="Solid" />
                                                                                 </CellStyle>
                                                                             </dx:GridViewDataSpinEditColumn>
-                                                                            <dx:GridViewDataComboBoxColumn Caption="  Type" FieldName="ReimTranspo_Type2" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1" Width="140px">
+                                                                            <dx:GridViewDataComboBoxColumn Caption="  Type" FieldName="ReimTranspo_Type2" ShowInCustomizationForm="True" Visible="False" VisibleIndex="2" Width="140px">
                                                                                 <PropertiesComboBox DataSourceID="SqlReimTranspo" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
                                                                                     <Columns>
                                                                                         <dx:ListBoxColumn Caption="Type" FieldName="Type" Width="50px">
@@ -2211,19 +2219,19 @@
                                                                                 </PropertiesComboBox>
                                                                                 <EditFormCaptionStyle HorizontalAlign="Center">
                                                                                 </EditFormCaptionStyle>
-                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <HeaderStyle HorizontalAlign="Center">
                                                                                 <Border BorderStyle="Solid" />
                                                                                 </HeaderStyle>
                                                                                 <CellStyle>
                                                                                     <BorderTop BorderColor="Black" BorderStyle="Solid" />
                                                                                 </CellStyle>
                                                                             </dx:GridViewDataComboBoxColumn>
-                                                                            <dx:GridViewDataSpinEditColumn Caption=" Amount" FieldName="ReimTranspo_Amount2" ShowInCustomizationForm="True" Visible="False" VisibleIndex="2" Width="90px">
+                                                                            <dx:GridViewDataSpinEditColumn Caption=" Amount" FieldName="ReimTranspo_Amount2" ShowInCustomizationForm="True" Visible="False" VisibleIndex="3" Width="90px">
                                                                                 <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
                                                                                 </PropertiesSpinEdit>
                                                                                 <EditFormCaptionStyle HorizontalAlign="Center">
                                                                                 </EditFormCaptionStyle>
-                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <HeaderStyle HorizontalAlign="Center">
                                                                                 <Border BorderStyle="Solid" />
                                                                                 </HeaderStyle>
                                                                                 <CellStyle>
@@ -2231,7 +2239,7 @@
                                                                                     <BorderRight BorderColor="Black" BorderStyle="Solid" />
                                                                                 </CellStyle>
                                                                             </dx:GridViewDataSpinEditColumn>
-                                                                            <dx:GridViewDataComboBoxColumn Caption=" Type" CellRowSpan="2" FieldName="ReimTranspo_Type3" ShowInCustomizationForm="True" Visible="False" VisibleIndex="3" Width="140px">
+                                                                            <dx:GridViewDataComboBoxColumn Caption=" Type" CellRowSpan="2" FieldName="ReimTranspo_Type3" ShowInCustomizationForm="True" Visible="False" VisibleIndex="4" Width="140px">
                                                                                 <PropertiesComboBox DataSourceID="SqlReimTranspo" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
                                                                                     <Columns>
                                                                                         <dx:ListBoxColumn Caption="Type" FieldName="Type" Width="50px">
@@ -2242,19 +2250,19 @@
                                                                                 </PropertiesComboBox>
                                                                                 <EditFormCaptionStyle HorizontalAlign="Center">
                                                                                 </EditFormCaptionStyle>
-                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <HeaderStyle HorizontalAlign="Center">
                                                                                 <Border BorderStyle="Solid" />
                                                                                 </HeaderStyle>
                                                                                 <CellStyle>
                                                                                     <BorderTop BorderColor="Black" BorderStyle="Solid" />
                                                                                 </CellStyle>
                                                                             </dx:GridViewDataComboBoxColumn>
-                                                                            <dx:GridViewDataSpinEditColumn Caption="Amount" CellRowSpan="2" FieldName="ReimTranspo_Amount3" ShowInCustomizationForm="True" Visible="False" VisibleIndex="4" Width="90px">
+                                                                            <dx:GridViewDataSpinEditColumn Caption="Amount" CellRowSpan="2" FieldName="ReimTranspo_Amount3" ShowInCustomizationForm="True" Visible="False" VisibleIndex="5" Width="90px">
                                                                                 <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
                                                                                 </PropertiesSpinEdit>
                                                                                 <EditFormCaptionStyle HorizontalAlign="Center">
                                                                                 </EditFormCaptionStyle>
-                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <HeaderStyle HorizontalAlign="Center">
                                                                                 <Border BorderStyle="Solid" />
                                                                                 </HeaderStyle>
                                                                                 <CellStyle>
@@ -2265,10 +2273,10 @@
                                                                         </Columns>
                                                                     </dx:GridViewBandColumn>
                                                                     <dx:GridViewBandColumn Caption="ENTERTAINMENT" ShowInCustomizationForm="True" VisibleIndex="4" MaxWidth="50">
-                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" Wrap="True" BackColor="#CCCCCC" />
+                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" Wrap="True" />
                                                                         <Columns>
                                                                             <dx:GridViewDataMemoColumn Caption="Explanation" FieldName="Entertainment_Explain" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
-                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <HeaderStyle HorizontalAlign="Center">
                                                                                 <Border BorderStyle="Solid" />
                                                                                 </HeaderStyle>
                                                                                 <CellStyle>
@@ -2278,7 +2286,7 @@
                                                                             <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="Entertainment_Amount" ShowInCustomizationForm="True" VisibleIndex="1" Width="90px">
                                                                                 <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
                                                                                 </PropertiesSpinEdit>
-                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <HeaderStyle HorizontalAlign="Center">
                                                                                 <Border BorderStyle="Solid" />
                                                                                 </HeaderStyle>
                                                                                 <CellStyle>
@@ -2289,10 +2297,10 @@
                                                                         </Columns>
                                                                     </dx:GridViewBandColumn>
                                                                     <dx:GridViewBandColumn Caption="BUSINESS MEALS" ShowInCustomizationForm="True" VisibleIndex="5" MaxWidth="50">
-                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" Wrap="True" BackColor="#CCCCCC" />
+                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" Wrap="True" />
                                                                         <Columns>
                                                                             <dx:GridViewDataMemoColumn Caption="Explanation" FieldName="BusMeals_Explain" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
-                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <HeaderStyle HorizontalAlign="Center">
                                                                                 <Border BorderStyle="Solid" />
                                                                                 </HeaderStyle>
                                                                                 <CellStyle>
@@ -2302,7 +2310,7 @@
                                                                             <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="BusMeals_Amount" ShowInCustomizationForm="True" VisibleIndex="1" Width="90px">
                                                                                 <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
                                                                                 </PropertiesSpinEdit>
-                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <HeaderStyle HorizontalAlign="Center">
                                                                                 <Border BorderStyle="Solid" />
                                                                                 </HeaderStyle>
                                                                                 <CellStyle>
@@ -2313,7 +2321,7 @@
                                                                         </Columns>
                                                                     </dx:GridViewBandColumn>
                                                                     <dx:GridViewBandColumn Caption="OTHER BUS. EXPENSES" ShowInCustomizationForm="True" VisibleIndex="6">
-                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" BackColor="#CCCCCC" />
+                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
                                                                         <Columns>
                                                                             <dx:GridViewDataComboBoxColumn Caption="Type" FieldName="OtherBus_Type" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
                                                                                 <PropertiesComboBox ClientInstanceName="otherBusType" DataSourceID="SqlOtherBusExp" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
@@ -2334,7 +2342,7 @@
 }
 " />
                                                                                 </PropertiesComboBox>
-                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <HeaderStyle HorizontalAlign="Center">
                                                                                 <Border BorderStyle="Solid" />
                                                                                 </HeaderStyle>
                                                                                 <CellStyle>
@@ -2348,7 +2356,7 @@
 }
 " />
                                                                                         </PropertiesMemoEdit>
-                                                                                        <HeaderStyle BackColor="#F0F0F0">
+                                                                                        <HeaderStyle>
                                                                                         <Border BorderStyle="Solid" />
                                                                                         </HeaderStyle>
                                                                                         <CellStyle>
@@ -2360,7 +2368,7 @@
                                                                             <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="OtherBus_Amount" ShowInCustomizationForm="True" VisibleIndex="1" Width="90px">
                                                                                 <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
                                                                                 </PropertiesSpinEdit>
-                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <HeaderStyle HorizontalAlign="Center">
                                                                                 <Border BorderStyle="Solid" />
                                                                                 </HeaderStyle>
                                                                                 <CellStyle>
@@ -2371,7 +2379,7 @@
                                                                         </Columns>
                                                                     </dx:GridViewBandColumn>
                                                                     <dx:GridViewBandColumn Caption="MISC. TRAVEL EXPENSES" ShowInCustomizationForm="True" VisibleIndex="3">
-                                                                        <HeaderStyle BackColor="#CCCCCC" Font-Bold="True" HorizontalAlign="Center"></HeaderStyle>
+                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center"></HeaderStyle>
                                                                         <Columns>
                                                                             <dx:GridViewDataComboBoxColumn Caption="Type" FieldName="MiscTravel_Type" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
                                                                                 <PropertiesComboBox ClientInstanceName="miscTravelType" DataSourceID="SqlMiscTravelExp" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
@@ -2392,7 +2400,7 @@
 }
 " />
                                                                                 </PropertiesComboBox>
-                                                                                <HeaderStyle BackColor="#F0F0F0" HorizontalAlign="Center">
+                                                                                <HeaderStyle HorizontalAlign="Center">
                                                                                 <Border BorderStyle="Solid" />
                                                                                 </HeaderStyle>
                                                                                 <Columns>
@@ -2403,7 +2411,7 @@
 }
 " />
                                                                                         </PropertiesMemoEdit>
-                                                                                        <HeaderStyle BackColor="#F0F0F0">
+                                                                                        <HeaderStyle>
                                                                                         <Border BorderStyle="Solid" />
                                                                                         </HeaderStyle>
                                                                                     </dx:GridViewDataMemoColumn>
@@ -2412,7 +2420,7 @@
                                                                             <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="MiscTravel_Amount" ShowInCustomizationForm="True" VisibleIndex="1" Width="90px">
                                                                                 <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
                                                                                 </PropertiesSpinEdit>
-                                                                                <HeaderStyle BackColor="#F0F0F0" Font-Bold="False" HorizontalAlign="Center">
+                                                                                <HeaderStyle Font-Bold="False" HorizontalAlign="Center">
                                                                                 <Border BorderStyle="Solid" />
                                                                                 </HeaderStyle>
                                                                                 <CellStyle>

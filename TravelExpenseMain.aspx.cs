@@ -1,6 +1,7 @@
 ﻿using DevExpress.Web;
 using System;
 using System.Configuration;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -29,11 +30,12 @@ namespace DX_WebTemplate
                 compCB.Value = Convert.ToString(Session["userCompanyID"]);
                 //var depcode = context.ITP_S_UserMasters.Where(x => x.EmpCode == Convert.ToString(Session["userID"])).Select(x => x.DepCode).FirstOrDefault();
                 //var isdep = Convert.ToString(context.ITP_S_OrgDepartmentMasters.Where(x => x.DepCode == depcode && x.Company_ID == Convert.ToInt32(Session["userCompanyID"])).Select(x => x.ID).FirstOrDefault());
-                
+
                 //if (isdep == "0")
                 //    chargedCB.SelectedIndex = -1;
                 //else
                 //    chargedCB.Value = isdep;
+                sqlCompany.SelectParameters["UserId"].DefaultValue = Session["userID"].ToString();
 
 
                 SqlDepartmentEdit.SelectParameters["UserId"].DefaultValue = Convert.ToString(Session["userID"]);
@@ -230,6 +232,13 @@ namespace DX_WebTemplate
                 SqlDepartmentEdit.DataBind();
                 depCB.DataBind();
             }
+        }
+
+        protected void chargedCB0_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var comp_id = e.Parameter.ToString();
+            SqlDepartment.SelectParameters["Company_ID"].DefaultValue = comp_id;
+            chargedCB0.DataBind();
         }
     }
 }

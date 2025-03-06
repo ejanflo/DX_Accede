@@ -16,6 +16,7 @@
                 <div class="modal-body container-fluid mx-auto text-center bg-secondary" id="pdf_container">
                 </div>
                 <div class="modal-footer" id="wmodalFooter">
+                    <button type="button" id="rotatePdf" class="btn btn-warning btn-sm">Rotate</button>
                     <button type="button" id="modalClose" class="btn btn-light btn-outline-secondary btn-sm">Close</button>
                 </div>
             </div>
@@ -48,6 +49,25 @@
         var pdfDoc = null;
         var scale = 1.8; //Set Scale for zooming PDF.
         var resolution = 1; //Set Resolution to Adjust PDF clarity.
+
+        var rotationAngle = 0; // Track rotation angle
+
+        document.getElementById("rotatePdf").addEventListener("click", function () {
+            if (pdfDoc) {
+                rotationAngle = (rotationAngle + 90) % 360; // Increment rotation by 90 degrees
+                RenderAllPages(); // Re-render all pages with the new rotation
+            }
+        });
+
+        function RenderAllPages() {
+            var pdf_container = document.getElementById("pdf_container");
+            pdf_container.innerHTML = ""; // Clear container
+            pdf_container.style.display = "block";
+
+            for (var i = 1; i <= pdfDoc.numPages; i++) {
+                RenderPage(pdf_container, i);
+            }
+        }
 
         function onCustomButtonClick(s, e) {
             if (e.buttonID == 'btnDownload') {
@@ -147,7 +167,7 @@
                 pdf_container.appendChild(spacer);
 
                 //Set the Canvas dimensions using ViewPort and Scale.
-                var viewport = page.getViewport({ scale: scale });
+                var viewport = page.getViewport({ scale: scale, rotation: rotationAngle });
                 canvas.height = resolution * viewport.height;
                 canvas.width = resolution * viewport.width;
 

@@ -173,27 +173,30 @@ namespace DX_WebTemplate
                 }
 
                 departmentCB.Value = expType;
-                lbl_caTotal.Text = totalca.ToString();
-                lbl_expenseTotal.Text = totalexp.ToString();
-                lbl_dueTotal.Text = totalexp > totalca ? $"({(totalexp - totalca):N2})" : (totalca - totalexp).ToString("N2");
+                lbl_caTotal.Text = Convert.ToString(Session["currency"]) + totalca.ToString("N2");
+                lbl_expenseTotal.Text = Convert.ToString(Session["currency"]) + totalexp.ToString("N2");
+                lbl_dueTotal.Text = totalexp > totalca ? "(" + Convert.ToString(Session["currency"]) + "" + (totalexp - totalca).ToString("N2") + ")" : Convert.ToString(Session["currency"]) + (totalca - totalexp).ToString("N2");
 
                 var totExpCA = totalexp > totalca ? Convert.ToDecimal(totalexp - totalca) : Convert.ToDecimal(totalca - totalexp);
 
-                Session["mainwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.IsRA == true && totExpCA >= x.Minimum && totExpCA <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault());
-                SqlWF.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
-                SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
-
-                if (Convert.ToString(Session["ford"]) == "Foreign")
+                if (mainExp != null)
                 {
-                    Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.Description == "Foreign Test WF Finance Exec>CFO/Pres" && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
-                }
-                else
-                {
-                    Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && (x.IsRA == false || x.IsRA == null && totExpCA >= x.Minimum && totExpCA <= x.Maximum)).Select(x => x.WF_Id).FirstOrDefault());
-                }
+                    Session["mainwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.IsRA == true && totExpCA >= x.Minimum && totExpCA <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault());
+                    SqlWF.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
+                    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
 
-                SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
-                SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
+                    if (Convert.ToString(Session["ford"]) == "Foreign")
+                    {
+                        Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.Description == "Foreign Test WF Finance Exec>CFO/Pres" && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
+                    }
+                    else
+                    {
+                        Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && (x.IsRA == false || x.IsRA == null && totExpCA >= x.Minimum && totExpCA <= x.Maximum)).Select(x => x.WF_Id).FirstOrDefault());
+                    }
+
+                    SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
+                    SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
+                }
 
                 //SqlWF.SelectParameters["UserId"].DefaultValue = mainExp.Employee_Id.ToString();
                 //SqlWF.SelectParameters["CompanyId"].DefaultValue = mainExp.Company_Id.ToString();

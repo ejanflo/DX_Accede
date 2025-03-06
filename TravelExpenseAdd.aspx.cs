@@ -215,9 +215,9 @@ namespace DX_WebTemplate
                     }
 
                     drpdown_expenseType.Value = expType;
-                    lbl_caTotal.Text = Convert.ToString(Session["currency"]) + totalca.ToString();
-                    lbl_expenseTotal.Text = Convert.ToString(Session["currency"]) + totalexp.ToString();
-                    lbl_dueTotal.Text = totalexp > totalca ? Convert.ToString(Session["currency"]) + $"({(totalexp - totalca):N2})" : Convert.ToString(Session["currency"]) + (totalca - totalexp).ToString("N2");
+                    lbl_caTotal.Text = Convert.ToString(Session["currency"]) + totalca.ToString("N2");
+                    lbl_expenseTotal.Text = Convert.ToString(Session["currency"]) + totalexp.ToString("N2");
+                    lbl_dueTotal.Text = totalexp > totalca ? "(" + Convert.ToString(Session["currency"]) +""+ (totalexp - totalca).ToString("N2") + ")" : Convert.ToString(Session["currency"]) + (totalca - totalexp).ToString("N2");
 
                     var totExpCA = totalexp > totalca ? Convert.ToDecimal(totalexp - totalca) : Convert.ToDecimal(totalca - totalexp);
 
@@ -675,8 +675,8 @@ namespace DX_WebTemplate
             var expType = countCA > 0 && countExp == 0 ? "1" : countCA == 0 && countExp > 0 ? "2" : "1";
 
             var allTot = totalexp > totalca
-                ? $"({(totalexp - totalca):N2})"
-                : (totalca - totalexp).ToString("N2");
+                ? "(" + Session["currency"] + "" + (totalexp - totalca).ToString("N2") + ")"
+                : Session["currency"] + "" + (totalca - totalexp).ToString("N2");
 
             var totExpCA = totalexp > totalca 
                 ? Convert.ToDecimal(totalexp - totalca) 
@@ -709,7 +709,7 @@ namespace DX_WebTemplate
                 }
             }
 
-            return new { totalca = (Session["currency"] +""+ totalca), totalexp = (Session["currency"] + "" + totalexp), allTot = Session["currency"] + "" + allTot, totExpCA, expType, hasReim };
+            return new { totalca = (Session["currency"] +""+ totalca.ToString("N2")), totalexp = (Session["currency"] + "" + totalexp.ToString("N2")), allTot, totExpCA, expType, hasReim, CA = totalca, EXP = totalexp };
         }
 
         protected void costCenter_Callback(object sender, CallbackEventArgsBase e)
