@@ -106,6 +106,7 @@ namespace DX_WebTemplate
 
                         var disapproveItem = ExpenseEditForm.FindItemOrGroupByName("disapproveItem") as LayoutItem;
                         var returnItem = ExpenseEditForm.FindItemOrGroupByName("returnItem") as LayoutItem;
+                        var returnPrevItem = ExpenseEditForm.FindItemOrGroupByName("returnPrevItem") as LayoutItem;
                         var forwardItem = ExpenseEditForm.FindItemOrGroupByName("forwardItem") as LayoutItem;
 
                         // GET WORKFLOW ID 
@@ -227,9 +228,16 @@ namespace DX_WebTemplate
                             forwardItem.Visible = false;
                         }
 
-                        if (status == "Pending at Finance" || status == "Pending at P2P" || status == "Pending at Audit" || mainExp.ExpenseType_ID != 1)
+                        if (status == "Pending at Finance" || status == "Pending at P2P" || mainExp.ExpenseType_ID != 1)
                         {
                             disapproveItem.Visible = false;
+                        }
+
+                        if (status == "Pending at Audit")
+                        {
+                            disapproveItem.Visible = false;
+                            returnBtn.Text = "Return to Creator";
+                            returnPrevItem.ClientVisible = true;
                         }
 
                         if (status == "Pending at Cashier")
@@ -776,7 +784,19 @@ namespace DX_WebTemplate
                 }
                 _DataContext.SubmitChanges();
 
-                SendEmailWithCC(id, userID, compID, status, prepID, cc, remarks);
+                if (action == "returnPrev")
+                {
+                    status = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Pending at Finance").Select(x => x.STS_Id).FirstOrDefault();
+                    var fapWF = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.FAPWF_Id).FirstOrDefault();
+                    var fapWFD = _DataContext.ITP_S_WorkflowDetails.Where(x => x.WF_Id == fapWF && x.Sequence == 1).FirstOrDefault();
+
+                    insertWA(Convert.ToInt32(fapWFD.WF_Id), Convert.ToInt32(fapWFD.WFD_Id), Convert.ToInt32(fapWFD.OrgRole_Id), id, compID, status, rfpid);
+                }
+                else
+                {
+                    SendEmailWithCC(id, userID, compID, status, prepID, cc, remarks);
+                }
+
             }
             catch (Exception)
             {
@@ -1006,7 +1026,11 @@ namespace DX_WebTemplate
 
                                 var countAUDWF = _DataContext.ITP_T_WorkflowActivities.Count(w => w.WF_Id == audwf && w.AppId == 1032 && w.Document_Id == docID && w.AppDocTypeId == doctype_id);
 
-                                if (countAUDWF > 0)
+                                var audRetStat = _DataContext.ITP_S_Status.Where(w => w.STS_Description == "Returned by Audit").Select(w => w.STS_Id).FirstOrDefault(); 
+                                var hasReturnStatus = _DataContext.ITP_T_WorkflowActivities.Any(w => w.WF_Id == audwf && w.AppId == 1032 && w.Document_Id == docID && w.AppDocTypeId == doctype_id && w.Status == audRetStat);
+
+
+                                if (countAUDWF > 0 && (!hasReturnStatus || Convert.ToString(Session["doc_stat2"]) == "Pending at Audit"))
                                 {
                                     Debug.WriteLine("There's AUDWF");
                                     var audRetStatus = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Returned by Audit").Select(x => x.STS_Id).FirstOrDefault();

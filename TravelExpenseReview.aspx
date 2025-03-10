@@ -248,6 +248,8 @@
             var remarks = '';
             if (act == "return")
                 remarks = returnRemarks.GetText();
+            if (act == "returnPrev")
+                remarks = returnRemarks0.GetText();
             else if (act == "disapprove")
                 remarks = disapproveRemarks.GetText();
 
@@ -290,7 +292,7 @@
             <Items>
                 <dx:LayoutGroup Caption="New Expense Report" ColSpan="1" GroupBoxDecoration="HeadingLine" Width="100%" ColCount="2" ColumnCount="2" Name="EditFormName">
                     <Items>
-                        <dx:LayoutGroup ColSpan="2" GroupBoxDecoration="None" HorizontalAlign="Right" ColCount="5" ColumnCount="5" ColumnSpan="2">
+                        <dx:LayoutGroup ColSpan="2" GroupBoxDecoration="None" HorizontalAlign="Right" ColCount="6" ColumnCount="6" ColumnSpan="2">
                             <Items>
                                 <dx:LayoutItem Caption="" ColSpan="1" Name="forwardItem">
                                     <LayoutItemNestedControlCollection>
@@ -312,6 +314,18 @@
 	 ApprovePopup.Show();
 }" />
                                                 <Border BorderColor="#006838" />
+                                            </dx:ASPxButton>
+                                        </dx:LayoutItemNestedControlContainer>
+                                    </LayoutItemNestedControlCollection>
+                                </dx:LayoutItem>
+                                <dx:LayoutItem Caption="" ClientVisible="False" ColSpan="1" Name="returnPrevItem">
+                                    <LayoutItemNestedControlCollection>
+                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                            <dx:ASPxButton ID="returnPrevBtn" runat="server" AutoPostBack="False" BackColor="#E67C0E" ClientInstanceName="returnPrevBtn" Font-Bold="True" Font-Size="Small" ForeColor="White" Text="Return to FAP" UseSubmitBehavior="False">
+                                                <ClientSideEvents Click="function(s, e) {
+	ReturnPopup0.Show();
+}" />
+                                                <Border BorderColor="#E67C0E" />
                                             </dx:ASPxButton>
                                         </dx:LayoutItemNestedControlContainer>
                                     </LayoutItemNestedControlCollection>
@@ -3868,6 +3882,81 @@ onTravelClick();
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxButton ID="ASPxFormLayout1_E7" runat="server" Text="Cancel" AutoPostBack="False" BackColor="White" ForeColor="Gray" UseSubmitBehavior="False">
+                                                    <ClientSideEvents Click="function(s, e) {
+               returnRemarks.SetText('');
+	ReturnPopup.Hide();
+}" />
+                                                    <Border BorderColor="Gray" />
+                                                </dx:ASPxButton>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                    </dx:LayoutItem>
+                                </Items>
+                            </dx:LayoutGroup>
+                        </Items>
+                        <SettingsItems HorizontalAlign="Center" />
+                    </dx:ASPxFormLayout>
+                </dx:PopupControlContentControl>
+            </ContentCollection>
+        </dx:ASPxPopupControl>
+
+        <dx:ASPxPopupControl ID="ReturnPopup0" runat="server" HeaderText="Return Expense Report" Modal="True" AutoUpdatePosition="True" ClientInstanceName="ReturnPopup0" CloseAction="CloseButton" CloseOnEscape="True" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" PopupAnimationType="None">
+            <SettingsAdaptivity Mode="Always" VerticalAlign="WindowCenter" />
+            <ContentCollection>
+                <dx:PopupControlContentControl runat="server">
+                    <dx:ASPxFormLayout ID="ASPxFormLayout17" runat="server" Width="100%">
+                        <Items>
+                            <dx:LayoutItem ColSpan="1" ShowCaption="False" HorizontalAlign="Center">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxImage ID="ASPxFormLayout1_E14" runat="server" Height="50px" ImageAlign="Middle" ImageUrl="~/Content/Images/warning.png" Width="50px">
+                                        </dx:ASPxImage>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                                <TabImage IconID="businessobjects_bo_attention_svg_16x16">
+                                </TabImage>
+                            </dx:LayoutItem>
+                            <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Center">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxLabel ID="ASPxFormLayout1_E15" runat="server" Text="Are you sure to return document?" Font-Size="Medium">
+                                        </dx:ASPxLabel>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                            </dx:LayoutItem>
+                            <dx:LayoutItem Caption="" ColSpan="1">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxMemo ID="returnRemarks0" runat="server" ClientInstanceName="returnRemarks0" Height="71px" NullText="Remarks (Required)" Width="100%">
+                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="retValid">
+                                                <RequiredField ErrorText="*Required" IsRequired="True" />
+                                            </ValidationSettings>
+                                        </dx:ASPxMemo>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                            </dx:LayoutItem>
+                            <dx:EmptyLayoutItem ColSpan="1">
+                            </dx:EmptyLayoutItem>
+                            <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="HeadingLine">
+                                <Items>
+                                    <dx:LayoutItem Caption="" ColSpan="1">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxButton ID="returnPopBtn0" runat="server" Text="Return" BackColor="#E67C0E" ClientInstanceName="returnPopBtn" AutoPostBack="False" UseSubmitBehavior="False">
+                                                    <ClientSideEvents Click="function(s, e) {
+               if(ASPxClientEdit.ValidateGroup('retValid')){
+	          ReturnDisapproveDoc('returnPrev');
+               }
+}" />
+                                                    <Border BorderColor="#E67C0E" />
+                                                </dx:ASPxButton>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                    </dx:LayoutItem>
+                                    <dx:LayoutItem Caption="" ColSpan="1">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxButton ID="ASPxFormLayout1_E16" runat="server" Text="Cancel" AutoPostBack="False" BackColor="White" ForeColor="Gray" UseSubmitBehavior="False">
                                                     <ClientSideEvents Click="function(s, e) {
                returnRemarks.SetText('');
 	ReturnPopup.Hide();

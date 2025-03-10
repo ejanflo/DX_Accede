@@ -42,6 +42,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxButton approveBtn;
 
         /// <summary>
+        /// returnPrevBtn control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton returnPrevBtn;
+
+        /// <summary>
         /// returnBtn control.
         /// </summary>
         /// <remarks>
@@ -1156,6 +1165,69 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxButton ASPxFormLayout1_E7;
+
+        /// <summary>
+        /// ReturnPopup0 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxPopupControl ReturnPopup0;
+
+        /// <summary>
+        /// ASPxFormLayout17 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxFormLayout ASPxFormLayout17;
+
+        /// <summary>
+        /// ASPxFormLayout1_E14 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxImage ASPxFormLayout1_E14;
+
+        /// <summary>
+        /// ASPxFormLayout1_E15 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxLabel ASPxFormLayout1_E15;
+
+        /// <summary>
+        /// returnRemarks0 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxMemo returnRemarks0;
+
+        /// <summary>
+        /// returnPopBtn0 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton returnPopBtn0;
+
+        /// <summary>
+        /// ASPxFormLayout1_E16 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton ASPxFormLayout1_E16;
 
         /// <summary>
         /// DisapprovePopup control.
