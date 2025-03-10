@@ -39,7 +39,10 @@ namespace DX_WebTemplate
                     string url = Request.Url.AbsolutePath; // Get the current URL
                     string pageName = Path.GetFileNameWithoutExtension(url); // Get the filename without 
 
-                    var payMethodCash = _DataContext.ACCEDE_S_PayMethods.Where(x => x.PMethod_name == "Cash").FirstOrDefault();
+                    var payMethodCash = _DataContext.ACCEDE_S_PayMethods
+                        .Where(x => x.PMethod_name == "Cash")
+                        .FirstOrDefault();
+
                     if (payMethodCash != null)
                     {
                         drpdown_PayMethod.Value = payMethodCash.ID.ToString(); // Automatically shows the name in the dropdown
