@@ -43,7 +43,10 @@ namespace DX_WebTemplate
                     //End ------------------ Page Security
 
                     //var wfDetails = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == Convert.ToInt32(Session["PassActID"])).FirstOrDefault();
-                    var exp_details = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpId_p2p"])).FirstOrDefault();
+                    var exp_details = _DataContext.ACCEDE_T_ExpenseMains
+                        .Where(x => x.ID == Convert.ToInt32(Session["ExpId_p2p"]))
+                        .FirstOrDefault();
+
                     //Session["ExpId_audit"] = wfDetails.Document_Id;
                     sqlMain.SelectParameters["ID"].DefaultValue = exp_details.ID.ToString();
                     SqlDocs.SelectParameters["Doc_ID"].DefaultValue = exp_details.ID.ToString();
@@ -61,7 +64,11 @@ namespace DX_WebTemplate
 
                     SqlWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp_details.WF_Id).ToString();
                     SqlFAPWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp_details.FAPWF_Id).ToString();
-                    var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense").Where(x => x.App_Id == 1032).FirstOrDefault();
+                    var app_docType = _DataContext.ITP_S_DocumentTypes
+                        .Where(x => x.DCT_Name == "ACDE Expense")
+                        .Where(x => x.App_Id == 1032)
+                        .FirstOrDefault();
+
                     SqlDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType != null ? app_docType.DCT_Id.ToString() : "";
                     var myLayoutGroup = FormExpApprovalView.FindItemOrGroupByName("ExpTitle") as LayoutGroup;
 
@@ -72,7 +79,11 @@ namespace DX_WebTemplate
                         myLayoutGroup.Caption = exp_details.DocNo.ToString() + " (View)";
                     }
 
-                    var RFPCA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(exp_details.ID)).Where(x => x.IsExpenseCA == true);
+                    var RFPCA = _DataContext.ACCEDE_T_RFPMains
+                        .Where(x => x.Exp_ID == Convert.ToInt32(exp_details.ID))
+                        .Where(x => x.IsExpenseCA == true)
+                        .Where(x => x.isTravel != true);
+
                     decimal totalCA = 0;
                     foreach (var item in RFPCA)
                     {
@@ -80,7 +91,9 @@ namespace DX_WebTemplate
                     }
                     caTotal.Text = totalCA.ToString("#,##0.00") + "  PHP ";
 
-                    var ExpDetails = _DataContext.ACCEDE_T_ExpenseDetails.Where(x => x.ExpenseMain_ID == Convert.ToInt32(exp_details.ID));
+                    var ExpDetails = _DataContext.ACCEDE_T_ExpenseDetails
+                        .Where(x => x.ExpenseMain_ID == Convert.ToInt32(exp_details.ID));
+
                     decimal totalExp = 0;
                     foreach (var item in ExpDetails)
                     {
@@ -141,7 +154,10 @@ namespace DX_WebTemplate
 
         protected void WFSequenceGrid_CustomCallback(object sender, DevExpress.Web.ASPxGridViewCustomCallbackEventArgs e)
         {
-            var expDetail = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpId_p2p"])).FirstOrDefault();
+            var expDetail = _DataContext.ACCEDE_T_ExpenseMains
+                .Where(x => x.ID == Convert.ToInt32(Session["ExpId_p2p"]))
+                .FirstOrDefault();
+
             SqlWFSequence.SelectParameters["WF_Id"].DefaultValue = expDetail.WF_Id.ToString();
             SqlWFSequence.DataBind();
 
@@ -153,13 +169,16 @@ namespace DX_WebTemplate
 
         protected void FAPWFGrid_CustomCallback(object sender, DevExpress.Web.ASPxGridViewCustomCallbackEventArgs e)
         {
-            var expDetail = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpId_p2p"])).FirstOrDefault();
+            var expDetail = _DataContext.ACCEDE_T_ExpenseMains
+                .Where(x => x.ID == Convert.ToInt32(Session["ExpId_p2p"]))
+                .FirstOrDefault();
+
             SqlFAPWFSequence.SelectParameters["WF_Id"].DefaultValue = expDetail.FAPWF_Id.ToString();
             SqlFAPWFSequence.DataBind();
 
-            FAPWFGrid.DataSourceID = null;
-            FAPWFGrid.DataSource = SqlFAPWFSequence;
-            FAPWFGrid.DataBind();
+            WFGrid.DataSourceID = null;
+            WFGrid.DataSource = SqlFAPWFSequence;
+            WFGrid.DataBind();
         }
 
         [WebMethod]
@@ -173,15 +192,22 @@ namespace DX_WebTemplate
         {
             try
             {
-                var exp_main = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpId_p2p"])).FirstOrDefault();
+                var exp_main = _DataContext.ACCEDE_T_ExpenseMains
+                    .Where(x => x.ID == Convert.ToInt32(Session["ExpId_p2p"]))
+                    .FirstOrDefault();
 
-                var rfp_main_reimburse = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == exp_main.ID)
-                    .Where(x => x.IsExpenseReim == true).FirstOrDefault();
+                var rfp_main_reimburse = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.Exp_ID == exp_main.ID)
+                    .Where(x => x.IsExpenseReim == true)
+                    .Where(x => x.isTravel != true)
+                    .FirstOrDefault();
 
                 //var payMethodDesc = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == exp_main.PaymentType).FirstOrDefault();
                 //var tranTypeDesc = _DataContext.ACCEDE_S_RFPTranTypes.Where(x => x.ID == exp_main.type).FirstOrDefault();
 
-                var Cash_status = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Pending at Cashier").FirstOrDefault();
+                var Cash_status = _DataContext.ITP_S_Status
+                    .Where(x => x.STS_Name == "Pending at Cashier")
+                    .FirstOrDefault();
                 
                 exp_main.ExpChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
                 exp_main.ExpChargedTo_DeptId = Convert.ToInt32(CTDept_id);
@@ -216,13 +242,17 @@ namespace DX_WebTemplate
 
                 //}
 
-                var wfID = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == exp_main.CompanyId)
+                var wfID = _DataContext.ITP_S_WorkflowHeaders
+                    .Where(x => x.Company_Id == exp_main.CompanyId)
                     .Where(x => x.Name == "ACDE P2P")
                     .FirstOrDefault();
 
                 if(wfID != null)
                 {
-                    var expDocType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense" || x.DCT_Description == "Accede Expense").Select(x => x.DCT_Id).FirstOrDefault();
+                    var expDocType = _DataContext.ITP_S_DocumentTypes
+                        .Where(x => x.DCT_Name == "ACDE Expense" || x.DCT_Description == "Accede Expense")
+                        .Select(x => x.DCT_Id)
+                        .FirstOrDefault();
                     
                     // GET WORKFLOW DETAILS ID
                     var wfDetails = from wfd in _DataContext.ITP_S_WorkflowDetails
@@ -286,14 +316,25 @@ namespace DX_WebTemplate
         {
             try
             {
-                var exp_main = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpId_p2p"])).FirstOrDefault();
-                var rfp_main_reimburse = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == exp_main.ID)
-                    .Where(x => x.IsExpenseReim == true).FirstOrDefault();
+                var exp_main = _DataContext.ACCEDE_T_ExpenseMains
+                    .Where(x => x.ID == Convert.ToInt32(Session["ExpId_p2p"]))
+                    .FirstOrDefault();
+
+                var rfp_main_reimburse = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.Exp_ID == exp_main.ID)
+                    .Where(x => x.IsExpenseReim == true)
+                    .Where(x => x.isTravel != true)
+                    .FirstOrDefault();
 
                 //var payMethod = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == rfp_main.PayMethod).FirstOrDefault();
-                var tranType = _DataContext.ACCEDE_S_ExpenseTypes.Where(x => x.ExpenseType_ID == exp_main.ExpenseType_ID).FirstOrDefault();
+                var tranType = _DataContext.ACCEDE_S_ExpenseTypes
+                    .Where(x => x.ExpenseType_ID == exp_main.ExpenseType_ID)
+                    .FirstOrDefault();
 
-                var returned_audit = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Returned by P2P").FirstOrDefault();
+                var returned_audit = _DataContext.ITP_S_Status
+                    .Where(x => x.STS_Name == "Returned by P2P")
+                    .FirstOrDefault();
+
                 if (returned_audit != null)
                 {
                     exp_main.ExpChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
@@ -315,7 +356,8 @@ namespace DX_WebTemplate
                     rfp_main_reimburse.SAPDocNo = SAPDoc;
                 }
 
-                var wfID = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == exp_main.CompanyId)
+                var wfID = _DataContext.ITP_S_WorkflowHeaders
+                    .Where(x => x.Company_Id == exp_main.CompanyId)
                     .Where(x => x.Name == "ACDE P2P")
                     .FirstOrDefault();
 
@@ -350,11 +392,13 @@ namespace DX_WebTemplate
                 };
                 _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(wfa);
 
-                var creator_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == exp_main.UserId)
-                                              .FirstOrDefault();
+                var creator_detail = _DataContext.ITP_S_UserMasters
+                    .Where(x => x.EmpCode == exp_main.UserId)
+                    .FirstOrDefault();
 
-                var sender_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Session["UserID"].ToString())
-                          .FirstOrDefault();
+                var sender_detail = _DataContext.ITP_S_UserMasters
+                    .Where(x => x.EmpCode == Session["UserID"].ToString())
+                    .FirstOrDefault();
 
                 ExpenseApprovalView exp = new ExpenseApprovalView();
 
@@ -379,13 +423,22 @@ namespace DX_WebTemplate
 
         public ExpItemDetails DisplayExpDetails(int item_id)
         {
-            var expMain = _DataContext.vw_ACCEDE_I_ExpenseDetails.Where(x => x.ExpenseReportDetail_ID == item_id).FirstOrDefault();
+            var expMain = _DataContext.vw_ACCEDE_I_ExpenseDetails
+                .Where(x => x.ExpenseReportDetail_ID == item_id)
+                .FirstOrDefault();
+
             ExpItemDetails exp = new ExpItemDetails();
             if (expMain != null)
             {
-                var acct_charge = _DataContext.ACDE_T_MasterCodes.Where(x => x.ID == Convert.ToInt32(expMain.AccountToCharged)).FirstOrDefault();
+                var acct_charge = _DataContext.ACDE_T_MasterCodes
+                    .Where(x => x.ID == Convert.ToInt32(expMain.AccountToCharged))
+                    .FirstOrDefault();
+
                 //var cost_center = _DataContext.ACCEDE_S_CostCenters.Where(x=>x.CostCenter_ID == Convert.ToInt32(expMain.CostCenterIOWBS)).FirstOrDefault();
-                var cc = _DataContext.ACCEDE_S_CostCenters.Where(x => x.CostCenter == expMain.CostCenterIOWBS).FirstOrDefault();
+                var cc = _DataContext.ACCEDE_S_CostCenters
+                    .Where(x => x.CostCenter == expMain.CostCenterIOWBS)
+                    .FirstOrDefault();
+
                 DateTime dateAdd = Convert.ToDateTime(expMain.DateAdded);
 
                 exp.acctCharge = acct_charge != null ? acct_charge.Description : "";
@@ -445,13 +498,22 @@ namespace DX_WebTemplate
 
         public ExpItemDetails DisplayExpDetails2(int item_id)
         {
-            var expMain = _DataContext.vw_ACCEDE_I_ExpenseDetails.Where(x => x.ExpenseReportDetail_ID == item_id).FirstOrDefault();
+            var expMain = _DataContext.vw_ACCEDE_I_ExpenseDetails
+                .Where(x => x.ExpenseReportDetail_ID == item_id)
+                .FirstOrDefault();
+
             ExpItemDetails exp = new ExpItemDetails();
             if (expMain != null)
             {
-                var acct_charge = _DataContext.ACDE_T_MasterCodes.Where(x => x.ID == Convert.ToInt32(expMain.AccountToCharged)).FirstOrDefault();
+                var acct_charge = _DataContext.ACDE_T_MasterCodes
+                    .Where(x => x.ID == Convert.ToInt32(expMain.AccountToCharged))
+                    .FirstOrDefault();
+
                 //var cost_center = _DataContext.ACCEDE_S_CostCenters.Where(x=>x.CostCenter_ID == Convert.ToInt32(expMain.CostCenterIOWBS)).FirstOrDefault();
-                var cc = _DataContext.ACCEDE_S_CostCenters.Where(x => x.CostCenter == expMain.CostCenterIOWBS).FirstOrDefault();
+                var cc = _DataContext.ACCEDE_S_CostCenters
+                    .Where(x => x.CostCenter == expMain.CostCenterIOWBS)
+                    .FirstOrDefault();
+
                 DateTime dateAdd = Convert.ToDateTime(expMain.DateAdded);
 
                 exp.acctCharge = acct_charge != null ? acct_charge.Description : "";

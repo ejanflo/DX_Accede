@@ -96,6 +96,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox edit_Company;
 
         /// <summary>
+        /// lbl_CompLoc control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox lbl_CompLoc;
+
+        /// <summary>
         /// lbl_PayMethod control.
         /// </summary>
         /// <remarks>

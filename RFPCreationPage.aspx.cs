@@ -39,11 +39,18 @@ namespace DX_WebTemplate
                     string url = Request.Url.AbsolutePath; // Get the current URL
                     string pageName = Path.GetFileNameWithoutExtension(url); // Get the filename without 
 
-                    var payMethodCash = _DataContext.ACCEDE_S_RFPTranTypes.Where(x => x.RFPTranType_Name == "Cash Advance").FirstOrDefault();
+                    var payMethodCash = _DataContext.ACCEDE_S_PayMethods.Where(x => x.PMethod_name == "Cash").FirstOrDefault();
                     if (payMethodCash != null)
                     {
-                        drpdown_TranType.Value = payMethodCash.ID.ToString(); // Automatically shows the name in the dropdown
+                        drpdown_PayMethod.Value = payMethodCash.ID.ToString(); // Automatically shows the name in the dropdown
                         
+                    }
+
+                    var rfpTrantype = _DataContext.ACCEDE_S_RFPTranTypes.Where(x => x.RFPTranType_Name == "Cash Advance").FirstOrDefault();
+                    if (rfpTrantype != null)
+                    {
+                        drpdown_TranType.Value = rfpTrantype.ID.ToString(); // Automatically shows the name in the dropdown
+
                     }
                     //if (!anflosession.current.haspageaccess(empcode, appid, pagename))
                     //{
@@ -190,13 +197,13 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static int InsertRFPMainAjax(string Comp_ID, string Dept_ID, string Paymethod, string tranType, bool isTrav, string costCenter, string io, string payee, string lastDay, string amount, string purpose, string wf_id, string status, string exp_id, string fap, string wbs, string pld, string curr, string travType, string classification, string CTCompanyId, string CTDepartmentId)
+        public static int InsertRFPMainAjax(string Comp_ID, string Dept_ID, string Paymethod, string tranType, bool isTrav, string costCenter, string io, string payee, string lastDay, string amount, string purpose, string wf_id, string status, string exp_id, string fap, string wbs, string pld, string curr, string travType, string classification, string CTCompanyId, string CTDepartmentId, string compLoc)
         {
             RFPCreationPage rfp = new RFPCreationPage();
-            return rfp.InsertRFPMain(Convert.ToInt32(Comp_ID), Convert.ToInt32(Dept_ID), Convert.ToInt32(Paymethod), Convert.ToInt32(tranType), isTrav, costCenter, io, payee, lastDay, Convert.ToDecimal(amount), purpose, Convert.ToInt32(wf_id), Convert.ToInt32(status), Convert.ToInt32(exp_id), Convert.ToInt32(fap), wbs, pld, curr, travType, classification, CTCompanyId, CTDepartmentId);
+            return rfp.InsertRFPMain(Convert.ToInt32(Comp_ID), Convert.ToInt32(Dept_ID), Convert.ToInt32(Paymethod), Convert.ToInt32(tranType), isTrav, costCenter, io, payee, lastDay, Convert.ToDecimal(amount), purpose, Convert.ToInt32(wf_id), Convert.ToInt32(status), Convert.ToInt32(exp_id), Convert.ToInt32(fap), wbs, pld, curr, travType, classification, CTCompanyId, CTDepartmentId, compLoc);
         }
 
-        public int InsertRFPMain(int Comp_ID, int Dept_ID, int Paymethod, int tranType, bool isTrav, string costCenter, string io, string payee, string lastDay, decimal amount, string purpose, int wf_id, int status, int exp_id, int fap, string wbs, string pld, string curr, string travType, string classification, string CTCompanyId, string CTDepartmentId)
+        public int InsertRFPMain(int Comp_ID, int Dept_ID, int Paymethod, int tranType, bool isTrav, string costCenter, string io, string payee, string lastDay, decimal amount, string purpose, int wf_id, int status, int exp_id, int fap, string wbs, string pld, string curr, string travType, string classification, string CTCompanyId, string CTDepartmentId, string compLoc)
         {
             ITPORTALDataContext dbContxt = new ITPORTALDataContext(conString);
             SqlConnection conn = null;
@@ -356,6 +363,9 @@ namespace DX_WebTemplate
                 cmd.Parameters.Add(
                 new SqlParameter("@curr", curr));
 
+                cmd.Parameters.Add(
+                new SqlParameter("@CompLocation", Convert.ToInt32(compLoc)));
+
                 // Add output parameter for generated ID
                 SqlParameter outputParam = new SqlParameter("@GeneratedID", SqlDbType.Int);
                 outputParam.Direction = ParameterDirection.Output;
@@ -469,9 +479,10 @@ namespace DX_WebTemplate
                 var payMethod = _DataContext.ACCEDE_S_PayMethods.Where(x=>x.ID == rfp_main_query.PayMethod).FirstOrDefault();
                 var tranType = _DataContext.ACCEDE_S_RFPTranTypes.Where(x=>x.ID == rfp_main_query.TranType).FirstOrDefault();
                 var sequence = 1;
+                var wf_Id = rfp_main_query.WF_Id;
 
                 //IF DOCUMENT WAS RECALLED
-                if(rfp_main_query.Status == 15)//15 IS A RECALL STATUS
+                if (rfp_main_query.Status == 15)//15 IS A RECALL STATUS
                 {
                     var rfpDoctype = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP").FirstOrDefault();
                     var wfAct = _DataContext.ITP_T_WorkflowActivities.Where(x => x.Document_Id == rfp_main_query.ID)
@@ -482,11 +493,12 @@ namespace DX_WebTemplate
 
                     var wfDetail = _DataContext.ITP_S_WorkflowDetails.Where(x=>x.WFD_Id == wfAct.WFD_Id).FirstOrDefault();
                     sequence = Convert.ToInt32(wfDetail.Sequence);
+                    wf_Id = Convert.ToInt32(wfDetail.WF_Id);
                 }
                 //END RECALL PROCESS
 
                 var Approver = from app in _DataContext.vw_ACCEDE_I_WFSetups
-                               where app.WF_Id == rfp_main_query.WF_Id
+                               where app.WF_Id == wf_Id
                                where app.Sequence == sequence
                                select app;
 
@@ -1054,6 +1066,18 @@ namespace DX_WebTemplate
             if(count == 1)
                 drpdown_CostCenter.SelectedIndex = 0; drpdown_CostCenter.DataBind();
 
+        }
+
+        protected void drpdown_CompLocation_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var comp_id = e.Parameter.ToString();
+
+            SqlCompLocation.SelectParameters["Comp_Id"].DefaultValue = comp_id;
+            SqlCompLocation.DataBind();
+
+            drpdown_CompLocation.DataSourceID = null;
+            drpdown_CompLocation.DataSource = SqlCompLocation;
+            drpdown_CompLocation.DataBind();
         }
     }
 }

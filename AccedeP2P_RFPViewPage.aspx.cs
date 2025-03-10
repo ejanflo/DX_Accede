@@ -44,8 +44,13 @@ namespace DX_WebTemplate
 
                     //sqlMain.SelectParameters["UserId"].DefaultValue = empCode;
                     var rfp_id = Convert.ToInt32(Session["passP2PRFPID"]);
-                    var rfp_details = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == rfp_id).FirstOrDefault();
-                    var exp_details = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == rfp_details.Exp_ID).FirstOrDefault();
+                    var rfp_details = _DataContext.ACCEDE_T_RFPMains
+                        .Where(x => x.ID == rfp_id)
+                        .FirstOrDefault();
+
+                    var exp_details = _DataContext.ACCEDE_T_ExpenseMains
+                        .Where(x => x.ID == rfp_details.Exp_ID)
+                        .FirstOrDefault();
 
                     var btnSub = formRFP.FindItemOrGroupByName("btnSubmit") as LayoutItem;
                     var btnEdit = formRFP.FindItemOrGroupByName("btnEditRFP") as LayoutItem;
@@ -116,8 +121,10 @@ namespace DX_WebTemplate
                     }
                     var release_cash_status = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Disbursed").FirstOrDefault();
 
-                    var P2PVerify = _DataContext.vw_ACCEDE_FinApproverVerifies.Where(x => x.UserId == empCode)
-                        .Where(x => x.Role_Name == "Accede P2P").FirstOrDefault();
+                    var P2PVerify = _DataContext.vw_ACCEDE_FinApproverVerifies
+                        .Where(x => x.UserId == empCode)
+                        .Where(x => x.Role_Name == "Accede P2P")
+                        .FirstOrDefault();
 
                     if (P2PVerify != null && rfp_details.User_ID != empCode)
                     //if (CashierVerify != null && rfp_details.Status == 7)
@@ -141,7 +148,10 @@ namespace DX_WebTemplate
                         }
                     }
 
-                    var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP").Where(x => x.App_Id == 1032).FirstOrDefault();
+                    var app_docType = _DataContext.ITP_S_DocumentTypes
+                        .Where(x => x.DCT_Name == "ACDE RFP")
+                        .Where(x => x.App_Id == 1032)
+                        .FirstOrDefault();
 
                     SqlMain.SelectParameters["ID"].DefaultValue = rfp_id.ToString();
                     SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = rfp_details.WF_Id.ToString();
@@ -184,7 +194,9 @@ namespace DX_WebTemplate
             try
             {
                 var rfp_id = Convert.ToInt32(Session["passP2PRFPID"]);
-                var rfp_details = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == rfp_id).FirstOrDefault();
+                var rfp_details = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.ID == rfp_id)
+                    .FirstOrDefault();
 
                 if (!IsPostBack || (Session["DataSetDoc"] == null))
                 {
@@ -207,8 +219,14 @@ namespace DX_WebTemplate
                 else
                     dsDoc = (DataSet)Session["DataSetDoc"];
 
-                var docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP").FirstOrDefault();
-                var RFPDocs = _DataContext.ITP_T_FileAttachments.Where(x => x.Doc_ID == rfp_details.ID).Where(x => x.DocType_Id == docType.DCT_Id).ToList();
+                var docType = _DataContext.ITP_S_DocumentTypes
+                    .Where(x => x.DCT_Name == "ACDE RFP")
+                    .FirstOrDefault();
+
+                var RFPDocs = _DataContext.ITP_T_FileAttachments
+                    .Where(x => x.Doc_ID == rfp_details.ID)
+                    .Where(x => x.DocType_Id == docType.DCT_Id)
+                    .ToList();
 
                 if (!IsPostBack || (Session["DataSetDoc"] == null))
                 {
@@ -277,7 +295,9 @@ namespace DX_WebTemplate
 
         public int UpdateRFPMain(int status)
         {
-            var rfp_main = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == Convert.ToInt32(Session["passP2PRFPID"])).FirstOrDefault();
+            var rfp_main = _DataContext.ACCEDE_T_RFPMains
+                .Where(x => x.ID == Convert.ToInt32(Session["passP2PRFPID"]))
+                .FirstOrDefault();
 
             if (status == 1)
             {
@@ -315,7 +335,10 @@ namespace DX_WebTemplate
         {
             try
             {
-                var rfp_details = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == Convert.ToInt32(Session["passP2PRFPID"])).FirstOrDefault();
+                var rfp_details = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.ID == Convert.ToInt32(Session["passP2PRFPID"]))
+                    .FirstOrDefault();
+
                 Session["ExpenseId"] = rfp_details.Exp_ID;
                 return true;
             }
@@ -337,12 +360,32 @@ namespace DX_WebTemplate
         {
             try
             {
-                var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP").Where(x => x.App_Id == 1032).FirstOrDefault();
-                var rfp_main = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == Convert.ToInt32(Session["passP2PRFPID"])).FirstOrDefault();
-                var Cashier_status = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Pending at Cashier").FirstOrDefault();
-                var P2PWF = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Name.Contains("ACDE P2P")).Where(x => x.Company_Id == Convert.ToInt32(rfp_main.ChargedTo_CompanyId)).FirstOrDefault();
-                var P2PWFDetail = _DataContext.ITP_S_WorkflowDetails.Where(x => x.WF_Id == Convert.ToInt32(P2PWF.WF_Id)).FirstOrDefault();
-                var orgRole = _DataContext.ITP_S_SecurityUserOrgRoles.Where(x => x.OrgRoleId == Convert.ToInt32(P2PWFDetail.OrgRole_Id)).Where(x => x.UserId == Session["userID"].ToString()).FirstOrDefault();
+                var app_docType = _DataContext.ITP_S_DocumentTypes
+                    .Where(x => x.DCT_Name == "ACDE RFP")
+                    .Where(x => x.App_Id == 1032)
+                    .FirstOrDefault();
+
+                var rfp_main = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.ID == Convert.ToInt32(Session["passP2PRFPID"]))
+                    .FirstOrDefault();
+
+                var Cashier_status = _DataContext.ITP_S_Status
+                    .Where(x => x.STS_Description == "Pending at Cashier")
+                    .FirstOrDefault();
+
+                var P2PWF = _DataContext.ITP_S_WorkflowHeaders
+                    .Where(x => x.Name.Contains("ACDE P2P"))
+                    .Where(x => x.Company_Id == Convert.ToInt32(rfp_main.ChargedTo_CompanyId))
+                    .FirstOrDefault();
+
+                var P2PWFDetail = _DataContext.ITP_S_WorkflowDetails
+                    .Where(x => x.WF_Id == Convert.ToInt32(P2PWF.WF_Id))
+                    .FirstOrDefault();
+
+                var orgRole = _DataContext.ITP_S_SecurityUserOrgRoles
+                    .Where(x => x.OrgRoleId == Convert.ToInt32(P2PWFDetail.OrgRole_Id))
+                    .Where(x => x.UserId == Session["userID"].ToString())
+                    .FirstOrDefault();
                 
                 rfp_main.SAPDocNo = SAPDoc;
                 rfp_main.ChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
@@ -567,8 +610,14 @@ namespace DX_WebTemplate
         {
             try
             {
-                var rfp_details = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == Convert.ToInt32(Session["passP2PRF PID"])).FirstOrDefault();
-                var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP").Where(x => x.App_Id == 1032).FirstOrDefault();
+                var rfp_details = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.ID == Convert.ToInt32(Session["passP2PRF PID"]))
+                    .FirstOrDefault();
+
+                var app_docType = _DataContext.ITP_S_DocumentTypes
+                    .Where(x => x.DCT_Name == "ACDE RFP")
+                    .Where(x => x.App_Id == 1032)
+                    .FirstOrDefault();
 
                 //Insert Attachments
                 DataSet dsFile = (DataSet)Session["DataSetDoc"];

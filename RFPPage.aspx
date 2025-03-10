@@ -645,7 +645,7 @@
                                         </dx:GridViewCommandColumn>
                                         <dx:GridViewDataTextColumn FieldName="Purpose" ShowInCustomizationForm="True" VisibleIndex="7" Caption="Purpose">
                                             <Columns>
-                                                <dx:GridViewDataComboBoxColumn Caption="Department" FieldName="Department_ID" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                <dx:GridViewDataComboBoxColumn Caption="Department" FieldName="ChargedTo_DeptId" ShowInCustomizationForm="True" VisibleIndex="0">
                                                     <PropertiesComboBox DataSourceID="SqlDept" TextField="DepDesc" ValueField="ID">
                                                     </PropertiesComboBox>
                                                 </dx:GridViewDataComboBoxColumn>
@@ -673,7 +673,7 @@
                                             <PropertiesTextEdit DisplayFormatString="M/dd/yyyy">
                                             </PropertiesTextEdit>
                                             <Columns>
-                                                <dx:GridViewDataComboBoxColumn AdaptivePriority="1" Caption="Company" FieldName="Company_ID" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                <dx:GridViewDataComboBoxColumn AdaptivePriority="1" Caption="Company" FieldName="ChargedTo_CompanyId" ShowInCustomizationForm="True" VisibleIndex="0">
                                                     <PropertiesComboBox DataSourceID="SqlComp" TextField="CompanyShortName" ValueField="WASSId">
                                                     </PropertiesComboBox>
                                                     <CellStyle Font-Bold="True">

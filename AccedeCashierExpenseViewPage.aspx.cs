@@ -43,7 +43,10 @@ namespace DX_WebTemplate
                     //End ------------------ Page Security
 
                     var expID = Session["ExpenseId"];
-                    var expDetails = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(expID)).FirstOrDefault();
+                    var expDetails = _DataContext.ACCEDE_T_ExpenseMains
+                        .Where(x => x.ID == Convert.ToInt32(expID))
+                        .FirstOrDefault();
+
                     sqlMain.SelectParameters["ID"].DefaultValue = expDetails.ID.ToString();
                     SqlDocs.SelectParameters["Doc_ID"].DefaultValue = expDetails.ID.ToString();
                     SqlCA.SelectParameters["Exp_ID"].DefaultValue = expDetails.ID.ToString();
@@ -52,7 +55,10 @@ namespace DX_WebTemplate
                     SqlExpDetails.SelectParameters["ExpenseMain_ID"].DefaultValue = expDetails.ID.ToString();
                     SqlWFActivity.SelectParameters["Document_Id"].DefaultValue = expDetails.ID.ToString();
 
-                    var exp = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"])).FirstOrDefault();
+                    var exp = _DataContext.ACCEDE_T_ExpenseMains
+                        .Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"]))
+                        .FirstOrDefault();
+
                     SqlWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp.WF_Id).ToString();
                     SqlFAPWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp.FAPWF_Id).ToString();
 
@@ -66,7 +72,11 @@ namespace DX_WebTemplate
                         myLayoutGroup.Caption = exp.DocNo.ToString() + " (View)";
                     }
 
-                    var RFPCA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"])).Where(x => x.IsExpenseCA == true);
+                    var RFPCA = _DataContext.ACCEDE_T_RFPMains
+                        .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]))
+                        .Where(x => x.IsExpenseCA == true)
+                        .Where(x => x.isTravel != true);
+
                     decimal totalCA = 0;
                     foreach (var item in RFPCA)
                     {
@@ -74,7 +84,9 @@ namespace DX_WebTemplate
                     }
                     caTotal.Text = totalCA.ToString("#,##0.00") + "  PHP ";
 
-                    var ExpDetails = _DataContext.ACCEDE_T_ExpenseDetails.Where(x => x.ExpenseMain_ID == Convert.ToInt32(Session["ExpenseId"]));
+                    var ExpDetails = _DataContext.ACCEDE_T_ExpenseDetails
+                        .Where(x => x.ExpenseMain_ID == Convert.ToInt32(Session["ExpenseId"]));
+
                     decimal totalExp = 0;
                     foreach (var item in ExpDetails)
                     {
@@ -88,7 +100,11 @@ namespace DX_WebTemplate
                         var dueField = FormExpApprovalView.FindItemOrGroupByName("due_lbl") as LayoutItem;
                         dueField.Caption = "Net Due to Employee";
 
-                        var reimRFP = _DataContext.ACCEDE_T_RFPMains.Where(x => x.IsExpenseReim == true).Where(x => x.Status != 4).Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]));
+                        var reimRFP = _DataContext.ACCEDE_T_RFPMains
+                            .Where(x => x.IsExpenseReim == true)
+                            .Where(x => x.Status != 4)
+                            .Where(x => x.isTravel != true)
+                            .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]));
 
                         if(reimRFP != null)
                         {
@@ -156,17 +172,47 @@ namespace DX_WebTemplate
         {
             try
             {
-                var app_docType_rfp = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP").Where(x => x.App_Id == 1032).FirstOrDefault();
-                var app_docType_exp = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense").Where(x => x.App_Id == 1032).FirstOrDefault();
+                var app_docType_rfp = _DataContext.ITP_S_DocumentTypes
+                    .Where(x => x.DCT_Name == "ACDE RFP")
+                    .Where(x => x.App_Id == 1032)
+                    .FirstOrDefault();
 
-                var exp_main = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"])).FirstOrDefault();
-                var completed_status = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Complete").FirstOrDefault();
+                var app_docType_exp = _DataContext.ITP_S_DocumentTypes
+                    .Where(x => x.DCT_Name == "ACDE Expense")
+                    .Where(x => x.App_Id == 1032)
+                    .FirstOrDefault();
 
-                var rfp_main_reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"])).Where(x=>x.IsExpenseReim == true).Where(x=>x.Status != 4).FirstOrDefault();
-                var release_cash_status = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Disbursed").FirstOrDefault();
-                var cashierWF = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Name == "ACDE CASHIER").Where(x => x.Company_Id == Convert.ToInt32(exp_main.CompanyId)).FirstOrDefault();
-                var cashierWFDetail = _DataContext.ITP_S_WorkflowDetails.Where(x => x.WF_Id == Convert.ToInt32(cashierWF.WF_Id)).FirstOrDefault();
-                var orgRole = _DataContext.ITP_S_SecurityUserOrgRoles.Where(x => x.OrgRoleId == Convert.ToInt32(cashierWFDetail.OrgRole_Id)).Where(x => x.UserId == Session["userID"].ToString()).FirstOrDefault();
+                var exp_main = _DataContext.ACCEDE_T_ExpenseMains
+                    .Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"]))
+                    .FirstOrDefault();
+
+                var completed_status = _DataContext.ITP_S_Status
+                    .Where(x => x.STS_Name == "Complete")
+                    .FirstOrDefault();
+
+                var rfp_main_reim = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]))
+                    .Where(x=>x.IsExpenseReim == true).Where(x=>x.Status != 4)
+                    .Where(x => x.isTravel != true)
+                    .FirstOrDefault();
+
+                var release_cash_status = _DataContext.ITP_S_Status
+                    .Where(x => x.STS_Description == "Disbursed")
+                    .FirstOrDefault();
+
+                var cashierWF = _DataContext.ITP_S_WorkflowHeaders
+                    .Where(x => x.Name == "ACDE CASHIER")
+                    .Where(x => x.Company_Id == Convert.ToInt32(exp_main.ExpChargedTo_CompanyId))
+                    .FirstOrDefault();
+
+                var cashierWFDetail = _DataContext.ITP_S_WorkflowDetails
+                    .Where(x => x.WF_Id == Convert.ToInt32(cashierWF.WF_Id))
+                    .FirstOrDefault();
+
+                var orgRole = _DataContext.ITP_S_SecurityUserOrgRoles
+                    .Where(x => x.OrgRoleId == Convert.ToInt32(cashierWFDetail.OrgRole_Id))
+                    .Where(x => x.UserId == Session["userID"].ToString())
+                    .FirstOrDefault();
 
                 if (stats == 1)
                 {
@@ -180,7 +226,7 @@ namespace DX_WebTemplate
                             {
                                 new_activity.Status = release_cash_status.STS_Id;
                                 new_activity.AppId = 1032;
-                                new_activity.CompanyId = rfp_main_reim.Company_ID;
+                                new_activity.CompanyId = rfp_main_reim.ChargedTo_CompanyId;
                                 new_activity.Document_Id = rfp_main_reim.ID;
                                 new_activity.WF_Id = cashierWFDetail.WF_Id;
                                 new_activity.DateAssigned = DateTime.Now;
@@ -206,7 +252,7 @@ namespace DX_WebTemplate
                     {
                         new_activity_exp.Status = release_cash_status.STS_Id;
                         new_activity_exp.AppId = 1032;
-                        new_activity_exp.CompanyId = exp_main.CompanyId;
+                        new_activity_exp.CompanyId = exp_main.ExpChargedTo_CompanyId;
                         new_activity_exp.Document_Id = exp_main.ID;
                         new_activity_exp.WF_Id = cashierWFDetail.WF_Id;
                         new_activity_exp.DateAssigned = DateTime.Now;

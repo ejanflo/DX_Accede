@@ -38,6 +38,34 @@
              
         }
 
+        function RecallClick() {
+            LoadingPanel.Show();
+            var remarks = txtBox_recallRemarks.GetValue();
+            $.ajax({
+                type: "POST",
+                url: "AccedeExpenseViewPage.aspx/RecallExpMainAJAX",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({
+                    remarks: remarks
+                }),
+                success: function (response) {
+                    // Update the description text box with the response value
+                    if (response.d == "success") {
+                        LoadingPanel.SetText('Expense Successfully recalled. Redirecting&hellip;');
+                        LoadingPanel.Show();
+                        window.location.href = 'AccedeExpenseReportDashboard.aspx';
+
+                    } else {
+                        alert(response.d);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                }
+            });
+        }
+
         //PDF/IMAGE VIEWER
         var pdfjsLib = window['pdfjs-dist/build/pdf'];
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.min.js';
@@ -169,7 +197,7 @@
         }
     </style>
     <div class="conta" id="demoFabContent">
-    <dx:ASPxFormLayout ID="FormExpApprovalView" runat="server" DataSourceID="sqlMain" Width="90%" SettingsAdaptivity-AdaptivityMode="SingleColumnWindowLimit" ColCount="2" ColumnCount="2" Theme="iOS">
+    <dx:ASPxFormLayout ID="FormExpApprovalView" runat="server" DataSourceID="sqlMain" Width="90%" SettingsAdaptivity-AdaptivityMode="SingleColumnWindowLimit" ColCount="2" ColumnCount="2" Theme="iOS" style="margin-right: 0px">
         <SettingsAdaptivity SwitchToSingleColumnAtWindowInnerWidth="900" AdaptivityMode="SingleColumnWindowLimit">
         </SettingsAdaptivity>
         <Items>
@@ -185,20 +213,12 @@
                     <dx:LayoutGroup Caption="Action Buttons" ColSpan="2" ColumnSpan="2" GroupBoxDecoration="None" HorizontalAlign="Right" Width="100%" ColCount="4" ColumnCount="4">
                         <Items>
 
-                            <dx:EmptyLayoutItem ColSpan="3" ColumnSpan="3" Width="100%">
+                            <dx:EmptyLayoutItem ColSpan="4" ColumnSpan="4" Width="100%">
                             </dx:EmptyLayoutItem>
-                            <dx:LayoutItem Caption="" ColSpan="1" Width="20%">
+                            <dx:LayoutItem Caption="" ColSpan="1" Width="20%" ClientVisible="False" Name="edit_btn">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxButton ID="btnSubmit" runat="server" BackColor="#006838" Text="Submit" Visible="False">
-                                        </dx:ASPxButton>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="" ColSpan="1" Width="20%">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxButton ID="btnEdit" runat="server" BackColor="#006DD6" Text="Edit" ClientVisible="False" AutoPostBack="False">
+                                        <dx:ASPxButton ID="btnEdit" runat="server" BackColor="#006DD6" Text="Edit" AutoPostBack="False">
                                             <ClientSideEvents Click="function(s, e) {
 	redirectToEditPage();
 }" />
@@ -208,7 +228,20 @@
                                 </LayoutItemNestedControlCollection>
                             </dx:LayoutItem>
 
-                            <dx:LayoutItem Caption="" ColSpan="1" Name="PrintBtn" ClientVisible="False">
+                            <dx:LayoutItem Caption="" ColSpan="1" Name="recallBtn" HorizontalAlign="Right" Width="20%" ClientVisible="False">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxButton ID="btnRecall" runat="server" AutoPostBack="False" BackColor="#E67C03" ClientInstanceName="btnRecall" EnableTheming="True" Font-Bold="False" ForeColor="White" Text="Recall" Theme="iOS">
+                                            <ClientSideEvents Click="function(s, e) {
+	RecallPopup.Show();
+}" />
+                                            <Border BorderColor="#E67C03" />
+                                        </dx:ASPxButton>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                            </dx:LayoutItem>
+
+                            <dx:LayoutItem Caption="" ColSpan="1" Name="PrintBtn" ClientVisible="False" Width="20%">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxButton ID="btnPrint" runat="server" BackColor="#006838" ClientInstanceName="btnPrint" EnableTheming="True" Font-Bold="False" Text="Print" Theme="iOS" OnClick="btnPrint_Click">
@@ -274,6 +307,16 @@
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxTextBox ID="ASPxTextBox12" runat="server" Font-Bold="True" Font-Size="Small" Width="100%">
+                                            <Border BorderStyle="None" />
+                                            <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                        </dx:ASPxTextBox>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                            </dx:LayoutItem>
+                            <dx:LayoutItem Caption="Location" ColSpan="1" FieldName="CompLocation">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxTextBox ID="ASPxTextBox16" runat="server" Font-Bold="True" Font-Size="Small" Width="100%">
                                             <Border BorderStyle="None" />
                                             <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                         </dx:ASPxTextBox>
@@ -646,7 +689,7 @@
                     </dx:EmptyLayoutItem>
                     <dx:LayoutGroup Caption="WORKFLOW" ColCount="2" ColSpan="2" ColumnCount="2" ColumnSpan="2" Width="100%">
                         <Items>
-                            <dx:LayoutItem Caption="Company" ColSpan="1" FieldName="CompanyShortName">
+                            <dx:LayoutItem Caption="Workflow Company" ColSpan="1" FieldName="CompanyShortName">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxTextBox ID="ASPxTextBox3" runat="server" Font-Bold="True" Font-Size="Small" Width="100%">
@@ -657,7 +700,7 @@
                                 </LayoutItemNestedControlCollection>
                                 <CaptionSettings HorizontalAlign="Right" />
                             </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Department" ColSpan="1" FieldName="DepDesc">
+                            <dx:LayoutItem Caption="Workflow Department" ColSpan="1" FieldName="DepDesc">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxTextBox ID="ASPxTextBox15" runat="server" Font-Bold="True" Font-Size="Small" Width="100%">
@@ -814,6 +857,75 @@
                 </dx:FABAction>
             </Items>
         </dx:ASPxFloatingActionButton>
+
+        <dx:ASPxPopupControl ID="RecallPopup" runat="server" HeaderText="Recall Expense Report?" Modal="True" AllowDragging="True" AutoUpdatePosition="True" ClientInstanceName="RecallPopup" CloseAction="CloseButton" CloseOnEscape="True" EnableViewState="False" PopupAnimationType="None" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter">
+        <SettingsAdaptivity Mode="Always" VerticalAlign="WindowCenter" />
+        <ContentCollection>
+<dx:PopupControlContentControl runat="server">
+    <dx:ASPxFormLayout ID="ASPxFormLayout4" runat="server">
+        <Items>
+            <dx:LayoutItem ColSpan="1" ShowCaption="False" HorizontalAlign="Center">
+                <LayoutItemNestedControlCollection>
+                    <dx:LayoutItemNestedControlContainer runat="server">
+                        <dx:ASPxImage ID="ASPxFormLayout1_E11" runat="server" Height="50px" ImageAlign="Middle" ImageUrl="~/Content/Images/warning.png" Width="50px">
+                        </dx:ASPxImage>
+                    </dx:LayoutItemNestedControlContainer>
+                </LayoutItemNestedControlCollection>
+            </dx:LayoutItem>
+            <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Center">
+                <LayoutItemNestedControlCollection>
+                    <dx:LayoutItemNestedControlContainer runat="server">
+                        <dx:ASPxLabel ID="ASPxFormLayout1_E12" runat="server" Text="Are you sure you want to recall this document?" Font-Size="Medium">
+                        </dx:ASPxLabel>
+                    </dx:LayoutItemNestedControlContainer>
+                </LayoutItemNestedControlCollection>
+            </dx:LayoutItem>
+            <dx:LayoutItem ColSpan="1" HorizontalAlign="Center" ShowCaption="False" Width="80%">
+                <LayoutItemNestedControlCollection>
+                    <dx:LayoutItemNestedControlContainer runat="server">
+                        <dx:ASPxMemo ID="txtBox_recallRemarks" runat="server" Caption="Remarks" ClientInstanceName="txtBox_recallRemarks" Width="100%">
+                            <ValidationSettings EnableCustomValidation="True" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="RejectGroup">
+                                <RequiredField ErrorText="Remarks is required" IsRequired="True" />
+                            </ValidationSettings>
+                        </dx:ASPxMemo>
+                    </dx:LayoutItemNestedControlContainer>
+                </LayoutItemNestedControlCollection>
+            </dx:LayoutItem>
+            <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="HeadingLine">
+                <Items>
+                    <dx:LayoutItem Caption="" ColSpan="1">
+                        <LayoutItemNestedControlCollection>
+                            <dx:LayoutItemNestedControlContainer runat="server">
+                                <dx:ASPxButton ID="mdlBtnReject" runat="server" Text="Confirm Recall" BackColor="#E67C03" AutoPostBack="False">
+                                    <ClientSideEvents Click="function(s, e) {
+	if(ASPxClientEdit.ValidateGroup('RejectGroup')){
+RecallClick(); RecallPopup.Hide();
+} 
+}" />
+                                    <Border BorderColor="#E67C03" />
+                                </dx:ASPxButton>
+                            </dx:LayoutItemNestedControlContainer>
+                        </LayoutItemNestedControlCollection>
+                    </dx:LayoutItem>
+                    <dx:LayoutItem Caption="" ColSpan="1">
+                        <LayoutItemNestedControlCollection>
+                            <dx:LayoutItemNestedControlContainer runat="server">
+                                <dx:ASPxButton ID="ASPxFormLayout1_E15" runat="server" Text="Cancel" AutoPostBack="False" BackColor="White" ForeColor="Gray">
+                                    <ClientSideEvents Click="function(s, e) {
+	RejectPopup.Hide();
+}" />
+                                    <Border BorderColor="Gray" />
+                                </dx:ASPxButton>
+                            </dx:LayoutItemNestedControlContainer>
+                        </LayoutItemNestedControlCollection>
+                    </dx:LayoutItem>
+                </Items>
+            </dx:LayoutGroup>
+        </Items>
+    </dx:ASPxFormLayout>
+            </dx:PopupControlContentControl>
+</ContentCollection>
+    </dx:ASPxPopupControl>
         <dx:ASPxLoadingPanel ID="loadPanel" runat="server" Text="Redirecting&amp;hellip;" Theme="MaterialCompact" ClientInstanceName="loadPanel" Modal="True">
     </dx:ASPxLoadingPanel>
         <dx:ASPxLoadingPanel ID="LoadingPanel" runat="server" Text="Loading&amp;hellip;" Theme="MaterialCompact" ClientInstanceName="LoadingPanel" Modal="True">

@@ -51,7 +51,10 @@ namespace DX_WebTemplate
 
                             int actID = Convert.ToInt32(Decrypt(encryptedID));
                             
-                            var actDetails = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == Convert.ToInt32(actID)).FirstOrDefault();
+                            var actDetails = _DataContext.ITP_T_WorkflowActivities
+                                .Where(x => x.WFA_Id == Convert.ToInt32(actID))
+                                .FirstOrDefault();
+
                             Session["ExpId"] = actDetails.Document_Id;
                             sqlMain.SelectParameters["ID"].DefaultValue = actDetails.Document_Id.ToString();
                             SqlDocs.SelectParameters["Doc_ID"].DefaultValue = actDetails.Document_Id.ToString();
@@ -63,6 +66,7 @@ namespace DX_WebTemplate
                             var exp = _DataContext.ACCEDE_T_ExpenseMains
                                 .Where(x => x.ID == Convert.ToInt32(actDetails.Document_Id))
                                 .FirstOrDefault();
+
                             SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = exp.ExpChargedTo_CompanyId.ToString();
                             SqlCompany.SelectParameters["UserId"].DefaultValue = exp.ExpenseName.ToString();
 
@@ -71,8 +75,10 @@ namespace DX_WebTemplate
 
                             SqlCostCenterCT.SelectParameters["DepartmentId"].DefaultValue = Convert.ToInt32(exp.ExpChargedTo_DeptId).ToString();
 
-                            var FinApproverVerify = _DataContext.vw_ACCEDE_FinApproverVerifies.Where(x => x.UserId == empCode)
-                                .Where(x => x.Role_Name == "Accede Finance Approver").FirstOrDefault();
+                            var FinApproverVerify = _DataContext.vw_ACCEDE_FinApproverVerifies
+                                .Where(x => x.UserId == empCode)
+                                .Where(x => x.Role_Name == "Accede Finance Approver")
+                                .FirstOrDefault();
 
                             var lbl_CTcomp = FormExpApprovalView.FindItemOrGroupByName("txt_CTComp") as LayoutItem;
                             var lbl_CTdept = FormExpApprovalView.FindItemOrGroupByName("txt_CTDept") as LayoutItem;
@@ -83,14 +89,18 @@ namespace DX_WebTemplate
                             var lbl_classType = FormExpApprovalView.FindItemOrGroupByName("txt_ClassType") as LayoutItem;
                             var edit_classType = FormExpApprovalView.FindItemOrGroupByName("edit_ClassType") as LayoutItem;
 
-                            var expType = _DataContext.ACCEDE_S_ExpenseTypes.Where(x => x.ExpenseType_ID == Convert.ToInt32(exp.ExpenseType_ID)).FirstOrDefault();
+                            var expType = _DataContext.ACCEDE_S_ExpenseTypes
+                                .Where(x => x.ExpenseType_ID == Convert.ToInt32(exp.ExpenseType_ID))
+                                .FirstOrDefault();
                             
                             if(FinApproverVerify != null)
                             {
-                                lbl_CTcomp.ClientVisible = false;
+                                //lbl_CTcomp.ClientVisible = false;
+                                lbl_CTcomp.ClientVisible = true;
                                 lbl_CTdept.ClientVisible = false;
                                 lbl_CostCenter.ClientVisible = false;
-                                edit_CTcomp.ClientVisible = true;
+                                //edit_CTcomp.ClientVisible = true;
+                                edit_CTcomp.ClientVisible = false;
                                 edit_CTdept.ClientVisible = true;
                                 edit_CostCenter.ClientVisible = true;
 
@@ -127,7 +137,11 @@ namespace DX_WebTemplate
                                 myLayoutGroup.Caption = exp.DocNo.ToString() + " (View)";
                             }
 
-                            var RFPCA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(actDetails.Document_Id)).Where(x => x.IsExpenseCA == true);
+                            var RFPCA = _DataContext.ACCEDE_T_RFPMains
+                                .Where(x => x.Exp_ID == Convert.ToInt32(actDetails.Document_Id))
+                                .Where(x => x.isTravel != true)
+                                .Where(x => x.IsExpenseCA == true);
+
                             decimal totalCA = 0;
                             foreach (var item in RFPCA)
                             {
@@ -135,7 +149,9 @@ namespace DX_WebTemplate
                             }
                             caTotal.Text = totalCA.ToString("#,##0.00") + "  " + exp.Exp_Currency + " ";
 
-                            var ExpDetails = _DataContext.ACCEDE_T_ExpenseDetails.Where(x => x.ExpenseMain_ID == Convert.ToInt32(actDetails.Document_Id));
+                            var ExpDetails = _DataContext.ACCEDE_T_ExpenseDetails
+                                .Where(x => x.ExpenseMain_ID == Convert.ToInt32(actDetails.Document_Id));
+
                             decimal totalExp = 0;
                             foreach (var item in ExpDetails)
                             {
@@ -162,13 +178,19 @@ namespace DX_WebTemplate
                             }
 
                             //APPROVE AND FORWARD BUTTON AND GENERATE AAF WF
-                            var wfDetails = _DataContext.ITP_S_WorkflowDetails.Where(x => x.WF_Id == actDetails.WF_Id)
-                                .Where(x => x.WFD_Id == actDetails.WFD_Id).FirstOrDefault();
+                            var wfDetails = _DataContext.ITP_S_WorkflowDetails
+                                .Where(x => x.WF_Id == actDetails.WF_Id)
+                                .Where(x => x.WFD_Id == actDetails.WFD_Id)
+                                .FirstOrDefault();
 
-                            var nxWFDetails = _DataContext.ITP_S_WorkflowDetails.Where(x => x.WF_Id == actDetails.WF_Id)
-                                .Where(x => x.Sequence == (Convert.ToInt32(wfDetails.Sequence) + 1)).FirstOrDefault();
+                            var nxWFDetails = _DataContext.ITP_S_WorkflowDetails
+                                .Where(x => x.WF_Id == actDetails.WF_Id)
+                                .Where(x => x.Sequence == (Convert.ToInt32(wfDetails.Sequence) + 1))
+                                .FirstOrDefault();
 
-                            var if_WF_isRA = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.WF_Id == wfDetails.WF_Id).FirstOrDefault();
+                            var if_WF_isRA = _DataContext.ITP_S_WorkflowHeaders
+                                .Where(x => x.WF_Id == wfDetails.WF_Id)
+                                .FirstOrDefault();
 
 
                             var aaf = FormExpApprovalView.FindItemOrGroupByName("AAF") as LayoutItem;
@@ -178,11 +200,15 @@ namespace DX_WebTemplate
                                 aaf.ClientVisible = true;
                             }
 
-                            var FinExecVerify = _DataContext.vw_ACCEDE_FinApproverVerifies.Where(x => x.UserId == empCode)
-                                .Where(x => x.Role_Name == "Accede Finance Executive").FirstOrDefault();
+                            var FinExecVerify = _DataContext.vw_ACCEDE_FinApproverVerifies
+                                .Where(x => x.UserId == empCode)
+                                .Where(x => x.Role_Name == "Accede Finance Executive")
+                                .FirstOrDefault();
 
-                            var FinCFOVerify = _DataContext.vw_ACCEDE_FinApproverVerifies.Where(x => x.UserId == empCode)
-                                .Where(x => x.Role_Name == "Accede CFO").FirstOrDefault();
+                            var FinCFOVerify = _DataContext.vw_ACCEDE_FinApproverVerifies
+                                .Where(x => x.UserId == empCode)
+                                .Where(x => x.Role_Name == "Accede CFO")
+                                .FirstOrDefault();
 
                             if (FinExecVerify != null)
                             {
@@ -304,7 +330,10 @@ namespace DX_WebTemplate
 
         protected void WFSequenceGrid_CustomCallback(object sender, DevExpress.Web.ASPxGridViewCustomCallbackEventArgs e)
         {
-            var expDetail = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpId"])).FirstOrDefault();
+            var expDetail = _DataContext.ACCEDE_T_ExpenseMains
+                .Where(x => x.ID == Convert.ToInt32(Session["ExpId"]))
+                .FirstOrDefault();
+
             SqlWFSequence.SelectParameters["WF_Id"].DefaultValue = expDetail.WF_Id.ToString();
             SqlWFSequence.DataBind();
 
@@ -316,7 +345,10 @@ namespace DX_WebTemplate
 
         protected void FAPWFGrid_CustomCallback(object sender, DevExpress.Web.ASPxGridViewCustomCallbackEventArgs e)
         {
-            var expDetail = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpId"])).FirstOrDefault();
+            var expDetail = _DataContext.ACCEDE_T_ExpenseMains
+                .Where(x => x.ID == Convert.ToInt32(Session["ExpId"]))
+                .FirstOrDefault();
+
             SqlFAPWFSequence.SelectParameters["WF_Id"].DefaultValue = expDetail.FAPWF_Id.ToString();
             SqlFAPWFSequence.DataBind();
 
@@ -342,14 +374,19 @@ namespace DX_WebTemplate
                 {
                     var actID = Convert.ToInt32(Decrypt(encryptedID));
 
-                    var act_detail_id = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == actID).FirstOrDefault();
+                    var act_detail_id = _DataContext.ITP_T_WorkflowActivities
+                        .Where(x => x.WFA_Id == actID)
+                        .FirstOrDefault();
 
-                    var exp_main = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == act_detail_id.Document_Id).FirstOrDefault();
+                    var exp_main = _DataContext.ACCEDE_T_ExpenseMains
+                        .Where(x => x.ID == act_detail_id.Document_Id)
+                        .FirstOrDefault();
 
                     var rfp_main = _DataContext.ACCEDE_T_RFPMains
                         .Where(x => x.Exp_ID == act_detail_id.Document_Id)
                         .Where(x => x.Status != 4)
                         .Where(x => x.IsExpenseReim == true)
+                        .Where(x => x.isTravel != true)
                         .FirstOrDefault();
 
                     var payMethod = "";
@@ -362,8 +399,13 @@ namespace DX_WebTemplate
 
                     if (rfp_main != null)
                     {
-                        payMethod = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == rfp_main.PayMethod).FirstOrDefault().PMethod_name;
-                        tranType = _DataContext.ACCEDE_S_RFPTranTypes.Where(x => x.ID == rfp_main.TranType).FirstOrDefault().RFPTranType_Name;
+                        payMethod = _DataContext.ACCEDE_S_PayMethods
+                            .Where(x => x.ID == rfp_main.PayMethod)
+                            .FirstOrDefault().PMethod_name;
+
+                        tranType = _DataContext.ACCEDE_S_RFPTranTypes
+                            .Where(x => x.ID == rfp_main.TranType)
+                            .FirstOrDefault().RFPTranType_Name;
 
                         rfp_main.ChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
                         rfp_main.ChargedTo_DeptId = Convert.ToInt32(CTDept_id);
@@ -372,16 +414,33 @@ namespace DX_WebTemplate
                     }
                     else
                     {
-                        var rfp_main_ca = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == act_detail_id.Document_Id).Where(x => x.IsExpenseCA == true).FirstOrDefault();
-                        payMethod = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == rfp_main_ca.PayMethod).FirstOrDefault().PMethod_name;
-                        tranType = _DataContext.ACCEDE_S_RFPTranTypes.Where(x => x.ID == rfp_main_ca.TranType).FirstOrDefault().RFPTranType_Name;
+                        var rfp_main_ca = _DataContext.ACCEDE_T_RFPMains
+                            .Where(x => x.Exp_ID == act_detail_id.Document_Id)
+                            .Where(x => x.IsExpenseCA == true)
+                            .Where(x => x.isTravel != true)
+                            .FirstOrDefault();
+
+                        payMethod = _DataContext.ACCEDE_S_PayMethods
+                            .Where(x => x.ID == rfp_main_ca.PayMethod)
+                            .FirstOrDefault().PMethod_name;
+
+                        tranType = _DataContext.ACCEDE_S_RFPTranTypes
+                            .Where(x => x.ID == rfp_main_ca.TranType)
+                            .FirstOrDefault().RFPTranType_Name;
+
                     }
 
 
-                    var rfp_app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP").Where(x => x.App_Id == 1032).FirstOrDefault();
+                    var rfp_app_docType = _DataContext.ITP_S_DocumentTypes
+                        .Where(x => x.DCT_Name == "ACDE RFP")
+                        .Where(x => x.App_Id == 1032)
+                        .FirstOrDefault();
+
                     var exp_app_doctype = act_detail_id.AppDocTypeId;
 
-                    var ExpActDetails = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == actID).FirstOrDefault();
+                    var ExpActDetails = _DataContext.ITP_T_WorkflowActivities
+                        .Where(x => x.WFA_Id == actID)
+                        .FirstOrDefault();
 
                     int reimId = 0;
                     if (rfp_main != null)
@@ -418,12 +477,20 @@ namespace DX_WebTemplate
                             reimActDetails.ActedBy_User_Id = Session["userID"].ToString();
                         }
 
-                        var wf_detail_query = _DataContext.ITP_S_WorkflowDetails.Where(x => x.WFD_Id == wf_detail).FirstOrDefault();
-                        var wfHead_data = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.WF_Id == wf_detail_query.WF_Id).FirstOrDefault();
+                        var wf_detail_query = _DataContext.ITP_S_WorkflowDetails
+                            .Where(x => x.WFD_Id == wf_detail)
+                            .FirstOrDefault();
+
+                        var wfHead_data = _DataContext.ITP_S_WorkflowHeaders
+                            .Where(x => x.WF_Id == wf_detail_query.WF_Id)
+                            .FirstOrDefault();
 
                         next_seq = Convert.ToInt32(wf_detail_query.Sequence) + 1;
 
-                        var nex_wf_detail_query = _DataContext.ITP_S_WorkflowDetails.Where(x => x.WF_Id == wf_detail_query.WF_Id).Where(x => x.Sequence == next_seq).FirstOrDefault();
+                        var nex_wf_detail_query = _DataContext.ITP_S_WorkflowDetails
+                            .Where(x => x.WF_Id == wf_detail_query.WF_Id)
+                            .Where(x => x.Sequence == next_seq)
+                            .FirstOrDefault();
 
                         var nex_org_role = 0;
                         var nex_wf_detail_id = 0;
@@ -453,7 +520,7 @@ namespace DX_WebTemplate
                                 {
                                     new_activity.Status = 1;
                                     new_activity.AppId = 1032;
-                                    new_activity.CompanyId = rfp_main.Company_ID;
+                                    new_activity.CompanyId = rfp_main.ChargedTo_CompanyId;
                                     new_activity.Document_Id = rfp_main.ID;
                                     new_activity.WF_Id = wf_detail_query.WF_Id;
                                     new_activity.DateAssigned = DateTime.Now;
@@ -473,7 +540,7 @@ namespace DX_WebTemplate
                             {
                                 new_activity_exp.Status = 1;
                                 new_activity_exp.AppId = 1032;
-                                new_activity_exp.CompanyId = exp_main.CompanyId;
+                                new_activity_exp.CompanyId = exp_main.ExpChargedTo_CompanyId;
                                 new_activity_exp.Document_Id = exp_main.ID;
                                 new_activity_exp.WF_Id = wf_detail_query.WF_Id;
                                 new_activity_exp.DateAssigned = DateTime.Now;
@@ -488,11 +555,13 @@ namespace DX_WebTemplate
                             ///////---START EMAIL PROCESS-----////////
                             foreach (var user in _DataContext.ITP_S_SecurityUserOrgRoles.Where(x => x.OrgRoleId == org_id))
                             {
-                                var nexApprover_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == user.UserId)
-                                          .FirstOrDefault();
+                                var nexApprover_detail = _DataContext.ITP_S_UserMasters
+                                    .Where(x => x.EmpCode == user.UserId)
+                                    .FirstOrDefault();
 
-                                var sender_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Session["UserID"].ToString())
-                                          .FirstOrDefault();
+                                var sender_detail = _DataContext.ITP_S_UserMasters
+                                    .Where(x => x.EmpCode == Session["UserID"].ToString())
+                                    .FirstOrDefault();
 
                                 SendEmailTo(exp_main.ID, nexApprover_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Pending", payMethod.ToString(), tranType.ToString());
 
@@ -503,11 +572,17 @@ namespace DX_WebTemplate
                             if (wfHead_data.IsRA == true)
                             {
                                 //transition to finance wf
-                                var finance_wf_data = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.WF_Id == exp_main.FAPWF_Id).FirstOrDefault();
+                                var finance_wf_data = _DataContext.ITP_S_WorkflowHeaders
+                                    .Where(x => x.WF_Id == exp_main.FAPWF_Id)
+                                    .FirstOrDefault();
 
                                 if (finance_wf_data != null)
                                 {
-                                    var fin_wfDetail_data = _DataContext.ITP_S_WorkflowDetails.Where(x => x.WF_Id == finance_wf_data.WF_Id).Where(x => x.Sequence == 1).FirstOrDefault();
+                                    var fin_wfDetail_data = _DataContext.ITP_S_WorkflowDetails
+                                        .Where(x => x.WF_Id == finance_wf_data.WF_Id)
+                                        .Where(x => x.Sequence == 1)
+                                        .FirstOrDefault();
+
                                     var org_id = fin_wfDetail_data.OrgRole_Id;
                                     var date2day = DateTime.Now;
                                     //DELEGATE CHECK
@@ -561,11 +636,13 @@ namespace DX_WebTemplate
                                     ///////---START EMAIL PROCESS-----////////
                                     foreach (var user in _DataContext.ITP_S_SecurityUserOrgRoles.Where(x => x.OrgRoleId == org_id))
                                     {
-                                        var nexApprover_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == user.UserId)
-                                                  .FirstOrDefault();
+                                        var nexApprover_detail = _DataContext.ITP_S_UserMasters
+                                            .Where(x => x.EmpCode == user.UserId)
+                                            .FirstOrDefault();
 
-                                        var sender_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Session["UserID"].ToString())
-                                                  .FirstOrDefault();
+                                        var sender_detail = _DataContext.ITP_S_UserMasters
+                                            .Where(x => x.EmpCode == Session["UserID"].ToString())
+                                            .FirstOrDefault();
 
                                         SendEmailTo(exp_main.ID, nexApprover_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Pending", payMethod.ToString(), tranType.ToString());
 
@@ -580,7 +657,10 @@ namespace DX_WebTemplate
                             }
                             else
                             {
-                                var pending_audit = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Pending at Audit").FirstOrDefault();
+                                var pending_audit = _DataContext.ITP_S_Status
+                                    .Where(x => x.STS_Name == "Pending at Audit")
+                                    .FirstOrDefault();
+
                                 if (rfp_main != null)
                                 {
                                     rfp_main.Status = Convert.ToInt32(pending_audit.STS_Id);
@@ -588,11 +668,13 @@ namespace DX_WebTemplate
 
                                 exp_main.Status = Convert.ToInt32(pending_audit.STS_Id);
 
-                                var creator_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == exp_main.UserId)
-                                                  .FirstOrDefault();
+                                var creator_detail = _DataContext.ITP_S_UserMasters
+                                    .Where(x => x.EmpCode == exp_main.UserId)
+                                    .FirstOrDefault();
 
-                                var sender_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Session["UserID"].ToString())
-                                          .FirstOrDefault();
+                                var sender_detail = _DataContext.ITP_S_UserMasters
+                                    .Where(x => x.EmpCode == Session["UserID"].ToString())
+                                    .FirstOrDefault();
 
                                 SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Approve", payMethod.ToString(), tranType.ToString());
 
@@ -630,17 +712,25 @@ namespace DX_WebTemplate
                 if (!string.IsNullOrEmpty(encryptedID))
                 {
                     var actID = Convert.ToInt32(Decrypt(encryptedID));
-                    var exp_id = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == actID).FirstOrDefault();
+                    var exp_id = _DataContext.ITP_T_WorkflowActivities
+                        .Where(x => x.WFA_Id == actID)
+                        .FirstOrDefault();
 
-                    var exp_main = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == exp_id.Document_Id).FirstOrDefault();
+                    var exp_main = _DataContext.ACCEDE_T_ExpenseMains
+                        .Where(x => x.ID == exp_id.Document_Id)
+                        .FirstOrDefault();
+
                     var rfp_main = _DataContext.ACCEDE_T_RFPMains
                         .Where(x => x.Exp_ID == exp_id.Document_Id)
                         .Where(x => x.IsExpenseReim == true)
                         .Where(x => x.Status != 4)
+                        .Where(x => x.isTravel != true)
                         .FirstOrDefault();
 
                     //var payMethod = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == rfp_main.PayMethod).FirstOrDefault();
-                    var tranType = _DataContext.ACCEDE_S_ExpenseTypes.Where(x => x.ExpenseType_ID == exp_main.ExpenseType_ID).FirstOrDefault();
+                    var tranType = _DataContext.ACCEDE_S_ExpenseTypes
+                        .Where(x => x.ExpenseType_ID == exp_main.ExpenseType_ID)
+                        .FirstOrDefault();
 
                     exp_main.ExpChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
                     exp_main.ExpChargedTo_DeptId = Convert.ToInt32(CTDept_id);
@@ -678,7 +768,9 @@ namespace DX_WebTemplate
                         rfp_main.Status = 3;
                     }
 
-                    var ExpActDetails = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == actID).FirstOrDefault();
+                    var ExpActDetails = _DataContext.ITP_T_WorkflowActivities
+                        .Where(x => x.WFA_Id == actID)
+                        .FirstOrDefault();
 
                     //Update Expense Activity
                     ExpActDetails.Status = 3;
@@ -688,11 +780,13 @@ namespace DX_WebTemplate
 
                     exp_main.Status = 3;
 
-                    var creator_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == exp_main.UserId)
-                                                  .FirstOrDefault();
+                    var creator_detail = _DataContext.ITP_S_UserMasters
+                        .Where(x => x.EmpCode == exp_main.UserId)
+                        .FirstOrDefault();
 
-                    var sender_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Session["UserID"].ToString())
-                              .FirstOrDefault();
+                    var sender_detail = _DataContext.ITP_S_UserMasters
+                        .Where(x => x.EmpCode == Session["UserID"].ToString())
+                        .FirstOrDefault();
 
 
                     SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Return", "", tranType.Description);
@@ -723,16 +817,24 @@ namespace DX_WebTemplate
                 if (!string.IsNullOrEmpty(encryptedID))
                 {
                     var actID = Convert.ToInt32(Decrypt(encryptedID));
-                    var exp_id = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == actID).FirstOrDefault();
+                    var exp_id = _DataContext.ITP_T_WorkflowActivities
+                        .Where(x => x.WFA_Id == actID)
+                        .FirstOrDefault();
 
-                    var exp_main = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == exp_id.Document_Id).FirstOrDefault();
+                    var exp_main = _DataContext.ACCEDE_T_ExpenseMains
+                        .Where(x => x.ID == exp_id.Document_Id)
+                        .FirstOrDefault();
+
                     var rfp_main = _DataContext.ACCEDE_T_RFPMains
                         .Where(x => x.Exp_ID == exp_id.Document_Id)
                         .Where(x => x.IsExpenseReim == true)
+                        .Where(x => x.isTravel != true)
                         .FirstOrDefault();
 
                     //var payMethod = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == rfp_main.PayMethod).FirstOrDefault();
-                    var tranType = _DataContext.ACCEDE_S_ExpenseTypes.Where(x => x.ExpenseType_ID == exp_main.ExpenseType_ID).FirstOrDefault();
+                    var tranType = _DataContext.ACCEDE_S_ExpenseTypes
+                        .Where(x => x.ExpenseType_ID == exp_main.ExpenseType_ID)
+                        .FirstOrDefault();
 
                     //exp_main.ExpChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
                     //exp_main.ExpChargedTo_DeptId = Convert.ToInt32(CTDept_id);
@@ -770,7 +872,9 @@ namespace DX_WebTemplate
                         rfp_main.Status = 8;
                     }
 
-                    var ExpActDetails = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == actID).FirstOrDefault();
+                    var ExpActDetails = _DataContext.ITP_T_WorkflowActivities
+                        .Where(x => x.WFA_Id == actID)
+                        .FirstOrDefault();
 
                     //Update Expense Activity
                     ExpActDetails.Status = 8;
@@ -780,11 +884,13 @@ namespace DX_WebTemplate
 
                     exp_main.Status = 8;
 
-                    var creator_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == exp_main.UserId)
-                                                  .FirstOrDefault();
+                    var creator_detail = _DataContext.ITP_S_UserMasters
+                        .Where(x => x.EmpCode == exp_main.UserId)
+                        .FirstOrDefault();
 
-                    var sender_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Session["UserID"].ToString())
-                              .FirstOrDefault();
+                    var sender_detail = _DataContext.ITP_S_UserMasters
+                        .Where(x => x.EmpCode == Session["UserID"].ToString())
+                        .FirstOrDefault();
 
 
                     SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Disapprove", "", tranType.Description);
@@ -809,14 +915,28 @@ namespace DX_WebTemplate
 
         public RFPDetails DisplayCADetails(int item_id)
         {
-            var rfpCA = _DataContext.ACCEDE_T_RFPMains.Where(x=>x.ID == item_id).FirstOrDefault();
+            var rfpCA = _DataContext.ACCEDE_T_RFPMains
+                .Where(x=>x.ID == item_id)
+                .FirstOrDefault();
+
             RFPDetails rfp = new RFPDetails();
             if (rfpCA != null)
             {
-                var compName = _DataContext.CompanyMasters.Where(x=>x.WASSId == rfpCA.Company_ID).FirstOrDefault().CompanyShortName;
-                var deptName = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == rfpCA.Department_ID).FirstOrDefault().DepDesc;
-                var payMethName = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == rfpCA.PayMethod).FirstOrDefault().PMethod_name;
-                var tranTypeName = _DataContext.ACCEDE_S_RFPTranTypes.Where(x => x.ID == rfpCA.TranType).FirstOrDefault().RFPTranType_Name;
+                var compName = _DataContext.CompanyMasters
+                    .Where(x=>x.WASSId == rfpCA.Company_ID)
+                    .FirstOrDefault().CompanyShortName;
+
+                var deptName = _DataContext.ITP_S_OrgDepartmentMasters
+                    .Where(x => x.ID == rfpCA.Department_ID)
+                    .FirstOrDefault().DepDesc;
+
+                var payMethName = _DataContext.ACCEDE_S_PayMethods
+                    .Where(x => x.ID == rfpCA.PayMethod)
+                    .FirstOrDefault().PMethod_name;
+
+                var tranTypeName = _DataContext.ACCEDE_S_RFPTranTypes
+                    .Where(x => x.ID == rfpCA.TranType)
+                    .FirstOrDefault().RFPTranType_Name;
 
                 rfp.company = compName != null ? compName : "";
                 rfp.department = deptName != null ? deptName : "";
@@ -842,15 +962,32 @@ namespace DX_WebTemplate
         public RFPDetails DisplayReimDetails(int item_id)
         {
             Session["Reim_edit_id"] = item_id;
-            var rfpReim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == item_id).FirstOrDefault();
+            var rfpReim = _DataContext.ACCEDE_T_RFPMains
+                .Where(x => x.ID == item_id)
+                .FirstOrDefault();
+
             RFPDetails rfp = new RFPDetails();
             if (rfpReim != null)
             {
-                var compName = _DataContext.CompanyMasters.Where(x => x.WASSId == rfpReim.Company_ID).FirstOrDefault().CompanyShortName;
-                var deptName = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == rfpReim.Department_ID).FirstOrDefault().DepDesc;
-                var payMethName = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == rfpReim.PayMethod).FirstOrDefault().PMethod_name;
-                var tranTypeName = _DataContext.ACCEDE_S_RFPTranTypes.Where(x => x.ID == rfpReim.TranType).FirstOrDefault().RFPTranType_Name;
-                var payeeName = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == rfpReim.Payee).FirstOrDefault();
+                var compName = _DataContext.CompanyMasters
+                    .Where(x => x.WASSId == rfpReim.Company_ID)
+                    .FirstOrDefault().CompanyShortName;
+
+                var deptName = _DataContext.ITP_S_OrgDepartmentMasters
+                    .Where(x => x.ID == rfpReim.Department_ID)
+                    .FirstOrDefault().DepDesc;
+
+                var payMethName = _DataContext.ACCEDE_S_PayMethods
+                    .Where(x => x.ID == rfpReim.PayMethod)
+                    .FirstOrDefault().PMethod_name;
+
+                var tranTypeName = _DataContext.ACCEDE_S_RFPTranTypes
+                    .Where(x => x.ID == rfpReim.TranType)
+                    .FirstOrDefault().RFPTranType_Name;
+
+                var payeeName = _DataContext.ITP_S_UserMasters
+                    .Where(x => x.EmpCode == rfpReim.Payee)
+                    .FirstOrDefault();
 
                 rfp.company = compName != null ? compName : "";
                 rfp.department = deptName != null ? deptName : "";
@@ -878,15 +1015,23 @@ namespace DX_WebTemplate
         {
             try
             {
-                var reimDetails = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == Convert.ToInt32(Session["Reim_edit_id"])).FirstOrDefault();
+                var reimDetails = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.ID == Convert.ToInt32(Session["Reim_edit_id"]))
+                    .FirstOrDefault();
+
                 reimDetails.PayMethod = Convert.ToInt32(payMethod);
 
-                var caDetails = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(reimDetails.Exp_ID))
+                var caDetails = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.Exp_ID == Convert.ToInt32(reimDetails.Exp_ID))
+                    .Where(x => x.isTravel != true)
                     .Where(x => x.IsExpenseCA == true);
 
                 if(caDetails.Count() == 0 )
                 {
-                    var expMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x=>x.ID == Convert.ToInt32(reimDetails.Exp_ID)).FirstOrDefault();
+                    var expMain = _DataContext.ACCEDE_T_ExpenseMains
+                        .Where(x=>x.ID == Convert.ToInt32(reimDetails.Exp_ID))
+                        .FirstOrDefault();
+
                     expMain.PaymentType = Convert.ToInt32(payMethod);
                 }
                 _DataContext.SubmitChanges();
@@ -909,13 +1054,22 @@ namespace DX_WebTemplate
 
         public ExpItemDetails DisplayExpDetails(int item_id)
         {
-            var expMain = _DataContext.vw_ACCEDE_I_ExpenseDetails.Where(x=>x.ExpenseReportDetail_ID == item_id).FirstOrDefault();
+            var expMain = _DataContext.vw_ACCEDE_I_ExpenseDetails
+                .Where(x=>x.ExpenseReportDetail_ID == item_id)
+                .FirstOrDefault();
+
             ExpItemDetails exp = new ExpItemDetails();
             if(expMain != null)
             {
-                var acct_charge = _DataContext.ACDE_T_MasterCodes.Where(x => x.ID == Convert.ToInt32(expMain.AccountToCharged)).FirstOrDefault();
+                var acct_charge = _DataContext.ACDE_T_MasterCodes
+                    .Where(x => x.ID == Convert.ToInt32(expMain.AccountToCharged))
+                    .FirstOrDefault();
+
                 //var cost_center = _DataContext.ACCEDE_S_CostCenters.Where(x=>x.CostCenter_ID == Convert.ToInt32(expMain.CostCenterIOWBS)).FirstOrDefault();
-                var cc = _DataContext.ACCEDE_S_CostCenters.Where(x=>x.CostCenter == expMain.CostCenterIOWBS).FirstOrDefault();
+                var cc = _DataContext.ACCEDE_S_CostCenters
+                    .Where(x=>x.CostCenter == expMain.CostCenterIOWBS)
+                    .FirstOrDefault();
+
                 DateTime dateAdd = Convert.ToDateTime(expMain.DateAdded);
 
                 exp.acctCharge = acct_charge != null ? acct_charge.Description : "";
@@ -945,14 +1099,21 @@ namespace DX_WebTemplate
                 ///////---START EMAIL PROCESS-----////////
                 //foreach (var user in _DataContext.ITP_S_SecurityUserOrgRoles.Where(x => x.OrgRoleId == org_id))
                 //{
-                var exp_main = _DataContext.ACCEDE_T_ExpenseMains.Where(x=>x.ID == doc_id).FirstOrDefault();
+                var exp_main = _DataContext.ACCEDE_T_ExpenseMains
+                    .Where(x=>x.ID == doc_id)
+                    .FirstOrDefault();
 
-                var requestor_detail = _DataContext.ITP_S_UserMasters.Where(x=>x.EmpCode == exp_main.ExpenseName).FirstOrDefault();
-                var user_email = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == receiver_id)
-                                    .FirstOrDefault();
+                var requestor_detail = _DataContext.ITP_S_UserMasters
+                    .Where(x=>x.EmpCode == exp_main.ExpenseName)
+                    .FirstOrDefault();
 
-                var comp_name = _DataContext.CompanyMasters.Where(x => x.WASSId == Comp_id)
-                            .FirstOrDefault();
+                var user_email = _DataContext.ITP_S_UserMasters
+                    .Where(x => x.EmpCode == receiver_id)
+                    .FirstOrDefault();
+
+                var comp_name = _DataContext.CompanyMasters
+                    .Where(x => x.WASSId == Comp_id)
+                    .FirstOrDefault();
 
                 //Start--   Get Text info
                 var queryText =
@@ -1034,7 +1195,10 @@ namespace DX_WebTemplate
         {
             try
             {
-                var expDetails = _DataContext.ACCEDE_T_ExpenseDetails.Where(x=>x.ExpenseReportDetail_ID == Convert.ToInt32(Session["ExpMainId"])).FirstOrDefault();
+                var expDetails = _DataContext.ACCEDE_T_ExpenseDetails
+                    .Where(x=>x.ExpenseReportDetail_ID == Convert.ToInt32(Session["ExpMainId"]))
+                    .FirstOrDefault();
+
                 expDetails.NetAmount = Convert.ToDecimal(net_amount);
                 expDetails.VAT = Convert.ToDecimal(vat_amnt);
                 expDetails.EWT = Convert.ToDecimal(ewt_amnt);
@@ -1042,7 +1206,11 @@ namespace DX_WebTemplate
                 expDetails.ExpDtl_WBS = wbs;
 
 
-                var reim = _DataContext.ACCEDE_T_RFPMains.Where(x=>x.Exp_ID == Convert.ToInt32(expDetails.ExpenseMain_ID)).Where(x=>x.IsExpenseReim == true).FirstOrDefault();
+                var reim = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x=>x.Exp_ID == Convert.ToInt32(expDetails.ExpenseMain_ID))
+                    .Where(x=>x.IsExpenseReim == true)
+                    .Where(x => x.isTravel != true)
+                    .FirstOrDefault();
 
                 if(reim != null)
                 {
@@ -1069,8 +1237,10 @@ namespace DX_WebTemplate
         {
             if (e.VisibleIndex >= 0 && e.ButtonID == "btnEdit") // Ensure it's a data row and the button is the desired one
             {
-                var FinApproverVerify = _DataContext.vw_ACCEDE_FinApproverVerifies.Where(x => x.UserId == Session["userID"].ToString())
-                        .Where(x => x.Role_Name == "Accede Finance Approver").FirstOrDefault();
+                var FinApproverVerify = _DataContext.vw_ACCEDE_FinApproverVerifies
+                    .Where(x => x.UserId == Session["userID"].ToString())
+                    .Where(x => x.Role_Name == "Accede Finance Approver")
+                    .FirstOrDefault();
 
                 if (FinApproverVerify != null)
                 {
@@ -1140,6 +1310,7 @@ namespace DX_WebTemplate
                         .Where(x => x.Exp_ID == exp_ActDetails.Document_Id)
                         .Where(x => x.Status != 4)
                         .Where(x => x.IsExpenseReim == true)
+                        .Where(x => x.isTravel != true)
                         .FirstOrDefault();
 
                     var rfp_app_docType = _DataContext.ITP_S_DocumentTypes
@@ -1201,10 +1372,13 @@ namespace DX_WebTemplate
                         var rfp_main_ca = _DataContext.ACCEDE_T_RFPMains
                             .Where(x => x.Exp_ID == exp_ActDetails.Document_Id)
                             .Where(x => x.IsExpenseCA == true)
+                            .Where(x => x.isTravel != true)
                             .FirstOrDefault();
+
                         payMethod = _DataContext.ACCEDE_S_PayMethods
                             .Where(x => x.ID == rfp_main_ca.PayMethod)
                             .FirstOrDefault().PMethod_name;
+
                         tranType = _DataContext.ACCEDE_S_RFPTranTypes
                             .Where(x => x.ID == rfp_main_ca.TranType)
                             .FirstOrDefault().RFPTranType_Name;
@@ -1212,7 +1386,11 @@ namespace DX_WebTemplate
 
                     if (aaf_wf_data != null)
                     {
-                        var fin_wfDetail_data = _DataContext.ITP_S_WorkflowDetails.Where(x => x.WF_Id == aaf_wf_data.WF_Id).Where(x => x.Sequence == 1).FirstOrDefault();
+                        var fin_wfDetail_data = _DataContext.ITP_S_WorkflowDetails
+                            .Where(x => x.WF_Id == aaf_wf_data.WF_Id)
+                            .Where(x => x.Sequence == 1)
+                            .FirstOrDefault();
+
                         var org_id = fin_wfDetail_data.OrgRole_Id;
                         var date2day = DateTime.Now;
                         //DELEGATE CHECK
@@ -1266,11 +1444,13 @@ namespace DX_WebTemplate
                         ///////---START EMAIL PROCESS-----////////
                         foreach (var user in _DataContext.ITP_S_SecurityUserOrgRoles.Where(x => x.OrgRoleId == org_id))
                         {
-                            var nexApprover_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == user.UserId)
-                                      .FirstOrDefault();
+                            var nexApprover_detail = _DataContext.ITP_S_UserMasters
+                                .Where(x => x.EmpCode == user.UserId)
+                                .FirstOrDefault();
 
-                            var sender_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Session["UserID"].ToString())
-                                      .FirstOrDefault();
+                            var sender_detail = _DataContext.ITP_S_UserMasters
+                                .Where(x => x.EmpCode == Session["UserID"].ToString())
+                                .FirstOrDefault();
 
                             SendEmailTo(exp_main.ID, nexApprover_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Pending", payMethod.ToString(), tranType.ToString());
 

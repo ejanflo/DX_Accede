@@ -2,7 +2,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
      
     
-    <style>
+    aw<style>
         .radio-buttons-container {
             display: flex;
             align-items: center; /* Vertically centers the radio buttons */
@@ -21,8 +21,7 @@
             height: 100vh;
             margin: 0
         }
-    </style>
-    <script>
+    </style><script>
          function OnInit(s, e) {
              fab.SetActionContext("CancelContext", true);
              //AttachEvents();
@@ -771,8 +770,7 @@
                 page.render(renderContext);
             });
         };
-    </script>
-    <div class="conta" id="demoFabContent">
+    </script><div class="conta" id="demoFabContent">
     <dx:ASPxFormLayout ID="FormExpApprovalView" runat="server" DataSourceID="sqlMain" Width="90%" SettingsAdaptivity-AdaptivityMode="SingleColumnWindowLimit" ColCount="2" ColumnCount="2" Theme="iOS" ClientInstanceName="FormExpApprovalView">
         <SettingsAdaptivity SwitchToSingleColumnAtWindowInnerWidth="900" AdaptivityMode="SingleColumnWindowLimit">
         </SettingsAdaptivity>
@@ -953,6 +951,19 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                     </ValidationSettings>
                                                     <Border BorderColor="#006838" BorderWidth="1px" />
                                                 </dx:ASPxComboBox>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                    </dx:LayoutItem>
+                                    <dx:LayoutItem Caption="Location" ColSpan="1" FieldName="CompLocation">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxTextBox ID="txt_CompLocation" runat="server" ClientInstanceName="txt_CompLocation" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
+                                                    <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                        <RequiredField ErrorText="*Required" />
+                                                    </ValidationSettings>
+                                                    <Border BorderStyle="None" />
+                                                    <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                </dx:ASPxTextBox>
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
                                     </dx:LayoutItem>
@@ -1497,7 +1508,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                         <Items>
                             <dx:LayoutGroup Caption="WORKFLOW" ColCount="2" ColSpan="1" ColumnCount="2">
                                 <Items>
-                                    <dx:LayoutItem Caption="Company" ColSpan="1" FieldName="CompanyShortName">
+                                    <dx:LayoutItem Caption="Workflow Company" ColSpan="1" FieldName="CompanyShortName">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxTextBox ID="txt_Comp" runat="server" ClientInstanceName="name" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
@@ -1511,7 +1522,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                         </LayoutItemNestedControlCollection>
                                         <CaptionSettings HorizontalAlign="Right" />
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Department" ColSpan="1" FieldName="DepDesc">
+                                    <dx:LayoutItem Caption="Workflow Department" ColSpan="1" FieldName="DepDesc">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxTextBox ID="txt_Comp0" runat="server" ClientInstanceName="name" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
@@ -1649,7 +1660,9 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                         </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataTextColumn Caption="Approver" FieldName="FullName" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="2">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="STS_Name" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                        <dx:GridViewDataTextColumn FieldName="STS_Name" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="5" Caption="Status">
+                                                        </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewDataTextColumn Caption="Remarks" FieldName="Remarks" ShowInCustomizationForm="True" VisibleIndex="6">
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:ASPxGridView>

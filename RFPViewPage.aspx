@@ -655,6 +655,16 @@
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
                                     </dx:LayoutItem>
+                                    <dx:LayoutItem Caption="Location" ColSpan="2" ColumnSpan="2" FieldName="CompLocation" Width="100%">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxTextBox ID="ASPxTextBox20" runat="server" Font-Bold="True" Font-Size="Medium" ReadOnly="True" Width="100%">
+                                                    <Border BorderStyle="None" />
+                                                    <BorderBottom BorderColor="#333333" BorderStyle="Solid" BorderWidth="1px" />
+                                                </dx:ASPxTextBox>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                    </dx:LayoutItem>
                                     <dx:LayoutItem Caption="Payment Method" ColSpan="2" Width="100%" ColumnSpan="2" FieldName="PMethod_name">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
@@ -1008,7 +1018,7 @@ onTravelClick();
                         <Items>
                             <dx:LayoutGroup Caption="" ColCount="2" ColSpan="3" ColumnCount="2" ColumnSpan="3" GroupBoxDecoration="None" Width="100%">
                                 <Items>
-                                    <dx:LayoutItem Caption="Company" ColSpan="1" FieldName="CompanyShortName" Width="50%">
+                                    <dx:LayoutItem Caption="Workflow Company" ColSpan="1" FieldName="CompanyShortName" Width="50%">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxTextBox ID="ASPxTextBox1" runat="server" Font-Bold="True" Font-Size="Medium" ReadOnly="True" Width="100%">
@@ -1019,7 +1029,7 @@ onTravelClick();
                                         </LayoutItemNestedControlCollection>
                                         <CaptionSettings HorizontalAlign="Right" />
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Deparment" ColSpan="1" FieldName="DepDesc" Width="50%">
+                                    <dx:LayoutItem Caption="Workflow Deparment" ColSpan="1" FieldName="DepDesc" Width="50%">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxTextBox ID="ASPxTextBox5" runat="server" Font-Bold="True" Font-Size="Medium" ReadOnly="True" Width="100%">

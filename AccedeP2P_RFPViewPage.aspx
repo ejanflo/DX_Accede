@@ -623,7 +623,20 @@ if(ASPxClientEdit.ValidateGroup('ViewFormCashier')){
                                             </Caption>
                                         </GroupBoxStyle>
                                         <Items>
-                                            <dx:LayoutItem Caption="Charged To Company" ColSpan="2" ColumnSpan="2" FieldName="ChargedTo_CompanyId" Width="100%">
+                                            <dx:LayoutItem Caption="Charged To Company" ColSpan="2" FieldName="CTCompName" Name="txt_CTComp" ColumnSpan="2" Width="100%">
+                                                <LayoutItemNestedControlCollection>
+                                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                                        <dx:ASPxTextBox ID="txt_CTCompany" runat="server" ClientInstanceName="txt_CTCompany" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
+                                                            <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                                <RequiredField ErrorText="*Required" />
+                                                            </ValidationSettings>
+                                                            <Border BorderStyle="None" />
+                                                            <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                        </dx:ASPxTextBox>
+                                                    </dx:LayoutItemNestedControlContainer>
+                                                </LayoutItemNestedControlCollection>
+                                            </dx:LayoutItem>
+                                            <dx:LayoutItem Caption="Charged To Company" ColSpan="2" ColumnSpan="2" FieldName="ChargedTo_CompanyId" Width="100%" ClientVisible="False">
                                                 <LayoutItemNestedControlCollection>
                                                     <dx:LayoutItemNestedControlContainer runat="server">
                                                         <dx:ASPxComboBox ID="edit_Company" runat="server" ClientInstanceName="edit_Company" DataSourceID="SqlCompany" Font-Bold="True" TextField="CompanyShortName" ValueField="CompanyId" Width="100%" Font-Size="Medium">
@@ -637,6 +650,19 @@ drpdown_CostCenter.SetValue(&quot;&quot;);
                                                             </ValidationSettings>
                                                             <Border BorderColor="#006838" BorderWidth="1px" />
                                                         </dx:ASPxComboBox>
+                                                    </dx:LayoutItemNestedControlContainer>
+                                                </LayoutItemNestedControlCollection>
+                                            </dx:LayoutItem>
+                                            <dx:LayoutItem Caption="Location" ColSpan="2" FieldName="CompLocation" ColumnSpan="2" Width="100%">
+                                                <LayoutItemNestedControlCollection>
+                                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                                        <dx:ASPxTextBox ID="txt_CompLoc" runat="server" ClientInstanceName="txt_CompLoc" Font-Bold="True" ReadOnly="True" Width="100%" Font-Size="Small" HorizontalAlign="Left">
+                                                            <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                                <RequiredField ErrorText="*Required" />
+                                                            </ValidationSettings>
+                                                            <Border BorderStyle="None" />
+                                                            <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                        </dx:ASPxTextBox>
                                                     </dx:LayoutItemNestedControlContainer>
                                                 </LayoutItemNestedControlCollection>
                                             </dx:LayoutItem>
@@ -1029,7 +1055,7 @@ onTravelClick();
                                 <Items>
                                     <dx:LayoutGroup Caption="" ColCount="2" ColSpan="3" ColumnCount="2" ColumnSpan="3" GroupBoxDecoration="None" Width="100%">
                                         <Items>
-                                            <dx:LayoutItem Caption="Company" ColSpan="1" FieldName="CompanyShortName" Width="50%">
+                                            <dx:LayoutItem Caption="Workflow Company" ColSpan="1" FieldName="CompanyShortName" Width="50%">
                                                 <LayoutItemNestedControlCollection>
                                                     <dx:LayoutItemNestedControlContainer runat="server">
                                                         <dx:ASPxTextBox ID="ASPxTextBox1" runat="server" Font-Bold="True" Font-Size="Medium" ReadOnly="True" Width="100%">
@@ -1040,7 +1066,7 @@ onTravelClick();
                                                 </LayoutItemNestedControlCollection>
                                                 <CaptionSettings HorizontalAlign="Right" />
                                             </dx:LayoutItem>
-                                            <dx:LayoutItem Caption="Deparment" ColSpan="1" FieldName="DepDesc" Width="50%">
+                                            <dx:LayoutItem Caption="Workflow Deparment" ColSpan="1" FieldName="DepDesc" Width="50%">
                                                 <LayoutItemNestedControlCollection>
                                                     <dx:LayoutItemNestedControlContainer runat="server">
                                                         <dx:ASPxTextBox ID="ASPxTextBox5" runat="server" Font-Bold="True" Font-Size="Medium" ReadOnly="True" Width="100%">

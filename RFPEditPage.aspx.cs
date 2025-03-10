@@ -73,6 +73,7 @@ namespace DX_WebTemplate
                         SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = rfp_details.FAPWF_Id.ToString();
                         SqlDocs.SelectParameters["Doc_ID"].DefaultValue = rfp_id.ToString();
                         SqlDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType != null ? app_docType.DCT_Id.ToString() : null;
+                        SqlCompLocation.SelectParameters["Comp_Id"].DefaultValue = rfp_details.ChargedTo_CompanyId.ToString();
 
                         var depCode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == rfp_details.Department_ID).FirstOrDefault();
                         SqlWF.SelectParameters["DepCode"].DefaultValue = depCode.DepCode.ToString();
@@ -166,19 +167,20 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static int UpdateRFPMainAjax(string Comp_ID, string Dept_ID, string Paymethod, string tranType, bool isTrav, string costCenter, string io, string payee, string lastDay, string amount, string purpose, string wf_id, string status, string exp_id, string fap, string wbs, string pld, string curr, string travType, string classification, string CTComp_ID, string CTDept_ID)
+        public static int UpdateRFPMainAjax(string Comp_ID, string Dept_ID, string Paymethod, string tranType, bool isTrav, string costCenter, string io, string payee, string lastDay, string amount, string purpose, string wf_id, string status, string exp_id, string fap, string wbs, string pld, string curr, string travType, string classification, string CTComp_ID, string CTDept_ID, string compLoc)
         {
             RFPEditPage rfp = new RFPEditPage();
-            return rfp.UpdateRFPMain(Convert.ToInt32(Comp_ID), Convert.ToInt32(Dept_ID), Convert.ToInt32(Paymethod), Convert.ToInt32(tranType), isTrav, costCenter, io, payee, lastDay, Convert.ToDecimal(amount), purpose, Convert.ToInt32(wf_id), Convert.ToInt32(status), Convert.ToInt32(exp_id), Convert.ToInt32(fap), wbs, pld, curr, travType, classification, CTComp_ID, CTDept_ID);
+            return rfp.UpdateRFPMain(Convert.ToInt32(Comp_ID), Convert.ToInt32(Dept_ID), Convert.ToInt32(Paymethod), Convert.ToInt32(tranType), isTrav, costCenter, io, payee, lastDay, Convert.ToDecimal(amount), purpose, Convert.ToInt32(wf_id), Convert.ToInt32(status), Convert.ToInt32(exp_id), Convert.ToInt32(fap), wbs, pld, curr, travType, classification, CTComp_ID, CTDept_ID, compLoc);
         }
 
-        public int UpdateRFPMain(int Comp_ID, int Dept_ID, int Paymethod, int tranType, bool isTrav, string costCenter, string io, string payee, string lastDay, decimal amount, string purpose, int wf_id, int status, int exp_id, int fap, string wbs, string pld, string curr, string travType, string classification, string CTComp_ID, string CTDept_ID)
+        public int UpdateRFPMain(int Comp_ID, int Dept_ID, int Paymethod, int tranType, bool isTrav, string costCenter, string io, string payee, string lastDay, decimal amount, string purpose, int wf_id, int status, int exp_id, int fap, string wbs, string pld, string curr, string travType, string classification, string CTComp_ID, string CTDept_ID, string compLoc)
         {
             var rfp_main = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == Convert.ToInt32(Session["EditRFPID"])).FirstOrDefault();
             
             if (rfp_main != null)
             {
                 rfp_main.Company_ID = Comp_ID;
+                rfp_main.Comp_Location_Id = Convert.ToInt32(compLoc);
                 rfp_main.Department_ID = Dept_ID;
                 rfp_main.PayMethod = Paymethod;
                 rfp_main.TranType = tranType;
@@ -346,7 +348,7 @@ namespace DX_WebTemplate
 
         protected void drpdwn_FAPWF_Callback(object sender, DevExpress.Web.CallbackEventArgsBase e)
         {
-            var comp_id = drpdown_Company.Value != null ? drpdown_Company.Value : 0;
+            var comp_id = drpdown_CTCompany.Value != null ? drpdown_CTCompany.Value : 0;
             var amount = spinEdit_Amount.Value != null ? spinEdit_Amount.Value : "0.00";
             var classTypeId = drpdown_classification.Value != null ? drpdown_classification.Value : 0;
             var classType = _DataContext.ACCEDE_S_ExpenseClassifications.Where(x => x.ID == Convert.ToInt32(classTypeId)).FirstOrDefault();
@@ -657,6 +659,18 @@ namespace DX_WebTemplate
             {
                 drpdown_CTDepartment.SelectedIndex = 0;
             }
+        }
+
+        protected void drpdown_CompLocation_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var comp_id = e.Parameter.ToString();
+
+            SqlCompLocation.SelectParameters["Comp_Id"].DefaultValue = comp_id;
+            SqlCompLocation.DataBind();
+
+            drpdown_CompLocation.DataSourceID = null;
+            drpdown_CompLocation.DataSource = SqlCompLocation;
+            drpdown_CompLocation.DataBind();
         }
     }
 }

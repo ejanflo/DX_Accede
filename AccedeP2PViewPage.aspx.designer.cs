@@ -87,6 +87,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox txt_CreatorName;
 
         /// <summary>
+        /// txt_CTCompany control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox txt_CTCompany;
+
+        /// <summary>
         /// drpdown_CTComp control.
         /// </summary>
         /// <remarks>
@@ -94,6 +103,15 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxComboBox drpdown_CTComp;
+
+        /// <summary>
+        /// txt_CompLocation control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox txt_CompLocation;
 
         /// <summary>
         /// drpdown_CTDepartment control.
@@ -319,6 +337,24 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.GridViewCommandColumnCustomButton btnDownloadFile;
+
+        /// <summary>
+        /// txt_ExpCat0 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox txt_ExpCat0;
+
+        /// <summary>
+        /// txt_ExpCat1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox txt_ExpCat1;
 
         /// <summary>
         /// txt_WF control.

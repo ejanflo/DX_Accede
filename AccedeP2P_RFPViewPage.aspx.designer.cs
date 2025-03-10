@@ -87,6 +87,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxButton btnCancel;
 
         /// <summary>
+        /// txt_CTCompany control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox txt_CTCompany;
+
+        /// <summary>
         /// edit_Company control.
         /// </summary>
         /// <remarks>
@@ -94,6 +103,15 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxComboBox edit_Company;
+
+        /// <summary>
+        /// txt_CompLoc control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox txt_CompLoc;
 
         /// <summary>
         /// edit_PayMethod control.

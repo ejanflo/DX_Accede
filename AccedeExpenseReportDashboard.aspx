@@ -63,16 +63,17 @@
             var expName = drpdown_EmpId.GetValue();
             var expDate = date_expDate.GetValue();
             var payType = drpdown_PayType.GetValue();
-            var Comp = drpdown_Comp.GetValue();
+            var Comp = drpdown_Comp.GetValue() != null ? drpdown_Comp.GetValue() : "";
             var CostCenter = txtbox_CostCenter.GetValue() != null ? txtbox_CostCenter.GetValue() : "";
             var expCat = drpdown_expCat.GetValue();
             var Purpose = memo_Purpose.GetValue();
             var isTrav = rdButton_Trav.GetValue();
             var currency = txt_Currency.GetValue();
-            var department = drpdown_Department.GetValue();
+            var department = drpdown_Department.GetValue() != null ? drpdown_Department.GetValue() : "";
             var classification = drpdown_classification.GetValue();
             var CTComp_id = drpdown_CTComp.GetValue();
             var CTDept_id = drpdown_CTDepartment.GetValue();
+            var CompLoc = drpdown_CompLocation.GetValue();
 
             console.log(payType);
 
@@ -94,7 +95,8 @@
                     payType: payType,
                     classification: classification,
                     CTComp_id: CTComp_id,
-                    CTDept_id: CTDept_id
+                    CTDept_id: CTDept_id,
+                    CompLoc: CompLoc
                 }),
                 success: function (response) {
                     // Update the description text box with the response value
@@ -435,7 +437,7 @@
                                                             </Image>
                                                             <Styles>
                                                                 <Style BackColor="#006DD6" Font-Bold="True" Font-Italic="False" Font-Size="Smaller" ForeColor="White">
-                                                                    <Paddings PaddingBottom="4px" PaddingLeft="8px" PaddingRight="8px" PaddingTop="4px" />
+                                                                    <Paddings PaddingBottom="4px" PaddingLeft="8px" PaddingRight="11px" PaddingTop="4px" />
                                                                 </Style>
                                                             </Styles>
                                                         </dx:GridViewCommandColumnCustomButton>
@@ -452,7 +454,7 @@
                                                     <CellStyle HorizontalAlign="Left">
                                                     </CellStyle>
                                                 </dx:GridViewCommandColumn>
-                                                <dx:GridViewDataComboBoxColumn Caption="Company" FieldName="CompanyId" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                <dx:GridViewDataComboBoxColumn Caption="Company" FieldName="ExpChargedTo_CompanyId" ShowInCustomizationForm="True" VisibleIndex="5">
                                                     <PropertiesComboBox DataSourceID="sqlCompany" TextField="CompanyShortName" ValueField="WASSId">
                                                     </PropertiesComboBox>
                                                 </dx:GridViewDataComboBoxColumn>
@@ -542,6 +544,7 @@
 drpdown_Department.PerformCallback(s.GetValue());
 OnCompanyChanged(s.GetValue());
 drpdown_Comp.SetValue(s.GetValue());
+drpdown_CompLocation.PerformCallback(s.GetValue());
 }" />
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreateForm">
                                                 <RequiredField ErrorText="Required field." IsRequired="True" />
@@ -564,14 +567,20 @@ drpdown_Comp.SetValue(s.GetValue());
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
                             </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Report Date" ColSpan="1">
+                            <dx:LayoutItem Caption="Location" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxDateEdit ID="date_expDate" runat="server" Width="100%" ClientInstanceName="date_expDate">
+                                        <dx:ASPxComboBox ID="drpdown_CompLocation" runat="server" ClientInstanceName="drpdown_CompLocation" DataSourceID="SqlCompLocation" OnCallback="drpdown_CompLocation_Callback" TextField="Name" ValueField="ID" Width="100%">
+                                            <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	drpdown_CTDepartment.PerformCallback(s.GetValue());
+drpdown_Department.PerformCallback(s.GetValue());
+OnCompanyChanged(s.GetValue());
+drpdown_Comp.SetValue(s.GetValue());
+}" />
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreateForm">
                                                 <RequiredField ErrorText="Required field." IsRequired="True" />
                                             </ValidationSettings>
-                                        </dx:ASPxDateEdit>
+                                        </dx:ASPxComboBox>
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
                             </dx:LayoutItem>
@@ -595,14 +604,14 @@ drpdown_Comp.SetValue(s.GetValue());
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
                             </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Transaction Type" ColSpan="1">
+                            <dx:LayoutItem Caption="Report Date" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="drpdown_PayType" runat="server" Width="100%" DataSourceID="sqlExpenseType" TextField="Description" ValueField="ExpenseType_ID" ClientInstanceName="drpdown_PayType">
+                                        <dx:ASPxDateEdit ID="date_expDate" runat="server" Width="100%" ClientInstanceName="date_expDate">
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreateForm">
                                                 <RequiredField ErrorText="Required field." IsRequired="True" />
                                             </ValidationSettings>
-                                        </dx:ASPxComboBox>
+                                        </dx:ASPxDateEdit>
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
                             </dx:LayoutItem>
@@ -617,10 +626,10 @@ drpdown_Comp.SetValue(s.GetValue());
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
                             </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Expense Category" ColSpan="1">
+                            <dx:LayoutItem Caption="Transaction Type" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="drpdown_expCat" runat="server" Width="100%" DataSourceID="SqlExpCat" TextField="Description" ValueField="ID" ClientInstanceName="drpdown_expCat">
+                                        <dx:ASPxComboBox ID="drpdown_PayType" runat="server" Width="100%" DataSourceID="sqlExpenseType" TextField="Description" ValueField="ExpenseType_ID" ClientInstanceName="drpdown_PayType">
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreateForm">
                                                 <RequiredField ErrorText="Required field." IsRequired="True" />
                                             </ValidationSettings>
@@ -636,6 +645,19 @@ drpdown_Comp.SetValue(s.GetValue());
                                         <dx:ASPxComboBox ID="txt_Currency" runat="server" Width="100%" ClientInstanceName="txt_Currency" DataSourceID="SqlCurrency" TextField="CurrDescription" ValueField="CurrDescription" SelectedIndex="0">
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" ValidationGroup="CreateForm">
                                                 <RequiredField ErrorText="This field is required." IsRequired="True" />
+                                            </ValidationSettings>
+                                        </dx:ASPxComboBox>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                            </dx:LayoutItem>
+
+
+                            <dx:LayoutItem Caption="Expense Category" ColSpan="1">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxComboBox ID="drpdown_expCat" runat="server" Width="100%" DataSourceID="SqlExpCat" TextField="Description" ValueField="ID" ClientInstanceName="drpdown_expCat">
+                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreateForm">
+                                                <RequiredField ErrorText="Required field." IsRequired="True" />
                                             </ValidationSettings>
                                         </dx:ASPxComboBox>
                                     </dx:LayoutItemNestedControlContainer>
@@ -693,7 +715,7 @@ drpdown_Comp.SetValue(s.GetValue());
                             </dx:LayoutItem>
 
 
-                            <dx:LayoutGroup Caption="Workflow" ColCount="2" ColSpan="2" ColumnCount="2" ColumnSpan="2" Width="100%">
+                            <dx:LayoutGroup Caption="Workflow" ColCount="2" ColSpan="2" ColumnCount="2" ColumnSpan="2" Width="100%" ClientVisible="False">
                                 <Items>
                                     <dx:LayoutItem Caption="Company" ColSpan="1">
                                         <LayoutItemNestedControlCollection>
@@ -874,4 +896,9 @@ drpdown_Comp.SetValue(s.GetValue());
             <asp:Parameter Name="DepartmentId" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlCompLocation" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_CompanyBranch] WHERE ([Comp_Id] = @Comp_Id)">
+        <SelectParameters>
+            <asp:Parameter Name="Comp_Id" Type="Int32" />
+        </SelectParameters>
+</asp:SqlDataSource>
 </asp:Content>

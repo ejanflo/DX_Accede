@@ -120,7 +120,7 @@ namespace DX_WebTemplate
                 var returnP2PStats = context.ITP_S_Status.Where(x => x.STS_Name == "Returned by P2P").FirstOrDefault();
 
                 //Check if the status is "saved" and make the button visible accordingly
-                if (statusValue != null && (statusValue.ToString() == "13" || statusValue.ToString() == "3" || statusValue.ToString() == returned_audit.STS_Id.ToString() || statusValue.ToString() == returnP2PStats.STS_Id.ToString()))
+                if (statusValue != null && (statusValue.ToString() == "15" || statusValue.ToString() == "13" || statusValue.ToString() == "3" || statusValue.ToString() == returned_audit.STS_Id.ToString() || statusValue.ToString() == returnP2PStats.STS_Id.ToString()))
                     e.Visible = DevExpress.Utils.DefaultBoolean.True;
                 else
                     e.Visible = DevExpress.Utils.DefaultBoolean.False;
@@ -181,14 +181,14 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static bool AddExpenseReportAJAX(string expName, string expDate, string Comp, string CostCenter, string expCat, string Purpose, bool isTrav, string currency, string department, string payType, string classification, string CTComp_id, string CTDept_id)
+        public static bool AddExpenseReportAJAX(string expName, string expDate, string Comp, string CostCenter, string expCat, string Purpose, bool isTrav, string currency, string department, string payType, string classification, string CTComp_id, string CTDept_id, string CompLoc)
         {
             Accede_Expense_Report accede = new Accede_Expense_Report();
             
-            return accede.AddExpenseReport(expName, expDate, Comp, CostCenter, expCat, Purpose, isTrav, currency, department, payType, classification, CTComp_id, CTDept_id); 
+            return accede.AddExpenseReport(expName, expDate, Comp, CostCenter, expCat, Purpose, isTrav, currency, department, payType, classification, CTComp_id, CTDept_id, CompLoc); 
         }
 
-        public bool AddExpenseReport(string expName, string expDate, string Comp, string CostCenter, string expCat, string Purpose, bool isTrav, string currency, string department, string payType, string classification, string CTComp_id, string CTDept_id)
+        public bool AddExpenseReport(string expName, string expDate, string Comp, string CostCenter, string expCat, string Purpose, bool isTrav, string currency, string department, string payType, string classification, string CTComp_id, string CTDept_id, string CompLoc)
         {
             var expDoctype = context.ITP_S_DocumentTypes.Where(x=>x.DCT_Name == "ACDE Expense").FirstOrDefault();
             try
@@ -202,7 +202,11 @@ namespace DX_WebTemplate
                     main.ExpenseName = expName;
                     main.ReportDate = Convert.ToDateTime(expDate);
                     main.ExpenseType_ID = Convert.ToInt32(payType);
-                    main.CompanyId = Convert.ToInt32(Comp);
+                    if(Comp != "")
+                    {
+                        main.CompanyId = Convert.ToInt32(Comp);
+                    }
+                    
                     if(CostCenter != "")
                     {
                         main.CostCenter = CostCenter;
@@ -215,10 +219,14 @@ namespace DX_WebTemplate
                     main.DateCreated = DateTime.Now;
                     main.isTravel = isTrav;
                     main.Exp_Currency = currency;
-                    main.Dept_Id = Convert.ToInt32(department);
+                    if(department != "")
+                    {
+                        main.Dept_Id = Convert.ToInt32(department);
+                    }
                     main.ExpenseClassification = Convert.ToInt32(classification);
                     main.ExpChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
                     main.ExpChargedTo_DeptId = Convert.ToInt32(CTDept_id);
+                    main.ExpComp_Location_Id = Convert.ToInt32(CompLoc);
                 }
                 context.ACCEDE_T_ExpenseMains.InsertOnSubmit(main);
                 context.SubmitChanges();
@@ -373,6 +381,18 @@ namespace DX_WebTemplate
             {
                 drpdown_CTDepartment.SelectedIndex = 0;
             }
+        }
+
+        protected void drpdown_CompLocation_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var comp_id = e.Parameter.ToString();
+
+            SqlCompLocation.SelectParameters["Comp_Id"].DefaultValue = comp_id;
+            SqlCompLocation.DataBind();
+
+            drpdown_CompLocation.DataSourceID = null;
+            drpdown_CompLocation.DataSource = SqlCompLocation;
+            drpdown_CompLocation.DataBind();
         }
     }
 }

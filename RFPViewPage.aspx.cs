@@ -759,7 +759,7 @@ namespace DX_WebTemplate
                         date_created = item.DateCreated.ToString();
                         document_purpose = item.Purpose;
 
-                        approver_id = _DataContext.ITP_S_SecurityUserOrgRoles.Where(x => x.Id == approver_org_id).FirstOrDefault().UserId;
+                        approver_id = _DataContext.ITP_S_SecurityUserOrgRoles.Where(x => x.OrgRoleId == approver_org_id).FirstOrDefault().UserId;
                         creator_fullname = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == item.User_ID).FirstOrDefault().FullName;
                         creator_email = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == item.User_ID).FirstOrDefault().Email;
 

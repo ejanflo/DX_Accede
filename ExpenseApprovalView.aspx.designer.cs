@@ -114,6 +114,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox drpdown_CTComp;
 
         /// <summary>
+        /// txt_CompLocation control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox txt_CompLocation;
+
+        /// <summary>
         /// txt_CTDepartment control.
         /// </summary>
         /// <remarks>

@@ -12,6 +12,7 @@ using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using static DX_WebTemplate.AccedeExpenseReportEdit1;
+using static DX_WebTemplate.TravelExpenseAdd;
 
 namespace DX_WebTemplate
 {
@@ -45,7 +46,10 @@ namespace DX_WebTemplate
                     //End ------------------ Page Security
 
                     //var wfDetails = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == Convert.ToInt32(Session["PassActID"])).FirstOrDefault();
-                    var exp_details = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpId_audit"])).FirstOrDefault();
+                    var exp_details = _DataContext.ACCEDE_T_ExpenseMains
+                        .Where(x => x.ID == Convert.ToInt32(Session["ExpId_audit"]))
+                        .FirstOrDefault();
+
                     //Session["ExpId_audit"] = wfDetails.Document_Id;
                     sqlMain.SelectParameters["ID"].DefaultValue = exp_details.ID.ToString();
                     SqlDocs.SelectParameters["Doc_ID"].DefaultValue = exp_details.ID.ToString();
@@ -58,7 +62,11 @@ namespace DX_WebTemplate
 
                     SqlWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp_details.WF_Id).ToString();
                     SqlFAPWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp_details.FAPWF_Id).ToString();
-                    var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense").Where(x => x.App_Id == 1032).FirstOrDefault();
+                    var app_docType = _DataContext.ITP_S_DocumentTypes
+                        .Where(x => x.DCT_Name == "ACDE Expense")
+                        .Where(x => x.App_Id == 1032)
+                        .FirstOrDefault();
+
                     SqlDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType != null ? app_docType.DCT_Id.ToString() : "";
                     var myLayoutGroup = FormExpApprovalView.FindItemOrGroupByName("ExpTitle") as LayoutGroup;
 
@@ -67,7 +75,11 @@ namespace DX_WebTemplate
                         myLayoutGroup.Caption = exp_details.DocNo.ToString() + " (View)";
                     }
 
-                    var RFPCA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(exp_details.ID)).Where(x => x.IsExpenseCA == true);
+                    var RFPCA = _DataContext.ACCEDE_T_RFPMains
+                        .Where(x => x.Exp_ID == Convert.ToInt32(exp_details.ID))
+                        .Where(x => x.IsExpenseCA == true)
+                        .Where(x => x.isTravel != true);
+
                     decimal totalCA = 0;
                     foreach (var item in RFPCA)
                     {
@@ -75,7 +87,9 @@ namespace DX_WebTemplate
                     }
                     caTotal.Text = totalCA.ToString("#,##0.00") + "  PHP ";
 
-                    var ExpDetails = _DataContext.ACCEDE_T_ExpenseDetails.Where(x => x.ExpenseMain_ID == Convert.ToInt32(exp_details.ID));
+                    var ExpDetails = _DataContext.ACCEDE_T_ExpenseDetails
+                        .Where(x => x.ExpenseMain_ID == Convert.ToInt32(exp_details.ID));
+
                     decimal totalExp = 0;
                     foreach (var item in ExpDetails)
                     {
@@ -125,6 +139,15 @@ namespace DX_WebTemplate
 
                         }
                     }
+                    //END APPROVER FORWARD WF
+
+                    //LAST APPROVER DETAILS
+                    var lastActDetails = _DataContext.ITP_S_WorkflowHeaders
+                        .Where(x=>x.WF_Id == exp_details.FAPWF_Id)
+                        .FirstOrDefault();
+
+                    txt_FinanceWF.Value = lastActDetails.Name;
+                    //END LAST APPROVER DETAILS
 
                 }
                 else
@@ -150,7 +173,10 @@ namespace DX_WebTemplate
 
         protected void WFSequenceGrid_CustomCallback(object sender, DevExpress.Web.ASPxGridViewCustomCallbackEventArgs e)
         {
-            var expDetail = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpId_audit"])).FirstOrDefault();
+            var expDetail = _DataContext.ACCEDE_T_ExpenseMains
+                .Where(x => x.ID == Convert.ToInt32(Session["ExpId_audit"]))
+                .FirstOrDefault();
+
             SqlWFSequence.SelectParameters["WF_Id"].DefaultValue = expDetail.WF_Id.ToString();
             SqlWFSequence.DataBind();
 
@@ -162,7 +188,10 @@ namespace DX_WebTemplate
 
         protected void FAPWFGrid_CustomCallback(object sender, DevExpress.Web.ASPxGridViewCustomCallbackEventArgs e)
         {
-            var expDetail = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpId_audit"])).FirstOrDefault();
+            var expDetail = _DataContext.ACCEDE_T_ExpenseMains
+                .Where(x => x.ID == Convert.ToInt32(Session["ExpId_audit"]))
+                .FirstOrDefault();
+
             SqlFAPWFSequence.SelectParameters["WF_Id"].DefaultValue = expDetail.FAPWF_Id.ToString();
             SqlFAPWFSequence.DataBind();
 
@@ -182,19 +211,41 @@ namespace DX_WebTemplate
         {
             try
             {
-                var exp_main = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpId_audit"])).FirstOrDefault();
+                var exp_main = _DataContext.ACCEDE_T_ExpenseMains
+                    .Where(x => x.ID == Convert.ToInt32(Session["ExpId_audit"]))
+                    .FirstOrDefault();
 
-                var rfp_main_reimburse = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == exp_main.ID)
-                    .Where(x => x.IsExpenseReim == true).FirstOrDefault();
-                var rfp_main_CA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpId_audit"])).Where(x => x.IsExpenseCA == true);
-                var liquidated_status = _DataContext.ITP_S_Status.Where(x=>x.STS_Name == "Liquidated").FirstOrDefault();
+                var rfp_main_reimburse = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.Exp_ID == exp_main.ID)
+                    .Where(x => x.IsExpenseReim == true)
+                    .Where(x => x.isTravel != true)
+                    .FirstOrDefault();
+
+                var rfp_main_CA = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpId_audit"]))
+                    .Where(x => x.IsExpenseCA == true)
+                    .Where(x => x.isTravel != true);
+
+                var liquidated_status = _DataContext.ITP_S_Status
+                    .Where(x=>x.STS_Name == "Liquidated")
+                    .FirstOrDefault();
+
                 if (rfp_main_reimburse != null)
                 {
-                    var payMethodDesc = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == rfp_main_reimburse.PayMethod).FirstOrDefault();
-                    var tranTypeDesc = _DataContext.ACCEDE_S_RFPTranTypes.Where(x => x.ID == rfp_main_reimburse.TranType).FirstOrDefault();
+                    var payMethodDesc = _DataContext.ACCEDE_S_PayMethods
+                        .Where(x => x.ID == rfp_main_reimburse.PayMethod)
+                        .FirstOrDefault();
+
+                    var tranTypeDesc = _DataContext.ACCEDE_S_RFPTranTypes
+                        .Where(x => x.ID == rfp_main_reimburse.TranType)
+                        .FirstOrDefault();
+
                     if (payMethodDesc.PMethod_desc == "Check")
                     {
-                        var P2PStatus = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Pending at P2P").FirstOrDefault();
+                        var P2PStatus = _DataContext.ITP_S_Status
+                            .Where(x => x.STS_Name == "Pending at P2P")
+                            .FirstOrDefault();
+
                         rfp_main_reimburse.Status = P2PStatus.STS_Id;
                         exp_main.Status = P2PStatus.STS_Id;
                         foreach(var item in rfp_main_CA)
@@ -204,27 +255,34 @@ namespace DX_WebTemplate
                     }
                     else
                     {
-                        var Cash_status = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Pending at Cashier").FirstOrDefault();
+                        var Cash_status = _DataContext.ITP_S_Status
+                            .Where(x => x.STS_Name == "Pending at Cashier")
+                            .FirstOrDefault();
+
                         rfp_main_reimburse.Status = Cash_status.STS_Id;
                         exp_main.Status = Cash_status.STS_Id;
                         foreach (var item in rfp_main_CA)
                         {
                             item.Status = liquidated_status.STS_Id;
                         }
-                        var creator_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == rfp_main_reimburse.User_ID)
-                                          .FirstOrDefault();
+                        var creator_detail = _DataContext.ITP_S_UserMasters
+                            .Where(x => x.EmpCode == rfp_main_reimburse.User_ID)
+                            .FirstOrDefault();
 
-                        var sender_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Session["UserID"].ToString())
-                                  .FirstOrDefault();
+                        var sender_detail = _DataContext.ITP_S_UserMasters
+                            .Where(x => x.EmpCode == Session["UserID"].ToString())
+                            .FirstOrDefault();
 
                         RFPApprovalView rfp = new RFPApprovalView();
-                        rfp.SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(rfp_main_reimburse.Company_ID), sender_detail.FullName, sender_detail.Email, rfp_main_reimburse.RFP_DocNum, rfp_main_reimburse.DateCreated.ToString(), rfp_main_reimburse.Purpose, approve_remarks, "Approve", payMethodDesc.PMethod_name, tranTypeDesc.RFPTranType_Name);
+                        rfp.SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(rfp_main_reimburse.ChargedTo_CompanyId), sender_detail.FullName, sender_detail.Email, rfp_main_reimburse.RFP_DocNum, rfp_main_reimburse.DateCreated.ToString(), rfp_main_reimburse.Purpose, approve_remarks, "Approve", payMethodDesc.PMethod_name, tranTypeDesc.RFPTranType_Name);
 
                     }
                 }
                 else
                 {
-                    var P2PStatus = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Pending at P2P").FirstOrDefault();
+                    var P2PStatus = _DataContext.ITP_S_Status
+                        .Where(x => x.STS_Name == "Pending at P2P")
+                        .FirstOrDefault();
                     
                     exp_main.Status = P2PStatus.STS_Id;
                     foreach (var item in rfp_main_CA)
@@ -233,15 +291,24 @@ namespace DX_WebTemplate
                     }
                 }
 
-                var wfID = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == exp_main.CompanyId)
+                var wfID = _DataContext.ITP_S_WorkflowHeaders
+                    .Where(x => x.Company_Id == exp_main.ExpChargedTo_CompanyId)
                     .Where(x => x.Name == "ACDE AUDIT")
                     .FirstOrDefault();
 
                 if(wfID != null)
                 {
-                    var expDocType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense" || x.DCT_Description == "Accede Expense").Select(x => x.DCT_Id).FirstOrDefault();
-                    var returned_audit = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Returned by Audit").FirstOrDefault();
-                    var activityReturned = _DataContext.ITP_T_WorkflowActivities.Where(x => x.AppId == 1032)
+                    var expDocType = _DataContext.ITP_S_DocumentTypes
+                        .Where(x => x.DCT_Name == "ACDE Expense" || x.DCT_Description == "Accede Expense")
+                        .Select(x => x.DCT_Id)
+                        .FirstOrDefault();
+
+                    var returned_audit = _DataContext.ITP_S_Status
+                        .Where(x => x.STS_Name == "Returned by Audit")
+                        .FirstOrDefault();
+
+                    var activityReturned = _DataContext.ITP_T_WorkflowActivities
+                        .Where(x => x.AppId == 1032)
                         .Where(x => x.AppDocTypeId == expDocType)
                         .Where(x => x.Document_Id == Convert.ToInt32(Session["ExpId_audit"]))
                         .Where(x=>x.Status == returned_audit.STS_Id)
@@ -278,8 +345,9 @@ namespace DX_WebTemplate
                             OrgRole_Id = orID,
                             Document_Id = Convert.ToInt32(Session["ExpId_audit"]),
                             AppId = 1032,
+                            Remarks = Session["AuthUser"].ToString() + ": " + approve_remarks + ";",
                             ActedBy_User_Id = Session["userID"].ToString(),
-                            CompanyId = Convert.ToInt32(exp_main.CompanyId),
+                            CompanyId = Convert.ToInt32(exp_main.ExpChargedTo_CompanyId),
                             AppDocTypeId = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense" || x.DCT_Description == "Accede Expense").Select(x => x.DCT_Id).FirstOrDefault(),
                             IsActive = true,
                         };
@@ -315,19 +383,31 @@ namespace DX_WebTemplate
         {
             try
             {
-                var exp_main = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpId_audit"])).FirstOrDefault();
+                var exp_main = _DataContext.ACCEDE_T_ExpenseMains
+                    .Where(x => x.ID == Convert.ToInt32(Session["ExpId_audit"]))
+                    .FirstOrDefault();
                 
                 //var payMethod = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == rfp_main.PayMethod).FirstOrDefault();
-                var tranType = _DataContext.ACCEDE_S_ExpenseTypes.Where(x => x.ExpenseType_ID == exp_main.ExpenseType_ID).FirstOrDefault();
+                var tranType = _DataContext.ACCEDE_S_ExpenseTypes
+                    .Where(x => x.ExpenseType_ID == exp_main.ExpenseType_ID)
+                    .FirstOrDefault();
 
-                var returned_audit = _DataContext.ITP_S_Status.Where(x=>x.STS_Name == "Returned by Audit").FirstOrDefault();
+                var returned_audit = _DataContext.ITP_S_Status
+                    .Where(x=>x.STS_Name == "Returned by Audit")
+                    .FirstOrDefault();
+
                 if(returned_audit != null) 
                 {
                     exp_main.Status = returned_audit.STS_Id;
                 }
 
-                var expDocType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense" || x.DCT_Description == "Accede Expense").Select(x => x.DCT_Id).FirstOrDefault();
-                var activityReturned = _DataContext.ITP_T_WorkflowActivities.Where(x => x.AppId == 1032)
+                var expDocType = _DataContext.ITP_S_DocumentTypes
+                    .Where(x => x.DCT_Name == "ACDE Expense" || x.DCT_Description == "Accede Expense")
+                    .Select(x => x.DCT_Id)
+                    .FirstOrDefault();
+
+                var activityReturned = _DataContext.ITP_T_WorkflowActivities
+                    .Where(x => x.AppId == 1032)
                     .Where(x => x.AppDocTypeId == expDocType)
                     .Where(x => x.Document_Id == Convert.ToInt32(Session["ExpId_audit"]))
                     .Where(x => x.Status == returned_audit.STS_Id)
@@ -340,9 +420,10 @@ namespace DX_WebTemplate
                 }
                 else
                 {
-                    var wfID = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == exp_main.CompanyId)
-                    .Where(x => x.Name == "ACDE AUDIT")
-                    .FirstOrDefault();
+                    var wfID = _DataContext.ITP_S_WorkflowHeaders
+                        .Where(x => x.Company_Id == exp_main.ExpChargedTo_CompanyId)
+                        .Where(x => x.Name == "ACDE AUDIT")
+                        .FirstOrDefault();
 
                     // GET WORKFLOW DETAILS ID
                     var wfDetails = from wfd in _DataContext.ITP_S_WorkflowDetails
@@ -368,22 +449,25 @@ namespace DX_WebTemplate
                         OrgRole_Id = orID,
                         Document_Id = Convert.ToInt32(Session["ExpId_audit"]),
                         AppId = 1032,
+                        Remarks = Session["AuthUser"].ToString() + ": " + remarks + ";",
                         ActedBy_User_Id = Session["userID"].ToString(),
-                        CompanyId = Convert.ToInt32(exp_main.CompanyId),
+                        CompanyId = Convert.ToInt32(exp_main.ExpChargedTo_CompanyId),
                         AppDocTypeId = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense" || x.DCT_Description == "Accede Expense").Select(x => x.DCT_Id).FirstOrDefault(),
                         IsActive = true,
                     };
                     _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(wfa);
 
-                    var creator_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == exp_main.UserId)
-                                                  .FirstOrDefault();
+                    var creator_detail = _DataContext.ITP_S_UserMasters
+                        .Where(x => x.EmpCode == exp_main.UserId)
+                        .FirstOrDefault();
 
-                    var sender_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Session["UserID"].ToString())
-                              .FirstOrDefault();
+                    var sender_detail = _DataContext.ITP_S_UserMasters
+                        .Where(x => x.EmpCode == Session["UserID"].ToString())
+                        .FirstOrDefault();
 
                     ExpenseApprovalView exp = new ExpenseApprovalView();
 
-                    exp.SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Return", "", tranType.Description);
+                    exp.SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(exp_main.ExpChargedTo_CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Return", "", tranType.Description);
                     _DataContext.SubmitChanges();
                 }
 
@@ -407,13 +491,22 @@ namespace DX_WebTemplate
 
         public ExpItemDetails DisplayExpDetails(int item_id)
         {
-            var expMain = _DataContext.vw_ACCEDE_I_ExpenseDetails.Where(x => x.ExpenseReportDetail_ID == item_id).FirstOrDefault();
+            var expMain = _DataContext.vw_ACCEDE_I_ExpenseDetails
+                .Where(x => x.ExpenseReportDetail_ID == item_id)
+                .FirstOrDefault();
+
             ExpItemDetails exp = new ExpItemDetails();
             if (expMain != null)
             {
-                var acct_charge = _DataContext.ACDE_T_MasterCodes.Where(x => x.ID == Convert.ToInt32(expMain.AccountToCharged)).FirstOrDefault();
+                var acct_charge = _DataContext.ACDE_T_MasterCodes
+                    .Where(x => x.ID == Convert.ToInt32(expMain.AccountToCharged))
+                    .FirstOrDefault();
+
                 //var cost_center = _DataContext.ACCEDE_S_CostCenters.Where(x=>x.CostCenter_ID == Convert.ToInt32(expMain.CostCenterIOWBS)).FirstOrDefault();
-                var cc = _DataContext.ACCEDE_S_CostCenters.Where(x => x.CostCenter == expMain.CostCenterIOWBS).FirstOrDefault();
+                var cc = _DataContext.ACCEDE_S_CostCenters
+                    .Where(x => x.CostCenter == expMain.CostCenterIOWBS)
+                    .FirstOrDefault();
+
                 DateTime dateAdd = Convert.ToDateTime(expMain.DateAdded);
 
                 exp.acctCharge = acct_charge != null ? acct_charge.Description : "";
@@ -462,6 +555,7 @@ namespace DX_WebTemplate
                     .Where(x => x.Exp_ID == ExpID)
                     .Where(x => x.Status != 4)
                     .Where(x => x.IsExpenseReim == true)
+                    .Where(x => x.isTravel != true)
                     .FirstOrDefault();
 
                 //Getting RFP doctype
@@ -487,13 +581,19 @@ namespace DX_WebTemplate
                     .FirstOrDefault(); 
 
                 //Getting the forward WF details (Sequence 1)
-                var fin_wfDetail_data = _DataContext.ITP_S_WorkflowDetails.Where(x => x.WF_Id == Convert.ToInt32(forwardWF)).Where(x => x.Sequence == 1).FirstOrDefault();
+                var fin_wfDetail_data = _DataContext.ITP_S_WorkflowDetails
+                    .Where(x => x.WF_Id == Convert.ToInt32(forwardWF))
+                    .Where(x => x.Sequence == 1).FirstOrDefault();
                     
                 var org_id = fin_wfDetail_data.OrgRole_Id;
                 var date2day = DateTime.Now;
 
                 //DELEGATE CHECK and change org_id if there are any delegation
-                foreach (var del in _DataContext.ITP_S_TaskDelegations.Where(x => x.OrgRole_ID_Orig == fin_wfDetail_data.OrgRole_Id).Where(x => x.DateFrom <= date2day).Where(x => x.DateTo >= date2day).Where(x => x.isActive == true))
+                foreach (var del in _DataContext.ITP_S_TaskDelegations
+                    .Where(x => x.OrgRole_ID_Orig == fin_wfDetail_data.OrgRole_Id)
+                    .Where(x => x.DateFrom <= date2day)
+                    .Where(x => x.DateTo >= date2day)
+                    .Where(x => x.isActive == true))
                 {
                     if (del != null)
                     {
@@ -502,8 +602,13 @@ namespace DX_WebTemplate
 
                 }
                 //Getting Paymethod and TranType
-                var payMethod = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == rfp_main.PayMethod).FirstOrDefault();
-                var tranType = _DataContext.ACCEDE_S_RFPTranTypes.Where(x => x.ID == rfp_main.TranType).FirstOrDefault();
+                var payMethod = _DataContext.ACCEDE_S_PayMethods
+                    .Where(x => x.ID == rfp_main.PayMethod)
+                    .FirstOrDefault();
+
+                var tranType = _DataContext.ACCEDE_S_RFPTranTypes
+                    .Where(x => x.ID == rfp_main.TranType)
+                    .FirstOrDefault();
 
                 if (rfp_main != null)
                 {
@@ -512,7 +617,7 @@ namespace DX_WebTemplate
                     {
                         new_activity.Status = 1;
                         new_activity.AppId = 1032;
-                        new_activity.CompanyId = rfp_main.Company_ID;
+                        new_activity.CompanyId = rfp_main.ChargedTo_CompanyId;
                         new_activity.Document_Id = rfp_main.ID;
                         new_activity.WF_Id = fin_wfDetail_data.WF_Id;
                         new_activity.DateAssigned = DateTime.Now;
@@ -531,7 +636,7 @@ namespace DX_WebTemplate
                 {
                     new_activity_exp.Status = 1;
                     new_activity_exp.AppId = 1032;
-                    new_activity_exp.CompanyId = exp_main.CompanyId;
+                    new_activity_exp.CompanyId = exp_main.ExpChargedTo_CompanyId;
                     new_activity_exp.Document_Id = exp_main.ID;
                     new_activity_exp.WF_Id = fin_wfDetail_data.WF_Id;
                     new_activity_exp.DateAssigned = DateTime.Now;
@@ -549,15 +654,17 @@ namespace DX_WebTemplate
                 //update expense main details
                 exp_main.Status = 1;
 
-                var creator_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == exp_main.UserId)
-                                                .FirstOrDefault();
+                var creator_detail = _DataContext.ITP_S_UserMasters
+                    .Where(x => x.EmpCode == exp_main.UserId)
+                    .FirstOrDefault();
 
-                var sender_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Session["UserID"].ToString())
-                            .FirstOrDefault();
+                var sender_detail = _DataContext.ITP_S_UserMasters
+                    .Where(x => x.EmpCode == Session["UserID"].ToString())
+                    .FirstOrDefault();
 
                 RFPApprovalView rfp = new RFPApprovalView();
 
-                rfp.SendEmailTo(Convert.ToInt32(rfp_main.ID), creator_detail.EmpCode, Convert.ToInt32(rfp_main.Company_ID), sender_detail.FullName, sender_detail.Email, rfp_main.RFP_DocNum, rfp_main.DateCreated.ToString(), rfp_main.Purpose, remarks, "Return", payMethod.PMethod_name, tranType.RFPTranType_Name);
+                rfp.SendEmailTo(Convert.ToInt32(rfp_main.ID), creator_detail.EmpCode, Convert.ToInt32(rfp_main.ChargedTo_CompanyId), sender_detail.FullName, sender_detail.Email, rfp_main.RFP_DocNum, rfp_main.DateCreated.ToString(), rfp_main.Purpose, remarks, "Return", payMethod.PMethod_name, tranType.RFPTranType_Name);
                 _DataContext.SubmitChanges();
 
                 return "success";
@@ -580,6 +687,136 @@ namespace DX_WebTemplate
             WFSequenceGrid0.DataSourceID = null;
             WFSequenceGrid0.DataSource = SqlWFSequenceForward;
             WFSequenceGrid0.DataBind();
+        }
+
+        //AJAX FUNCTION RETURNING DOCUMENT TO LAST APPROVER
+        [WebMethod]
+        public static string btnReturnAppClickAjax(string return_remarks)
+        {
+            AccedeAuditViewPage exp = new AccedeAuditViewPage();
+            return exp.btnReturnAppClick(return_remarks);
+        }
+
+        public string btnReturnAppClick(string return_remarks)
+        {
+            try
+            {
+                var doc_id = Convert.ToInt32(Session["ExpId_audit"]);
+                var exp_details = _DataContext.ACCEDE_T_ExpenseMains
+                    .Where(x => x.ID == doc_id)
+                    .FirstOrDefault();
+
+                var tranType = _DataContext.ACCEDE_S_ExpenseTypes
+                    .Where(x => x.ExpenseType_ID == exp_details.ExpenseType_ID)
+                    .FirstOrDefault();
+
+                var app_docType = _DataContext.ITP_S_DocumentTypes
+                    .Where(x => x.DCT_Name == "ACDE Expense")
+                    .Where(x => x.App_Id == 1032)
+                    .FirstOrDefault();
+
+                var lastActDetails = _DataContext.ITP_T_WorkflowActivities
+                    .Where(x => x.Document_Id == doc_id)
+                    .Where(x => x.AppDocTypeId == app_docType.DCT_Id)
+                    .Where(x => x.Status == 7)
+                    .OrderByDescending(x => x.WFA_Id)
+                    .FirstOrDefault();
+
+                var lastAppDetails = _DataContext.ITP_S_UserMasters
+                    .Where(x => x.EmpCode == lastActDetails.ActedBy_User_Id)
+                    .FirstOrDefault();
+
+                var returned_audit = _DataContext.ITP_S_Status
+                    .Where(x => x.STS_Name == "Returned by Audit")
+                    .FirstOrDefault();
+
+                var wfID = _DataContext.ITP_S_WorkflowHeaders
+                    .Where(x => x.Company_Id == exp_details.ExpChargedTo_CompanyId)
+                    .Where(x => x.Name == "ACDE AUDIT")
+                    .FirstOrDefault();
+
+                // GET WORKFLOW DETAILS ID FROM AUDIT WF
+                var wfDetails = from wfd in _DataContext.ITP_S_WorkflowDetails
+                                where wfd.WF_Id == wfID.WF_Id && wfd.Sequence == 1
+                                select wfd.WFD_Id;
+                int wfdID = wfDetails.FirstOrDefault();
+
+                // GET ORG ROLE ID FROM AUDIT WF
+                var orgRole = from or in _DataContext.ITP_S_WorkflowDetails
+                              where or.WF_Id == wfID.WF_Id && or.Sequence == 1
+                              select or.OrgRole_Id;
+                int orID = (int)orgRole.FirstOrDefault();
+
+                //INSERT RETURN EXPENSE STATUS TO ITP_T_WorkflowActivity
+                DateTime currentDate = DateTime.Now;
+                ITP_T_WorkflowActivity wfa = new ITP_T_WorkflowActivity()
+                {
+                    Status = returned_audit.STS_Id,
+                    DateAssigned = currentDate,
+                    DateAction = currentDate,
+                    WF_Id = wfID.WF_Id,
+                    WFD_Id = wfdID,
+                    OrgRole_Id = orID,
+                    Document_Id = doc_id,
+                    Remarks = Session["AuthUser"].ToString() + ": " + return_remarks + ";",
+                    AppId = 1032,
+                    ActedBy_User_Id = Session["userID"].ToString(),
+                    CompanyId = Convert.ToInt32(exp_details.ExpChargedTo_CompanyId),
+                    AppDocTypeId = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense" || x.DCT_Description == "Accede Expense").Select(x => x.DCT_Id).FirstOrDefault(),
+                    IsActive = true,
+                };
+                _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(wfa);
+                //END RETURN EXPENSE STATUS
+
+
+                // CHANGE WORKFLOW DETAILS ID FROM FAP WF
+                wfDetails = from wfd in _DataContext.ITP_S_WorkflowDetails
+                                where wfd.WF_Id == exp_details.FAPWF_Id && wfd.Sequence == 1
+                                select wfd.WFD_Id;
+                wfdID = wfDetails.FirstOrDefault();
+
+                // CHANGE ORG ROLE ID FROM FAP WF
+                orgRole = from or in _DataContext.ITP_S_WorkflowDetails
+                              where or.WF_Id == exp_details.FAPWF_Id && or.Sequence == 1
+                              select or.OrgRole_Id;
+                orID = (int)orgRole.FirstOrDefault();
+
+                //INSERT LAST APPROVER PENDING STATUS TO ITP_T_WorkflowActivity
+                ITP_T_WorkflowActivity wfa_pending = new ITP_T_WorkflowActivity()
+                {
+                    Status = 1,
+                    DateAssigned = currentDate,
+                    WF_Id = exp_details.FAPWF_Id,
+                    WFD_Id = wfdID,
+                    OrgRole_Id = orID,
+                    Document_Id = doc_id,
+                    AppId = 1032,
+                    CompanyId = Convert.ToInt32(exp_details.ExpChargedTo_CompanyId),
+                    AppDocTypeId = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense" || x.DCT_Description == "Accede Expense").Select(x => x.DCT_Id).FirstOrDefault(),
+                    IsActive = true,
+                };
+                _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(wfa_pending);
+                //END PENDING STATUS
+
+                exp_details.Status = 1;
+
+                var creator_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == exp_details.UserId)
+                                              .FirstOrDefault();
+
+                var sender_detail = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Session["UserID"].ToString())
+                          .FirstOrDefault();
+
+                ExpenseApprovalView exp = new ExpenseApprovalView();
+
+                exp.SendEmailTo(exp_details.ID, lastActDetails.ActedBy_User_Id, Convert.ToInt32(exp_details.ExpChargedTo_CompanyId), sender_detail.FullName, sender_detail.Email, exp_details.DocNo, exp_details.DateCreated.ToString(), exp_details.Purpose, return_remarks, "ReturnApprover", "", tranType.Description);
+                _DataContext.SubmitChanges();
+
+                return "success";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
         }
     }
     

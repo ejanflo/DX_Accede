@@ -62,6 +62,41 @@
             WFSequenceGrid0.PerformCallback(wf_id);
         }
 
+        function ReturnAppClick() {
+
+            LoadingPanel.Show();
+            var return_remarks = txt_returnApp_remarks.GetValue();
+            $.ajax({
+                type: "POST",
+                url: "AccedeAuditViewPage.aspx/btnReturnAppClickAjax",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({
+                    return_remarks: return_remarks
+                }),
+                success: function (response) {
+                    // Update the description text box with the response value
+                    var funcResult = response.d;
+                    LoadingPanel.Hide();
+
+                    if (funcResult == "success") {
+                        LoadingPanel.SetText('You returned this request. Redirecting&hellip;');
+                        LoadingPanel.Show();
+                        window.location.href = 'AccedeAuditInquiryPage.aspx';
+
+                    } else {
+                        //LoadingPanel.SetText('There is an error returning this request. Redirecting&hellip;');
+                        //LoadingPanel.Show();
+                        //window.location.href = 'ExpenseApprovalView.aspx';
+                        alert(funcResult);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                }
+            });
+        }
+
          function viewCADetailModal(item_id) {
             $.ajax({
                 type: "POST",
@@ -534,12 +569,14 @@
                 <Items>
 
 
-                    <dx:LayoutGroup Caption="Action Buttons" ColSpan="2" ColumnSpan="2" GroupBoxDecoration="None" HorizontalAlign="Right" Width="100%" ColCount="3" ColumnCount="3">
+                    <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2" Width="100%">
+                    </dx:EmptyLayoutItem>
+
+
+                    <dx:LayoutGroup Caption="Action Buttons" ColSpan="2" ColumnSpan="2" GroupBoxDecoration="None" HorizontalAlign="Right" Width="100%" ColCount="7" ColumnCount="7">
                         <Items>
 
-                            <dx:EmptyLayoutItem ColSpan="3" ColumnSpan="3" Width="100%">
-                            </dx:EmptyLayoutItem>
-                            <dx:LayoutItem Caption="" ColSpan="1" Width="20%">
+                            <dx:LayoutItem Caption="" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxButton ID="btnApprove" runat="server" BackColor="#006838" Text="Approve" AutoPostBack="False">
@@ -550,22 +587,22 @@
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
                             </dx:LayoutItem>
-                            <dx:LayoutItem Caption="" ColSpan="1" Name="AAF" Width="20%">
+                            <dx:LayoutItem Caption="" ColSpan="1" Name="AAF">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxButton ID="btn_AppForward" runat="server" AutoPostBack="False" BackColor="#006DD6" ClientInstanceName="btn_AppForward" Text="Approve and Forward">
+                                        <dx:ASPxButton ID="btn_AppForward" runat="server" AutoPostBack="False" BackColor="#E67C03" ClientInstanceName="btn_AppForward" Text="Return to Last Approver">
                                             <ClientSideEvents Click="function(s, e) {
-	if(ASPxClientEdit.ValidateGroup('RFPApproval')) ApproveForPopup.Show();
+	if(ASPxClientEdit.ValidateGroup('RFPApproval')) ReturnLastAppPopup.Show();
 }" />
-                                            <Border BorderColor="#006DD6" />
+                                            <Border BorderColor="#E67C03" />
                                         </dx:ASPxButton>
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
                             </dx:LayoutItem>
-                            <dx:LayoutItem Caption="" ColSpan="1" Width="20%">
+                            <dx:LayoutItem Caption="" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxButton ID="btnReturn" runat="server" BackColor="#E67C03" Text="Return" AutoPostBack="False">
+                                        <dx:ASPxButton ID="btnReturn" runat="server" BackColor="#E67C03" Text="Return to Creator" AutoPostBack="False">
                                             <ClientSideEvents Click="function(s, e) {
 	RejectPopup.Show();
 }" />
@@ -575,7 +612,7 @@
                                 </LayoutItemNestedControlCollection>
                             </dx:LayoutItem>
 
-                            <dx:LayoutItem Caption="" ColSpan="1" Width="20%" ClientVisible="False">
+                            <dx:LayoutItem Caption="" ColSpan="1" ClientVisible="False">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxButton ID="btnDisapprove" runat="server" BackColor="#CC2A17" Text="Disapprove" AutoPostBack="False">
@@ -588,7 +625,7 @@
                                 </LayoutItemNestedControlCollection>
                             </dx:LayoutItem>
 
-                            <dx:LayoutItem Caption="" ColSpan="1" Width="20%">
+                            <dx:LayoutItem Caption="" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxButton ID="btnCancel" runat="server" Text="Cancel" Theme="iOS" ClientInstanceName="btnCancel" AutoPostBack="False" EnableTheming="True" BackColor="White" Font-Bold="False" ForeColor="Gray">
@@ -666,6 +703,19 @@
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxTextBox ID="txt_CTCompany" runat="server" ClientInstanceName="txt_CTCompany" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
+                                                    <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                        <RequiredField ErrorText="*Required" />
+                                                    </ValidationSettings>
+                                                    <Border BorderStyle="None" />
+                                                    <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                </dx:ASPxTextBox>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                    </dx:LayoutItem>
+                                    <dx:LayoutItem Caption="Location" ColSpan="1" FieldName="CompLocation">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxTextBox ID="txt_CompLocation" runat="server" ClientInstanceName="txt_CompLocation" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
                                                     <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                         <RequiredField ErrorText="*Required" />
                                                     </ValidationSettings>
@@ -1160,7 +1210,7 @@
                         <Items>
                             <dx:LayoutGroup Caption="WORKFLOW" ColCount="2" ColSpan="1" ColumnCount="2">
                                 <Items>
-                                    <dx:LayoutItem Caption="Company" ColSpan="1" FieldName="CompanyShortName">
+                                    <dx:LayoutItem Caption="Workflow Company" ColSpan="1" FieldName="CompanyShortName">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxTextBox ID="txt_Comp" runat="server" ClientInstanceName="name" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
@@ -1174,7 +1224,7 @@
                                         </LayoutItemNestedControlCollection>
                                         <CaptionSettings HorizontalAlign="Right" />
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Department" ColSpan="1" FieldName="DepDesc">
+                                    <dx:LayoutItem Caption="Workflow Department" ColSpan="1" FieldName="DepDesc">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxTextBox ID="txt_Comp0" runat="server" ClientInstanceName="name" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
@@ -1586,6 +1636,92 @@ ReturnClick(); RejectPopup.Hide();
                                 <dx:ASPxButton ID="ASPxFormLayout1_E15" runat="server" Text="Cancel" AutoPostBack="False" BackColor="White" ForeColor="Gray">
                                     <ClientSideEvents Click="function(s, e) {
 	RejectPopup.Hide();
+}" />
+                                    <Border BorderColor="Gray" />
+                                </dx:ASPxButton>
+                            </dx:LayoutItemNestedControlContainer>
+                        </LayoutItemNestedControlCollection>
+                    </dx:LayoutItem>
+                </Items>
+            </dx:LayoutGroup>
+        </Items>
+    </dx:ASPxFormLayout>
+            </dx:PopupControlContentControl>
+</ContentCollection>
+    </dx:ASPxPopupControl>
+
+        <dx:ASPxPopupControl ID="ReturnLastAppPopup" runat="server" HeaderText="Return Document to Last Approver?" Modal="True" AllowDragging="True" AutoUpdatePosition="True" ClientInstanceName="ReturnLastAppPopup" CloseAction="CloseButton" CloseOnEscape="True" EnableViewState="False" PopupAnimationType="None" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter">
+        <SettingsAdaptivity Mode="Always" VerticalAlign="WindowCenter" />
+        <ContentCollection>
+<dx:PopupControlContentControl runat="server">
+    <dx:ASPxFormLayout ID="ASPxFormLayout2" runat="server">
+        <Items>
+            <dx:LayoutItem ColSpan="1" HorizontalAlign="Center" ShowCaption="False">
+                <LayoutItemNestedControlCollection>
+                    <dx:LayoutItemNestedControlContainer runat="server">
+                        <dx:ASPxImage ID="ASPxImage2" runat="server" Height="50px" ImageAlign="Middle" ImageUrl="~/Content/Images/warning.png" Width="50px">
+                        </dx:ASPxImage>
+                    </dx:LayoutItemNestedControlContainer>
+                </LayoutItemNestedControlCollection>
+            </dx:LayoutItem>
+            <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Center">
+                <LayoutItemNestedControlCollection>
+                    <dx:LayoutItemNestedControlContainer runat="server">
+                        <dx:ASPxLabel ID="ASPxLabel2" runat="server" Font-Size="Medium" Text="Are you sure you want to return this document to last approver?">
+                        </dx:ASPxLabel>
+                    </dx:LayoutItemNestedControlContainer>
+                </LayoutItemNestedControlCollection>
+            </dx:LayoutItem>
+            <dx:LayoutGroup Caption="" ColSpan="1" GroupBoxDecoration="None" HorizontalAlign="Center">
+                <Items>
+                    <dx:EmptyLayoutItem ColSpan="1" HorizontalAlign="Center">
+                    </dx:EmptyLayoutItem>
+                    <dx:LayoutItem Caption="Finance Workflow" ColSpan="1" HorizontalAlign="Center">
+                        <LayoutItemNestedControlCollection>
+                            <dx:LayoutItemNestedControlContainer runat="server">
+                                <dx:ASPxTextBox ID="txt_FinanceWF" runat="server" ClientInstanceName="txt_FinanceWF" Font-Bold="True" Font-Size="Small" Width="100%">
+                                    <Border BorderStyle="None" />
+                                </dx:ASPxTextBox>
+                            </dx:LayoutItemNestedControlContainer>
+                        </LayoutItemNestedControlCollection>
+                    </dx:LayoutItem>
+                    <dx:EmptyLayoutItem ColSpan="1" HorizontalAlign="Center">
+                    </dx:EmptyLayoutItem>
+                </Items>
+            </dx:LayoutGroup>
+            <dx:LayoutItem ColSpan="1" HorizontalAlign="Center" ShowCaption="False" Width="80%">
+                <LayoutItemNestedControlCollection>
+                    <dx:LayoutItemNestedControlContainer runat="server">
+                        <dx:ASPxMemo ID="txt_returnApp_remarks" runat="server" Caption="Remarks" ClientInstanceName="txt_returnApp_remarks" Width="100%">
+                            <ValidationSettings EnableCustomValidation="True" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="RejectGroup1">
+                                <RequiredField ErrorText="Remarks is required" IsRequired="True" />
+                            </ValidationSettings>
+                        </dx:ASPxMemo>
+                    </dx:LayoutItemNestedControlContainer>
+                </LayoutItemNestedControlCollection>
+            </dx:LayoutItem>
+            <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="HeadingLine">
+                <Items>
+                    <dx:LayoutItem Caption="" ColSpan="1">
+                        <LayoutItemNestedControlCollection>
+                            <dx:LayoutItemNestedControlContainer runat="server">
+                                <dx:ASPxButton ID="mdlBtnReject2" runat="server" Text="Confirm Return" BackColor="#E67C03" AutoPostBack="False">
+                                    <ClientSideEvents Click="function(s, e) {
+	if(ASPxClientEdit.ValidateGroup('RejectGroup1')){
+ReturnAppClick(); ReturnLastAppPopup.Hide();
+} 
+}" />
+                                    <Border BorderColor="#E67C03" />
+                                </dx:ASPxButton>
+                            </dx:LayoutItemNestedControlContainer>
+                        </LayoutItemNestedControlCollection>
+                    </dx:LayoutItem>
+                    <dx:LayoutItem Caption="" ColSpan="1">
+                        <LayoutItemNestedControlCollection>
+                            <dx:LayoutItemNestedControlContainer runat="server">
+                                <dx:ASPxButton ID="ASPxButton4" runat="server" Text="Cancel" AutoPostBack="False" BackColor="White" ForeColor="Gray">
+                                    <ClientSideEvents Click="function(s, e) {
+	ReturnLastAppPopup.Hide();
 }" />
                                     <Border BorderColor="Gray" />
                                 </dx:ASPxButton>

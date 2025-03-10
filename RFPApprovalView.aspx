@@ -791,6 +791,19 @@ drpdown_CostCenter.PerformCallback();
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
                                     </dx:LayoutItem>
+                                    <dx:LayoutItem Caption="Location" ColSpan="1" FieldName="CompLocation">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxTextBox ID="lbl_CompLoc" runat="server" ClientInstanceName="lbl_CompLoc" Font-Bold="True" ReadOnly="True" Width="100%">
+                                                    <Border BorderStyle="None" />
+                                                    <BorderLeft BorderStyle="None" />
+                                                    <BorderTop BorderStyle="None" />
+                                                    <BorderRight BorderStyle="None" />
+                                                    <BorderBottom BorderColor="#333333" BorderStyle="Solid" BorderWidth="1px" />
+                                                </dx:ASPxTextBox>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                    </dx:LayoutItem>
                                     <dx:LayoutItem Caption="Payment Method" ColSpan="1" FieldName="PMethod_name" Width="100%" Name="lbl_PM">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
@@ -1265,7 +1278,7 @@ drpdown_CostCenter.PerformCallback();
                                 <Items>
                                     <dx:LayoutGroup Caption="" ColCount="2" ColSpan="2" ColumnCount="2" ColumnSpan="2" GroupBoxDecoration="None" Width="100%">
                                         <Items>
-                                            <dx:LayoutItem Caption="Company" ColSpan="1" FieldName="CompanyShortName" Width="50%">
+                                            <dx:LayoutItem Caption="Workflow Company" ColSpan="1" FieldName="CompanyShortName" Width="50%">
                                                 <LayoutItemNestedControlCollection>
                                                     <dx:LayoutItemNestedControlContainer runat="server">
                                                         <dx:ASPxTextBox ID="lbl_WFCompany" runat="server" ClientInstanceName="lbl_WFCompany" Font-Bold="True" ReadOnly="True" Width="100%">
@@ -1278,7 +1291,7 @@ drpdown_CostCenter.PerformCallback();
                                                     </dx:LayoutItemNestedControlContainer>
                                                 </LayoutItemNestedControlCollection>
                                             </dx:LayoutItem>
-                                            <dx:LayoutItem Caption="Department" ColSpan="1" FieldName="DepDesc" Width="50%">
+                                            <dx:LayoutItem Caption="Workflow Department" ColSpan="1" FieldName="DepDesc" Width="50%">
                                                 <LayoutItemNestedControlCollection>
                                                     <dx:LayoutItemNestedControlContainer runat="server">
                                                         <dx:ASPxTextBox ID="lbl_WFDepartment" runat="server" ClientInstanceName="lbl_WFDepartment" Font-Bold="True" ReadOnly="True" Width="100%">

@@ -87,13 +87,31 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox ASPxTextBox1;
 
         /// <summary>
-        /// ASPxTextBox3 control.
+        /// ASPxTextBox12 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox3;
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox12;
+
+        /// <summary>
+        /// ASPxTextBox13 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox13;
+
+        /// <summary>
+        /// ASPxTextBox14 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox14;
 
         /// <summary>
         /// ASPxTextBox4 control.
@@ -238,6 +256,24 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.GridViewCommandColumnCustomButton btnDownload;
+
+        /// <summary>
+        /// ASPxTextBox3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox3;
+
+        /// <summary>
+        /// ASPxTextBox15 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox15;
 
         /// <summary>
         /// ASPxTextBox10 control.

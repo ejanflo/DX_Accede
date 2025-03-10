@@ -105,11 +105,18 @@ namespace DX_WebTemplate
                     //    exp_EmpId.SelectedIndex = 0;
                     //}
 
-                    var pay_released = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Disbursed").FirstOrDefault();
+                    var pay_released = _DataContext.ITP_S_Status
+                        .Where(x => x.STS_Name == "Disbursed")
+                        .FirstOrDefault();
+
                     sqlRFPMainCA.SelectParameters["User_ID"].DefaultValue = mainExp.ExpenseName.ToString();
                     sqlRFPMainCA.SelectParameters["Status"].DefaultValue = pay_released.STS_Id.ToString();
 
-                    var rfpCA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == mainExp.ID).Where(x=>x.IsExpenseCA == true);
+                    var rfpCA = _DataContext.ACCEDE_T_RFPMains
+                        .Where(x => x.Exp_ID == mainExp.ID)
+                        .Where(x=>x.IsExpenseCA == true)
+                        .Where(x=>x.isTravel != true);
+
                     var totalCA = new decimal (0.00);
                     foreach(var item in rfpCA)
                     {
@@ -126,7 +133,9 @@ namespace DX_WebTemplate
                     //}
                     lbl_caTotal.Text = totalCA.ToString("#,##0.00") + "  "+ mainExp.Exp_Currency;
 
-                    var expDetail = _DataContext.ACCEDE_T_ExpenseDetails.Where(x=>x.ExpenseMain_ID == mainExp.ID);
+                    var expDetail = _DataContext.ACCEDE_T_ExpenseDetails
+                        .Where(x=>x.ExpenseMain_ID == mainExp.ID);
+
                     var totalExp = new decimal (0.00);
                     foreach(var item in expDetail)
                     {
@@ -136,7 +145,12 @@ namespace DX_WebTemplate
 
                     var totalDue = new decimal(0.00);
                     totalDue = totalCA - totalExp;
-                    var reimRFP = _DataContext.ACCEDE_T_RFPMains.Where(x => x.IsExpenseReim == true).Where(x=>x.Status != 4).Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]));
+
+                    var reimRFP = _DataContext.ACCEDE_T_RFPMains
+                        .Where(x => x.IsExpenseReim == true)
+                        .Where(x=>x.Status != 4)
+                        .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]))
+                        .Where(x => x.isTravel != true);
 
                     if (totalDue < 0)
                     {
@@ -207,18 +221,22 @@ namespace DX_WebTemplate
                     if (!IsPostBack)
                     {
                         var classTypeId = mainExp.ExpenseClassification;
-                        var classType = _DataContext.ACCEDE_S_ExpenseClassifications.Where(x => x.ID == Convert.ToInt32(classTypeId)).FirstOrDefault();
+                        var classType = _DataContext.ACCEDE_S_ExpenseClassifications
+                            .Where(x => x.ID == Convert.ToInt32(classTypeId))
+                            .FirstOrDefault();
+
                         var fapwf_id = 0;
 
                         if (classType != null && Convert.ToBoolean(classType.withFAPLogic) == true)
                         {
-                            var fapwf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(mainExp.CompanyId))
-                            .Where(x => x.App_Id == 1032)
-                            .Where(x => x.With_DivHead == true)
-                            .Where(x => x.Minimum <= Convert.ToDecimal(Math.Abs(totalExp)))
-                            .Where(x => x.Maximum >= Convert.ToDecimal(Math.Abs(totalExp)))
-                            .Where(x => x.IsRA == null || x.IsRA == false)
-                            .FirstOrDefault();
+                            var fapwf = _DataContext.ITP_S_WorkflowHeaders
+                                .Where(x => x.Company_Id == Convert.ToInt32(mainExp.ExpChargedTo_CompanyId))
+                                .Where(x => x.App_Id == 1032)
+                                .Where(x => x.With_DivHead == true)
+                                .Where(x => x.Minimum <= Convert.ToDecimal(Math.Abs(totalExp)))
+                                .Where(x => x.Maximum >= Convert.ToDecimal(Math.Abs(totalExp)))
+                                .Where(x => x.IsRA == null || x.IsRA == false)
+                                .FirstOrDefault();
 
                             if (fapwf != null)
                             {
@@ -227,13 +245,14 @@ namespace DX_WebTemplate
                         }
                         else
                         {
-                            var fapwf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(mainExp.CompanyId))
-                            .Where(x => x.App_Id == 1032)
-                            .Where(x => x.With_DivHead == false || x.With_DivHead == null)
-                            .Where(x => x.Minimum <= Convert.ToDecimal(Math.Abs(totalExp)))
-                            .Where(x => x.Maximum >= Convert.ToDecimal(Math.Abs(totalExp)))
-                            .Where(x => x.IsRA == null || x.IsRA == false)
-                            .FirstOrDefault();
+                            var fapwf = _DataContext.ITP_S_WorkflowHeaders
+                                .Where(x => x.Company_Id == Convert.ToInt32(mainExp.ExpChargedTo_CompanyId))
+                                .Where(x => x.App_Id == 1032)
+                                .Where(x => x.With_DivHead == false || x.With_DivHead == null)
+                                .Where(x => x.Minimum <= Convert.ToDecimal(Math.Abs(totalExp)))
+                                .Where(x => x.Maximum >= Convert.ToDecimal(Math.Abs(totalExp)))
+                                .Where(x => x.IsRA == null || x.IsRA == false)
+                                .FirstOrDefault();
 
                             if (fapwf != null)
                             {
@@ -418,7 +437,10 @@ namespace DX_WebTemplate
                     filesizeStr = filesize.ToString() + " Bytes";
                 }
 
-                var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense").Where(x => x.App_Id == 1032).FirstOrDefault();
+                var app_docType = _DataContext.ITP_S_DocumentTypes
+                    .Where(x => x.DCT_Name == "ACDE Expense")
+                    .Where(x => x.App_Id == 1032)
+                    .FirstOrDefault();
 
                 ITP_T_FileAttachment docs = new ITP_T_FileAttachment();
                 {
@@ -432,7 +454,7 @@ namespace DX_WebTemplate
                     docs.Description = file.FileName.Split('.').First();
                     docs.FileSize = filesizeStr;
                     docs.Doc_No = Session["DocNo"].ToString();
-                    docs.Company_ID = Convert.ToInt32(exp_EmpId.Value);
+                    docs.Company_ID = Convert.ToInt32(exp_CTCompany.Value);
                     docs.DateUploaded = DateTime.Now;
                     docs.DocType_Id = app_docType != null ? app_docType.DCT_Id : 0;
                 };
@@ -498,7 +520,10 @@ namespace DX_WebTemplate
         {
             try
             {
-                var expMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"])).FirstOrDefault();
+                var expMain = _DataContext.ACCEDE_T_ExpenseMains
+                    .Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"]))
+                    .FirstOrDefault();
+
                 expMain.ExpenseType_ID = 1;
 
                 foreach (var id in selectedIds)
@@ -610,8 +635,15 @@ namespace DX_WebTemplate
                 }
                 else
                 {
-                    var expMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"])).FirstOrDefault();
-                    var rfpCA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"])).Where(x => x.IsExpenseCA == true);
+                    var expMain = _DataContext.ACCEDE_T_ExpenseMains
+                        .Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"]))
+                        .FirstOrDefault();
+
+                    var rfpCA = _DataContext.ACCEDE_T_RFPMains
+                        .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]))
+                        .Where(x => x.IsExpenseCA == true)
+                        .Where(x => x.isTravel != true);
+
                     //if (rfpCA.Count() > 0)
                     //{
                     //    expMain.ExpenseType_ID = 1;
@@ -685,7 +717,10 @@ namespace DX_WebTemplate
 
                     _DataContext.SubmitChanges();
 
-                    var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense").Where(x => x.App_Id == 1032).FirstOrDefault();
+                    var app_docType = _DataContext.ITP_S_DocumentTypes
+                        .Where(x => x.DCT_Name == "ACDE Expense")
+                        .Where(x => x.App_Id == 1032)
+                        .FirstOrDefault();
 
                     //Insert Invoice Attachments
                     DataSet dsFile = (DataSet)Session["DataSetDoc"];
@@ -721,8 +756,15 @@ namespace DX_WebTemplate
                     }
                     //Done inserting Invoice attachments
 
-                    var rfpReim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"])).Where(x => x.Status != 4).Where(x => x.IsExpenseReim == true).FirstOrDefault();
-                    var expDetails = _DataContext.ACCEDE_T_ExpenseDetails.Where(x => x.ExpenseMain_ID == Convert.ToInt32(Session["ExpenseId"]));
+                    var rfpReim = _DataContext.ACCEDE_T_RFPMains
+                        .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]))
+                        .Where(x => x.Status != 4)
+                        .Where(x => x.IsExpenseReim == true)
+                        .Where(x => x.isTravel != true)
+                        .FirstOrDefault();
+
+                    var expDetails = _DataContext.ACCEDE_T_ExpenseDetails
+                        .Where(x => x.ExpenseMain_ID == Convert.ToInt32(Session["ExpenseId"]));
 
                     decimal totalReim = new decimal(0);
                     decimal totalCA = new decimal(0);
@@ -767,9 +809,15 @@ namespace DX_WebTemplate
 
         protected void drpdwn_FAPWF_Callback(object sender, CallbackEventArgsBase e)
         {
-            var mainExp = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"])).FirstOrDefault();
+            var mainExp = _DataContext.ACCEDE_T_ExpenseMains
+                .Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"]))
+                .FirstOrDefault();
 
-            var rfpCA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == mainExp.ID).Where(x => x.IsExpenseCA == true);
+            var rfpCA = _DataContext.ACCEDE_T_RFPMains
+                .Where(x => x.Exp_ID == mainExp.ID)
+                .Where(x => x.IsExpenseCA == true)
+                .Where(x => x.isTravel != true);
+
             var totalCA = new decimal(0.00);
             foreach (var item in rfpCA)
             {
@@ -785,7 +833,9 @@ namespace DX_WebTemplate
             //    drpdown_expenseType.Text = "Reimbursement";
             //}
 
-            var expDetail = _DataContext.ACCEDE_T_ExpenseDetails.Where(x => x.ExpenseMain_ID == mainExp.ID);
+            var expDetail = _DataContext.ACCEDE_T_ExpenseDetails
+                .Where(x => x.ExpenseMain_ID == mainExp.ID);
+
             var totalExp = new decimal(0.00);
             foreach (var item in expDetail)
             {
@@ -796,19 +846,23 @@ namespace DX_WebTemplate
             totalDue = totalCA - totalExp;
 
             //// - - Setting FAP workflow - - ////
-            var classTypeId = drpdown_classification.Value != null ? drpdown_classification.Value : 0;
-            var classType = _DataContext.ACCEDE_S_ExpenseClassifications.Where(x => x.ID == Convert.ToInt32(classTypeId)).FirstOrDefault();
+            var classTypeId = drpdown_ExpCategory.Value != null ? drpdown_ExpCategory.Value : 0;
+            var classType = _DataContext.ACCEDE_S_ExpenseClassifications
+                .Where(x => x.ID == Convert.ToInt32(classTypeId))
+                .FirstOrDefault();
+
             var fapwf_id = 0;
 
             if (classType != null && Convert.ToBoolean(classType.withFAPLogic) == true)
             {
-                var fapwf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(mainExp.CompanyId))
-                .Where(x => x.App_Id == 1032)
-                .Where(x => x.With_DivHead == true)
-                .Where(x => x.Minimum <= Convert.ToDecimal(Math.Abs(totalExp)))
-                .Where(x => x.Maximum >= Convert.ToDecimal(Math.Abs(totalExp)))
-                .Where(x => x.IsRA == null || x.IsRA == false)
-                .FirstOrDefault();
+                var fapwf = _DataContext.ITP_S_WorkflowHeaders
+                    .Where(x => x.Company_Id == Convert.ToInt32(e.Parameter))
+                    .Where(x => x.App_Id == 1032)
+                    .Where(x => x.With_DivHead == true)
+                    .Where(x => x.Minimum <= Convert.ToDecimal(Math.Abs(totalExp)))
+                    .Where(x => x.Maximum >= Convert.ToDecimal(Math.Abs(totalExp)))
+                    .Where(x => x.IsRA == null || x.IsRA == false)
+                    .FirstOrDefault();
 
                 if (fapwf != null)
                 {
@@ -817,13 +871,14 @@ namespace DX_WebTemplate
             }
             else
             {
-                var fapwf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(mainExp.CompanyId))
-                .Where(x => x.App_Id == 1032)
-                .Where(x => x.With_DivHead == false || x.With_DivHead == null)
-                .Where(x => x.Minimum <= Convert.ToDecimal(Math.Abs(totalExp)))
-                .Where(x => x.Maximum >= Convert.ToDecimal(Math.Abs(totalExp)))
-                .Where(x => x.IsRA == null || x.IsRA == false)
-                .FirstOrDefault();
+                var fapwf = _DataContext.ITP_S_WorkflowHeaders
+                    .Where(x => x.Company_Id == Convert.ToInt32(e.Parameter))
+                    .Where(x => x.App_Id == 1032)
+                    .Where(x => x.With_DivHead == false || x.With_DivHead == null)
+                    .Where(x => x.Minimum <= Convert.ToDecimal(Math.Abs(totalExp)))
+                    .Where(x => x.Maximum >= Convert.ToDecimal(Math.Abs(totalExp)))
+                    .Where(x => x.IsRA == null || x.IsRA == false)
+                    .FirstOrDefault();
 
                 if (fapwf != null)
                 {
@@ -861,9 +916,17 @@ namespace DX_WebTemplate
             {
                 if(btnCommand == "btnRemoveCA")
                 {
-                    var CA_RFP = _DataContext.ACCEDE_T_RFPMains.Where(x=>x.ID == item_id).FirstOrDefault();
+                    var CA_RFP = _DataContext.ACCEDE_T_RFPMains
+                        .Where(x=>x.ID == item_id)
+                        .FirstOrDefault();
+
                     CA_RFP.Exp_ID = null;
-                    var rfpReim_upd = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"])).Where(x => x.Status != 4).Where(x => x.IsExpenseReim == true).FirstOrDefault();
+                    var rfpReim_upd = _DataContext.ACCEDE_T_RFPMains
+                        .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]))
+                        .Where(x => x.Status != 4).Where(x => x.IsExpenseReim == true)
+                        .Where(x => x.isTravel != true)
+                        .FirstOrDefault();
+
                     if(rfpReim_upd != null)
                     {
                         rfpReim_upd.Amount = Convert.ToDecimal(rfpReim_upd.Amount) + Convert.ToDecimal(CA_RFP.Amount);
@@ -872,27 +935,46 @@ namespace DX_WebTemplate
 
                 if (btnCommand == "btnRemoveExp")
                 {
-                    var exp_det = _DataContext.ACCEDE_T_ExpenseDetails.Where(x => x.ExpenseReportDetail_ID == item_id).FirstOrDefault();
-                    var exp_det_map = _DataContext.ACCEDE_T_ExpenseDetailsMaps.Where(x => x.ExpenseReportDetail_ID == item_id);
+                    var exp_det = _DataContext.ACCEDE_T_ExpenseDetails
+                        .Where(x => x.ExpenseReportDetail_ID == item_id)
+                        .FirstOrDefault();
+
+                    var exp_det_map = _DataContext.ACCEDE_T_ExpenseDetailsMaps
+                        .Where(x => x.ExpenseReportDetail_ID == item_id);
+
                     _DataContext.ACCEDE_T_ExpenseDetails.DeleteOnSubmit(exp_det);
                     _DataContext.ACCEDE_T_ExpenseDetailsMaps.DeleteAllOnSubmit(exp_det_map);
                     _DataContext.SubmitChanges();
 
-                    var Reim_RFP_exp = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"])).Where(x => x.Status != 4).Where(x=>x.IsExpenseReim == true).FirstOrDefault();
+                    var Reim_RFP_exp = _DataContext.ACCEDE_T_RFPMains
+                        .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]))
+                        .Where(x => x.Status != 4).Where(x=>x.IsExpenseReim == true)
+                        .Where(x => x.isTravel != true)
+                        .FirstOrDefault();
 
-                    var updated_exp_det = _DataContext.ACCEDE_T_ExpenseDetails.Where(x => x.ExpenseMain_ID == Convert.ToInt32(Session["ExpenseId"])).FirstOrDefault();
+                    var updated_exp_det = _DataContext.ACCEDE_T_ExpenseDetails
+                        .Where(x => x.ExpenseMain_ID == Convert.ToInt32(Session["ExpenseId"]))
+                        .FirstOrDefault();
+
                     if(updated_exp_det == null)
                     {
                         if(Reim_RFP_exp != null)
                         {
-                            var Reim_RFP = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == Reim_RFP_exp.ID).FirstOrDefault();
+                            var Reim_RFP = _DataContext.ACCEDE_T_RFPMains
+                                .Where(x => x.ID == Reim_RFP_exp.ID)
+                                .FirstOrDefault();
+
                             //_DataContext.ACCEDE_T_RFPMains.DeleteOnSubmit(Reim_RFP);
                             Reim_RFP.Status = 4;
                         }
                     }
                     else
                     {
-                        var rfp_CA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"])).Where(x => x.IsExpenseCA == true);
+                        var rfp_CA = _DataContext.ACCEDE_T_RFPMains
+                            .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]))
+                            .Where(x => x.IsExpenseCA == true)
+                            .Where(x => x.isTravel != true);
+
                         var totalCA = new decimal(0.00);
                         foreach (var item in rfp_CA)
                         {
@@ -900,7 +982,9 @@ namespace DX_WebTemplate
 
                         }
 
-                        var expDetail = _DataContext.ACCEDE_T_ExpenseDetails.Where(x => x.ExpenseMain_ID == Convert.ToInt32(Session["ExpenseId"]));
+                        var expDetail = _DataContext.ACCEDE_T_ExpenseDetails
+                            .Where(x => x.ExpenseMain_ID == Convert.ToInt32(Session["ExpenseId"]));
+
                         var totalExp = new decimal(0.00);
                         foreach (var item in expDetail)
                         {
@@ -914,7 +998,10 @@ namespace DX_WebTemplate
                         {
                             if (Reim_RFP_exp != null)
                             {
-                                var Reim_RFP = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == Reim_RFP_exp.ID).FirstOrDefault();
+                                var Reim_RFP = _DataContext.ACCEDE_T_RFPMains
+                                    .Where(x => x.ID == Reim_RFP_exp.ID)
+                                    .FirstOrDefault();
+
                                 //_DataContext.ACCEDE_T_RFPMains.DeleteOnSubmit(Reim_RFP);
                                 Reim_RFP.Status = 4;
                             }
@@ -929,13 +1016,23 @@ namespace DX_WebTemplate
 
                 if (btnCommand == "btnRemoveReim")
                 {
-                    var Reim_RFP = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == item_id).FirstOrDefault();
+                    var Reim_RFP = _DataContext.ACCEDE_T_RFPMains
+                        .Where(x => x.ID == item_id)
+                        .FirstOrDefault();
+
                     //_DataContext.ACCEDE_T_RFPMains.DeleteOnSubmit(Reim_RFP);
                     Reim_RFP.Status = 4;
                 }
 
-                var expMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"])).FirstOrDefault();
-                var rfpCA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"])).Where(x => x.IsExpenseCA == true).Where(x => x.Status == 7);
+                var expMain = _DataContext.ACCEDE_T_ExpenseMains
+                    .Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"]))
+                    .FirstOrDefault();
+
+                var rfpCA = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]))
+                    .Where(x => x.IsExpenseCA == true)
+                    .Where(x => x.isTravel != true);
+
                 if (rfpCA.Count() > 0)
                 {
                     expMain.ExpenseType_ID = 1;
@@ -999,11 +1096,23 @@ namespace DX_WebTemplate
                 generateDocNo.RunStoredProc_GenerateDocNum(1011, Convert.ToInt32(comp_id), 1032);
                 var docNum = generateDocNo.GetLatest_DocNum(1011, Convert.ToInt32(comp_id), 1032);
 
-                var expMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x=>x.ID == Convert.ToInt32(Session["ExpenseId"])).FirstOrDefault();
+                var expMain = _DataContext.ACCEDE_T_ExpenseMains
+                    .Where(x=>x.ID == Convert.ToInt32(Session["ExpenseId"]))
+                    .FirstOrDefault();
 
-                var rfpCA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"])).Where(x => x.IsExpenseCA == true);
-                var rfpReim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"])).Where(x => x.Status != 4).Where(x => x.IsExpenseReim == true).FirstOrDefault();
-                var expDetails = _DataContext.ACCEDE_T_ExpenseDetails.Where(x => x.ExpenseMain_ID == Convert.ToInt32(Session["ExpenseId"]));
+                var rfpCA = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]))
+                    .Where(x => x.IsExpenseCA == true)
+                    .Where(x => x.isTravel != true);
+
+                var rfpReim = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]))
+                    .Where(x => x.Status != 4).Where(x => x.IsExpenseReim == true)
+                    .Where(x => x.isTravel != true)
+                    .FirstOrDefault();
+
+                var expDetails = _DataContext.ACCEDE_T_ExpenseDetails
+                    .Where(x => x.ExpenseMain_ID == Convert.ToInt32(Session["ExpenseId"]));
 
                 decimal totalReim = new decimal(0);
                 decimal totalCA = new decimal(0);
@@ -1087,9 +1196,23 @@ namespace DX_WebTemplate
         {
             try
             {
-                var exp = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"])).FirstOrDefault();
-                var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == exp.ID).Where(x => x.Status != 4).Where(x => x.IsExpenseReim == true).FirstOrDefault();
-                var expCA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"])).Where(x=>x.IsExpenseCA == true).FirstOrDefault();
+                var exp = _DataContext.ACCEDE_T_ExpenseMains
+                    .Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"]))
+                    .FirstOrDefault();
+
+                var reim = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.Exp_ID == exp.ID)
+                    .Where(x => x.Status != 4)
+                    .Where(x => x.IsExpenseReim == true)
+                    .Where(x => x.isTravel != true)
+                    .FirstOrDefault();
+
+                var expCA = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]))
+                    .Where(x=>x.IsExpenseCA == true)
+                    .Where(x => x.isTravel != true)
+                    .FirstOrDefault();
+
                 if (expType == "1")
                 {
                     if(expCA == null && btn != "Save" && btn != "Save2")
@@ -1110,7 +1233,9 @@ namespace DX_WebTemplate
                     return "This transaction cannot be submitted. Please check your Cash Advance, Expense Items, or Reimbursement.";
                 }
 
-                var tranType = _DataContext.ACCEDE_S_ExpenseTypes.Where(x=>x.ExpenseType_ID == Convert.ToInt32(expType)).FirstOrDefault();
+                var tranType = _DataContext.ACCEDE_S_ExpenseTypes
+                    .Where(x=>x.ExpenseType_ID == Convert.ToInt32(expType))
+                    .FirstOrDefault();
                 
                 exp.ReportDate = Convert.ToDateTime(dateFile);
                 exp.ExpenseName = repName;
@@ -1151,12 +1276,20 @@ namespace DX_WebTemplate
 
                 if (btn == "Submit" || btn == "CreateSubmit")
                 {
-                    var returnAuditStats = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Returned by Audit").FirstOrDefault();
-                    var returnP2PStats = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Returned by P2P").FirstOrDefault();
+                    var returnAuditStats = _DataContext.ITP_S_Status
+                        .Where(x => x.STS_Name == "Returned by Audit")
+                        .FirstOrDefault();
+
+                    var returnP2PStats = _DataContext.ITP_S_Status
+                        .Where(x => x.STS_Name == "Returned by P2P")
+                        .FirstOrDefault();
 
                     if( exp.Status == returnAuditStats.STS_Id)
                     {
-                        var pendingAuditStats = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Pending at Audit").FirstOrDefault();
+                        var pendingAuditStats = _DataContext.ITP_S_Status
+                            .Where(x => x.STS_Name == "Pending at Audit")
+                            .FirstOrDefault();
+
                         exp.Status = pendingAuditStats.STS_Id;
                         if (reim != null)
                         {
@@ -1166,7 +1299,10 @@ namespace DX_WebTemplate
                     }
                     else if(exp.Status == returnP2PStats.STS_Id)
                     {
-                        var pendingP2PStats = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Pending at P2P").FirstOrDefault();
+                        var pendingP2PStats = _DataContext.ITP_S_Status
+                            .Where(x => x.STS_Name == "Pending at P2P")
+                            .FirstOrDefault();
+
                         exp.Status = pendingP2PStats.STS_Id;
                         if(reim != null)
                         {
@@ -1190,6 +1326,42 @@ namespace DX_WebTemplate
                                       select or.OrgRole_Id;
                         int orID = (int)orgRole.FirstOrDefault();
 
+                        //IF DOCUMENT WAS RECALLED
+                        if (exp.Status == 15)//15 IS A RECALL STATUS
+                        {
+                            var expDoctype = _DataContext.ITP_S_DocumentTypes
+                                .Where(x => x.DCT_Name == "ACDE Expense")
+                                .FirstOrDefault();
+
+                            var wfAct = _DataContext.ITP_T_WorkflowActivities
+                                .Where(x => x.Document_Id == exp.ID)
+                                .Where(x => x.AppId == 1032)
+                                .Where(x => x.AppDocTypeId == expDoctype.DCT_Id)
+                                .Where(x => x.Status == 15)//15 IS A RECALL STATUS
+                                .FirstOrDefault();
+
+                            var wfDetail = _DataContext.ITP_S_WorkflowDetails
+                                .Where(x => x.WFD_Id == wfAct.WFD_Id)
+                                .FirstOrDefault();
+
+                            wfID = Convert.ToInt32(wfDetail.WF_Id);
+
+                            // GET WORKFLOW DETAILS ID
+                            wfDetails = from wfd in _DataContext.ITP_S_WorkflowDetails
+                                        where wfd.WF_Id == wfID && wfd.Sequence == Convert.ToInt32(wfDetail.Sequence)
+                                        select wfd.WFD_Id;
+
+                            wfdID = wfDetails.FirstOrDefault();
+
+                            // GET ORG ROLE ID
+                            orgRole = from or in _DataContext.ITP_S_WorkflowDetails
+                                      where or.WF_Id == wfID && or.Sequence == Convert.ToInt32(wfDetail.Sequence)
+                                      select or.OrgRole_Id;
+
+                            orID = (int)orgRole.FirstOrDefault();
+                        }
+                        //END RECALL PROCESS
+
                         //Add reim to workflow activity
                         if (reim != null)
                         {
@@ -1206,7 +1378,7 @@ namespace DX_WebTemplate
                                 OrgRole_Id = orID,
                                 Document_Id = Convert.ToInt32(reim.ID),
                                 AppId = 1032,
-                                CompanyId = Convert.ToInt32(comp_id),
+                                CompanyId = Convert.ToInt32(CTCompany_id),
                                 AppDocTypeId = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP" || x.DCT_Description == "Accede Request For Payment").Select(x => x.DCT_Id).FirstOrDefault(),
                                 IsActive = true,
                             };
@@ -1230,7 +1402,7 @@ namespace DX_WebTemplate
                             OrgRole_Id = orID,
                             Document_Id = Convert.ToInt32(Session["ExpenseId"]),
                             AppId = 1032,
-                            CompanyId = Convert.ToInt32(comp_id),
+                            CompanyId = Convert.ToInt32(CTCompany_id),
                             AppDocTypeId = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense" || x.DCT_Description == "Accede Expense").Select(x => x.DCT_Id).FirstOrDefault(),
                             IsActive = true,
                         };
@@ -1274,9 +1446,11 @@ namespace DX_WebTemplate
                 .Where(um => um.OrgRoleId == org_id)
                 .Select(um => um.UserId)
                 .FirstOrDefault();
+
             var user_email = _DataContext.ITP_S_UserMasters
                 .Where(x => x.EmpCode == user_userID)
                 .FirstOrDefault();
+
             var comp_name = _DataContext.CompanyMasters
                 .Where(x => x.WASSId == comps_id)
                 .FirstOrDefault();
@@ -1302,6 +1476,7 @@ namespace DX_WebTemplate
                 .Where(um => um.EmpCode == Convert.ToString(Session["prep"]))
                 .Select(um => um.FullName)
                 .FirstOrDefault();
+
             var requestor_email = _DataContext.ITP_S_UserMasters
                 .Where(um => um.EmpCode == Convert.ToString(Session["prep"]))
                 .Select(um => um.Email)
@@ -1341,8 +1516,16 @@ namespace DX_WebTemplate
 
             foreach (var item in queryER)
             {
-                var exp = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == doc_id).Select(x => x.ExpenseType_ID).FirstOrDefault();
-                var expType = _DataContext.ACCEDE_S_ExpenseTypes.Where(x => x.ExpenseType_ID == exp).Select(x => x.Description).FirstOrDefault();
+                var exp = _DataContext.ACCEDE_T_ExpenseMains
+                    .Where(x => x.ID == doc_id)
+                    .Select(x => x.ExpenseType_ID)
+                    .FirstOrDefault();
+
+                var expType = _DataContext.ACCEDE_S_ExpenseTypes
+                    .Where(x => x.ExpenseType_ID == exp)
+                    .Select(x => x.Description)
+                    .FirstOrDefault();
+
                 emailDetails +=
                             "<tr>" +
                             "<td style='text-align: center;'>" + expType + "</td>" +
@@ -1462,7 +1645,10 @@ namespace DX_WebTemplate
 
         public ExpDetails DisplayExpDetails(int expDetailID)
         {
-            var exp_details = _DataContext.ACCEDE_T_ExpenseDetails.Where(x=>x.ExpenseReportDetail_ID == expDetailID).FirstOrDefault();
+            var exp_details = _DataContext.ACCEDE_T_ExpenseDetails
+                .Where(x=>x.ExpenseReportDetail_ID == expDetailID)
+                .FirstOrDefault();
+
             ExpDetails exp_det_class = new ExpDetails();
 
             if (exp_details != null)
@@ -1531,7 +1717,9 @@ namespace DX_WebTemplate
 
         protected void ExpAllocGrid_edit_RowInserting(object sender, DevExpress.Web.Data.ASPxDataInsertingEventArgs e)
         {
-            var expAllocs = _DataContext.ACCEDE_T_ExpenseDetailsMaps.Where(x => x.ExpenseReportDetail_ID == Convert.ToInt32(Session["ExpDetailsID"]));
+            var expAllocs = _DataContext.ACCEDE_T_ExpenseDetailsMaps
+                .Where(x => x.ExpenseReportDetail_ID == Convert.ToInt32(Session["ExpDetailsID"]));
+
             decimal totalAmnt = new decimal(0.00);
 
             ASPxGridView grid =  (ASPxGridView)sender;
@@ -1565,7 +1753,9 @@ namespace DX_WebTemplate
 
         protected void ExpAllocGrid_edit_RowDeleting(object sender, DevExpress.Web.Data.ASPxDataDeletingEventArgs e)
         {
-            var expAllocs = _DataContext.ACCEDE_T_ExpenseDetailsMaps.Where(x => x.ExpenseReportDetail_ID == Convert.ToInt32(Session["ExpDetailsID"]));
+            var expAllocs = _DataContext.ACCEDE_T_ExpenseDetailsMaps
+                .Where(x => x.ExpenseReportDetail_ID == Convert.ToInt32(Session["ExpDetailsID"]));
+
             decimal totalAmnt = new decimal(0.00);
 
             ASPxGridView grid = (ASPxGridView)sender;
@@ -1591,7 +1781,8 @@ namespace DX_WebTemplate
             try
             {
                 decimal totalNetAmnt = new decimal(0.00);
-                var expDtlMap = _DataContext.ACCEDE_T_ExpenseDetailsMaps.Where(x => x.ExpenseReportDetail_ID == Convert.ToInt32(Session["ExpDetailsID"]));
+                var expDtlMap = _DataContext.ACCEDE_T_ExpenseDetailsMaps
+                    .Where(x => x.ExpenseReportDetail_ID == Convert.ToInt32(Session["ExpDetailsID"]));
 
                 foreach (var item in expDtlMap)
                 {
@@ -1606,7 +1797,10 @@ namespace DX_WebTemplate
                 }
                 else
                 {
-                    var expDetail = _DataContext.ACCEDE_T_ExpenseDetails.Where(x => x.ExpenseReportDetail_ID == Convert.ToInt32(Session["ExpDetailsID"])).FirstOrDefault();
+                    var expDetail = _DataContext.ACCEDE_T_ExpenseDetails
+                        .Where(x => x.ExpenseReportDetail_ID == Convert.ToInt32(Session["ExpDetailsID"]))
+                        .FirstOrDefault();
+
                     if (expDetail != null)
                     {
                         expDetail.DateAdded = Convert.ToDateTime(dateAdd);
@@ -1628,9 +1822,19 @@ namespace DX_WebTemplate
 
                 _DataContext.SubmitChanges();
 
-                var rfpCA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"])).Where(x => x.IsExpenseCA == true);
-                var rfpReim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"])).Where(x => x.Status != 4).Where(x => x.IsExpenseReim == true).FirstOrDefault();
-                var expDetails = _DataContext.ACCEDE_T_ExpenseDetails.Where(x => x.ExpenseMain_ID == Convert.ToInt32(Session["ExpenseId"]));
+                var rfpCA = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]))
+                    .Where(x => x.isTravel != true)
+                    .Where(x => x.IsExpenseCA == true);
+
+                var rfpReim = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]))
+                    .Where(x => x.Status != 4).Where(x => x.IsExpenseReim == true)
+                    .Where(x => x.isTravel != true)
+                    .FirstOrDefault();
+
+                var expDetails = _DataContext.ACCEDE_T_ExpenseDetails
+                    .Where(x => x.ExpenseMain_ID == Convert.ToInt32(Session["ExpenseId"]));
                 
                 decimal totalReim = new decimal(0);
                 decimal totalCA = new decimal(0);
@@ -1708,12 +1912,16 @@ namespace DX_WebTemplate
         {
             try
             {
-                var mainExp = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"])).FirstOrDefault();
+                var mainExp = _DataContext.ACCEDE_T_ExpenseMains
+                    .Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"]))
+                    .FirstOrDefault();
+
                 if(mainExp != null)
                 {
                     mainExp.Exp_Currency = currency;
 
-                    var expDetails = _DataContext.ACCEDE_T_ExpenseDetails.Where(x => x.ExpenseMain_ID == mainExp.ID);
+                    var expDetails = _DataContext.ACCEDE_T_ExpenseDetails
+                        .Where(x => x.ExpenseMain_ID == mainExp.ID);
 
                     foreach(var expense in expDetails)
                     {
@@ -1739,7 +1947,10 @@ namespace DX_WebTemplate
         {
             try
             {
-                var rfp = _DataContext.ACCEDE_T_RFPMains.Where(x=>x.RFP_DocNum == rfpDoc).FirstOrDefault();
+                var rfp = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x=>x.RFP_DocNum == rfpDoc)
+                    .FirstOrDefault();
+
                 if(rfp != null)
                 {
                     Session["passRFPID"] = rfp.ID;
@@ -1760,7 +1971,11 @@ namespace DX_WebTemplate
         {
             try
             {
-                var rfp_CA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"])).Where(x => x.IsExpenseCA == true);
+                var rfp_CA = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]))
+                    .Where(x => x.isTravel != true)
+                    .Where(x => x.IsExpenseCA == true);
+
                 var totalCA = new decimal(0.00);
                 foreach (var item in rfp_CA)
                 {
@@ -1768,7 +1983,9 @@ namespace DX_WebTemplate
 
                 }
 
-                var expDetail = _DataContext.ACCEDE_T_ExpenseDetails.Where(x => x.ExpenseMain_ID == Convert.ToInt32(Session["ExpenseId"]));
+                var expDetail = _DataContext.ACCEDE_T_ExpenseDetails
+                    .Where(x => x.ExpenseMain_ID == Convert.ToInt32(Session["ExpenseId"]));
+
                 var totalExp = new decimal(0.00);
                 foreach (var item in expDetail)
                 {
@@ -1780,7 +1997,12 @@ namespace DX_WebTemplate
 
                 if(totalDue < 0 && Math.Abs(totalDue) > Convert.ToDecimal(t_amount))
                 {
-                    var rfpReim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"])).Where(x => x.Status != 4).Where(x => x.IsExpenseReim == true);
+                    var rfpReim = _DataContext.ACCEDE_T_RFPMains
+                        .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]))
+                        .Where(x => x.Status != 4)
+                        .Where(x => x.isTravel != true)
+                        .Where(x => x.IsExpenseReim == true);
+
                     if(rfpReim.Count() > 0)
                     {
                         return false;
@@ -1915,7 +2137,10 @@ namespace DX_WebTemplate
                     filesizeStr = filesize.ToString() + " Bytes";
                 }
 
-                var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense").Where(x => x.App_Id == 1032).FirstOrDefault();
+                var app_docType = _DataContext.ITP_S_DocumentTypes
+                    .Where(x => x.DCT_Name == "ACDE Expense")
+                    .Where(x => x.App_Id == 1032)
+                    .FirstOrDefault();
 
                 ITP_T_FileAttachment docs = new ITP_T_FileAttachment();
                 {
@@ -1950,7 +2175,9 @@ namespace DX_WebTemplate
             ASPxGridView gridView = (ASPxGridView)sender;
             var expFile_Id = e.Keys["File_Id"].ToString();
 
-            var expFile = _DataContext.ITP_T_FileAttachments.Where(x => x.ID == Convert.ToInt32(expFile_Id)).FirstOrDefault();
+            var expFile = _DataContext.ITP_T_FileAttachments
+                .Where(x => x.ID == Convert.ToInt32(expFile_Id))
+                .FirstOrDefault();
 
             if (expFile != null)
             {
@@ -1968,8 +2195,14 @@ namespace DX_WebTemplate
             ASPxGridView gridView = (ASPxGridView)sender;
             var expFile_Id = e.Keys["File_Id"].ToString();
 
-            var expFile = _DataContext.ITP_T_FileAttachments.Where(x => x.ID == Convert.ToInt32(expFile_Id)).FirstOrDefault();
-            var expMap = _DataContext.ACCEDE_T_ExpenseDetailFileAttaches.Where(x=>x.FileAttach_Id == Convert.ToInt32(expFile_Id)).FirstOrDefault();
+            var expFile = _DataContext.ITP_T_FileAttachments
+                .Where(x => x.ID == Convert.ToInt32(expFile_Id))
+                .FirstOrDefault();
+
+            var expMap = _DataContext.ACCEDE_T_ExpenseDetailFileAttaches
+                .Where(x=>x.FileAttach_Id == Convert.ToInt32(expFile_Id))
+                .FirstOrDefault();
+
             if (expFile != null)
             {
                 _DataContext.ITP_T_FileAttachments.DeleteOnSubmit(expFile);
@@ -2002,6 +2235,7 @@ namespace DX_WebTemplate
             var rfpCA = _DataContext.ACCEDE_T_RFPMains
                 .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]))
                 .Where(x => x.IsExpenseCA == true)
+                .Where(x => x.isTravel != true)
                 .Where(x=>x.isTravel != true);
 
             var totalCA = new decimal(0.00);
@@ -2023,9 +2257,16 @@ namespace DX_WebTemplate
 
             var totalDue = new decimal(0.00);
             totalDue = totalCA - totalExp;
-            var reimRFP = _DataContext.ACCEDE_T_RFPMains.Where(x => x.IsExpenseReim == true).Where(x => x.Status != 4).Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]));
+            var reimRFP = _DataContext.ACCEDE_T_RFPMains
+                .Where(x => x.IsExpenseReim == true)
+                .Where(x => x.Status != 4)
+                .Where(x => x.isTravel != true)
+                .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]));
 
-            var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(exp_Department.Value)).FirstOrDefault();
+            var depcode = _DataContext.ITP_S_OrgDepartmentMasters
+                .Where(x => x.ID == Convert.ToInt32(e.Parameter))
+                .FirstOrDefault();
+
             //var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses
             //    .Where(x => x.CompanyId == Convert.ToInt32(exp_Company.Value))
             //    .Where(x => x.UserId == exp_EmpId.ToString())
@@ -2166,6 +2407,18 @@ namespace DX_WebTemplate
                 exp_EmpId.ValueField = "DelegateFor_UserID"; // Ensure value field is set correctly
                 exp_EmpId.DataBind();
             }
+        }
+
+        protected void exp_CompLocation_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var comp_id = e.Parameter.ToString();
+
+            SqlCompLocation.SelectParameters["Comp_Id"].DefaultValue = comp_id;
+            SqlCompLocation.DataBind();
+
+            exp_CompLocation.DataSourceID = null;
+            exp_CompLocation.DataSource = SqlCompLocation;
+            exp_CompLocation.DataBind();
         }
     }
 }
