@@ -60,6 +60,7 @@ namespace DX_WebTemplate
                     sqlDept.SelectParameters["CompanyId"].DefaultValue = mainExp.CompanyId.ToString();
                     sqlDept.SelectParameters["UserId"].DefaultValue = mainExp.ExpenseName.ToString();
                     SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = mainExp.ExpChargedTo_CompanyId.ToString();
+                    SqlCompLocation.SelectParameters["Comp_Id"].DefaultValue = mainExp.ExpChargedTo_CompanyId.ToString();
 
                     SqlUser.SelectParameters["Company_ID"].DefaultValue = mainExp.ExpChargedTo_CompanyId.ToString();
                     SqlUser.SelectParameters["DelegateTo_UserID"].DefaultValue = mainExp.ExpenseName.ToString();
@@ -2278,7 +2279,7 @@ namespace DX_WebTemplate
             //    .FirstOrDefault();
 
             // Fetch data using the stored procedure
-            DataTable rawf = GetWorkflowHeadersByExpenseAndDepartment(exp_EmpId.ToString(), Convert.ToInt32(exp_EmpId.Value), totalExp, depcode != null ? depcode.DepCode : "0", 1032);
+            DataTable rawf = GetWorkflowHeadersByExpenseAndDepartment(exp_EmpId.Value.ToString(), Convert.ToInt32(exp_Company.Value), totalExp, depcode != null ? depcode.DepCode : "0", 1032);
 
             if (rawf != null && rawf.Rows.Count > 0)
             {
@@ -2286,12 +2287,19 @@ namespace DX_WebTemplate
                 DataRow firstRow = rawf.Rows[0];
                 int wfId = Convert.ToInt32(firstRow["WF_Id"]);
 
-                // Set the dropdown to the first item (if applicable)
-                drpdown_WF.SelectedIndex = 0;
-
                 // Update the SQL data source parameters
                 SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
+                SqlWorkflowSequence.DataBind();
+
                 SqlWF.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
+                SqlWF.DataBind();
+
+                // Set the dropdown to the first item (if applicable)
+                drpdown_WF.DataSourceID = null;
+                drpdown_WF.DataSource = SqlWF;
+                drpdown_WF.DataBind();
+                drpdown_WF.SelectedIndex = 0;
+
             }
             else
             {

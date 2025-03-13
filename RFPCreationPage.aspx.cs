@@ -49,7 +49,10 @@ namespace DX_WebTemplate
                         
                     }
 
-                    var rfpTrantype = _DataContext.ACCEDE_S_RFPTranTypes.Where(x => x.RFPTranType_Name == "Cash Advance").FirstOrDefault();
+                    var rfpTrantype = _DataContext.ACCEDE_S_RFPTranTypes
+                        .Where(x => x.RFPTranType_Name == "Cash Advance")
+                        .FirstOrDefault();
+
                     if (rfpTrantype != null)
                     {
                         drpdown_TranType.Value = rfpTrantype.ID.ToString(); // Automatically shows the name in the dropdown
@@ -75,8 +78,13 @@ namespace DX_WebTemplate
 
                     SqlUserSelf.SelectParameters["EmpCode"].DefaultValue = empCode;
 
-                    var disburse_stat = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Disbursed").FirstOrDefault();
-                    var unliquidated_CA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.IsExpenseCA == true).Where(x => x.Status == Convert.ToInt32(disburse_stat.STS_Id));
+                    var disburse_stat = _DataContext.ITP_S_Status
+                        .Where(x => x.STS_Name == "Disbursed")
+                        .FirstOrDefault();
+
+                    var unliquidated_CA = _DataContext.ACCEDE_T_RFPMains
+                        .Where(x => x.IsExpenseCA == true)
+                        .Where(x => x.Status == Convert.ToInt32(disburse_stat.STS_Id));
 
                     PLD.MinDate = DateTime.Now;
                     if(unliquidated_CA.Count() > 0)
@@ -133,20 +141,20 @@ namespace DX_WebTemplate
 
         protected void formRFP_E4_Callback(object sender, CallbackEventArgsBase e)
         {
-            SqlDepartment.SelectParameters["CompanyId"].DefaultValue = drpdown_Company.Value.ToString();
+            SqlDepartment.SelectParameters["CompanyId"].DefaultValue = e.Parameter.ToString();
             SqlDepartment.DataBind();
 
             drpdown_Department.DataSourceID = null;
             drpdown_Department.DataSource = SqlDepartment;
             drpdown_Department.DataBind();
 
-            var dept = _DataContext.ITP_S_SecurityAppUserCompanyDepts.Where(x => x.CompanyId == Convert.ToInt32(drpdown_Company.Value))
+            var dept = _DataContext.ITP_S_SecurityAppUserCompanyDepts.Where(x => x.CompanyId == Convert.ToInt32(e.Parameter.ToString()))
                 .Where(x => x.UserId == Session["userID"].ToString());
 
-            if(dept != null)
-            {
-                drpdown_Department.SelectedIndex = 0;
-            }
+            //if(dept != null)
+            //{
+            //    drpdown_Department.SelectedIndex = 0;
+            //}
             
         }
 
@@ -699,7 +707,7 @@ namespace DX_WebTemplate
 
         protected void drpdwn_FAPWF_Callback(object sender, CallbackEventArgsBase e)
         {
-            var comp_id = drpdown_Company.Value != null ? drpdown_Company.Value : 0;
+            var comp_id = drpdown_CTCompany.Value != null ? drpdown_CTCompany.Value : 0;
             var amount = spinEdit_Amount.Value != null ? spinEdit_Amount.Value : "0.00";
             var classTypeId = drpdown_classification.Value != null ? drpdown_classification.Value : 0;
             var classType = _DataContext.ACCEDE_S_ExpenseClassifications.Where(x => x.ID == Convert.ToInt32(classTypeId)).FirstOrDefault();
@@ -838,9 +846,10 @@ namespace DX_WebTemplate
 
         protected void drpdown_WF_Callback(object sender, CallbackEventArgsBase e)
         {
-            var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(drpdown_Department.Value)).FirstOrDefault();
+            var param = e.Parameter != "" ? e.Parameter.ToString() : "0";
+            var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(param)).FirstOrDefault();
             var amount = spinEdit_Amount.Value != null ? spinEdit_Amount.Value.ToString() : "0";
-            SqlWF.SelectParameters["CompanyId"].DefaultValue = drpdown_Company.Value != null ? drpdown_Company.Value.ToString() : "0";
+            SqlWF.SelectParameters["CompanyId"].DefaultValue = depcode != null ? depcode.Company_ID.ToString() : "0";
             SqlWF.SelectParameters["DepCode"].DefaultValue = depcode != null ? depcode.DepCode.ToString() : "0";
             SqlWF.DataBind();
 

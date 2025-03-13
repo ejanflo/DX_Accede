@@ -1020,7 +1020,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
 	//costCenter.PerformCallback();
 exp_CTDepartment.PerformCallback(s.GetValue());
 drpdown_CostCenter.SetValue(&quot;&quot;);
-exp_EmpId.PerformCallback(s.GetValue());
+//exp_EmpId.PerformCallback(s.GetValue());
 drpdwn_FAPWF.PerformCallback(s.GetValue());
 exp_CompLocation.PerformCallback(s.GetValue());
 }" />
@@ -1034,7 +1034,7 @@ exp_CompLocation.PerformCallback(s.GetValue());
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings HorizontalAlign="Right" />
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Location" ColSpan="1">
+                                                <dx:LayoutItem Caption="Location" ColSpan="1" FieldName="ExpComp_Location_Id">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxComboBox ID="exp_CompLocation" runat="server" ClientInstanceName="exp_CompLocation" DataSourceID="SqlCompLocation" EnableTheming="True" Font-Bold="True" Font-Size="Small" OnCallback="exp_CompLocation_Callback" TextField="Name" ValueField="ID" Width="100%">
@@ -1054,6 +1054,7 @@ drpdwn_FAPWF.PerformCallback(s.GetValue());
                                                             </dx:ASPxComboBox>
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
+                                                    <CaptionSettings HorizontalAlign="Right" />
                                                 </dx:LayoutItem>
                                                 <dx:LayoutItem Caption="Employee Name" ColSpan="1" FieldName="ExpenseName">
                                                     <LayoutItemNestedControlCollection>
@@ -1840,9 +1841,9 @@ exp_EmpId.PerformCallback(s.GetValue());
                                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                                             <dx:ASPxComboBox ID="drpdown_WF" runat="server" ClientInstanceName="drpdown_WF" DataSourceID="SqlWF" Height="39px" OnCallback="drpdown_WF_Callback" SelectedIndex="0" TextField="Name" ValueField="WF_Id" Width="100%">
                                                                                 <ClientSideEvents Init="function(s, e) {
-	WFSequenceGrid.PerformCallback();
+	//WFSequenceGrid.PerformCallback();
 }" SelectedIndexChanged="function(s, e) {
-	        OnWFChanged();
+	        //OnWFChanged();
         }" />
                                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />

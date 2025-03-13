@@ -571,12 +571,6 @@ drpdown_CompLocation.PerformCallback(s.GetValue());
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxComboBox ID="drpdown_CompLocation" runat="server" ClientInstanceName="drpdown_CompLocation" DataSourceID="SqlCompLocation" OnCallback="drpdown_CompLocation_Callback" TextField="Name" ValueField="ID" Width="100%">
-                                            <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	drpdown_CTDepartment.PerformCallback(s.GetValue());
-drpdown_Department.PerformCallback(s.GetValue());
-OnCompanyChanged(s.GetValue());
-drpdown_Comp.SetValue(s.GetValue());
-}" />
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreateForm">
                                                 <RequiredField ErrorText="Required field." IsRequired="True" />
                                             </ValidationSettings>

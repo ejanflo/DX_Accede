@@ -29,7 +29,7 @@ namespace DX_WebTemplate
 
                     SqlUserCompany.SelectParameters["UserId"].DefaultValue = EmpCode;
                     SqlUserSelf.SelectParameters["EmpCode"].DefaultValue = EmpCode;
-
+                    
                     //drpdown_EmpId.Value = EmpCode.ToString();
                     //drpdown_EmpId.DataBindItems();
 

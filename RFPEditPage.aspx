@@ -23,7 +23,7 @@
                           layoutItem.SetVisible(true);
                           layoutItem2.SetVisible(true);
                           drpdown_currency.PerformCallback(drpdown_TravType.GetValue());
-                          drpdwn_FAPWF.PerformCallback(drpdown_TravType.GetValue());
+                          drpdwn_FAPWF.PerformCallback(drpdown_TravType.GetValue() + "|" + drpdown_CTCompany.GetValue() + "|" + spinEdit_Amount.GetValue() + "|" + drpdown_classification.GetValue());
                           layoutItem3.SetVisible(false);
                       } else {
                           layoutItem.SetVisible(false);
@@ -74,7 +74,7 @@
 
           function onTravTypeChanged(trav) {
               drpdown_currency.PerformCallback(trav);
-              drpdwn_FAPWF.PerformCallback(trav);
+              drpdwn_FAPWF.PerformCallback(drpdown_TravType.GetValue() + "|" + drpdown_CTCompany.GetValue() + "|" + spinEdit_Amount.GetValue() + "|" + drpdown_classification.GetValue());
           }
 
           function onPayToVendorTranType() {
@@ -144,8 +144,8 @@
                       success: function (response) {
                           //Update the description text box with the response value
                           if (response.d != 0 && amount > response.d) {
-                              warning_txt.SetText("Amount entered is beyond company's system limit. Please use SAP Concur instead or continue with this transaction.");
-                              PetCashPopupSave.Show();
+                              //warning_txt.SetText("Amount entered is beyond company's system limit. Please use SAP Concur instead or continue with this transaction.");
+                              //PetCashPopupSave.Show();
                               //spinEdit_Amount.SetValue("");
                           }
 
@@ -163,12 +163,12 @@
                   });
               }
 
-              FAPWFGrid.PerformCallback(amount + "|" + comp_id);
-              drpdwn_FAPWF.PerformCallback(amount + "|" + comp_id);
+              FAPWFGrid.PerformCallback(drpdown_TravType.GetValue() + "|" + drpdown_CTCompany.GetValue() + "|" + spinEdit_Amount.GetValue() + "|" + drpdown_classification.GetValue());
+              drpdwn_FAPWF.PerformCallback(drpdown_TravType.GetValue() + "|" + drpdown_CTCompany.GetValue() + "|" + spinEdit_Amount.GetValue() + "|" + drpdown_classification.GetValue());
               drpdwn_FAPWF.SetSelectedIndex(0);
-              drpdown_WF.PerformCallback(amount + "|" + comp_id);
-              WFSequenceGrid.PerformCallback(amount + "|" + comp_id);
-              drpdown_WF.SetSelectedIndex(0);
+              //drpdown_WF.PerformCallback(amount + "|" + comp_id);
+             // WFSequenceGrid.PerformCallback(amount + "|" + comp_id);
+              //drpdown_WF.SetSelectedIndex(0);
 
           }
 
@@ -187,7 +187,7 @@
           function onDeptChanged() {
 
               drpdown_WF.PerformCallback();
-              drpdwn_FAPWF.PerformCallback();
+              //drpdwn_FAPWF.PerformCallback();
           }
 
           function onCTDeptChanged() {
@@ -452,9 +452,10 @@
                                         <dx:ASPxComboBox ID="drpdown_CTCompany" runat="server" ClientInstanceName="drpdown_CTCompany" DataSourceID="SqlCompany" TextField="CompanyShortName" ValueField="CompanyId" Width="100%">
                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	drpdown_CTDepartment.PerformCallback(s.GetValue());
-drpdown_Payee.PerformCallback(s.GetValue());
+//drpdown_Payee.PerformCallback(s.GetValue());
 drpdown_CostCenter.SetValue(&quot;&quot;);
-drpdwn_FAPWF.PerformCallback();
+drpdwn_FAPWF.PerformCallback(drpdown_TravType.GetValue() + &quot;|&quot; + drpdown_CTCompany.GetValue() + &quot;|&quot; + spinEdit_Amount.GetValue() + &quot;|&quot; + drpdown_classification.GetValue());
+FAPWFGrid.PerformCallback(drpdown_TravType.GetValue() + &quot;|&quot; + drpdown_CTCompany.GetValue() + &quot;|&quot; + spinEdit_Amount.GetValue() + &quot;|&quot; + drpdown_classification.GetValue());
 ifComp_is_DLI();
 onAmountChanged(drpdown_PayMethod.GetValue());
 drpdown_CompLocation.PerformCallback(s.GetValue());
@@ -576,7 +577,9 @@ onTravelClick();
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxComboBox ID="drpdown_classification" runat="server" ClientInstanceName="drpdown_classification" DataSourceID="SqlClassification" TextField="ClassificationName" ValueField="ID" Width="100%">
                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	drpdwn_FAPWF.PerformCallback();
+	FAPWFGrid.PerformCallback(drpdown_TravType.GetValue() + &quot;|&quot; + drpdown_CTCompany.GetValue() + &quot;|&quot; + spinEdit_Amount.GetValue() + &quot;|&quot; + drpdown_classification.GetValue());
+drpdown_FAPWF.PerformCallback(drpdown_TravType.GetValue() + &quot;|&quot; + drpdown_CTCompany.GetValue() + &quot;|&quot; + spinEdit_Amount.GetValue() + &quot;|&quot; + drpdown_classification.GetValue());
+
 }" />
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                 <RequiredField ErrorText="This field is required." IsRequired="True" />
@@ -717,6 +720,9 @@ onTravelClick();
                                         <dx:ASPxSpinEdit ID="spinEdit_Amount" runat="server" Width="50%" DisplayFormatString="#,##0.00" MaxValue="9999999" ClientInstanceName="spinEdit_Amount">
                                             <ClientSideEvents ValueChanged="function(s, e) {
 	onAmountChanged(drpdown_PayMethod.GetValue());
+FAPWFGrid.PerformCallback(drpdown_TravType.GetValue() + &quot;|&quot; + drpdown_CTCompany.GetValue() + &quot;|&quot; + spinEdit_Amount.GetValue() + &quot;|&quot; + drpdown_classification.GetValue());
+drpdown_FAPWF.PerformCallback(drpdown_TravType.GetValue() + &quot;|&quot; + drpdown_CTCompany.GetValue() + &quot;|&quot; + spinEdit_Amount.GetValue() + &quot;|&quot; + drpdown_classification.GetValue());
+
 }" />
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                 <RequiredField ErrorText="This field is required." IsRequired="True" />
@@ -936,11 +942,11 @@ onTravelClick();
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxComboBox ID="drpdown_Company" runat="server" ClientInstanceName="drpdown_Company" DataSourceID="SqlCompany" TextField="CompanyShortName" ValueField="CompanyId" Width="100%">
                                                     <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	drpdown_Department.PerformCallback();
+	drpdown_Department.PerformCallback(s.GetValue());
 drpdown_Payee.PerformCallback();
 drpdown_WF.PerformCallback();
 ifComp_is_DLI();
-onAmountChanged(drpdown_PayMethod.GetValue());
+//onAmountChanged(drpdown_PayMethod.GetValue());
 }" />
                                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                         <RequiredField ErrorText="This field is required." IsRequired="True" />

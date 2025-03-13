@@ -214,9 +214,9 @@
             //FAPWFGrid.PerformCallback(amount + "|" + comp_id);
             drpdwn_FAPWF.PerformCallback(amount + "|" + comp_id);
             drpdwn_FAPWF.SetSelectedIndex(0);
-            drpdown_WF.PerformCallback(amount + "|" + comp_id);
+            //drpdown_WF.PerformCallback(amount + "|" + comp_id);
             //WFSequenceGrid.PerformCallback(amount + "|" + comp_id);
-            drpdown_WF.SetSelectedIndex(0);
+            //drpdown_WF.SetSelectedIndex(0);
 
         }
 
@@ -236,10 +236,10 @@
             WFSequenceGrid.PerformCallback();
         }
 
-        function onDeptChanged() {
+        function onDeptChanged(dept) {
             
-            drpdown_WF.PerformCallback();
-            drpdwn_FAPWF.PerformCallback();
+            drpdown_WF.PerformCallback(dept);
+            //drpdwn_FAPWF.PerformCallback();
         }
 
         function onCTDeptChanged() {
@@ -507,13 +507,13 @@
                                         <dx:ASPxComboBox ID="drpdown_CTCompany" runat="server" ClientInstanceName="drpdown_CTCompany" DataSourceID="SqlCompany" TextField="CompanyShortName" ValueField="CompanyId" Width="100%">
                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	drpdown_CTDepartment.PerformCallback(s.GetValue());
-drpdown_Payee.PerformCallback(s.GetValue());
+drpdown_Payee.PerformCallback(sdrpdown_CTCompany.GetValue());
 drpdown_CostCenter.SetValue(&quot;&quot;);
 //drpdown_WF.PerformCallback();
 ifComp_is_DLI();
 onAmountChanged(drpdown_PayMethod.GetValue());
 drpdown_Company.SetValue(s.GetValue());
-drpdown_Department.PerformCallback();
+//drpdown_Department.PerformCallback();
 drpdwn_FAPWF.PerformCallback();
 drpdown_CompLocation.PerformCallback(s.GetValue());
 }" />
@@ -971,11 +971,11 @@ onTravelClick();
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxComboBox ID="drpdown_Company" runat="server" ClientInstanceName="drpdown_Company" DataSourceID="SqlCompany" TextField="CompanyShortName" ValueField="CompanyId" Width="100%">
                                                     <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	drpdown_Department.PerformCallback();
-drpdown_Payee.PerformCallback();
+	drpdown_Department.PerformCallback(s.GetValue());
+drpdown_Payee.PerformCallback(s.GetValue());
 drpdown_WF.PerformCallback();
 ifComp_is_DLI();
-onAmountChanged(drpdown_PayMethod.GetValue());
+//onAmountChanged(drpdown_PayMethod.GetValue());
 }" />
                                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                         <RequiredField ErrorText="This field is required." IsRequired="True" />
@@ -990,7 +990,7 @@ onAmountChanged(drpdown_PayMethod.GetValue());
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxComboBox ID="drpdown_Department" runat="server" ClientInstanceName="drpdown_Department" DataSourceID="SqlDepartment" OnCallback="formRFP_E4_Callback" TextField="DepDesc" ValueField="ID" Width="100%">
                                                     <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	onDeptChanged();
+	onDeptChanged(s.GetValue());
 }" />
                                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                         <RequiredField ErrorText="This field is required." IsRequired="True" />
@@ -1028,6 +1028,8 @@ onAmountChanged(drpdown_PayMethod.GetValue());
                                                     <dx:LayoutItemNestedControlContainer runat="server">
                                                         <dx:ASPxComboBox ID="drpdown_WF" runat="server" ClientInstanceName="drpdown_WF" DataSourceID="SqlWF" OnCallback="drpdown_WF_Callback" TextField="WorkflowHeader_Name" ValueField="WF_Id" Width="100%">
                                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	OnWFChanged();
+}" ButtonClick="function(s, e) {
 	OnWFChanged();
 }" />
                                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
