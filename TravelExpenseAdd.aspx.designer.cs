@@ -78,13 +78,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox departmentCB;
 
         /// <summary>
-        /// fordCB control.
+        /// reportdateDE control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox fordCB;
+        protected global::DevExpress.Web.ASPxDateEdit reportdateDE;
 
         /// <summary>
         /// drpdown_expenseType control.
@@ -105,24 +105,6 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox chargedCB;
 
         /// <summary>
-        /// chargedCB0 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox chargedCB0;
-
-        /// <summary>
-        /// reportdateDE control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxDateEdit reportdateDE;
-
-        /// <summary>
         /// datefromDE control.
         /// </summary>
         /// <remarks>
@@ -130,6 +112,15 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxDateEdit datefromDE;
+
+        /// <summary>
+        /// locBranch control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox locBranch;
 
         /// <summary>
         /// datetoDE control.
@@ -141,6 +132,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxDateEdit datetoDE;
 
         /// <summary>
+        /// chargedCB0 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox chargedCB0;
+
+        /// <summary>
         /// timedepartTE control.
         /// </summary>
         /// <remarks>
@@ -148,6 +148,15 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxTimeEdit timedepartTE;
+
+        /// <summary>
+        /// fordCB control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox fordCB;
 
         /// <summary>
         /// timearriveTE control.
@@ -1435,5 +1444,23 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlExpenseClassification;
+
+        /// <summary>
+        /// SqlLocBranch control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlLocBranch;
+
+        /// <summary>
+        /// SqlDepartmentEdit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlDepartmentEdit;
     }
 }

@@ -435,28 +435,6 @@
                                                 </dx:LayoutItem>
                                                 <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2">
                                                 </dx:EmptyLayoutItem>
-                                                <dx:LayoutItem Caption="Report Date" ColSpan="1" FieldName="Date_Created">
-                                                    <LayoutItemNestedControlCollection>
-                                                        <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxDateEdit ID="reportdateDE" runat="server" ClientEnabled="False" ClientInstanceName="reportdateDE" DisplayFormatString="MMMM dd, yyyy" Enabled="False" Font-Bold="True" Width="100%">
-                                                                <DropDownButton Visible="False">
-                                                                </DropDownButton>
-                                                                <ValidationSettings ValidationGroup="ExpenseEdit">
-                                                                </ValidationSettings>
-                                                                <BorderLeft BorderStyle="None" />
-                                                                <BorderTop BorderStyle="None" />
-                                                                <BorderRight BorderStyle="None" />
-                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                                <DisabledStyle Font-Bold="True" Font-Overline="False" ForeColor="#222222">
-                                                                </DisabledStyle>
-                                                            </dx:ASPxDateEdit>
-                                                        </dx:LayoutItemNestedControlContainer>
-                                                    </LayoutItemNestedControlCollection>
-                                                    <CaptionStyle Font-Bold="False" Font-Size="Small">
-                                                    </CaptionStyle>
-                                                </dx:LayoutItem>
-                                                <dx:EmptyLayoutItem ColSpan="1">
-                                                </dx:EmptyLayoutItem>
                                                 <dx:LayoutItem Caption="Travel" ColSpan="1" FieldName="ForeignDomestic">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
@@ -490,6 +468,42 @@
                                                     <CaptionStyle Font-Bold="False" Font-Size="Small">
                                                     </CaptionStyle>
                                                 </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Report Date" ColSpan="1" FieldName="Date_Created">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxDateEdit ID="reportdateDE" runat="server" ClientEnabled="False" ClientInstanceName="reportdateDE" DisplayFormatString="MMMM dd, yyyy" Enabled="False" Font-Bold="True" Width="100%">
+                                                                <DropDownButton Visible="False">
+                                                                </DropDownButton>
+                                                                <ValidationSettings ValidationGroup="ExpenseEdit">
+                                                                </ValidationSettings>
+                                                                <BorderLeft BorderStyle="None" />
+                                                                <BorderTop BorderStyle="None" />
+                                                                <BorderRight BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <DisabledStyle Font-Bold="True" Font-Overline="False" ForeColor="#222222">
+                                                                </DisabledStyle>
+                                                            </dx:ASPxDateEdit>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionStyle Font-Bold="False" Font-Size="Small">
+                                                    </CaptionStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Date From" ColSpan="1" FieldName="Date_From">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxDateEdit ID="datefromDE" runat="server" ClientEnabled="False" ClientInstanceName="datefromDE" DisplayFormatString="MMMM dd, yyyy" Font-Bold="True" Width="100%">
+                                                                <DropDownButton Visible="False">
+                                                                </DropDownButton>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <DisabledStyle Font-Bold="True" ForeColor="#222222">
+                                                                </DisabledStyle>
+                                                            </dx:ASPxDateEdit>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionStyle Font-Bold="False" Font-Size="Small">
+                                                    </CaptionStyle>
+                                                </dx:LayoutItem>
                                                 <dx:LayoutItem Caption="Charged To Company" ColSpan="1" FieldName="ChargedToComp">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
@@ -504,6 +518,57 @@
                                                                 <DisabledStyle Font-Bold="True" ForeColor="#222222">
                                                                 </DisabledStyle>
                                                             </dx:ASPxComboBox>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionStyle Font-Bold="False" Font-Size="Small">
+                                                    </CaptionStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Date To" ColSpan="1" FieldName="Date_To">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxDateEdit ID="datetoDE" runat="server" ClientEnabled="False" ClientInstanceName="datetoDE" DisplayFormatString="MMMM dd, yyyy" Font-Bold="True" Width="100%">
+                                                                <DropDownButton Visible="False">
+                                                                </DropDownButton>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <DisabledStyle Font-Bold="True" ForeColor="#222222">
+                                                                </DisabledStyle>
+                                                            </dx:ASPxDateEdit>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionStyle Font-Bold="False" Font-Size="Small">
+                                                    </CaptionStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Location/Branch" ColSpan="1" FieldName="LocBranch">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxComboBox ID="locBranch" runat="server" ClientEnabled="False" ClientInstanceName="locBranch" DataSourceID="SqlLocBranch" Font-Bold="True" OnCallback="locBranch_Callback" OnDataBound="locBranch_DataBound" TextField="Name" ValueField="ID" Width="100%">
+                                                                <DropDownButton Visible="False">
+                                                                </DropDownButton>
+                                                                <ClearButton DisplayMode="Always">
+                                                                </ClearButton>
+                                                                <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                                    <RequiredField ErrorText="*Required field" IsRequired="True" />
+                                                                </ValidationSettings>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <DisabledStyle ForeColor="#222222">
+                                                                </DisabledStyle>
+                                                            </dx:ASPxComboBox>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Time Departed" ColSpan="1">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxTimeEdit ID="timedepartTE" runat="server" ClientEnabled="False" ClientInstanceName="timedepartTE" Font-Bold="True" Width="100%">
+                                                                <SpinButtons ClientVisible="False">
+                                                                </SpinButtons>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <DisabledStyle Font-Bold="True" ForeColor="#222222">
+                                                                </DisabledStyle>
+                                                            </dx:ASPxTimeEdit>
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionStyle Font-Bold="False" Font-Size="Small">
@@ -528,54 +593,6 @@
                                                     <CaptionStyle Font-Bold="False" Font-Size="Small">
                                                     </CaptionStyle>
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Date From" ColSpan="1" FieldName="Date_From">
-                                                    <LayoutItemNestedControlCollection>
-                                                        <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxDateEdit ID="datefromDE" runat="server" ClientEnabled="False" ClientInstanceName="datefromDE" DisplayFormatString="MMMM dd, yyyy" Font-Bold="True" Width="100%">
-                                                                <DropDownButton Visible="False">
-                                                                </DropDownButton>
-                                                                <Border BorderStyle="None" />
-                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                                <DisabledStyle Font-Bold="True" ForeColor="#222222">
-                                                                </DisabledStyle>
-                                                            </dx:ASPxDateEdit>
-                                                        </dx:LayoutItemNestedControlContainer>
-                                                    </LayoutItemNestedControlCollection>
-                                                    <CaptionStyle Font-Bold="False" Font-Size="Small">
-                                                    </CaptionStyle>
-                                                </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Date To" ColSpan="1" FieldName="Date_To">
-                                                    <LayoutItemNestedControlCollection>
-                                                        <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxDateEdit ID="datetoDE" runat="server" ClientEnabled="False" ClientInstanceName="datetoDE" DisplayFormatString="MMMM dd, yyyy" Font-Bold="True" Width="100%">
-                                                                <DropDownButton Visible="False">
-                                                                </DropDownButton>
-                                                                <Border BorderStyle="None" />
-                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                                <DisabledStyle Font-Bold="True" ForeColor="#222222">
-                                                                </DisabledStyle>
-                                                            </dx:ASPxDateEdit>
-                                                        </dx:LayoutItemNestedControlContainer>
-                                                    </LayoutItemNestedControlCollection>
-                                                    <CaptionStyle Font-Bold="False" Font-Size="Small">
-                                                    </CaptionStyle>
-                                                </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Time Departed" ColSpan="1">
-                                                    <LayoutItemNestedControlCollection>
-                                                        <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxTimeEdit ID="timedepartTE" runat="server" ClientEnabled="False" ClientInstanceName="timedepartTE" Font-Bold="True" Width="100%">
-                                                                <SpinButtons ClientVisible="False">
-                                                                </SpinButtons>
-                                                                <Border BorderStyle="None" />
-                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                                <DisabledStyle Font-Bold="True" ForeColor="#222222">
-                                                                </DisabledStyle>
-                                                            </dx:ASPxTimeEdit>
-                                                        </dx:LayoutItemNestedControlContainer>
-                                                    </LayoutItemNestedControlCollection>
-                                                    <CaptionStyle Font-Bold="False" Font-Size="Small">
-                                                    </CaptionStyle>
-                                                </dx:LayoutItem>
                                                 <dx:LayoutItem Caption="Time Arrived" ColSpan="1">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
@@ -592,10 +609,10 @@
                                                     <CaptionStyle Font-Bold="False" Font-Size="Small">
                                                     </CaptionStyle>
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Trip To" ColSpan="1" FieldName="Trip_To">
+                                                <dx:LayoutItem Caption="Purpose" ColSpan="1" FieldName="Purpose" VerticalAlign="Top">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxMemo ID="tripMemo" runat="server" ClientEnabled="False" ClientInstanceName="tripMemo" Font-Bold="True" Width="100%">
+                                                            <dx:ASPxMemo ID="purposeMemo" runat="server" ClientEnabled="False" ClientInstanceName="purposeMemo" Font-Bold="True" HorizontalAlign="Left" Width="100%">
                                                                 <ValidationSettings>
                                                                     <RequiredField ErrorText="*Required" />
                                                                 </ValidationSettings>
@@ -610,10 +627,10 @@
                                                     <CaptionStyle Font-Bold="False" Font-Size="Small">
                                                     </CaptionStyle>
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Purpose" ColSpan="1" FieldName="Purpose">
+                                                <dx:LayoutItem Caption="Trip To" ColSpan="1" FieldName="Trip_To" VerticalAlign="Top">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxMemo ID="purposeMemo" runat="server" ClientEnabled="False" ClientInstanceName="purposeMemo" Font-Bold="True" HorizontalAlign="Left" Width="100%">
+                                                            <dx:ASPxMemo ID="tripMemo" runat="server" ClientEnabled="False" ClientInstanceName="tripMemo" Font-Bold="True" Width="100%">
                                                                 <ValidationSettings>
                                                                     <RequiredField ErrorText="*Required" />
                                                                 </ValidationSettings>
@@ -3789,7 +3806,7 @@ onTravelClick();
                             <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="HeadingLine" HorizontalAlign="Center" Width="100%">
                                 <Paddings Padding="0px" />
                                 <Items>
-                                    <dx:LayoutItem Caption="" ColSpan="1" Width="0px">
+                                    <dx:LayoutItem Caption="" ColSpan="1" Width="0px" VerticalAlign="Top">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxButton ID="forwardPopBtn" runat="server" Text="Approve &amp; Forward" BackColor="#0D6943" ClientInstanceName="forwardPopBtn" AutoPostBack="False" UseSubmitBehavior="False" ValidationGroup="forwardValid">
@@ -3802,9 +3819,9 @@ onTravelClick();
                                                 </dx:ASPxButton>
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
-                                        <Paddings Padding="0px" />
+                                        <Paddings Padding="0px" PaddingBottom="0px" PaddingLeft="0px" PaddingRight="0px" PaddingTop="0px" />
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="" ColSpan="1" Width="0px">
+                                    <dx:LayoutItem Caption="" ColSpan="1" Width="0px" VerticalAlign="Top">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxButton ID="ASPxFormLayout1_E13" runat="server" Text="Cancel" AutoPostBack="False" BackColor="White" ForeColor="Gray" UseSubmitBehavior="False">
@@ -3815,6 +3832,7 @@ onTravelClick();
                                                 </dx:ASPxButton>
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
+                                        <Paddings Padding="0px" PaddingBottom="0px" PaddingLeft="0px" PaddingRight="0px" PaddingTop="0px" />
                                     </dx:LayoutItem>
                                 </Items>
                             </dx:LayoutGroup>
@@ -4060,7 +4078,7 @@ onTravelClick();
         </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlEmpName" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_UserMaster]"></asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [CompanyMaster] WHERE ([WASSId] IS NOT NULL)"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [CompanyMaster] WHERE ([WASSId] IS NOT NULL) ORDER BY CompanyDesc ASC"></asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlTranType" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_ExpenseType]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlExpCat" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACDE_T_MasterCodes] WHERE ([Code] = @Code)">
         <SelectParameters>
@@ -4404,4 +4422,8 @@ onTravelClick();
                 <asp:Parameter Name="WF_Id" Type="Int32" />
             </SelectParameters>
         </asp:SqlDataSource>
-</asp:Content>
+     
+    <asp:SqlDataSource ID="SqlLocBranch" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_CompanyBranch]">
+    </asp:SqlDataSource>
+     
+     </asp:Content>

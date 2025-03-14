@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.Remoting.Contexts;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Security.Cryptography;
@@ -67,7 +68,7 @@ namespace DX_WebTemplate
                         Session["doc_stat2"] = status;
 
                         ExpenseEditForm.Items[0].Caption = "Travel Expense Document No.: " + mainExp.Doc_No + " (" + status + ")";
-                        
+
                         if (status == "Pending at Finance" || status == "Pending at P2P")
                         {
                             chargedCB.ClientEnabled = true;
@@ -747,8 +748,10 @@ namespace DX_WebTemplate
 
                 //UPDATE Workflow Activity 
                 var rfpapp_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP").Where(x => x.App_Id == 1032).FirstOrDefault();
+                var rfpwfa = _DataContext.ITP_T_WorkflowActivities.Where(x => x.AppDocTypeId == rfpapp_docType.DCT_Id && x.Document_Id == rfpid && x.AppId == 1032).Select(x => x.WFA_Id).FirstOrDefault();
+
                 var updateRFPWFA = _DataContext.ITP_T_WorkflowActivities
-                    .Where(e => e.Document_Id == rfpid && e.AppId == 1032 && e.AppDocTypeId == rfpapp_docType.DCT_Id && e.WFA_Id == wfa);
+                    .Where(e => e.Document_Id == rfpid && e.AppId == 1032 && e.AppDocTypeId == rfpapp_docType.DCT_Id && e.WFA_Id == rfpwfa);
 
                 foreach (ITP_T_WorkflowActivity e in updateRFPWFA)
                 {
@@ -758,7 +761,6 @@ namespace DX_WebTemplate
                     e.ActedBy_User_Id = userID;
                 }
                 _DataContext.SubmitChanges();
-
 
                 //UPDATE Travel Main
                 var updateTravelMain = _DataContext.ACCEDE_T_TravelExpenseMains
@@ -1010,7 +1012,9 @@ namespace DX_WebTemplate
 
                         var countFAPWF = _DataContext.ITP_T_WorkflowActivities.Count(w => w.WF_Id == fapwf && w.AppId == 1032 && w.Document_Id == docID && w.AppDocTypeId == doctype_id);
 
-                        if (countFAPWF > 0)
+                        var hasRetStatus = _DataContext.ITP_T_WorkflowActivities.Any(w => w.AppId == 1032 && w.Document_Id == docID && w.AppDocTypeId == doctype_id && w.Status == 3);
+
+                        if (countFAPWF > 0 && (!hasRetStatus || Convert.ToString(Session["doc_stat2"]) == "Forwarded" || Convert.ToString(Session["doc_stat2"]) == "Pending at Audit"))
                         {
                             Debug.WriteLine("There's FAPWF");
                             var fapRetStatus = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Returned by Finance").Select(x => x.STS_Id).FirstOrDefault();
@@ -1028,7 +1032,6 @@ namespace DX_WebTemplate
 
                                 var audRetStat = _DataContext.ITP_S_Status.Where(w => w.STS_Description == "Returned by Audit").Select(w => w.STS_Id).FirstOrDefault(); 
                                 var hasReturnStatus = _DataContext.ITP_T_WorkflowActivities.Any(w => w.WF_Id == audwf && w.AppId == 1032 && w.Document_Id == docID && w.AppDocTypeId == doctype_id && w.Status == audRetStat);
-
 
                                 if (countAUDWF > 0 && (!hasReturnStatus || Convert.ToString(Session["doc_stat2"]) == "Pending at Audit"))
                                 {
@@ -1428,6 +1431,34 @@ namespace DX_WebTemplate
             ForwardSequenceGrid.DataSourceID = null;
             ForwardSequenceGrid.DataSource = SqlWFSequenceForward;
             ForwardSequenceGrid.DataBind();
+        }
+
+        protected void locBranch_Callback(object sender, CallbackEventArgsBase e)
+        {
+            ASPxComboBox combo = sender as ASPxComboBox;
+
+            if (combo != null)
+            {
+                // Example: Check if the selected value is 0
+                if (combo.Value != null && combo.Value.ToString() == "0")
+                {
+                    combo.Value = null; // Set to null if value is 0
+                }
+            }
+        }
+
+        protected void locBranch_DataBound(object sender, EventArgs e)
+        {
+            ASPxComboBox combo = sender as ASPxComboBox;
+
+            if (combo != null)
+            {
+                // Example: Check if the selected value is 0
+                if (combo.Value != null && combo.Value.ToString() == "0")
+                {
+                    combo.Value = null; // Set to null if value is 0
+                }
+            }
         }
     }
 }

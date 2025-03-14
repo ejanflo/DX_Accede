@@ -105,15 +105,6 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox departmentCB;
 
         /// <summary>
-        /// reportdateDE control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxDateEdit reportdateDE;
-
-        /// <summary>
         /// fordCB control.
         /// </summary>
         /// <remarks>
@@ -132,22 +123,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox drpdown_expenseType;
 
         /// <summary>
-        /// chargedCB control.
+        /// reportdateDE control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox chargedCB;
-
-        /// <summary>
-        /// chargedCB0 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox chargedCB0;
+        protected global::DevExpress.Web.ASPxDateEdit reportdateDE;
 
         /// <summary>
         /// datefromDE control.
@@ -159,6 +141,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxDateEdit datefromDE;
 
         /// <summary>
+        /// chargedCB control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox chargedCB;
+
+        /// <summary>
         /// datetoDE control.
         /// </summary>
         /// <remarks>
@@ -166,6 +157,15 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxDateEdit datetoDE;
+
+        /// <summary>
+        /// locBranch control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox locBranch;
 
         /// <summary>
         /// timedepartTE control.
@@ -177,6 +177,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTimeEdit timedepartTE;
 
         /// <summary>
+        /// chargedCB0 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox chargedCB0;
+
+        /// <summary>
         /// timearriveTE control.
         /// </summary>
         /// <remarks>
@@ -186,15 +195,6 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTimeEdit timearriveTE;
 
         /// <summary>
-        /// tripMemo control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxMemo tripMemo;
-
-        /// <summary>
         /// purposeMemo control.
         /// </summary>
         /// <remarks>
@@ -202,6 +202,15 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxMemo purposeMemo;
+
+        /// <summary>
+        /// tripMemo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxMemo tripMemo;
 
         /// <summary>
         /// memo_remarks control.
@@ -1660,5 +1669,14 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlWFSequenceForward;
+
+        /// <summary>
+        /// SqlLocBranch control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlLocBranch;
     }
 }

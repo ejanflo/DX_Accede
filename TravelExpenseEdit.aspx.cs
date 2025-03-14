@@ -420,7 +420,7 @@ namespace DX_WebTemplate
         public static bool AddRFPReimburseAJAX(string empname, DateTime reportdate, string company, string department, string purpose,
             string amount)
         {
-            TravelExpenseAdd exp = new TravelExpenseAdd();
+            TravelExpenseEdit exp = new TravelExpenseEdit();
 
             return exp.AddRFPReimburse(empname, reportdate, company, department, purpose,
             amount);

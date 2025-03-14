@@ -86,6 +86,12 @@
                 var department = departmentCB.GetValue();
                 var purpose = purposeMemo.GetValue();
                 var amount = lbl_dueTotal.GetValue();
+                var chargedComp = chargedCB.GetValue();
+                var chargedDept = chargedCB0.GetValue();
+                var locbranch = locBranch.GetValue();
+                var ford = fordCB.GetValue();
+                var wf = drpdown_WF.GetValue();
+                var fapwf = drpdown_FAPWF.GetValue();
 
                 $.ajax({
                     type: "POST",
@@ -96,7 +102,13 @@
                         company: company,
                         department: department,
                         purpose: purpose,
-                        amount: amount
+                        amount: amount,
+                        chargedComp: chargedComp,
+                        chargedDept: chargedDept,
+                        locbranch: locbranch,
+                        ford: ford,
+                        wf: wf,
+                        fapwf: fapwf
                     }),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -694,6 +706,7 @@
             var ford = fordCB.GetValue();
             var purpose = purposeMemo.GetValue();
             var expenseType = drpdown_expenseType.GetValue();
+            var locbranch = locBranch.GetValue();
 
             $.ajax({
                 type: "POST",
@@ -713,6 +726,7 @@
                     ford: ford,
                     purpose: purpose,
                     expenseType: expenseType,
+                    locbranch: locbranch,
                     btnaction: btn
                 }),
                 contentType: "application/json; charset=utf-8",
@@ -994,28 +1008,25 @@
                                                 </dx:LayoutItem>
                                                 <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2">
                                                 </dx:EmptyLayoutItem>
-                                                <dx:LayoutItem Caption="Travel" ColSpan="1" FieldName="ForeignDomestic">
+                                                <dx:LayoutItem Caption="Report Date" ColSpan="1" FieldName="Date_Created">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxComboBox ID="fordCB" runat="server" ClientEnabled="False" ClientInstanceName="fordCB" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                                                <ClientSideEvents SelectedIndexChanged="CheckCurrency" />
-                                                                <Items>
-                                                                    <dx:ListEditItem Text="Domestic" Value="Domestic" />
-                                                                    <dx:ListEditItem Text="Foreign" Value="Foreign" />
-                                                                </Items>
+                                                            <dx:ASPxDateEdit ID="reportdateDE" runat="server" ClientInstanceName="reportdateDE" DisplayFormatString="MMMM dd, yyyy" Enabled="False" Font-Bold="True" Font-Size="Small" Width="100%">
                                                                 <DropDownButton Visible="False">
                                                                 </DropDownButton>
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
-                                                                <Border BorderStyle="None" />
+                                                                <BorderLeft BorderStyle="None" />
+                                                                <BorderTop BorderStyle="None" />
+                                                                <BorderRight BorderStyle="None" />
                                                                 <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                                                 <DisabledStyle ForeColor="#333333">
                                                                 </DisabledStyle>
-                                                            </dx:ASPxComboBox>
+                                                            </dx:ASPxDateEdit>
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
-                                                    <CaptionStyle Font-Bold="False" Font-Italic="False">
+                                                    <CaptionStyle Font-Bold="False">
                                                     </CaptionStyle>
                                                 </dx:LayoutItem>
                                                 <dx:LayoutItem Caption="Transaction Type" ColSpan="1">
@@ -1041,6 +1052,10 @@
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxComboBox ID="chargedCB" runat="server" ClientInstanceName="chargedCB" DataSourceID="SqlCompany" Font-Bold="True" Font-Size="Small" NullValueItemDisplayText="{0}" OnDataBound="chargedCB_DataBound" TextField="CompanyShortName" TextFormatString="{0}" ValueField="WASSId" Width="100%">
+                                                                <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	locBranch.PerformCallback(s.GetValue());
+               chargedCB0.PerformCallback(s.GetValue());
+}" />
                                                                 <Columns>
                                                                     <dx:ListBoxColumn Caption="Company" FieldName="CompanyShortName" Width="120px">
                                                                     </dx:ListBoxColumn>
@@ -1050,66 +1065,16 @@
                                                                 <ClearButton DisplayMode="Always">
                                                                 </ClearButton>
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
-                                                                    <RequiredField ErrorText="*Required" />
-                                                                </ValidationSettings>
-                                                                <Border BorderStyle="None" />
-                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                                <DisabledStyle ForeColor="#333333">
-                                                                </DisabledStyle>
-                                                            </dx:ASPxComboBox>
-                                                        </dx:LayoutItemNestedControlContainer>
-                                                    </LayoutItemNestedControlCollection>
-                                                    <CaptionStyle Font-Bold="False" Font-Italic="False">
-                                                    </CaptionStyle>
-                                                </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Charged To Department" ColSpan="1" FieldName="ChargedToDept">
-                                                    <LayoutItemNestedControlCollection>
-                                                        <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxComboBox ID="chargedCB0" runat="server" ClientInstanceName="chargedCB0" DataSourceID="SqlDepartment" Font-Bold="True" Font-Size="Small" NullValueItemDisplayText="{0}" OnDataBound="chargedCB0_DataBound" TextField="DepCode" TextFormatString="{1}" ValueField="ID" Width="100%">
-                                                                <Columns>
-                                                                    <dx:ListBoxColumn Caption="Company" FieldName="Company_Code" Width="110px">
-                                                                    </dx:ListBoxColumn>
-                                                                    <dx:ListBoxColumn Caption="Dept Code" FieldName="DepCode" Width="100px">
-                                                                    </dx:ListBoxColumn>
-                                                                    <dx:ListBoxColumn Caption="Dept Description" FieldName="DepDesc" Width="280px">
-                                                                    </dx:ListBoxColumn>
-                                                                </Columns>
-                                                                <ClearButton DisplayMode="Always">
-                                                                </ClearButton>
-                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
-                                                                    <RequiredField ErrorText="*Required" />
-                                                                </ValidationSettings>
-                                                                <Border BorderStyle="None" />
-                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                                <DisabledStyle ForeColor="#333333">
-                                                                </DisabledStyle>
-                                                            </dx:ASPxComboBox>
-                                                        </dx:LayoutItemNestedControlContainer>
-                                                    </LayoutItemNestedControlCollection>
-                                                    <CaptionStyle Font-Bold="False" Font-Italic="False">
-                                                    </CaptionStyle>
-                                                    <ParentContainerStyle Font-Bold="False" Font-Italic="False">
-                                                    </ParentContainerStyle>
-                                                </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Report Date" ColSpan="1" FieldName="Date_Created">
-                                                    <LayoutItemNestedControlCollection>
-                                                        <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxDateEdit ID="reportdateDE" runat="server" ClientInstanceName="reportdateDE" DisplayFormatString="MMMM dd, yyyy" Enabled="False" Font-Bold="True" Font-Size="Small" Width="100%">
-                                                                <DropDownButton Visible="False">
-                                                                </DropDownButton>
-                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
-                                                                <BorderLeft BorderStyle="None" />
-                                                                <BorderTop BorderStyle="None" />
-                                                                <BorderRight BorderStyle="None" />
+                                                                <Border BorderStyle="None" />
                                                                 <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                                                 <DisabledStyle ForeColor="#333333">
                                                                 </DisabledStyle>
-                                                            </dx:ASPxDateEdit>
+                                                            </dx:ASPxComboBox>
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
-                                                    <CaptionStyle Font-Bold="False">
+                                                    <CaptionStyle Font-Bold="False" Font-Italic="False">
                                                     </CaptionStyle>
                                                 </dx:LayoutItem>
                                                 <dx:LayoutItem Caption="Date From" ColSpan="1" FieldName="Date_From">
@@ -1129,6 +1094,21 @@
                                                     <CaptionStyle Font-Bold="False">
                                                     </CaptionStyle>
                                                 </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Location/Branch" ColSpan="1" FieldName="LocBranch">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxComboBox ID="locBranch" runat="server" ClientInstanceName="locBranch" DataSourceID="SqlLocBranch" Font-Bold="True" Font-Size="Small" OnCallback="locBranch_Callback" OnDataBound="locBranch_DataBound" TextField="Name" ValueField="ID" Width="100%">
+                                                                <ClearButton DisplayMode="Always">
+                                                                </ClearButton>
+                                                                <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                                    <RequiredField ErrorText="*Required field" IsRequired="True" />
+                                                                </ValidationSettings>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                            </dx:ASPxComboBox>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                </dx:LayoutItem>
                                                 <dx:LayoutItem Caption="Date To" ColSpan="1" FieldName="Date_To">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
@@ -1145,6 +1125,35 @@
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionStyle Font-Bold="False">
                                                     </CaptionStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Charged To Department" ColSpan="1" FieldName="ChargedToDept">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxComboBox ID="chargedCB0" runat="server" ClientInstanceName="chargedCB0" DataSourceID="SqlDepartment" Font-Bold="True" Font-Size="Small" NullValueItemDisplayText="{0}" OnDataBound="chargedCB0_DataBound" TextField="DepDesc" TextFormatString="{1}" ValueField="ID" Width="100%" OnCallback="chargedCB0_Callback">
+                                                                <Columns>
+                                                                    <dx:ListBoxColumn Caption="Company" FieldName="Company_Code" Width="110px">
+                                                                    </dx:ListBoxColumn>
+                                                                    <dx:ListBoxColumn Caption="Dept Code" FieldName="DepCode" Width="100px">
+                                                                    </dx:ListBoxColumn>
+                                                                    <dx:ListBoxColumn Caption="Dept Description" FieldName="DepDesc" Width="280px">
+                                                                    </dx:ListBoxColumn>
+                                                                </Columns>
+                                                                <ClearButton DisplayMode="Always">
+                                                                </ClearButton>
+                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                                    <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                </ValidationSettings>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <DisabledStyle ForeColor="#333333">
+                                                                </DisabledStyle>
+                                                            </dx:ASPxComboBox>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionStyle Font-Bold="False" Font-Italic="False">
+                                                    </CaptionStyle>
+                                                    <ParentContainerStyle Font-Bold="False" Font-Italic="False">
+                                                    </ParentContainerStyle>
                                                 </dx:LayoutItem>
                                                 <dx:LayoutItem Caption="Time Departed" ColSpan="1">
                                                     <LayoutItemNestedControlCollection>
@@ -1163,6 +1172,30 @@
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionStyle Font-Bold="False">
+                                                    </CaptionStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Travel" ColSpan="1" FieldName="ForeignDomestic">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxComboBox ID="fordCB" runat="server" ClientEnabled="False" ClientInstanceName="fordCB" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
+                                                                <ClientSideEvents SelectedIndexChanged="CheckCurrency" />
+                                                                <Items>
+                                                                    <dx:ListEditItem Text="Domestic" Value="Domestic" />
+                                                                    <dx:ListEditItem Text="Foreign" Value="Foreign" />
+                                                                </Items>
+                                                                <DropDownButton Visible="False">
+                                                                </DropDownButton>
+                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                                    <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                </ValidationSettings>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <DisabledStyle ForeColor="#333333">
+                                                                </DisabledStyle>
+                                                            </dx:ASPxComboBox>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionStyle Font-Bold="False" Font-Italic="False">
                                                     </CaptionStyle>
                                                 </dx:LayoutItem>
                                                 <dx:LayoutItem Caption="Time Arrived" ColSpan="1">
@@ -1198,10 +1231,11 @@
                                                             </dx:ASPxMemo>
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
+                                                    <Paddings PaddingBottom="15px" />
                                                     <CaptionStyle Font-Bold="False">
                                                     </CaptionStyle>
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Purpose" ColSpan="2" ColumnSpan="2" FieldName="Purpose">
+                                                <dx:LayoutItem Caption="Purpose" ColSpan="1" FieldName="Purpose">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxMemo ID="purposeMemo" runat="server" ClientInstanceName="purposeMemo" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" Width="100%">
@@ -1907,9 +1941,23 @@
                                                                                 <dx:PanelContent runat="server">
                                                                                     <dx:ASPxFormLayout ID="ASPxFormLayout8" runat="server" ColCount="2" ColumnCount="2" Width="100%">
                                                                                         <Items>
-                                                                                            <dx:LayoutGroup Caption="WORKFLOW DETAILS" ColSpan="1" GroupBoxDecoration="Box">
+                                                                                            <dx:LayoutGroup Caption="LINE MANAGER WORKFLOW DETAILS" ColSpan="1" GroupBoxDecoration="Box" ColCount="2" ColumnCount="2">
                                                                                                 <Items>
-                                                                                                    <dx:LayoutItem Caption="Workflow" ColSpan="1">
+                                                                                                    <dx:LayoutItem Caption="Workflow Compnany" ColSpan="1" Visible="False">
+                                                                                                        <LayoutItemNestedControlCollection>
+                                                                                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                                                                            </dx:LayoutItemNestedControlContainer>
+                                                                                                        </LayoutItemNestedControlCollection>
+                                                                                                        <CaptionSettings Location="Top" />
+                                                                                                    </dx:LayoutItem>
+                                                                                                    <dx:LayoutItem Caption="Workflow Department" ColSpan="1" Visible="False">
+                                                                                                        <LayoutItemNestedControlCollection>
+                                                                                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                                                                            </dx:LayoutItemNestedControlContainer>
+                                                                                                        </LayoutItemNestedControlCollection>
+                                                                                                        <CaptionSettings Location="Top" />
+                                                                                                    </dx:LayoutItem>
+                                                                                                    <dx:LayoutItem Caption="Workflow" ColSpan="2" ColumnSpan="2">
                                                                                                         <LayoutItemNestedControlCollection>
                                                                                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                                                                                 <dx:ASPxComboBox ID="drpdown_WF" runat="server" ClientEnabled="False" ClientInstanceName="drpdown_WF" DataSourceID="SqlWF" Font-Bold="True" Font-Size="Small" Height="39px" SelectedIndex="0" TextField="Name" ValueField="WF_Id" Width="100%">
@@ -1932,7 +1980,7 @@
                                                                                                         <ParentContainerStyle Font-Size="Small">
                                                                                                         </ParentContainerStyle>
                                                                                                     </dx:LayoutItem>
-                                                                                                    <dx:LayoutItem Caption="" ColSpan="1">
+                                                                                                    <dx:LayoutItem Caption="" ColSpan="2" ColumnSpan="2">
                                                                                                         <LayoutItemNestedControlCollection>
                                                                                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                                                                                 <dx:ASPxGridView ID="WFSequenceGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="WFSequenceGrid" DataSourceID="SqlWorkflowSequence" Theme="MaterialCompact" Width="100%">
@@ -4617,4 +4665,19 @@
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlExpenseClassification" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_ExpenseClassification]">
     </asp:SqlDataSource>
-</asp:Content>
+     
+    <asp:SqlDataSource ID="SqlLocBranch" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_CompanyBranch] WHERE ([Comp_Id] = @Comp_Id)">
+        <SelectParameters>
+            <asp:Parameter Name="Comp_Id" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+     
+     <asp:SqlDataSource ID="SqlDepartmentEdit" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_SecurityUserDept] WHERE (([AppId] = @AppId) AND ([IsActive] = @IsActive) AND ([UserId] = @UserId) AND ([CompanyId] = @CompanyId))">
+        <SelectParameters>
+            <asp:Parameter DefaultValue="1032" Name="AppId" Type="Int32" />
+            <asp:Parameter DefaultValue="true" Name="IsActive" Type="Boolean" />
+            <asp:Parameter DefaultValue="" Name="UserId" Type="String" />
+            <asp:Parameter DefaultValue="" Name="CompanyId" Type="Int32" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    </asp:Content>

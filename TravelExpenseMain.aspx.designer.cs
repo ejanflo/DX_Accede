@@ -96,22 +96,22 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox triptoTB;
 
         /// <summary>
-        /// compCB control.
+        /// chargedCB control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox compCB;
+        protected global::DevExpress.Web.ASPxComboBox chargedCB;
 
         /// <summary>
-        /// depCB control.
+        /// locBranch control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox depCB;
+        protected global::DevExpress.Web.ASPxComboBox locBranch;
 
         /// <summary>
         /// ForD control.
@@ -121,15 +121,6 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxComboBox ForD;
-
-        /// <summary>
-        /// chargedCB control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox chargedCB;
 
         /// <summary>
         /// chargedCB0 control.
@@ -184,6 +175,24 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxDateEdit timearriveTE;
+
+        /// <summary>
+        /// compCB control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox compCB;
+
+        /// <summary>
+        /// depCB control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox depCB;
 
         /// <summary>
         /// btnSaveExpense control.
@@ -310,5 +319,14 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlCompanyEdit;
+
+        /// <summary>
+        /// SqlLocBranch control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlLocBranch;
     }
 }

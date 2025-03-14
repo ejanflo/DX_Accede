@@ -122,6 +122,7 @@ namespace DX_WebTemplate
                             ExpenseEditForm.Items[0].Caption = "New Travel Expense";
 
                         SqlMain.SelectParameters["ID"].DefaultValue = mainExp.ID.ToString();
+                        SqlLocBranch.SelectParameters["Comp_Id"].DefaultValue = mainExp.ChargedToComp.ToString(); 
                         timedepartTE.DateTime = DateTime.Parse(mainExp.Time_Departed.ToString());
                         timearriveTE.DateTime = DateTime.Parse(mainExp.Time_Arrived.ToString());
                         Session["DocNo"] = mainExp.Doc_No.ToString();
@@ -273,11 +274,11 @@ namespace DX_WebTemplate
                     //// - - Setting FAP workflow - - ////
                     if (Convert.ToString(Session["ford"]) == "Foreign")
                     {
-                        Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.Description == "Foreign Test WF Finance Exec>CFO/Pres" && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
+                        Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.ChargedToComp && x.Description == "Foreign Test WF Finance Exec>CFO/Pres" && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
                     }
                     else
                     {
-                        Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && (x.IsRA == false || x.IsRA == null && totExpCA >= x.Minimum && totExpCA <= x.Maximum)).Select(x => x.WF_Id).FirstOrDefault());
+                        Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.ChargedToComp && (x.IsRA == false || x.IsRA == null && totExpCA >= x.Minimum && totExpCA <= x.Maximum)).Select(x => x.WF_Id).FirstOrDefault());
                     }
                     
                     SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
@@ -737,17 +738,14 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static bool AddRFPReimburseAJAX(string empname, DateTime reportdate, string company, string department, string purpose,
-            string amount)
+        public static bool AddRFPReimburseAJAX(string empname, DateTime reportdate, string company, string department, string purpose, string amount, string chargedComp, string chargedDept, string locbranch, string ford, string wf, string fapwf)
         {
             TravelExpenseAdd exp = new TravelExpenseAdd();
 
-            return exp.AddRFPReimburse(empname, reportdate, company, department, purpose,
-            amount);
+            return exp.AddRFPReimburse(empname, reportdate, company, department, purpose, amount, chargedComp, chargedDept, locbranch, ford, wf, fapwf);
         }
 
-        public bool AddRFPReimburse(string empname, DateTime reportdate, string company, string department, string purpose,
-            string amount)
+        public bool AddRFPReimburse(string empname, DateTime reportdate, string company, string department, string purpose, string amount, string chargedComp, string chargedDept, string locbranch, string ford, string wf, string fapwf)
         {
             try
             {
@@ -794,7 +792,12 @@ namespace DX_WebTemplate
                     rfp.RFP_DocNum = docNum.ToString();
                     rfp.User_ID = Session["userID"].ToString();
                     rfp.Status = expMain.Status;
-
+                    rfp.ChargedTo_CompanyId = Convert.ToInt32(chargedComp);
+                    rfp.ChargedTo_DeptId = Convert.ToInt32(chargedDept);
+                    rfp.Comp_Location_Id = Convert.ToInt32(locbranch);
+                    rfp.isForeignTravel = ford == "Foreign" ? true : false;
+                    rfp.WF_Id = Convert.ToInt32(wf);
+                    rfp.FAPWF_Id = Convert.ToInt32(fapwf);
                 }
 
                 _DataContext.ACCEDE_T_RFPMains.InsertOnSubmit(rfp);
@@ -1928,11 +1931,11 @@ namespace DX_WebTemplate
 
             if (Convert.ToString(fordCB.Value) == "Foreign")
             {
-                Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.Description == "Foreign Test WF Finance Exec>CFO/Pres" && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
+                Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.ChargedToComp && x.Description == "Foreign Test WF Finance Exec>CFO/Pres" && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
             }
             else
             {
-                Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == mainExp.Company_Id && x.App_Id == 1032 && x.IsRA == null && Convert.ToDecimal(e.Parameter) >= x.Minimum && Convert.ToDecimal(e.Parameter) <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault()) ?? null;
+                Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == mainExp.ChargedToComp && x.App_Id == 1032 && x.IsRA == null && Convert.ToDecimal(e.Parameter) >= x.Minimum && Convert.ToDecimal(e.Parameter) <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault()) ?? null;
             }
 
             SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
@@ -2184,6 +2187,44 @@ namespace DX_WebTemplate
 
                 ASPxWebDocumentViewer1.OpenReport(qrReport);
             }
+        }
+
+        protected void locBranch_Callback(object sender, CallbackEventArgsBase e)
+        {
+            if (e.Parameter != null && e.Parameter != "")
+            {
+                SqlLocBranch.SelectParameters["Comp_Id"].DefaultValue = e.Parameter.ToString();
+                SqlLocBranch.DataBind();
+
+                fordCB.DataSourceID = null;
+                fordCB.DataSource = SqlLocBranch;
+                fordCB.DataBind();
+            }
+        }
+
+        protected void locBranch_DataBound(object sender, EventArgs e)
+        {
+            ASPxComboBox combo = sender as ASPxComboBox;
+
+            if (combo != null)
+            {
+                // Example: Check if the selected value is 0
+                if (combo.Value != null && combo.Value.ToString() == "0")
+                {
+                    combo.Value = null; // Set to null if value is 0
+                }
+            }
+        }
+
+        protected void chargedCB0_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var comp_id = e.Parameter.ToString();
+            SqlDepartment.SelectParameters["Company_ID"].DefaultValue = comp_id;
+            SqlDepartment.DataBind();
+
+            fordCB.DataSourceID = null;
+            fordCB.DataSource = SqlDepartment;
+            fordCB.DataBind();
         }
     }
 }

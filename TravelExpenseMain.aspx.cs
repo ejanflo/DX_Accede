@@ -27,7 +27,7 @@ namespace DX_WebTemplate
                 sqlTravelExp.SelectParameters["Employee_Id"].DefaultValue = !string.IsNullOrEmpty(Convert.ToString(Session["Employee_Id"])) ? Convert.ToString(Session["Employee_Id"]) : "0";
 
                 employeeCB.Value = Session["userID"];
-                compCB.Value = Convert.ToString(Session["userCompanyID"]);
+                //compCB.Value = Convert.ToString(Session["userCompanyID"]);
                 //var depcode = context.ITP_S_UserMasters.Where(x => x.EmpCode == Convert.ToString(Session["userID"])).Select(x => x.DepCode).FirstOrDefault();
                 //var isdep = Convert.ToString(context.ITP_S_OrgDepartmentMasters.Where(x => x.DepCode == depcode && x.Company_ID == Convert.ToInt32(Session["userCompanyID"])).Select(x => x.ID).FirstOrDefault());
 
@@ -60,12 +60,12 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static bool AJAXSaveTravelExpense(string empcode, string companyid, string department_code, string chargedtoComp, string chargedtoDept, string tripto, DateTime datefrom, DateTime dateto, string timedepart, string timearrive, string purpose, string ford)
+        public static bool AJAXSaveTravelExpense(string empcode, string companyid, string department_code, string chargedtoComp, string chargedtoDept, string tripto, DateTime datefrom, DateTime dateto, string timedepart, string timearrive, string purpose, string ford, string locbranch)
         {
             DateTime timeDepart = Convert.ToDateTime(timedepart);
             DateTime timeArrive = Convert.ToDateTime(timearrive);
             TravelExpense travel = new TravelExpense();
-            return travel.SaveTravelExpense(empcode, companyid, department_code, chargedtoComp, chargedtoDept, tripto, datefrom, dateto, timeDepart.ToString("HH:mm"), timeArrive.ToString("HH:mm"), purpose, ford, DateTime.Now);
+            return travel.SaveTravelExpense(empcode, companyid, department_code, chargedtoComp, chargedtoDept, tripto, datefrom, dateto, timeDepart.ToString("HH:mm"), timeArrive.ToString("HH:mm"), purpose, ford, DateTime.Now, locbranch);
         }
 
         public UserInfo GetUserInfo(string fullname)
@@ -94,14 +94,14 @@ namespace DX_WebTemplate
             return user;
         }
 
-        public bool SaveTravelExpense(string empcode, string companyid, string department_code, string chargedtoComp, string chargedtoDept, string tripto, DateTime datefrom, DateTime dateto, string timedepart, string timearrive, string purpose, string ford, DateTime datecreated)
+        public bool SaveTravelExpense(string empcode, string companyid, string department_code, string chargedtoComp, string chargedtoDept, string tripto, DateTime datefrom, DateTime dateto, string timedepart, string timearrive, string purpose, string ford, DateTime datecreated, string locbranch)
         {
             try
             {
                 var app_docType = Convert.ToInt32(context.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense").Where(x => x.App_Id == 1032).Select(x => x.DCT_Id).FirstOrDefault());
                 GenerateDocNo generateDocNo = new GenerateDocNo();
-                generateDocNo.RunStoredProc_GenerateDocNum(Convert.ToInt32(app_docType), Convert.ToInt32(companyid), 1032);
-                var docNo = generateDocNo.GetLatest_DocNum(Convert.ToInt32(app_docType), Convert.ToInt32(companyid), 1032);
+                generateDocNo.RunStoredProc_GenerateDocNum(Convert.ToInt32(app_docType), Convert.ToInt32(chargedtoComp), 1032);
+                var docNo = generateDocNo.GetLatest_DocNum(Convert.ToInt32(app_docType), Convert.ToInt32(chargedtoComp), 1032);
 
                 ACCEDE_T_TravelExpenseMain travelMain = new ACCEDE_T_TravelExpenseMain();
                 {
@@ -120,6 +120,7 @@ namespace DX_WebTemplate
                     travelMain.Date_Created = datecreated;
                     travelMain.Doc_No = docNo;
                     travelMain.Preparer_Id = Convert.ToInt32(Session["userID"]);
+                    travelMain.LocBranch = Convert.ToInt32(locbranch);
                 }
                 context.ACCEDE_T_TravelExpenseMains.InsertOnSubmit(travelMain);
                 context.SubmitChanges();
@@ -221,16 +222,17 @@ namespace DX_WebTemplate
 
         protected void depCB_Callback(object sender, CallbackEventArgsBase e)
         {
-            if (e != null && e.Parameter != "")
+            if (e.Parameter != null && e.Parameter != "")
             {
-                Session["CompID"] = context.CompanyMasters.Where(x => x.WASSId == Convert.ToInt32(e.Parameter)).FirstOrDefault();
-            }
-
-            if (Session["CompID"] != null)
-            {
-                SqlDepartmentEdit.SelectParameters["CompanyId"].DefaultValue = Session["CompID"].ToString();
+                SqlDepartmentEdit.SelectParameters["CompanyId"].DefaultValue = e.Parameter.ToString();
+                SqlDepartmentEdit.SelectParameters["UserId"].DefaultValue = employeeCB.Value.ToString();
                 SqlDepartmentEdit.DataBind();
+
+                depCB.DataSourceID = null;
+                depCB.DataSource = SqlDepartmentEdit;
                 depCB.DataBind();
+
+                depCB.SelectedIndex = 0;
             }
         }
 
@@ -238,7 +240,24 @@ namespace DX_WebTemplate
         {
             var comp_id = e.Parameter.ToString();
             SqlDepartment.SelectParameters["Company_ID"].DefaultValue = comp_id;
+            SqlDepartment.DataBind();
+
+            chargedCB0.DataSourceID = null;
+            chargedCB0.DataSource = SqlDepartment;
             chargedCB0.DataBind();
+        }
+
+        protected void locBranch_Callback(object sender, CallbackEventArgsBase e)
+        {
+            if (e.Parameter != null && e.Parameter != "")
+            {
+                SqlLocBranch.SelectParameters["Comp_Id"].DefaultValue = e.Parameter.ToString();
+                SqlLocBranch.DataBind();
+
+                locBranch.DataSourceID = null;
+                locBranch.DataSource = SqlLocBranch;
+                locBranch.DataBind();
+            }
         }
     }
 }
