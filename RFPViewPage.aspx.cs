@@ -56,12 +56,16 @@ namespace DX_WebTemplate
                     var wbs = formRFP.FindItemOrGroupByName("WBS") as LayoutItem;
                     var cType = formRFP.FindItemOrGroupByName("ClassType") as LayoutItem;
                     var tType = formRFP.FindItemOrGroupByName("TravType") as LayoutItem;
-
+                    var expDoc = formRFP.FindItemOrGroupByName("ExpDoc") as LayoutItem;
 
                     myLayoutGroup.Caption = "Request For Payment (View) - "+rfp_details.RFP_DocNum;
 
                     if (rfp_details != null)
                     {
+                        if(rfp_details.Exp_ID != null)
+                        {
+                            expDoc.ClientVisible = true;
+                        }
                         if(rfp_details.isTravel == true)
                         {
                             rdButton_Trav.Checked = true;

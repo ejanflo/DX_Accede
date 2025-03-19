@@ -25,9 +25,12 @@
                 LoadingPanel.Show();
             }
 
+            if (e.buttonID == 'btnEdit') {
+                gridMain.PerformCallback(s.GetRowKey(e.visibleIndex) + "|" + e.buttonID);
+                LoadingPanel.Show();
+            }
+
             if (e.buttonID == 'btnView') {
-                
-                //displayRFPDetails(s.GetRowKey(e.visibleIndex));
                 gridMain.PerformCallback(s.GetRowKey(e.visibleIndex) + "|" + e.buttonID);
                 LoadingPanel.Show();
             }
@@ -618,6 +621,16 @@
                                                     </Image>
                                                     <Styles>
                                                         <Style Font-Bold="True" BackColor="#0D6943" Font-Size="Smaller" ForeColor="White">
+                                                            <Paddings PaddingBottom="4px" PaddingLeft="8px" PaddingRight="8px" PaddingTop="4px" />
+                                                        </Style>
+                                                    </Styles>
+                                                </dx:GridViewCommandColumnCustomButton>
+
+                                                <dx:GridViewCommandColumnCustomButton ID="btnEdit" Text="Edit">
+                                                    <Image IconID="iconbuilder_actions_edit_svg_white_16x16" ToolTip="Edit Document">
+                                                    </Image>
+                                                    <Styles>
+                                                        <Style BackColor="#006DD6" Font-Bold="True" Font-Size="Smaller" ForeColor="White">
                                                             <Paddings PaddingBottom="4px" PaddingLeft="8px" PaddingRight="8px" PaddingTop="4px" />
                                                         </Style>
                                                     </Styles>

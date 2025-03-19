@@ -79,6 +79,7 @@ namespace DX_WebTemplate
             string buttonId = args[1];
 
             Session["passRFPID"] = rowKey;
+            Session["EditRFPID"] = rowKey;
             //ASPxWebControl.RedirectOnCallback("RFPViewPage.aspx");
 
             var rfp_main = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == Convert.ToInt32(Session["passRFPID"])).FirstOrDefault();
@@ -108,6 +109,9 @@ namespace DX_WebTemplate
 
             if (buttonId == "btnPrint")
                 ASPxWebControl.RedirectOnCallback("~/RFPPrintPage.aspx");
+
+            if (buttonId == "btnEdit")
+                ASPxWebControl.RedirectOnCallback("~/RFPEditPage.aspx");
             //Session["passRFPID"] = e.Parameters.ToString();
             ////ASPxWebControl.RedirectOnCallback("RFPViewPage.aspx");
 
@@ -612,6 +616,20 @@ namespace DX_WebTemplate
                 var disburseStat = _DataContext.ITP_S_Status.Where(x=>x.STS_Name == "Disbursed").FirstOrDefault();
                 //Check if the status is "saved" and make the button visible accordingly
                 if (statusValue != null && (statusValue.ToString() == disburseStat.STS_Id.ToString()))
+                    e.Visible = DevExpress.Utils.DefaultBoolean.True;
+                else
+                    e.Visible = DevExpress.Utils.DefaultBoolean.False;
+            }
+
+            if (e.VisibleIndex >= 0 && e.ButtonID == "btnEdit") // Ensure it's a data row and the button is the desired one
+            {
+                //Get the value of the "Status" column for the current row
+                object statusValue = gridMain.GetRowValues(e.VisibleIndex, "Status");
+                var returnAuditStat = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Returned by Audit").FirstOrDefault();
+                var returnCashierStat = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Returned by Cashier").FirstOrDefault();
+                var returnP2PStat = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Returned by P2P").FirstOrDefault();
+                //Check if the status is "saved" and make the button visible accordingly
+                if (statusValue != null && (statusValue.ToString() == "13" || statusValue.ToString() == "3" || statusValue.ToString() == "15" || statusValue.ToString() == returnAuditStat.STS_Id.ToString() || statusValue.ToString() == returnCashierStat.STS_Id.ToString() || statusValue.ToString() == returnP2PStat.STS_Id.ToString()))
                     e.Visible = DevExpress.Utils.DefaultBoolean.True;
                 else
                     e.Visible = DevExpress.Utils.DefaultBoolean.False;

@@ -29,7 +29,7 @@
                           layoutItem.SetVisible(false);
                           layoutItem2.SetVisible(false);
                           drpdown_currency.PerformCallback("");
-                          drpdwn_FAPWF.PerformCallback("");
+                          drpdwn_FAPWF.PerformCallback(drpdown_TravType.GetValue() + "|" + drpdown_CTCompany.GetValue() + "|" + spinEdit_Amount.GetValue() + "|" + drpdown_classification.GetValue());
                           layoutItem3.SetVisible(true);
                       }
 
@@ -74,7 +74,12 @@
 
           function onTravTypeChanged(trav) {
               drpdown_currency.PerformCallback(trav);
-              drpdwn_FAPWF.PerformCallback(drpdown_TravType.GetValue() + "|" + drpdown_CTCompany.GetValue() + "|" + spinEdit_Amount.GetValue() + "|" + drpdown_classification.GetValue());
+              var travType = drpdown_TravType.GetValue() != null ? drpdown_TravType.GetValue() : "0";
+              var classType = "0";
+              FAPWFGrid.PerformCallback(travType + "|" + drpdown_CTCompany.GetValue() + "|" + spinEdit_Amount.GetValue() + "|" + classType);
+              drpdwn_FAPWF.PerformCallback(travType + "|" + drpdown_CTCompany.GetValue() + "|" + spinEdit_Amount.GetValue() + "|" + classType);
+              console.log(travType);
+
           }
 
           function onPayToVendorTranType() {
@@ -521,6 +526,8 @@ ifTranType_is_CA();
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxDateEdit ID="PLD" runat="server" ClientInstanceName="PLD" Width="100%">
+                                            <ClearButton DisplayMode="Always">
+                                            </ClearButton>
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                 <RequiredField ErrorText="This field is required." IsRequired="True" />
                                             </ValidationSettings>
@@ -587,9 +594,11 @@ onTravelClick();
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxComboBox ID="drpdown_classification" runat="server" ClientInstanceName="drpdown_classification" DataSourceID="SqlClassification" TextField="ClassificationName" ValueField="ID" Width="100%">
                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	FAPWFGrid.PerformCallback(drpdown_TravType.GetValue() + &quot;|&quot; + drpdown_CTCompany.GetValue() + &quot;|&quot; + spinEdit_Amount.GetValue() + &quot;|&quot; + drpdown_classification.GetValue());
-drpdown_FAPWF.PerformCallback(drpdown_TravType.GetValue() + &quot;|&quot; + drpdown_CTCompany.GetValue() + &quot;|&quot; + spinEdit_Amount.GetValue() + &quot;|&quot; + drpdown_classification.GetValue());
-
+var travType = &quot;0&quot;;
+var classType = drpdown_classification.GetValue() != null ? drpdown_classification.GetValue() : &quot;0&quot;;
+	FAPWFGrid.PerformCallback(travType + &quot;|&quot; + drpdown_CTCompany.GetValue() + &quot;|&quot; + spinEdit_Amount.GetValue() + &quot;|&quot; + classType);
+drpdwn_FAPWF.PerformCallback(travType + &quot;|&quot; + drpdown_CTCompany.GetValue() + &quot;|&quot; + spinEdit_Amount.GetValue() + &quot;|&quot; + classType);
+console.log(travType);
 }" />
                                             <ClearButton DisplayMode="Always">
                                             </ClearButton>

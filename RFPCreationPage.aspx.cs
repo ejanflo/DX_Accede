@@ -362,9 +362,12 @@ namespace DX_WebTemplate
                     new SqlParameter("@pld", null));
                 }
 
-                cmd.Parameters.Add(
+                if(classification != "")
+                {
+                    cmd.Parameters.Add(
                     new SqlParameter("@classification", classification));
-
+                }
+                
                 //if(remarks != "")
                 //{
                 //    cmd.Parameters.Add(
@@ -439,7 +442,6 @@ namespace DX_WebTemplate
 
                         // Close the connection to the database
                         connection.Close();
-
 
                     }
                 }

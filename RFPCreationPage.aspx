@@ -578,6 +578,8 @@ ifTranType_is_CA();
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxDateEdit ID="PLD" runat="server" ClientInstanceName="PLD" Width="100%">
+                                            <ClearButton DisplayMode="Always">
+                                            </ClearButton>
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                 <RequiredField ErrorText="This field is required." IsRequired="True" />
                                             </ValidationSettings>
@@ -652,7 +654,7 @@ onTravelClick();
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
                                 <CaptionSettings HorizontalAlign="Left" Location="Top" VerticalAlign="Middle" />
-                                <CaptionStyle Font-Italic="False" Font-Size="Small">
+                                <CaptionStyle Font-Italic="False">
                                 </CaptionStyle>
                             </dx:LayoutItem>
                             <dx:LayoutItem Caption="Classification" ColSpan="2" ColumnSpan="2" Width="100%" Name="ClassType">

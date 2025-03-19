@@ -194,27 +194,45 @@ namespace DX_WebTemplate
                     rfp_main.IsExpenseCA = false;
                     rfp_main.IsExpenseReim = true;
                 }
+
                 rfp_main.isTravel = isTrav;
                 rfp_main.SAPCostCenter = costCenter;
                 rfp_main.IO_Num = io;
                 rfp_main.Payee = payee;
+
                 if(isTrav == true)
                 {
+                    rfp_main.Classification_Type_Id = null;
                     rfp_main.LastDayTransact = Convert.ToDateTime(lastDay);
+                    if (travType == "1")
+                    {
+                        rfp_main.isForeignTravel = true;
+                    }
+                    else
+                    {
+                        rfp_main.isForeignTravel = false;
+                    }
                 }
                 else
                 {
                     rfp_main.LastDayTransact = null;
+                    rfp_main.isForeignTravel = null;
+
+                    rfp_main.Classification_Type_Id = Convert.ToInt32(classification);
                 }
+
                 rfp_main.Amount = Convert.ToDecimal(amount);
                 rfp_main.Purpose = purpose;
                 rfp_main.WF_Id = wf_id;
                 rfp_main.Status = status;
+
                 if (exp_id != 0)
                 {
                     rfp_main.Exp_ID = exp_id;
                 }
+
                 rfp_main.FAPWF_Id = fap;
+
                 if (Comp_ID != 5)
                 {
                     rfp_main.WBS = null;
@@ -240,24 +258,8 @@ namespace DX_WebTemplate
                 {
                     rfp_main.PLDate = null;
                 }
-                rfp_main.Currency = curr;
-                if(travType != "")
-                {
-                    if(travType == "1")
-                    {
-                        rfp_main.isForeignTravel = true;
-                    }
-                    else
-                    {
-                        rfp_main.isForeignTravel = false;
-                    }
-                    
-                }
-                if(classification != "")
-                {
-                    rfp_main.Classification_Type_Id = Convert.ToInt32(classification);
-                }
 
+                rfp_main.Currency = curr;
                 rfp_main.ChargedTo_CompanyId = Convert.ToInt32(CTComp_ID);
                 rfp_main.ChargedTo_DeptId = Convert.ToInt32(CTDept_ID);
                 
@@ -267,7 +269,6 @@ namespace DX_WebTemplate
                 //}
             }
             
-
             if (status == 1)
             {
 
@@ -351,7 +352,7 @@ namespace DX_WebTemplate
             var param = e.Parameter.Split('|');
             var comp_id = param[1];
             var amount = param[2];
-            var classTypeId = param[3];
+            var classTypeId = param[3] != "null" ? param[3] : "0";
             var tripType = param[0] != null ? param[0] : "";
             //var comp_id = drpdown_CTCompany.Value != null ? drpdown_CTCompany.Value : 0;
             //var amount = spinEdit_Amount.Value != null ? spinEdit_Amount.Value : "0.00";
@@ -530,7 +531,7 @@ namespace DX_WebTemplate
             var param = e.Parameters.Split('|');
             var comp_id = param[1];
             var amount = param[2];
-            var classTypeId = param[3];
+            var classTypeId = param[3] != "null" ? param[3] : "0";
             var tripType = param[0] != null ? param[0] : "";
             //var comp_id = drpdown_CTCompany.Value != null ? drpdown_CTCompany.Value : 0;
             //var amount = spinEdit_Amount.Value != null ? spinEdit_Amount.Value : "0.00";
