@@ -172,6 +172,7 @@ namespace DX_WebTemplate
                 {
                     var due_lbl = ExpenseEditForm.FindItemOrGroupByName("due_lbl") as LayoutItem;
                     var reimItem = ExpenseEditForm.FindItemOrGroupByName("reimItem") as LayoutItem;
+                    var remItem = ExpenseEditForm.FindItemOrGroupByName("remItem") as LayoutItem;
                     var reimDetails = ExpenseEditForm.FindItemOrGroupByName("reimDetails") as LayoutItem;
 
                     var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.isTravel == true && x.IsExpenseReim == true).FirstOrDefault();
@@ -209,10 +210,16 @@ namespace DX_WebTemplate
                         else
                             reimItem.ClientVisible = true;
                     }
+                    else if (totalca > totalexp)
+                    {
+                        due_lbl.Caption = "Due To Company";
+                        reimItem.ClientVisible = false;
+                        remItem.ClientVisible = true;
+                    }
                     else
                     {
-                        reimItem.ClientVisible = false;
                         due_lbl.Caption = "Due To Company";
+                        reimItem.ClientVisible = false;
                     }
 
                     drpdown_expenseType.Value = expType;

@@ -1370,7 +1370,7 @@
                                                 </dx:LayoutItem>
                                                 <dx:LayoutGroup Caption="" ColSpan="1" GroupBoxDecoration="None">
                                                     <Items>
-                                                        <dx:LayoutItem Caption="Remarks" ClientVisible="False" ColSpan="1" FieldName="remarks" Name="remItem">
+                                                        <dx:LayoutItem Caption="AR Reference No." ClientVisible="False" ColSpan="1" Name="remItem">
                                                             <LayoutItemNestedControlCollection>
                                                                 <dx:LayoutItemNestedControlContainer runat="server">
                                                                     <dx:ASPxMemo ID="memo_remarks" runat="server" ClientInstanceName="memo_remarks" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" Width="100%">
@@ -1382,6 +1382,7 @@
                                                                     </dx:ASPxMemo>
                                                                 </dx:LayoutItemNestedControlContainer>
                                                             </LayoutItemNestedControlCollection>
+                                                            <CaptionSettings Location="Top" />
                                                             <ParentContainerStyle Font-Size="Small">
                                                             </ParentContainerStyle>
                                                         </dx:LayoutItem>
