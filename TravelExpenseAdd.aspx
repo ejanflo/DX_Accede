@@ -3289,7 +3289,7 @@
 " />
                                                                 <SettingsAdaptivity AdaptivityMode="HideDataCells">
                                                                 </SettingsAdaptivity>
-                                                                <SettingsEditing Mode="Batch">
+                                                                <SettingsEditing Mode="Batch" NewItemRowPosition="Bottom">
                                                                     <BatchEditSettings StartEditAction="Click" />
                                                                 </SettingsEditing>
                                                                 <Settings ShowStatusBar="Hidden" />

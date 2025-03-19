@@ -805,6 +805,7 @@ namespace DX_WebTemplate
                     rfp.isForeignTravel = ford == "Foreign" ? true : false;
                     rfp.WF_Id = Convert.ToInt32(wf);
                     rfp.FAPWF_Id = Convert.ToInt32(fapwf);
+                    rfp.Currency = Convert.ToString(Session["ford"]) == "Domestic" ? "USD" : "PHP";
                 }
 
                 _DataContext.ACCEDE_T_RFPMains.InsertOnSubmit(rfp);

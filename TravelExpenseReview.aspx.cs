@@ -980,7 +980,7 @@ namespace DX_WebTemplate
                     {
                         if (Convert.ToDecimal(Session["totalCA"]) < Convert.ToDecimal(Session["totalEXP"]) && reimPayMethod == "Check")
                         {
-                            var cashierwf = _DataContext.ITP_S_WorkflowHeaders.Where(w => w.Name == "ACCEDE CASHIER" && w.App_Id == 1032 && w.Company_Id == companyID).Select(x => x.WF_Id).FirstOrDefault();
+                            var cashierwf = _DataContext.ITP_S_WorkflowHeaders.Where(w => w.Name == "ACDE CASHIER" && w.App_Id == 1032 && w.Company_Id == companyID).Select(x => x.WF_Id).FirstOrDefault();
                             var cashierwfd = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == cashierwf && w.Sequence == 1).Select(w => w.WFD_Id).FirstOrDefault();
                             var cashierorID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == cashierwf && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault();
                             var cashstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Cashier" || s.STS_Name == "Pending at Cashier").Select(s => s.STS_Id).FirstOrDefault();
