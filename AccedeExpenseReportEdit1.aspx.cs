@@ -110,7 +110,7 @@ namespace DX_WebTemplate
                         .Where(x => x.STS_Name == "Disbursed")
                         .FirstOrDefault();
 
-                    sqlRFPMainCA.SelectParameters["User_ID"].DefaultValue = mainExp.ExpenseName.ToString();
+                    sqlRFPMainCA.SelectParameters["Payee"].DefaultValue = mainExp.ExpenseName.ToString();
                     sqlRFPMainCA.SelectParameters["Status"].DefaultValue = pay_released.STS_Id.ToString();
 
                     var rfpCA = _DataContext.ACCEDE_T_RFPMains

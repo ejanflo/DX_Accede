@@ -1024,6 +1024,8 @@ drpdown_CostCenter.SetValue(&quot;&quot;);
 drpdwn_FAPWF.PerformCallback(s.GetValue());
 exp_CompLocation.PerformCallback(s.GetValue());
 }" />
+                                                                <ClearButton DisplayMode="Always">
+                                                                </ClearButton>
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
@@ -1041,11 +1043,13 @@ exp_CompLocation.PerformCallback(s.GetValue());
                                                                 <ClientSideEvents SelectedIndexChanged="function(s, e) {
 //exp_Company.SetValue(s.GetValue());
 	//costCenter.PerformCallback();
-exp_CTDepartment.PerformCallback(s.GetValue());
-drpdown_CostCenter.SetValue(&quot;&quot;);
-exp_EmpId.PerformCallback(s.GetValue());
-drpdwn_FAPWF.PerformCallback(s.GetValue());
+//exp_CTDepartment.PerformCallback(s.GetValue());
+//drpdown_CostCenter.SetValue(&quot;&quot;);
+//exp_EmpId.PerformCallback(s.GetValue());
+//drpdwn_FAPWF.PerformCallback(s.GetValue());
 }" />
+                                                                <ClearButton DisplayMode="Always">
+                                                                </ClearButton>
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
@@ -1060,6 +1064,8 @@ drpdwn_FAPWF.PerformCallback(s.GetValue());
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxComboBox ID="exp_EmpId" runat="server" ClientInstanceName="exp_EmpId" EnableTheming="True" Font-Bold="True" Font-Size="Small" TextField="FullName" ValueField="DelegateFor_UserID" Width="100%" OnCallback="exp_EmpId_Callback">
+                                                                <ClearButton DisplayMode="Always">
+                                                                </ClearButton>
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
@@ -1083,6 +1089,8 @@ drpdwn_FAPWF.PerformCallback(s.GetValue());
                                                                     <dx:ListBoxColumn Caption="Description" FieldName="DepDesc">
                                                                     </dx:ListBoxColumn>
                                                                 </Columns>
+                                                                <ClearButton DisplayMode="Always">
+                                                                </ClearButton>
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
@@ -1097,6 +1105,8 @@ drpdwn_FAPWF.PerformCallback(s.GetValue());
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxComboBox ID="drpdown_CostCenter" runat="server" ClientInstanceName="drpdown_CostCenter" DataSourceID="SqlCostCenter" Font-Bold="True" Font-Size="Small" OnCallback="drpdown_CostCenter_Callback" TextField="CostCenter" ValueField="CostCenter" Width="100%">
+                                                                <ClearButton DisplayMode="Always">
+                                                                </ClearButton>
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
@@ -1111,8 +1121,8 @@ drpdwn_FAPWF.PerformCallback(s.GetValue());
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxComboBox ID="drpdown_expenseType" runat="server" ClientInstanceName="drpdown_expenseType" DataSourceID="SqlTranType" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" TextField="Description" ValueField="ExpenseType_ID" Width="100%">
-                                                                <DropDownButton Visible="False">
-                                                                </DropDownButton>
+                                                                <ClearButton DisplayMode="Always">
+                                                                </ClearButton>
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
@@ -1127,6 +1137,8 @@ drpdwn_FAPWF.PerformCallback(s.GetValue());
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxComboBox ID="drpdown_ExpCategory" runat="server" ClientInstanceName="drpdown_ExpCategory" DataSourceID="SqlExpCat" EnableTheming="True" Font-Bold="True" Font-Size="Small" TextField="Description" ValueField="ID" Width="100%">
+                                                                <ClearButton DisplayMode="Always">
+                                                                </ClearButton>
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
@@ -1146,6 +1158,8 @@ drpdwn_FAPWF.PerformCallback(s.GetValue());
                                                                 <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	drpdwn_FAPWF.PerformCallback();
 }" />
+                                                                <ClearButton DisplayMode="Always">
+                                                                </ClearButton>
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
@@ -1255,6 +1269,8 @@ drpdwn_FAPWF.PerformCallback(s.GetValue());
 onCurrencyChanged();
 reim_Currency.SetValue(s.GetValue);
 }" />
+                                                                <ClearButton DisplayMode="Always">
+                                                                </ClearButton>
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
@@ -1269,6 +1285,8 @@ reim_Currency.SetValue(s.GetValue);
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxComboBox ID="drpdown_payType" runat="server" ClientInstanceName="drpdown_payType" DataSourceID="SqlPayMethod" EnableTheming="True" Font-Bold="True" Font-Size="Small" TextField="PMethod_name" ValueField="ID" Width="100%">
+                                                                <ClearButton DisplayMode="Always">
+                                                                </ClearButton>
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
@@ -1784,6 +1802,8 @@ exp_Department.PerformCallback(s.GetValue());
 //drpdown_CostCenter.SetValue(&quot;&quot;);
 exp_EmpId.PerformCallback(s.GetValue());
 }" />
+                                                                        <ClearButton DisplayMode="Always">
+                                                                        </ClearButton>
                                                                         <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                             <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                         </ValidationSettings>
@@ -1807,6 +1827,8 @@ exp_EmpId.PerformCallback(s.GetValue());
                                                                             <dx:ListBoxColumn Caption="Description" FieldName="DepDesc">
                                                                             </dx:ListBoxColumn>
                                                                         </Columns>
+                                                                        <ClearButton DisplayMode="Always">
+                                                                        </ClearButton>
                                                                         <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                             <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                         </ValidationSettings>
@@ -2005,8 +2027,6 @@ exp_EmpId.PerformCallback(s.GetValue());
                                                         </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataTextColumn FieldName="IO_Num" ShowInCustomizationForm="True" VisibleIndex="7" Caption="IO No.">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Payee" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                        </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataDateColumn FieldName="LastDayTransact" ShowInCustomizationForm="True" VisibleIndex="10" Caption="Last Day of Transaction">
                                                             <PropertiesDateEdit DisplayFormatString="MMMM dd, yyyy">
                                                             </PropertiesDateEdit>
@@ -2038,13 +2058,15 @@ exp_EmpId.PerformCallback(s.GetValue());
                                                             </PropertiesComboBox>
                                                         </dx:GridViewDataComboBoxColumn>
                                                         <dx:GridViewDataComboBoxColumn Caption="Department" FieldName="Department_ID" ShowInCustomizationForm="True" VisibleIndex="4">
-                                                            <PropertiesComboBox DataSourceID="sqlDept" TextField="DepCode" ValueField="ID">
+                                                            <PropertiesComboBox DataSourceID="sqlDept" TextField="DepDesc" ValueField="ID">
                                                             </PropertiesComboBox>
                                                         </dx:GridViewDataComboBoxColumn>
                                                         <dx:GridViewDataComboBoxColumn Caption="Payment Method" FieldName="PayMethod" ShowInCustomizationForm="True" VisibleIndex="5">
                                                             <PropertiesComboBox DataSourceID="sqlPayMethod" TextField="PMethod_name" ValueField="ID">
                                                             </PropertiesComboBox>
                                                         </dx:GridViewDataComboBoxColumn>
+                                                        <dx:GridViewDataTextColumn FieldName="RFP_DocNum" ShowInCustomizationForm="True" VisibleIndex="2" Caption="Doc No.">
+                                                        </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:ASPxGridView>
                                             </dx:LayoutItemNestedControlContainer>
@@ -3573,11 +3595,12 @@ computeNetAmount(&quot;edit&quot;);
             <asp:Parameter DefaultValue="" Name="Exp_ID" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="sqlRFPMainCA" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_RFPMain] WHERE (([IsExpenseCA] = @IsExpenseCA) AND ([User_ID] = @User_ID) AND ([Status] = @Status) AND ([Exp_ID] IS NULL))">
+    <asp:SqlDataSource ID="sqlRFPMainCA" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_RFPMain] WHERE (([IsExpenseCA] = @IsExpenseCA) AND ([isTravel] &lt;&gt; @isTravel) AND ([Status] = @Status) AND ([Payee] = @Payee))">
             <SelectParameters>
-                <asp:Parameter DefaultValue="True" Name="IsExpenseCA" Type="Boolean" />
-                <asp:Parameter DefaultValue="" Name="User_ID" Type="String" />
+                <asp:Parameter DefaultValue="true" Name="IsExpenseCA" Type="Boolean" />
+                <asp:Parameter DefaultValue="true" Name="isTravel" Type="Boolean" />
                 <asp:Parameter Name="Status" Type="Int32" />
+                <asp:Parameter Name="Payee" Type="String" />
             </SelectParameters>
         </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlRFPMainReim" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_RFPMain] WHERE (([IsExpenseReim] = @IsExpenseReim) AND ([Exp_ID] = @Exp_ID))">

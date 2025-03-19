@@ -507,16 +507,18 @@
                                         <dx:ASPxComboBox ID="drpdown_CTCompany" runat="server" ClientInstanceName="drpdown_CTCompany" DataSourceID="SqlCompany" TextField="CompanyShortName" ValueField="CompanyId" Width="100%">
                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	drpdown_CTDepartment.PerformCallback(s.GetValue());
-drpdown_Payee.PerformCallback(sdrpdown_CTCompany.GetValue());
+drpdown_Payee.PerformCallback(drpdown_CTCompany.GetValue());
 drpdown_CostCenter.SetValue(&quot;&quot;);
 //drpdown_WF.PerformCallback();
 ifComp_is_DLI();
 onAmountChanged(drpdown_PayMethod.GetValue());
-drpdown_Company.SetValue(s.GetValue());
+//drpdown_Company.SetValue(s.GetValue());
 //drpdown_Department.PerformCallback();
 drpdwn_FAPWF.PerformCallback();
 drpdown_CompLocation.PerformCallback(s.GetValue());
 }" />
+                                            <ClearButton DisplayMode="Always">
+                                            </ClearButton>
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                 <RequiredField ErrorText="This field is required." IsRequired="True" />
                                             </ValidationSettings>
@@ -528,6 +530,8 @@ drpdown_CompLocation.PerformCallback(s.GetValue());
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxComboBox ID="drpdown_CompLocation" runat="server" ClientInstanceName="drpdown_CompLocation" DataSourceID="SqlCompLocation" TextField="Name" ValueField="ID" Width="100%" OnCallback="drpdown_CompLocation_Callback">
+                                            <ClearButton DisplayMode="Always">
+                                            </ClearButton>
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                 <RequiredField ErrorText="This field is required." IsRequired="True" />
                                             </ValidationSettings>
@@ -542,6 +546,8 @@ drpdown_CompLocation.PerformCallback(s.GetValue());
                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	onPayMethodChanged(s.GetValue());
 }" />
+                                            <ClearButton DisplayMode="Always">
+                                            </ClearButton>
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                 <RequiredField ErrorText="This field is required." IsRequired="True" />
                                             </ValidationSettings>
@@ -558,6 +564,8 @@ drpdown_CompLocation.PerformCallback(s.GetValue());
 	//onPayToVendorTranType();
 ifTranType_is_CA();
 }" />
+                                            <ClearButton DisplayMode="Always">
+                                            </ClearButton>
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                 <RequiredField ErrorText="This field is required." IsRequired="True" />
                                             </ValidationSettings>
@@ -621,6 +629,8 @@ onTravelClick();
                                                 <dx:ListEditItem Text="Foreign" Value="1" />
                                                 <dx:ListEditItem Text="Domestic" Value="2" />
                                             </Items>
+                                            <ClearButton DisplayMode="Always">
+                                            </ClearButton>
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                 <RequiredField ErrorText="This field is required." IsRequired="True" />
                                             </ValidationSettings>
@@ -633,6 +643,8 @@ onTravelClick();
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxDateEdit ID="dateEdit_lastDayTran" runat="server" ClientInstanceName="dateEdit_lastDayTran" Width="100%">
+                                            <ClearButton DisplayMode="Always">
+                                            </ClearButton>
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                 <RequiredField ErrorText="This field is required." IsRequired="True" />
                                             </ValidationSettings>
@@ -650,6 +662,8 @@ onTravelClick();
                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	drpdwn_FAPWF.PerformCallback();
 }" />
+                                            <ClearButton DisplayMode="Always">
+                                            </ClearButton>
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                 <RequiredField ErrorText="This field is required." IsRequired="True" />
                                             </ValidationSettings>
@@ -686,6 +700,8 @@ onTravelClick();
                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	onCTDeptChanged();
 }" />
+                                            <ClearButton DisplayMode="Always">
+                                            </ClearButton>
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                 <RequiredField ErrorText="This field is required." IsRequired="True" />
                                             </ValidationSettings>
@@ -697,6 +713,8 @@ onTravelClick();
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxComboBox ID="drpdown_CostCenter" runat="server" ClientInstanceName="drpdown_CostCenter" Width="100%" DataSourceID="SqlCostCenter" OnCallback="drpdown_CostCenter_Callback" TextField="CostCenter" ValueField="CostCenter">
+                                            <ClearButton DisplayMode="Always">
+                                            </ClearButton>
                                             <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                 <RequiredField ErrorText="*Required" IsRequired="True" />
                                             </ValidationSettings>
@@ -739,6 +757,8 @@ onTravelClick();
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxComboBox ID="drpdown_Payee" runat="server" ClientInstanceName="drpdown_Payee" OnCallback="drpdown_Payee_Callback" TextField="FullName" ValueField="DelegateFor_UserID" Width="100%">
+                                            <ClearButton DisplayMode="Always">
+                                            </ClearButton>
                                             <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                 <RequiredField ErrorText="*Required" IsRequired="True" />
                                             </ValidationSettings>
@@ -761,6 +781,8 @@ onTravelClick();
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxComboBox ID="drpdown_currency" runat="server" ClientInstanceName="drpdown_currency" DataSourceID="SqlCurrency" TextField="CurrDescription" ValueField="CurrDescription" Width="50%" OnCallback="drpdown_currency_Callback">
+                                                    <ClearButton DisplayMode="Always">
+                                                    </ClearButton>
                                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                         <RequiredField ErrorText="This field is requried." IsRequired="True" />
                                                     </ValidationSettings>
@@ -812,6 +834,8 @@ onTravelClick();
                                                 <dx:ListBoxColumn Caption="Purpose" FieldName="Purpose">
                                                 </dx:ListBoxColumn>
                                             </Columns>
+                                            <ClearButton DisplayMode="Always">
+                                            </ClearButton>
                                         </dx:ASPxComboBox>
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
@@ -977,6 +1001,8 @@ drpdown_WF.PerformCallback();
 ifComp_is_DLI();
 //onAmountChanged(drpdown_PayMethod.GetValue());
 }" />
+                                                    <ClearButton DisplayMode="Always">
+                                                    </ClearButton>
                                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                         <RequiredField ErrorText="This field is required." IsRequired="True" />
                                                     </ValidationSettings>
@@ -992,6 +1018,8 @@ ifComp_is_DLI();
                                                     <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	onDeptChanged(s.GetValue());
 }" />
+                                                    <ClearButton DisplayMode="Always">
+                                                    </ClearButton>
                                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                         <RequiredField ErrorText="This field is required." IsRequired="True" />
                                                     </ValidationSettings>
