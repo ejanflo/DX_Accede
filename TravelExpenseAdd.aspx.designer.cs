@@ -258,13 +258,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxButtonEdit reimTB;
 
         /// <summary>
-        /// memo_remarks control.
+        /// arNoTB control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxMemo memo_remarks;
+        protected global::DevExpress.Web.ASPxTextBox arNoTB;
 
         /// <summary>
         /// CAGrid control.

@@ -204,6 +204,7 @@ namespace DX_WebTemplate
 
                     if (totalexp > totalca)
                     {
+                        remItem.ClientVisible = false;
                         due_lbl.Caption = "Due To Employee";
                         if (reim != null)
                             reimItem.ClientVisible = false;
@@ -220,6 +221,7 @@ namespace DX_WebTemplate
                     {
                         due_lbl.Caption = "Due To Company";
                         reimItem.ClientVisible = false;
+                        remItem.ClientVisible = false;
                     }
 
                     drpdown_expenseType.Value = expType;
@@ -821,13 +823,13 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static object SaveSubmitTravelExpenseAJAX(string empname, DateTime reportdate, string company, string department, string chargedComp, string chargedDept, DateTime datefrom, DateTime dateto, DateTime timedepart, DateTime timearrive, string trip, string ford, string purpose, string expenseType, string btnaction)
+        public static object SaveSubmitTravelExpenseAJAX(string empname, DateTime reportdate, string company, string department, string chargedComp, string chargedDept, DateTime datefrom, DateTime dateto, DateTime timedepart, DateTime timearrive, string trip, string ford, string purpose, string expenseType, string locbranch, string arno, string btnaction)
         {
             TravelExpenseAdd tra = new TravelExpenseAdd();
-            return tra.SaveSubmitTravelExpense(empname, reportdate, company, department, chargedComp, chargedDept, datefrom, dateto, timedepart, timearrive, trip, ford, purpose, expenseType, btnaction);
+            return tra.SaveSubmitTravelExpense(empname, reportdate, company, department, chargedComp, chargedDept, datefrom, dateto, timedepart, timearrive, trip, ford, purpose, expenseType, locbranch, arno, btnaction);
         }
 
-        public object SaveSubmitTravelExpense(string empname, DateTime reportdate, string company, string department, string chargedComp, string chargedDept, DateTime datefrom, DateTime dateto, DateTime timedepart, DateTime timearrive, string trip, string ford, string purpose, string expenseType, string btnaction)
+        public object SaveSubmitTravelExpense(string empname, DateTime reportdate, string company, string department, string chargedComp, string chargedDept, DateTime datefrom, DateTime dateto, DateTime timedepart, DateTime timearrive, string trip, string ford, string purpose, string expenseType, string locbranch, string arno, string btnaction)
         {
             try
             {
@@ -866,6 +868,8 @@ namespace DX_WebTemplate
                 exp.ChargedToComp = Convert.ToInt32(chargedComp);
                 exp.ChargedToDept = Convert.ToInt32(chargedDept);
                 exp.Purpose = purpose;
+                exp.LocBranch = Convert.ToInt32(locbranch);
+                exp.ARRefNo = arno;
                 exp.ExpenseType_ID = Convert.ToInt32(tranType.ExpenseType_ID);
                 exp.WF_Id = Convert.ToInt32(Session["mainwfid"]);
                 exp.FAPWF_Id = Convert.ToInt32(Session["fapwfid"]);

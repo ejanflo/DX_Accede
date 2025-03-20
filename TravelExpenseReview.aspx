@@ -645,22 +645,6 @@
                                                     <CaptionStyle Font-Bold="False" Font-Size="Small">
                                                     </CaptionStyle>
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Remarks" ClientVisible="False" ColSpan="2" ColumnSpan="2" FieldName="remarks" Name="remItem">
-                                                    <LayoutItemNestedControlCollection>
-                                                        <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxMemo ID="memo_remarks" runat="server" ClientInstanceName="memo_remarks" Font-Bold="True" HorizontalAlign="Left" Width="100%">
-                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
-                                                                    <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                                </ValidationSettings>
-                                                                <Border BorderStyle="None" />
-                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                                <DisabledStyle Font-Bold="True" ForeColor="#222222">
-                                                                </DisabledStyle>
-                                                            </dx:ASPxMemo>
-                                                        </dx:LayoutItemNestedControlContainer>
-                                                    </LayoutItemNestedControlCollection>
-                                                    <Paddings PaddingTop="15px" />
-                                                </dx:LayoutItem>
                                             </Items>
                                             <ParentContainerStyle Font-Bold="True" Font-Size="Medium">
                                             </ParentContainerStyle>
@@ -776,6 +760,22 @@
                                                     <CaptionCellStyle>
                                                         <Paddings PaddingBottom="10px" />
                                                     </CaptionCellStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="AR Reference No." ClientVisible="False" ColSpan="1" Name="remItem" FieldName="ARRefNo">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxTextBox ID="arNoTB" runat="server" ClientEnabled="False" ClientInstanceName="arNoTB" Font-Bold="True" Width="100%">
+                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True">
+                                                                    <RequiredField ErrorText="*Required" />
+                                                                </ValidationSettings>
+                                                                <DisabledStyle ForeColor="#333333" BackColor="#F7FDF7">
+                                                                    <Border BorderColor="#329832" />
+                                                                </DisabledStyle>
+                                                            </dx:ASPxTextBox>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionSettings Location="Top" />
+                                                    <Paddings PaddingBottom="20px" />
                                                 </dx:LayoutItem>
                                                 <dx:EmptyLayoutItem ColSpan="1">
                                                     <BorderTop BorderColor="#878787" BorderStyle="Solid" BorderWidth="1px" />
@@ -1529,7 +1529,7 @@
                                                                                                     </dx:LayoutItem>
                                                                                                 </Items>
                                                                                             </dx:LayoutGroup>
-                                                                                            <dx:LayoutGroup Caption="WORKFLOW DETAILS" ColSpan="1" GroupBoxDecoration="Box">
+                                                                                            <dx:LayoutGroup Caption="LINE MANAGER WORKFLOW DETAILS" ColSpan="1" GroupBoxDecoration="Box">
                                                                                                 <Items>
                                                                                                     <dx:LayoutItem Caption="Workflow" ColSpan="1">
                                                                                                         <LayoutItemNestedControlCollection>

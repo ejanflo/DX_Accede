@@ -1,6 +1,6 @@
 ﻿using DevExpress.ClipboardSource.SpreadsheetML;
 using DevExpress.CodeParser;
-using DevExpress.Pdf.Native.BouncyCastle.Ocsp;
+using DevExpress.Pdf.Native.DocumentSigning;
 using DevExpress.Web;
 using System;
 using System.Collections.Generic;
@@ -269,6 +269,7 @@ namespace DX_WebTemplate
             {
                 var due_lbl = ExpenseEditForm.FindItemOrGroupByName("due_lbl") as LayoutItem;
                 var reimDetails = ExpenseEditForm.FindItemOrGroupByName("reimDetails") as LayoutItem;
+                var remItem = ExpenseEditForm.FindItemOrGroupByName("remItem") as LayoutItem;
 
                 var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.isTravel == true && x.IsExpenseReim == true).FirstOrDefault();
 
@@ -301,11 +302,24 @@ namespace DX_WebTemplate
 
                 if (totalexp > totalca)
                 {
+                    remItem.ClientVisible = false;
                     due_lbl.Caption = "Due To Employee";
+                    if (reim != null)
+                        reimDetails.ClientVisible = false;
+                    else
+                        reimDetails.ClientVisible = true;
+                }
+                else if (totalca > totalexp)
+                {
+                    due_lbl.Caption = "Due To Company";
+                    reimDetails.ClientVisible = false;
+                    remItem.ClientVisible = true;
                 }
                 else
                 {
                     due_lbl.Caption = "Due To Company";
+                    reimDetails.ClientVisible = false;
+                    remItem.ClientVisible = false;
                 }
 
                 departmentCB.Value = expType;

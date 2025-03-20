@@ -36,7 +36,16 @@
                 dataType: "json",
                 success: function (response) {
                     wfCallback.EndCallback.ClearHandlers();
-                    handleExpCA(response.d.expType, response.d.totalca, response.d.totalexp, response.d.allTot, response.d.totExpCA, response.d.hasReim);
+                    handleExpCA(
+                        response.d.expType,
+                        response.d.totalca,
+                        response.d.totalexp,
+                        response.d.allTot,
+                        response.d.totExpCA,
+                        response.d.hasReim,
+                        response.d.CA,
+                        response.d.EXP
+                    );
                     wfCallback.PerformCallback(response.d.totExpCA);
                 },
                 failure: function (response) {
@@ -226,19 +235,27 @@
 
         function handleExpCA(expType, totalca, totalexp, allTot, totExpCA, hasReim, CA, EXP) {
             var reimItem = ExpenseEditForm.GetItemByName('reimItem');
+            var remItem = ExpenseEditForm.GetItemByName('remItem');
             var reimDetails = ExpenseEditForm.GetItemByName('reimDetails');
             var due_lbl = ExpenseEditForm.GetItemByName('due_lbl');
 
             if (hasReim) {
                 reimItem.SetVisible(false);
+                remItem.SetVisible(false);
                 reimDetails.SetVisible(true);
             } else {
                 reimDetails.SetVisible(false);
 
                 if (EXP > CA) {
+                    remItem.SetVisible(false);
                     reimItem.SetVisible(true);
                     due_lbl.SetCaption("Due To Employee");
+                } else if (CA > EXP) {
+                    reimItem.SetVisible(false);
+                    remItem.SetVisible(true);
+                    due_lbl.SetCaption("Due To Company");
                 } else {
+                    remItem.SetVisible(false);
                     reimItem.SetVisible(false);
                     due_lbl.SetCaption("Due To Company");
                 }
@@ -577,7 +594,16 @@
                     wfCallback.EndCallback.ClearHandlers();
                     wfCallback.EndCallback.AddHandler(function () {
                         LoadingPanel.Hide();
-                        handleExpCA(response.d.expType, response.d.totalca, response.d.totalexp, response.d.allTot, response.d.totExpCA, response.d.hasReim);
+                        handleExpCA(
+                            response.d.expType,
+                            response.d.totalca,
+                            response.d.totalexp,
+                            response.d.allTot,
+                            response.d.totExpCA,
+                            response.d.hasReim,
+                            response.d.CA,
+                            response.d.EXP
+                        );;
 
                         // Map button commands to their respective actions
                         const toastMessages = {
@@ -623,7 +649,16 @@
                                 wfCallback.EndCallback.AddHandler(function () {
                                     caPopup.Hide();
                                     LoadingPanel.Hide();
-                                    handleExpCA(response.d.expType, response.d.totalca, response.d.totalexp, response.d.allTot, response.d.totExpCA, response.d.hasReim);
+                                    handleExpCA(
+                                        response.d.expType,
+                                        response.d.totalca,
+                                        response.d.totalexp,
+                                        response.d.allTot,
+                                        response.d.totExpCA,
+                                        response.d.hasReim,
+                                        response.d.CA,
+                                        response.d.EXP
+                                    );
 
                                     $('#toast-header').html('Success!');
                                     $('#toast-body').html('CA item(s) have been added successfully.');
@@ -707,6 +742,7 @@
             var purpose = purposeMemo.GetValue();
             var expenseType = drpdown_expenseType.GetValue();
             var locbranch = locBranch.GetValue();
+            var arNo = arNoTB.GetValue();
 
             $.ajax({
                 type: "POST",
@@ -727,6 +763,7 @@
                     purpose: purpose,
                     expenseType: expenseType,
                     locbranch: locbranch,
+                    arNo: arNo,
                     btnaction: btn
                 }),
                 contentType: "application/json; charset=utf-8",
@@ -910,12 +947,14 @@
                                         <dx:LayoutItemNestedControlContainer runat="server">
                                             <dx:ASPxButton ID="submitBtn" runat="server" BackColor="#006838" Font-Bold="True" Font-Size="Small" Text="Submit" ClientInstanceName="submitBtn" ValidationGroup="submitValid" AutoPostBack="False" UseSubmitBehavior="False">
                                                 <ClientSideEvents Click="function(s, e) {
+	if(ASPxClientEdit.ValidateGroup('ExpenseEdit')){
                        var reimItem = ExpenseEditForm.GetItemByName('reimItem');
                        if(reimItem .GetVisible() == true){
                               SubmitPopup2.Show();
                        }else{
                               SubmitPopup.Show();
                        }
+               }
 }" />
                                             </dx:ASPxButton>
                                         </dx:LayoutItemNestedControlContainer>
@@ -1081,6 +1120,8 @@
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxDateEdit ID="datefromDE" runat="server" ClientInstanceName="datefromDE" DisplayFormatString="MMMM dd, yyyy" Font-Bold="True" Font-Size="Small" Width="100%">
+                                                                <ClearButton DisplayMode="Always">
+                                                                </ClearButton>
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
@@ -1113,6 +1154,8 @@
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxDateEdit ID="datetoDE" runat="server" ClientInstanceName="datetoDE" DisplayFormatString="MMMM dd, yyyy" Font-Bold="True" Font-Size="Small" Width="100%">
+                                                                <ClearButton DisplayMode="Always">
+                                                                </ClearButton>
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
@@ -1161,6 +1204,8 @@
                                                             <dx:ASPxTimeEdit ID="timedepartTE" runat="server" ClientInstanceName="timedepartTE" Font-Bold="True" Font-Size="Small" Width="100%">
                                                                 <SpinButtons ClientVisible="False">
                                                                 </SpinButtons>
+                                                                <ClearButton DisplayMode="Always">
+                                                                </ClearButton>
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
@@ -1204,6 +1249,8 @@
                                                             <dx:ASPxTimeEdit ID="timearriveTE" runat="server" ClientInstanceName="timearriveTE" Font-Bold="True" Font-Size="Small" Width="100%">
                                                                 <SpinButtons ClientVisible="False">
                                                                 </SpinButtons>
+                                                                <ClearButton DisplayMode="Always">
+                                                                </ClearButton>
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
@@ -1368,26 +1415,27 @@
                                                     <ParentContainerStyle Font-Size="Small">
                                                     </ParentContainerStyle>
                                                 </dx:LayoutItem>
-                                                <dx:LayoutGroup Caption="" ColSpan="1" GroupBoxDecoration="None">
-                                                    <Items>
-                                                        <dx:LayoutItem Caption="AR Reference No." ClientVisible="False" ColSpan="1" Name="remItem">
-                                                            <LayoutItemNestedControlCollection>
-                                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                                    <dx:ASPxMemo ID="memo_remarks" runat="server" ClientInstanceName="memo_remarks" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" Width="100%">
-                                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
-                                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                                        </ValidationSettings>
-                                                                        <Border BorderStyle="None" />
-                                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                                    </dx:ASPxMemo>
-                                                                </dx:LayoutItemNestedControlContainer>
-                                                            </LayoutItemNestedControlCollection>
-                                                            <CaptionSettings Location="Top" />
-                                                            <ParentContainerStyle Font-Size="Small">
-                                                            </ParentContainerStyle>
-                                                        </dx:LayoutItem>
-                                                    </Items>
-                                                </dx:LayoutGroup>
+                                                <dx:LayoutItem Caption="AR Reference No." ClientVisible="False" ColSpan="1" Name="remItem" FieldName="ARRefNo">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxTextBox ID="arNoTB" runat="server" ClientInstanceName="arNoTB" Font-Bold="True" Font-Size="Small" Width="100%">
+                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                                    <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                </ValidationSettings>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <DisabledStyle ForeColor="#333333">
+                                                                </DisabledStyle>
+                                                            </dx:ASPxTextBox>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionSettings Location="Top" />
+                                                    <Paddings PaddingBottom="20px" />
+                                                    <CaptionStyle Font-Bold="False">
+                                                    </CaptionStyle>
+                                                    <ParentContainerStyle Font-Size="Small">
+                                                    </ParentContainerStyle>
+                                                </dx:LayoutItem>
                                             </Items>
                                             <ParentContainerStyle Font-Bold="True" Font-Size="Small">
                                             </ParentContainerStyle>

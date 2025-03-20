@@ -1203,6 +1203,8 @@
       <Column Name="ChargedToComp" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="ChargedToDept" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="LocBranch" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ARRefNo" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="SAP_Id" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
     </Type>
   </Table>
 </Database>

@@ -213,15 +213,6 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxMemo tripMemo;
 
         /// <summary>
-        /// memo_remarks control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxMemo memo_remarks;
-
-        /// <summary>
         /// caTotalCallback control.
         /// </summary>
         /// <remarks>
@@ -283,6 +274,15 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxButtonEdit reimTB;
+
+        /// <summary>
+        /// arNoTB control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox arNoTB;
 
         /// <summary>
         /// forAccountingGrid control.

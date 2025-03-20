@@ -23814,6 +23814,10 @@ namespace DX_WebTemplate
 		
 		private System.Nullable<int> _LocBranch;
 		
+		private string _ARRefNo;
+		
+		private string _SAP_Id;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -23862,6 +23866,10 @@ namespace DX_WebTemplate
     partial void OnChargedToDeptChanged();
     partial void OnLocBranchChanging(System.Nullable<int> value);
     partial void OnLocBranchChanged();
+    partial void OnARRefNoChanging(string value);
+    partial void OnARRefNoChanged();
+    partial void OnSAP_IdChanging(string value);
+    partial void OnSAP_IdChanged();
     #endregion
 		
 		public ACCEDE_T_TravelExpenseMain()
@@ -24305,6 +24313,46 @@ namespace DX_WebTemplate
 					this._LocBranch = value;
 					this.SendPropertyChanged("LocBranch");
 					this.OnLocBranchChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ARRefNo", DbType="NVarChar(50)")]
+		public string ARRefNo
+		{
+			get
+			{
+				return this._ARRefNo;
+			}
+			set
+			{
+				if ((this._ARRefNo != value))
+				{
+					this.OnARRefNoChanging(value);
+					this.SendPropertyChanging();
+					this._ARRefNo = value;
+					this.SendPropertyChanged("ARRefNo");
+					this.OnARRefNoChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SAP_Id", DbType="NVarChar(50)")]
+		public string SAP_Id
+		{
+			get
+			{
+				return this._SAP_Id;
+			}
+			set
+			{
+				if ((this._SAP_Id != value))
+				{
+					this.OnSAP_IdChanging(value);
+					this.SendPropertyChanging();
+					this._SAP_Id = value;
+					this.SendPropertyChanged("SAP_Id");
+					this.OnSAP_IdChanged();
 				}
 			}
 		}
