@@ -791,7 +791,7 @@
                 var ewt_amnt = ewt.GetValue() != null ? ewt.GetValue() : 0;
                 var vat_amnt = vat.GetValue() != null ? vat.GetValue() : 0;
 
-                var net_amnt = ((gross + vat_amnt) - ewt_amnt).toFixed(2);
+                var net_amnt = ((gross) - ewt_amnt).toFixed(2);
 
                 netAmount.SetValue(net_amnt);
             } else {
@@ -799,7 +799,7 @@
                 var ewt_amnt = ewt_edit.GetValue() != null ? ewt_edit.GetValue() : 0;
                 var vat_amnt = vat_edit.GetValue() != null ? vat_edit.GetValue() : 0;
 
-                var net_amnt = ((gross + vat_amnt) - ewt_amnt).toFixed(2);
+                var net_amnt = ((gross) - ewt_amnt).toFixed(2);
 
                 netAmount_edit.SetValue(net_amnt);
             }

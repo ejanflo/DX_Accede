@@ -2,7 +2,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
      
     
-    aw<style>
+    <style>
         .radio-buttons-container {
             display: flex;
             align-items: center; /* Vertically centers the radio buttons */
@@ -1181,7 +1181,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Remarks" ColSpan="1" FieldName="remarks">
+                                    <dx:LayoutItem Caption="Remarks" ColSpan="1" FieldName="remarks" ClientVisible="False">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxMemo ID="txt_remarks" runat="server" ClientInstanceName="txt_remarks" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
