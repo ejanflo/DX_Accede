@@ -288,7 +288,7 @@ namespace DX_WebTemplate
                             gross_lbl.DisplayFormatString = "#,##0.00" + " " + exp.Exp_Currency;
                             net_lbl.DisplayFormatString = "#,##0.00" + " " + exp.Exp_Currency;
                             vat_lbl.DisplayFormatString = "#,##0.00" + " " + exp.Exp_Currency;
-                            ewt_lbl.DisplayFormatString = "#,##0.00" + " " + exp.Exp_Currency;
+                            net_lbl.DisplayFormatString = "#,##0.00" + " " + exp.Exp_Currency;
 
                         }
                         else

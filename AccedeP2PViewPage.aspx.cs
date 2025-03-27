@@ -208,12 +208,16 @@ namespace DX_WebTemplate
                 var Cash_status = _DataContext.ITP_S_Status
                     .Where(x => x.STS_Name == "Pending at Cashier")
                     .FirstOrDefault();
-                
+
+                var completed_status = _DataContext.ITP_S_Status
+                    .Where(x => x.STS_Name == "Complete")
+                    .FirstOrDefault();
+
                 exp_main.ExpChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
                 exp_main.ExpChargedTo_DeptId = Convert.ToInt32(CTDept_id);
                 exp_main.ExpenseClassification = Convert.ToInt32(ClassType);
                 exp_main.CostCenter = costCenter;
-                exp_main.Status = Cash_status.STS_Id;
+                
                 
                 if (rfp_main_reimburse != null)
                 {
@@ -225,7 +229,14 @@ namespace DX_WebTemplate
 
                     rfp_main_reimburse.Status = Cash_status.STS_Id;
                     rfp_main_reimburse.SAPDocNo = SAPDoc;
+
+                    exp_main.Status = Cash_status.STS_Id;
                 }
+                else
+                {
+                    exp_main.Status = completed_status.STS_Id;
+                }
+
                 //else
                 //{
                 //    var ApproveStatus = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Complete").FirstOrDefault();

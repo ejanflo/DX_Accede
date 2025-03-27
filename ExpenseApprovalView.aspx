@@ -2,7 +2,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
      
     
-    aw<style>
+    <style>
         .radio-buttons-container {
             display: flex;
             align-items: center; /* Vertically centers the radio buttons */
@@ -471,7 +471,7 @@
                 var ewt_amnt = ewt.GetValue() != null ? ewt.GetValue() : 0;
                 var vat_amnt = vat.GetValue() != null ? vat.GetValue() : 0;
 
-                var net_amnt = ((gross + vat_amnt) - ewt_amnt).toFixed(2);
+                var net_amnt = ((gross) - ewt_amnt).toFixed(2);
 
                 netAmount.SetValue(net_amnt);
             } else {
@@ -479,7 +479,7 @@
                 var ewt_amnt = ewt_edit.GetValue() != null ? ewt_edit.GetValue() : 0;
                 var vat_amnt = vat_edit.GetValue() != null ? vat_edit.GetValue() : 0;
 
-                var net_amnt = ((gross + vat_amnt) - ewt_amnt).toFixed(2);
+                var net_amnt = ((gross) - ewt_amnt).toFixed(2);
 
                 netAmount_edit.SetValue(net_amnt);
             }
@@ -1181,7 +1181,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Remarks" ColSpan="1" FieldName="remarks">
+                                    <dx:LayoutItem Caption="Remarks" ColSpan="1" FieldName="remarks" ClientVisible="False">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxMemo ID="txt_remarks" runat="server" ClientInstanceName="txt_remarks" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
@@ -2374,22 +2374,6 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                     <ParentContainerStyle Font-Size="Small">
                                                     </ParentContainerStyle>
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Net Amount" ColSpan="1">
-                                                    <LayoutItemNestedControlCollection>
-                                                        <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxTextBox ID="net_lbl" runat="server" ClientInstanceName="net_lbl" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True" HorizontalAlign="Right">
-                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
-                                                                    <RequiredField ErrorText="*Required" />
-                                                                </ValidationSettings>
-                                                                <Border BorderStyle="None" />
-                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                            </dx:ASPxTextBox>
-                                                        </dx:LayoutItemNestedControlContainer>
-                                                    </LayoutItemNestedControlCollection>
-                                                    <CaptionSettings HorizontalAlign="Right" />
-                                                    <ParentContainerStyle Font-Size="Small">
-                                                    </ParentContainerStyle>
-                                                </dx:LayoutItem>
                                                 <dx:LayoutItem Caption="VAT" ColSpan="1">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
@@ -2410,6 +2394,22 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxTextBox ID="ewt_lbl" runat="server" ClientInstanceName="ewt_lbl" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True" HorizontalAlign="Right">
+                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
+                                                                    <RequiredField ErrorText="*Required" />
+                                                                </ValidationSettings>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                            </dx:ASPxTextBox>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionSettings HorizontalAlign="Right" />
+                                                    <ParentContainerStyle Font-Size="Small">
+                                                    </ParentContainerStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Net Amount" ColSpan="1">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxTextBox ID="net_lbl" runat="server" ClientInstanceName="net_lbl" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True" HorizontalAlign="Right">
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
                                                                     <RequiredField ErrorText="*Required" />
                                                                 </ValidationSettings>
