@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.Remoting.Contexts;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Services;
 using System.Web.UI;
@@ -1129,7 +1130,6 @@ namespace DX_WebTemplate
             return exp_det_class;
         }
 
-
         public class ExpDetails
         {
             public string travelDate { get; set; }
@@ -1896,45 +1896,13 @@ namespace DX_WebTemplate
                 Session["expAction"] = "edit";
 
                 // Load data from SqlDataSources into DataTables and merge
-                ds.Tables[0].Merge(GetDataTableFromSqlDataSource(SqlExpDetailsMap));
-
-                //ds.Tables[0].Merge(GetDataTableFromSqlDataSource(SqlRTMap));
-                //ds.Tables[1].Merge(GetDataTableFromSqlDataSource(SqlFAMap));
-                //ds.Tables[2].Merge(GetDataTableFromSqlDataSource(SqlMTMap));
-                //ds.Tables[3].Merge(GetDataTableFromSqlDataSource(SqlOBMap));
-                //ds.Tables[4].Merge(GetDataTableFromSqlDataSource(SqlEMap));
-                //ds.Tables[5].Merge(GetDataTableFromSqlDataSource(SqlBMMap));
-
-                dsDoc.Tables[0].Merge(GetDataTableFromSqlDataSource(SqlDocs2));
+                Task.Run(() => ds.Tables[0].Merge(GetDataTableFromSqlDataSource(SqlExpDetailsMap)));
+                Task.Run(() => dsDoc.Tables[0].Merge(GetDataTableFromSqlDataSource(SqlDocs2)));
             }
 
             // Bind the tables to the grids
             ASPxGridView22.DataSource = ds.Tables[0];
             ASPxGridView22.DataBind();
-
-            //reimTranGrid.DataSource = ds.Tables[0];
-            //fixedAllowGrid.DataSource = ds.Tables[1];
-            //miscTravelGrid.DataSource = ds.Tables[2];
-            //otherBusGrid.DataSource = ds.Tables[3];
-            //entertainmentGrid.DataSource = ds.Tables[4];
-            //busMealsGrid.DataSource = ds.Tables[5];
-            //TraDocuGrid.DataSource = dsDoc.Tables[0];
-
-            //// Data bind to refresh the grids
-            //reimTranGrid.DataBind();
-            //fixedAllowGrid.DataBind();
-            //miscTravelGrid.DataBind();
-            //otherBusGrid.DataBind();
-            //entertainmentGrid.DataBind();
-            //busMealsGrid.DataBind();
-            //TraDocuGrid.DataBind();
-
-            //reimTranGrid.JSProperties["cpSummary"] = reimTranGrid.GetTotalSummaryValue(reimTranGrid.TotalSummary["ReimTranspo_Amount"]);
-            //fixedAllowGrid.JSProperties["cpSummary"] = fixedAllowGrid.GetTotalSummaryValue(fixedAllowGrid.TotalSummary["FixedAllow_Amount"]);
-            //miscTravelGrid.JSProperties["cpSummary"] = miscTravelGrid.GetTotalSummaryValue(miscTravelGrid.TotalSummary["MiscTravelExp_Amount"]);
-            //otherBusGrid.JSProperties["cpSummary"] = otherBusGrid.GetTotalSummaryValue(otherBusGrid.TotalSummary["OtherBusinessExp_Amount"]);
-            //entertainmentGrid.JSProperties["cpSummary"] = entertainmentGrid.GetTotalSummaryValue(entertainmentGrid.TotalSummary["Entertainment_Amount"]);
-            //busMealsGrid.JSProperties["cpSummary"] = busMealsGrid.GetTotalSummaryValue(busMealsGrid.TotalSummary["BusinessMeal_Amount"]);
         }
 
         protected void wfCallback_Callback(object sender, CallbackEventArgsBase e)
