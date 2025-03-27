@@ -2855,12 +2855,15 @@ exp_EmpId.PerformCallback(s.GetValue());
                                             <ParentContainerStyle Font-Size="Small">
                                             </ParentContainerStyle>
                                         </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Net Amount" ColSpan="1">
+                                        <dx:LayoutItem Caption="VAT" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxSpinEdit ID="netAmount" runat="server" ClientInstanceName="netAmount" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="False" Font-Size="Small" MaxValue="99999999999999" Number="0.00" Width="100%" HorizontalAlign="Right" ReadOnly="True">
+                                                    <dx:ASPxSpinEdit ID="vat" runat="server" ClientInstanceName="vat" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="False" Font-Size="Small" MaxValue="999999999" Number="0.00" Width="100%" HorizontalAlign="Right">
                                                         <SpinButtons ClientVisible="False">
                                                         </SpinButtons>
+                                                        <ClientSideEvents ValueChanged="function(s, e) {
+	computeNetAmount(&quot;add&quot;);
+}" />
                                                         <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                                     </dx:ASPxSpinEdit>
@@ -2886,10 +2889,10 @@ exp_EmpId.PerformCallback(s.GetValue());
                                             <ParentContainerStyle Font-Size="Small">
                                             </ParentContainerStyle>
                                         </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="VAT" ColSpan="1">
+                                        <dx:LayoutItem Caption="EWT" ColSpan="1" HorizontalAlign="Left">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxSpinEdit ID="vat" runat="server" ClientInstanceName="vat" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="False" Font-Size="Small" MaxValue="999999999" Number="0.00" Width="100%" HorizontalAlign="Right">
+                                                    <dx:ASPxSpinEdit ID="ewt" runat="server" ClientInstanceName="ewt" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="False" Font-Size="Small" MaxValue="999999999" Number="0.00" Width="100%" HorizontalAlign="Right">
                                                         <SpinButtons ClientVisible="False">
                                                         </SpinButtons>
                                                         <ClientSideEvents ValueChanged="function(s, e) {
@@ -2918,15 +2921,12 @@ exp_EmpId.PerformCallback(s.GetValue());
                                             </LayoutItemNestedControlCollection>
                                             <CaptionSettings HorizontalAlign="Right" />
                                         </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="EWT" ColSpan="1" HorizontalAlign="Left">
+                                        <dx:LayoutItem Caption="Net Amount" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxSpinEdit ID="ewt" runat="server" ClientInstanceName="ewt" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="False" Font-Size="Small" MaxValue="999999999" Number="0.00" Width="100%" HorizontalAlign="Right">
+                                                    <dx:ASPxSpinEdit ID="netAmount" runat="server" ClientInstanceName="netAmount" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="False" Font-Size="Small" MaxValue="99999999999999" Number="0.00" Width="100%" HorizontalAlign="Right" ReadOnly="True">
                                                         <SpinButtons ClientVisible="False">
                                                         </SpinButtons>
-                                                        <ClientSideEvents ValueChanged="function(s, e) {
-	computeNetAmount(&quot;add&quot;);
-}" />
                                                         <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                                     </dx:ASPxSpinEdit>
@@ -3273,12 +3273,16 @@ computeNetAmount(&quot;edit&quot;);
                                             <ParentContainerStyle Font-Size="Small">
                                             </ParentContainerStyle>
                                         </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Net Amount" ColSpan="1">
+                                        <dx:LayoutItem Caption="VAT" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxSpinEdit ID="netAmount_edit" runat="server" ClientInstanceName="netAmount_edit" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="False" Font-Size="Small" MaxValue="99999999999999" Number="0.00" Width="100%" HorizontalAlign="Right" ReadOnly="True">
+                                                    <dx:ASPxSpinEdit ID="vat_edit" runat="server" ClientInstanceName="vat_edit" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="False" Font-Size="Small" MaxValue="999999999" Number="0.00" Width="100%" HorizontalAlign="Right">
                                                         <SpinButtons ClientVisible="False">
                                                         </SpinButtons>
+                                                        <ClientSideEvents ValueChanged="function(s, e) {
+	computeNetAmount(&quot;edit&quot;);
+
+}" />
                                                         <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                                     </dx:ASPxSpinEdit>
@@ -3304,10 +3308,10 @@ computeNetAmount(&quot;edit&quot;);
                                             <ParentContainerStyle Font-Size="Small">
                                             </ParentContainerStyle>
                                         </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="VAT" ColSpan="1">
+                                        <dx:LayoutItem Caption="EWT" ColSpan="1" HorizontalAlign="Left" Width="55%">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxSpinEdit ID="vat_edit" runat="server" ClientInstanceName="vat_edit" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="False" Font-Size="Small" MaxValue="999999999" Number="0.00" Width="100%" HorizontalAlign="Right">
+                                                    <dx:ASPxSpinEdit ID="ewt_edit" runat="server" ClientInstanceName="ewt_edit" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="False" Font-Size="Small" MaxValue="999999999" Number="0.00" Width="100%" HorizontalAlign="Right">
                                                         <SpinButtons ClientVisible="False">
                                                         </SpinButtons>
                                                         <ClientSideEvents ValueChanged="function(s, e) {
@@ -3337,16 +3341,12 @@ computeNetAmount(&quot;edit&quot;);
                                             </LayoutItemNestedControlCollection>
                                             <CaptionSettings HorizontalAlign="Right" />
                                         </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="EWT" ColSpan="1" HorizontalAlign="Left" Width="55%">
+                                        <dx:LayoutItem Caption="Net Amount" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxSpinEdit ID="ewt_edit" runat="server" ClientInstanceName="ewt_edit" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="False" Font-Size="Small" MaxValue="999999999" Number="0.00" Width="100%" HorizontalAlign="Right">
+                                                    <dx:ASPxSpinEdit ID="netAmount_edit" runat="server" ClientInstanceName="netAmount_edit" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="False" Font-Size="Small" MaxValue="99999999999999" Number="0.00" Width="100%" HorizontalAlign="Right" ReadOnly="True">
                                                         <SpinButtons ClientVisible="False">
                                                         </SpinButtons>
-                                                        <ClientSideEvents ValueChanged="function(s, e) {
-	computeNetAmount(&quot;edit&quot;);
-
-}" />
                                                         <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                                     </dx:ASPxSpinEdit>

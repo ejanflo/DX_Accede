@@ -1005,13 +1005,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox tin;
 
         /// <summary>
-        /// netAmount control.
+        /// vat control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxSpinEdit netAmount;
+        protected global::DevExpress.Web.ASPxSpinEdit vat;
 
         /// <summary>
         /// invoiceOR control.
@@ -1023,13 +1023,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox invoiceOR;
 
         /// <summary>
-        /// vat control.
+        /// ewt control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxSpinEdit vat;
+        protected global::DevExpress.Web.ASPxSpinEdit ewt;
 
         /// <summary>
         /// WBS control.
@@ -1041,13 +1041,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox WBS;
 
         /// <summary>
-        /// ewt control.
+        /// netAmount control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxSpinEdit ewt;
+        protected global::DevExpress.Web.ASPxSpinEdit netAmount;
 
         /// <summary>
         /// accountCharged control.
@@ -1212,13 +1212,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox tin_edit;
 
         /// <summary>
-        /// netAmount_edit control.
+        /// vat_edit control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxSpinEdit netAmount_edit;
+        protected global::DevExpress.Web.ASPxSpinEdit vat_edit;
 
         /// <summary>
         /// invoiceOR_edit control.
@@ -1230,13 +1230,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox invoiceOR_edit;
 
         /// <summary>
-        /// vat_edit control.
+        /// ewt_edit control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxSpinEdit vat_edit;
+        protected global::DevExpress.Web.ASPxSpinEdit ewt_edit;
 
         /// <summary>
         /// wbs_edit control.
@@ -1248,13 +1248,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox wbs_edit;
 
         /// <summary>
-        /// ewt_edit control.
+        /// netAmount_edit control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxSpinEdit ewt_edit;
+        protected global::DevExpress.Web.ASPxSpinEdit netAmount_edit;
 
         /// <summary>
         /// accountCharged_edit control.

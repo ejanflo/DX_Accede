@@ -1023,15 +1023,6 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox gross_lbl;
 
         /// <summary>
-        /// net_lbl control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox net_lbl;
-
-        /// <summary>
         /// vat_lbl control.
         /// </summary>
         /// <remarks>
@@ -1048,6 +1039,15 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxTextBox ewt_lbl;
+
+        /// <summary>
+        /// net_lbl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox net_lbl;
 
         /// <summary>
         /// acctChargeExp_lbl control.
