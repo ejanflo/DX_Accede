@@ -824,13 +824,13 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static object SaveSubmitTravelExpenseAJAX(string empname, DateTime reportdate, string company, string department, string chargedComp, string chargedDept, DateTime datefrom, DateTime dateto, DateTime timedepart, DateTime timearrive, string trip, string ford, string purpose, string expenseType, string locbranch, string arno, string btnaction)
+        public static object SaveSubmitTravelExpenseAJAX(string empname, DateTime reportdate, string company, string department, string chargedComp, string chargedDept, DateTime datefrom, DateTime dateto, DateTime timedepart, DateTime timearrive, string trip, string ford, string purpose, string expenseType, string locbranch, string arNo, string btnaction)
         {
             TravelExpenseAdd tra = new TravelExpenseAdd();
-            return tra.SaveSubmitTravelExpense(empname, reportdate, company, department, chargedComp, chargedDept, datefrom, dateto, timedepart, timearrive, trip, ford, purpose, expenseType, locbranch, arno, btnaction);
+            return tra.SaveSubmitTravelExpense(empname, reportdate, company, department, chargedComp, chargedDept, datefrom, dateto, timedepart, timearrive, trip, ford, purpose, expenseType, locbranch, arNo, btnaction);
         }
 
-        public object SaveSubmitTravelExpense(string empname, DateTime reportdate, string company, string department, string chargedComp, string chargedDept, DateTime datefrom, DateTime dateto, DateTime timedepart, DateTime timearrive, string trip, string ford, string purpose, string expenseType, string locbranch, string arno, string btnaction)
+        public object SaveSubmitTravelExpense(string empname, DateTime reportdate, string company, string department, string chargedComp, string chargedDept, DateTime datefrom, DateTime dateto, DateTime timedepart, DateTime timearrive, string trip, string ford, string purpose, string expenseType, string locbranch, string arNo, string btnaction)
         {
             try
             {
@@ -870,7 +870,7 @@ namespace DX_WebTemplate
                 exp.ChargedToDept = Convert.ToInt32(chargedDept);
                 exp.Purpose = purpose;
                 exp.LocBranch = Convert.ToInt32(locbranch);
-                exp.ARRefNo = arno;
+                exp.ARRefNo = arNo;
                 exp.ExpenseType_ID = Convert.ToInt32(tranType.ExpenseType_ID);
                 exp.WF_Id = Convert.ToInt32(Session["mainwfid"]);
                 exp.FAPWF_Id = Convert.ToInt32(Session["fapwfid"]);
