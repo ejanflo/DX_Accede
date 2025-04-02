@@ -305,9 +305,9 @@ namespace DX_WebTemplate
                     remItem.ClientVisible = false;
                     due_lbl.Caption = "Due To Employee";
                     if (reim != null)
-                        reimDetails.ClientVisible = false;
-                    else
                         reimDetails.ClientVisible = true;
+                    else
+                        reimDetails.ClientVisible = false;
                 }
                 else if (totalca > totalexp)
                 {
