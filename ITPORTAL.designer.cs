@@ -234,6 +234,9 @@ namespace DX_WebTemplate
     partial void InsertACCEDE_T_TravelExpenseMain(ACCEDE_T_TravelExpenseMain instance);
     partial void UpdateACCEDE_T_TravelExpenseMain(ACCEDE_T_TravelExpenseMain instance);
     partial void DeleteACCEDE_T_TravelExpenseMain(ACCEDE_T_TravelExpenseMain instance);
+    partial void InsertACCEDE_S_DocumentType(ACCEDE_S_DocumentType instance);
+    partial void UpdateACCEDE_S_DocumentType(ACCEDE_S_DocumentType instance);
+    partial void DeleteACCEDE_S_DocumentType(ACCEDE_S_DocumentType instance);
     #endregion
 		
 		public ITPORTALDataContext(string connection) : 
@@ -889,6 +892,14 @@ namespace DX_WebTemplate
 			get
 			{
 				return this.GetTable<ACCEDE_T_TravelExpenseMain>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ACCEDE_S_DocumentType> ACCEDE_S_DocumentTypes
+		{
+			get
+			{
+				return this.GetTable<ACCEDE_S_DocumentType>();
 			}
 		}
 	}
@@ -24353,6 +24364,92 @@ namespace DX_WebTemplate
 					this._SAP_Id = value;
 					this.SendPropertyChanged("SAP_Id");
 					this.OnSAP_IdChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_S_DocumentType")]
+	public partial class ACCEDE_S_DocumentType : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private string _Document_Type;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnDocument_TypeChanging(string value);
+    partial void OnDocument_TypeChanged();
+    #endregion
+		
+		public ACCEDE_S_DocumentType()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Document_Type", DbType="NVarChar(100)")]
+		public string Document_Type
+		{
+			get
+			{
+				return this._Document_Type;
+			}
+			set
+			{
+				if ((this._Document_Type != value))
+				{
+					this.OnDocument_TypeChanging(value);
+					this.SendPropertyChanging();
+					this._Document_Type = value;
+					this.SendPropertyChanged("Document_Type");
+					this.OnDocument_TypeChanged();
 				}
 			}
 		}

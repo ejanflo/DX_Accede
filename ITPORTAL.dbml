@@ -1207,4 +1207,10 @@
       <Column Name="SAP_Id" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
     </Type>
   </Table>
+  <Table Name="dbo.ACCEDE_S_DocumentType" Member="ACCEDE_S_DocumentTypes">
+    <Type Name="ACCEDE_S_DocumentType">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Document_Type" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+    </Type>
+  </Table>
 </Database>
