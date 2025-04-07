@@ -2321,7 +2321,7 @@
                                                                             </dx:GridViewDataSpinEditColumn>
                                                                         </Columns>
                                                                     </dx:GridViewBandColumn>
-                                                                    <dx:GridViewBandColumn Caption="OTHER BUS. EXPENSES" ShowInCustomizationForm="True" VisibleIndex="6">
+                                                                    <dx:GridViewBandColumn Caption="OTHER BUS. EXPENSES" ShowInCustomizationForm="True" VisibleIndex="6" Visible="False">
                                                                         <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
                                                                         <Columns>
                                                                             <dx:GridViewDataComboBoxColumn Caption="Type" FieldName="OtherBus_Type" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
@@ -2391,8 +2391,8 @@
                                                                                         </dx:ListBoxColumn>
                                                                                     </Columns>
                                                                                     <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	var selectedValue = s.GetValue(); // Get the selected value from ComboBox 
-               if (selectedValue == 5) { 
+	var selectedValue = s.GetText(); // Get the selected value from ComboBox 
+               if (selectedValue.includes(&quot;Others&quot;)) { 
                       MiscTravelExpSpecify.SetVisible(true);  
                       //miscTravelExpPopup.Show();
                }else{

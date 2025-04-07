@@ -366,6 +366,24 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.GridViewCommandColumnCustomButton btnDownload;
 
         /// <summary>
+        /// btnSupEdit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.GridViewCommandColumnCustomButton btnSupEdit;
+
+        /// <summary>
+        /// btnSupDelete control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.GridViewCommandColumnCustomButton btnSupDelete;
+
+        /// <summary>
         /// wfPanel control.
         /// </summary>
         /// <remarks>
@@ -1678,5 +1696,14 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlLocBranch;
+
+        /// <summary>
+        /// SqlSupDocType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlSupDocType;
     }
 }

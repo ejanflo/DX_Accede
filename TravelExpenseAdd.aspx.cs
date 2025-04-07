@@ -808,7 +808,7 @@ namespace DX_WebTemplate
                     rfp.isForeignTravel = ford == "Foreign" ? true : false;
                     rfp.WF_Id = Convert.ToInt32(wf);
                     rfp.FAPWF_Id = Convert.ToInt32(fapwf);
-                    rfp.Currency = Convert.ToString(Session["ford"]) == "Domestic" ? "USD" : "PHP";
+                    rfp.Currency = Convert.ToString(Session["ford"]) == "Domestic" ? "PHP" : "USD";
                 }
 
                 _DataContext.ACCEDE_T_RFPMains.InsertOnSubmit(rfp);
@@ -1896,13 +1896,16 @@ namespace DX_WebTemplate
                 Session["expAction"] = "edit";
 
                 // Load data from SqlDataSources into DataTables and merge
-                Task.Run(() => ds.Tables[0].Merge(GetDataTableFromSqlDataSource(SqlExpDetailsMap)));
-                Task.Run(() => dsDoc.Tables[0].Merge(GetDataTableFromSqlDataSource(SqlDocs2)));
+                ds.Tables[0].Merge(GetDataTableFromSqlDataSource(SqlExpDetailsMap));
+                dsDoc.Tables[0].Merge(GetDataTableFromSqlDataSource(SqlDocs2));
             }
 
             // Bind the tables to the grids
             ASPxGridView22.DataSource = ds.Tables[0];
             ASPxGridView22.DataBind();
+
+            TraDocuGrid.DataSource = dsDoc.Tables[0];
+            TraDocuGrid.DataBind();
         }
 
         protected void wfCallback_Callback(object sender, CallbackEventArgsBase e)
@@ -2205,6 +2208,21 @@ namespace DX_WebTemplate
             fordCB.DataSourceID = null;
             fordCB.DataSource = SqlDepartment;
             fordCB.DataBind();
+        }
+
+        protected void TraDocuGrid_CellEditorInitialize(object sender, ASPxGridViewEditorEventArgs e)
+        {
+            if (e.Column.FieldName == "Description")
+            {
+                ASPxComboBox comboBox = e.Editor as ASPxComboBox;
+                if (comboBox != null)
+                {
+                    comboBox.DataSource = SqlSupDocType; // supply data
+                    comboBox.ValueField = "Document_Type";
+                    comboBox.TextField = "Document_Type";
+                    comboBox.DataBind();
+                }
+            }
         }
     }
 }

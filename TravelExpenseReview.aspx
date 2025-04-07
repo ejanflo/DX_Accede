@@ -150,6 +150,10 @@
                 travelDateCalendar.SetDate(null);
                 totalExpTB.SetValue('');
                 viewExpDetailModal(item_id);
+            } else if (e.buttonID == 'btnSupEdit') {
+                s.StartEditRow(e.visibleIndex);  
+            } else if (e.buttonID == 'btnSupDelete') {
+                s.DeleteRow(e.visibleIndex);
             }
         }
 
@@ -221,6 +225,7 @@
             var remarks = approveRemarks.GetText();
             var chargedComp = chargedCB.GetValue();
             var chargedDept = chargedCB0.GetValue();
+            var arno = arNoTB.GetText();
 
             $.ajax({
                 type: "POST",
@@ -230,7 +235,8 @@
                 data: JSON.stringify({
                     remarks: remarks,
                     chargedcomp: chargedComp,
-                    chargeddept: chargedDept
+                    chargeddept: chargedDept,
+                    arNo: arno
                 }),
                 success: function (response) {
                     ApprovePopup.Hide();
@@ -1331,7 +1337,7 @@
                                                 <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Center" Width="100%">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxUploadControl ID="UploadController" runat="server" AutoStartUpload="True" OnFilesUploadComplete="UploadController_FilesUploadComplete" ShowProgressPanel="True" UploadMode="Auto" Visible="False" Width="100%">
+                                                            <dx:ASPxUploadControl ID="UploadController" runat="server" AutoStartUpload="True" OnFilesUploadComplete="UploadController_FilesUploadComplete" ShowProgressPanel="True" UploadMode="Auto" Width="100%" ClientVisible="False">
                                                                 <ClientSideEvents FilesUploadComplete="function(s, e) {
 	DocumentGrid.Refresh();
 }
@@ -1341,8 +1347,10 @@
                                                                 <Paddings PaddingBottom="10px" />
                                                                 <TextBoxStyle Font-Size="Small" />
                                                             </dx:ASPxUploadControl>
-                                                            <dx:ASPxGridView ID="DocumentGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="DocumentGrid" DataSourceID="SqlDocs" KeyFieldName="ID" Width="100%" Theme="MaterialCompact">
+                                                            <dx:ASPxGridView ID="DocumentGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="DocumentGrid" DataSourceID="SqlDocs" KeyFieldName="ID" Width="100%" Theme="MaterialCompact" OnCustomButtonInitialize="DocumentGrid_CustomButtonInitialize">
                                                                 <ClientSideEvents CustomButtonClick="onCustomButtonClick" />
+                                                                <SettingsEditing Mode="Inline">
+                                                                </SettingsEditing>
                                                                 <SettingsPopup>
                                                                     <FilterControl AutoUpdatePosition="False">
                                                                     </FilterControl>
@@ -1360,15 +1368,31 @@
                                                                                     </Style>
                                                                                 </Styles>
                                                                             </dx:GridViewCommandColumnCustomButton>
+                                                                            <dx:GridViewCommandColumnCustomButton ID="btnSupEdit" Text="Edit">
+                                                                                <Image IconID="iconbuilder_actions_edit_svg_16x16">
+                                                                                </Image>
+                                                                                <Styles>
+                                                                                    <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#006DD6">
+                                                                                        <Paddings PaddingBottom="4px" PaddingLeft="8px" PaddingRight="8px" PaddingTop="4px" />
+                                                                                    </Style>
+                                                                                </Styles>
+                                                                            </dx:GridViewCommandColumnCustomButton>
+                                                                            <dx:GridViewCommandColumnCustomButton ID="btnSupDelete" Text="Remove">
+                                                                                <Image IconID="iconbuilder_actions_deletecircled_svg_16x16">
+                                                                                </Image>
+                                                                                <Styles>
+                                                                                    <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#CC2A17">
+                                                                                        <Paddings PaddingBottom="4px" PaddingLeft="8px" PaddingRight="8px" PaddingTop="4px" />
+                                                                                    </Style>
+                                                                                </Styles>
+                                                                            </dx:GridViewCommandColumnCustomButton>
                                                                         </CustomButtons>
                                                                     </dx:GridViewCommandColumn>
                                                                     <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
                                                                         <EditFormSettings Visible="False" />
                                                                     </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="FileName" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                                        <EditFormSettings Visible="False" />
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="Description" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                                    <dx:GridViewDataTextColumn FieldName="FileName" ShowInCustomizationForm="True" VisibleIndex="2">
+                                                                        <EditFormSettings Visible="True" />
                                                                     </dx:GridViewDataTextColumn>
                                                                     <dx:GridViewDataTextColumn FieldName="FileExtension" ShowInCustomizationForm="True" Visible="False" VisibleIndex="4">
                                                                         <EditFormSettings Visible="False" />
@@ -1391,6 +1415,10 @@
                                                                     <dx:GridViewDataTextColumn Caption="File Size" FieldName="FileSize" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="12">
                                                                         <EditFormSettings Visible="False" />
                                                                     </dx:GridViewDataTextColumn>
+                                                                    <dx:GridViewDataComboBoxColumn FieldName="Description" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                                        <PropertiesComboBox DataSourceID="SqlSupDocType" TextField="Document_Type" ValueField="Document_Type">
+                                                                        </PropertiesComboBox>
+                                                                    </dx:GridViewDataComboBoxColumn>
                                                                 </Columns>
                                                                 <Styles>
                                                                     <Header>
@@ -1723,7 +1751,7 @@
                             <dx:LayoutItem Caption="" ColSpan="1" Name="BtnSaveDetailsUser" HorizontalAlign="Right" Width="0px">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxButton ID="rfpSave" runat="server" BackColor="#006DD6" ClientInstanceName="rfpSave" Text="Save" AutoPostBack="False">
+                                        <dx:ASPxButton ID="rfpSave" runat="server" BackColor="#006DD6" ClientInstanceName="rfpSave" Text="Save" AutoPostBack="False" UseSubmitBehavior="False">
                                             <ClientSideEvents Click="saveRFPChanges" />
                                             <Border BorderColor="#006DD6" />
                                         </dx:ASPxButton>
@@ -1733,7 +1761,7 @@
                             <dx:LayoutItem Caption="" ColSpan="1" Width="0px" HorizontalAlign="Right">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxButton ID="btnCancel" runat="server" AutoPostBack="False" BackColor="White" ClientInstanceName="btnCancel" EnableTheming="True" Font-Bold="False" ForeColor="Gray" Text="Cancel" Theme="iOS">
+                                        <dx:ASPxButton ID="btnCancel" runat="server" AutoPostBack="False" BackColor="White" ClientInstanceName="btnCancel" EnableTheming="True" Font-Bold="False" ForeColor="Gray" Text="Cancel" Theme="iOS" UseSubmitBehavior="False">
                                             <ClientSideEvents Click="function(s, e) {
 	history.back()
 }" />
@@ -3086,7 +3114,7 @@ onTravelClick();
                                                                             </dx:GridViewDataSpinEditColumn>
                                                                         </Columns>
                                                                     </dx:GridViewBandColumn>
-                                                                    <dx:GridViewBandColumn Caption="OTHER BUS. EXPENSES" ShowInCustomizationForm="True" VisibleIndex="12">
+                                                                    <dx:GridViewBandColumn Caption="OTHER BUS. EXPENSES" ShowInCustomizationForm="True" VisibleIndex="12" Visible="False">
                                                                         <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
                                                                         <Columns>
                                                                             <dx:GridViewDataComboBoxColumn Caption="Type" FieldName="OtherBus_Type" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
@@ -3143,8 +3171,8 @@ onTravelClick();
                                                                                         </dx:ListBoxColumn>
                                                                                     </Columns>
                                                                                     <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	var selectedValue = s.GetValue(); // Get the selected value from ComboBox 
-               if (selectedValue == 5) { 
+	var selectedValue = s.GetText(); // Get the selected value from ComboBox 
+               if (selectedValue.includes(&quot;Others&quot;)) { 
                         OtherBusinessExpSpecify.SetVisible(true);
                         //otherBusExpPopup.Show();
                }else{
@@ -3271,15 +3299,15 @@ onTravelClick();
                                                                     <dx:GridViewDataTextColumn FieldName="FileName" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="3">
                                                                         <EditFormSettings Visible="False" />
                                                                     </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="Description" ShowInCustomizationForm="True" VisibleIndex="4">
-                                                                        <EditFormSettings Visible="False" />
-                                                                    </dx:GridViewDataTextColumn>
                                                                     <dx:GridViewDataTextColumn FieldName="FileExtension" ShowInCustomizationForm="True" VisibleIndex="5">
                                                                     </dx:GridViewDataTextColumn>
                                                                     <dx:GridViewDataTextColumn Caption="File Size" FieldName="FileSize" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="13">
                                                                         <EditFormSettings Visible="False" />
                                                                     </dx:GridViewDataTextColumn>
                                                                     <dx:GridViewDataTextColumn FieldName="FileAttachment" ShowInCustomizationForm="True" Visible="False" VisibleIndex="2">
+                                                                    </dx:GridViewDataTextColumn>
+                                                                    <dx:GridViewDataTextColumn FieldName="Description" ShowInCustomizationForm="True" VisibleIndex="4">
+                                                                        <EditFormSettings Visible="False" />
                                                                     </dx:GridViewDataTextColumn>
                                                                 </Columns>
                                                                 <Styles>
@@ -4426,4 +4454,7 @@ onTravelClick();
     <asp:SqlDataSource ID="SqlLocBranch" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_CompanyBranch]">
     </asp:SqlDataSource>
      
+     <asp:SqlDataSource ID="SqlSupDocType" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_DocumentType] ORDER BY [Document_Type]">
+    </asp:SqlDataSource>
+         
      </asp:Content>

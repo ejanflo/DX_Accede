@@ -1420,7 +1420,7 @@
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxTextBox ID="arNoTB" runat="server" ClientInstanceName="arNoTB" Font-Bold="True" Font-Size="Small" Width="100%">
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
-                                                                    <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                    <RequiredField ErrorText="*Required" />
                                                                 </ValidationSettings>
                                                                 <Border BorderStyle="None" />
                                                                 <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
@@ -1865,6 +1865,9 @@
                                                             </dx:ASPxUploadControl>
                                                             <dx:ASPxGridView ID="DocumentGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="DocumentGrid" DataSourceID="SqlDocs" Font-Size="Small" KeyFieldName="ID" Theme="MaterialCompact" Width="100%">
                                                                 <ClientSideEvents CustomButtonClick="onCustomButtonClick" />
+                                                                <SettingsEditing Mode="Batch">
+                                                                    <BatchEditSettings StartEditAction="Click" />
+                                                                </SettingsEditing>
                                                                 <SettingsCommandButton>
                                                                     <EditButton>
                                                                         <Image IconID="richedit_trackingchanges_trackchanges_svg_16x16">
@@ -1891,15 +1894,13 @@
                                                                 </SettingsPopup>
                                                                 <SettingsLoadingPanel Mode="ShowOnStatusBar" />
                                                                 <Columns>
-                                                                    <dx:GridViewCommandColumn Caption="Action" ShowDeleteButton="True" ShowEditButton="True" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                                    <dx:GridViewCommandColumn Caption="Action" ShowDeleteButton="True" ShowInCustomizationForm="True" VisibleIndex="0">
                                                                     </dx:GridViewCommandColumn>
                                                                     <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
                                                                         <EditFormSettings Visible="False" />
                                                                     </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="FileName" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                                        <EditFormSettings Visible="False" />
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="Description" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                                    <dx:GridViewDataTextColumn FieldName="FileName" ShowInCustomizationForm="True" VisibleIndex="2">
+                                                                        <EditFormSettings Visible="True" />
                                                                     </dx:GridViewDataTextColumn>
                                                                     <dx:GridViewDataTextColumn FieldName="FileExtension" ShowInCustomizationForm="True" Visible="False" VisibleIndex="4">
                                                                         <EditFormSettings Visible="False" />
@@ -1930,6 +1931,14 @@
                                                                     <dx:GridViewDataTextColumn Caption="File Size" FieldName="FileSize" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="12">
                                                                         <EditFormSettings Visible="False" />
                                                                     </dx:GridViewDataTextColumn>
+                                                                    <dx:GridViewDataComboBoxColumn FieldName="Description" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                                        <PropertiesComboBox DataSourceID="SqlSupDocType" TextField="Document_Type" ValueField="Document_Type">
+                                                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                                                <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                            </ValidationSettings>
+                                                                        </PropertiesComboBox>
+                                                                        <EditFormSettings Visible="True" />
+                                                                    </dx:GridViewDataComboBoxColumn>
                                                                 </Columns>
                                                                 <Styles>
                                                                     <Header>
@@ -1974,7 +1983,6 @@
                                                                     </CollapseButton>
                                                                 </Images>
                                                                 <SettingsCollapsing AnimationType="Slide" ExpandEffect="Slide">
-                                                                    <ExpandButton Position="Far" />
                                                                 </SettingsCollapsing>
                                                                 <ExpandBarTemplate>
                                                                     <div style="padding-right: 8px; padding-top: 4px;">
@@ -3565,7 +3573,7 @@
                                                                             </dx:GridViewDataSpinEditColumn>
                                                                         </Columns>
                                                                     </dx:GridViewBandColumn>
-                                                                    <dx:GridViewBandColumn Caption="OTHER BUS. EXPENSES" ShowInCustomizationForm="True" VisibleIndex="6">
+                                                                    <dx:GridViewBandColumn Caption="OTHER BUS. EXPENSES" ShowInCustomizationForm="True" VisibleIndex="6" Visible="False">
                                                                         <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
                                                                         <Columns>
                                                                             <dx:GridViewDataComboBoxColumn Caption="Type" FieldName="OtherBus_Type" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
@@ -3629,7 +3637,7 @@
                                                                         <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
                                                                         <Columns>
                                                                             <dx:GridViewDataComboBoxColumn Caption="Type" FieldName="MiscTravel_Type" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
-                                                                                <PropertiesComboBox ClientInstanceName="miscTravelType" DataSourceID="SqlMiscTravelExp" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID" AllowNull="True">
+                                                                                <PropertiesComboBox ClientInstanceName="miscTravelType" DataSourceID="SqlMiscTravelExp" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID" AllowNull="True" DropDownRows="9">
                                                                                     <Columns>
                                                                                         <dx:ListBoxColumn Caption="Type" FieldName="Type" Width="50px">
                                                                                         </dx:ListBoxColumn>
@@ -3637,9 +3645,9 @@
                                                                                         </dx:ListBoxColumn>
                                                                                     </Columns>
                                                                                     <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	var selectedValue = s.GetValue(); // Get the selected value from ComboBox 
+	var selectedValue = s.GetText(); // Get the selected value from ComboBox 
               
-               if (selectedValue == 5) { 
+               if (selectedValue.includes(&quot;Others&quot;)) { 
                       //ASPxGridView22.GetColumn(15).SetVisible(true);
                       MiscTravelExpSpecify.SetVisible(true);  
                       //miscTravelExpPopup.Show();
@@ -3718,8 +3726,10 @@
                                                                 <Paddings PaddingBottom="10px" />
                                                                 <TextBoxStyle Font-Size="Small" />
                                                             </dx:ASPxUploadControl>
-                                                            <dx:ASPxGridView ID="TraDocuGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="TraDocuGrid" Font-Size="Small" KeyFieldName="ID" OnRowDeleting="TraDocuGrid_RowDeleting" OnRowUpdating="TraDocuGrid_RowUpdating" Width="100%" Theme="MaterialCompact">
+                                                            <dx:ASPxGridView ID="TraDocuGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="TraDocuGrid" Font-Size="Small" KeyFieldName="ID" OnRowDeleting="TraDocuGrid_RowDeleting" OnRowUpdating="TraDocuGrid_RowUpdating" Width="100%" Theme="MaterialCompact" OnCellEditorInitialize="TraDocuGrid_CellEditorInitialize">
                                                                 <ClientSideEvents CustomButtonClick="onCustomButtonClick" />
+                                                                <SettingsEditing Mode="Inline">
+                                                                </SettingsEditing>
                                                                 <SettingsCommandButton>
                                                                     <EditButton>
                                                                         <Image IconID="richedit_trackingchanges_trackchanges_svg_16x16">
@@ -3750,12 +3760,10 @@
                                                                     <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
                                                                         <EditFormSettings Visible="False" />
                                                                     </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="FileName" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="3">
-                                                                        <EditFormSettings Visible="False" />
+                                                                    <dx:GridViewDataTextColumn FieldName="FileName" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                                        <EditFormSettings Visible="True" />
                                                                     </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="Description" ShowInCustomizationForm="True" VisibleIndex="4">
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="FileExtension" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                                    <dx:GridViewDataTextColumn FieldName="FileExtension" ShowInCustomizationForm="True" VisibleIndex="5" ReadOnly="True">
                                                                         <EditFormSettings Visible="False" />
                                                                     </dx:GridViewDataTextColumn>
                                                                     <dx:GridViewDataTextColumn Caption="File Size" FieldName="FileSize" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="13">
@@ -3763,6 +3771,9 @@
                                                                     </dx:GridViewDataTextColumn>
                                                                     <dx:GridViewDataTextColumn FieldName="FileAttachment" ShowInCustomizationForm="True" Visible="False" VisibleIndex="2">
                                                                     </dx:GridViewDataTextColumn>
+                                                                    <dx:GridViewDataComboBoxColumn FieldName="Description" ShowInCustomizationForm="True" VisibleIndex="4">
+                                                                        <EditFormSettings Visible="True" />
+                                                                    </dx:GridViewDataComboBoxColumn>
                                                                 </Columns>
                                                                 <Styles>
                                                                     <Header>
@@ -4728,5 +4739,8 @@
             <asp:Parameter DefaultValue="" Name="UserId" Type="String" />
             <asp:Parameter DefaultValue="" Name="CompanyId" Type="Int32" />
         </SelectParameters>
+    </asp:SqlDataSource>
+     
+     <asp:SqlDataSource ID="SqlSupDocType" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_DocumentType] ORDER BY [Document_Type]">
     </asp:SqlDataSource>
     </asp:Content>
