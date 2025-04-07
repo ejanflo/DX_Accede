@@ -30,6 +30,11 @@ namespace DX_WebTemplate
                     var desig = "";
                     var isReprint = 0;
 
+                    var chargeComp = "";
+                    var chargeDept = "";
+                    var classification = "";
+                    var foreignDomestic = "";
+
                     //Recommending Approval
                     var recAppr1 = "Ronald T. Garcia";
                     var recAppr1Pos = "Recommending Approver 1";
@@ -231,6 +236,33 @@ namespace DX_WebTemplate
                             PLdate = Convert.ToDateTime(rfp.PLDate).ToString("MM/dd/yyyy");
                         }
 
+                        //Charged to Company in text
+                        if (rfp.ChargedTo_CompanyId != null)
+                        {
+                            var chargeCompId = context.CompanyMasters.Where(x => x.WASSId == Convert.ToInt32(rfp.ChargedTo_CompanyId)).Select(x => x.CompanyShortName).FirstOrDefault() ?? String.Empty;
+                            chargeComp = chargeCompId.ToString();
+                        }
+
+                        //Charged to Department in text
+                        if (rfp.ChargedTo_DeptId != null)
+                        {
+                            var chargeDeptId = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(rfp.ChargedTo_DeptId)).Select(x => x.DepCode).FirstOrDefault() ?? String.Empty;
+                            chargeDept = chargeDeptId.ToString();
+                        }
+
+                        //Classification in text
+                        if (rfp.Classification_Type_Id != null)
+                        {
+                            var classificationId = context.ACCEDE_S_ExpenseClassifications.Where(x => x.ID == Convert.ToInt32(rfp.Classification_Type_Id)).Select(x => x.ClassificationName).FirstOrDefault() ?? String.Empty;
+                            classification = classificationId.ToString();
+                        }
+
+                        //isForeignTravel in text
+                        if (rfp.isForeignTravel == true)
+                            foreignDomestic = "FOREIGN";
+                        else
+                            foreignDomestic = "DOMESTIC";
+
                         // Set the parameter value
                         report.Parameters["isRePrint"].Value = isReprint; // SET ang value diri sa watermark 
 
@@ -241,6 +273,10 @@ namespace DX_WebTemplate
                         report.Parameters["cashinwords"].Value = cashinwords.ToUpper();
                         report.Parameters["desig"].Value = desig.ToUpper();
                         report.Parameters["depcost"].Value = depcode.ToUpper() + " - " + costcenter;
+                        report.Parameters["chargeComp"].Value = chargeComp.ToUpper();
+                        report.Parameters["chargeDept"].Value = chargeDept.ToUpper();
+                        report.Parameters["classification"].Value = classification.ToUpper();
+                        report.Parameters["foreignDomestic"].Value = foreignDomestic.ToUpper();
 
                         report.Parameters["recAppr1"].Value = recAppr1.ToUpper();
                         report.Parameters["recAppr2"].Value = recAppr2.ToUpper();
