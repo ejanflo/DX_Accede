@@ -170,6 +170,42 @@
             });
         }
 
+        function saveAR() {
+            LoadingPanel.SetText('Saving Changes&hellip;');
+            LoadingPanel.Show();
+            var ARReference = txt_ARReference.GetValue();
+            $.ajax({
+                type: "POST",
+                url: "AccedeCashierExpenseViewPage.aspx/ReleaseARReferenceAJAX",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({
+                    ARReference: ARReference
+                }),
+                success: function (response) {
+                    // Update the description text box with the response value
+                    var funcResult = response.d;
+
+                    if (funcResult == "success") {
+                        LoadingPanel.SetText('Changes saved. Document will proceed to Finance.');
+                        LoadingPanel.Show();
+
+                        window.location.href = 'CashierInquiryPage.aspx';
+
+                    } else {
+                        alert(response.d);
+                        LoadingPanel.SetText('Changes saving failed!');
+                        LoadingPanel.Hide();
+
+                        window.location.href = 'AccedeCashierExpenseViewPage.aspx';
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                }
+            });
+        }
+
         function saveFinChanges(stats) {
             LoadingPanel.SetText('Saving Changes&hellip;');
             LoadingPanel.Show();
@@ -377,7 +413,22 @@
 
                             <dx:EmptyLayoutItem ColSpan="3" ColumnSpan="3" Width="100%">
                             </dx:EmptyLayoutItem>
-                            <dx:LayoutItem Caption="" ColSpan="1" Width="20%">
+                            <dx:LayoutItem Caption="" ColSpan="1" ClientVisible="False" Name="SaveAR">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxButton ID="FormExpApprovalView_E1" runat="server" Text="Save" AutoPostBack="False">
+                                            <ClientSideEvents Click="function(s, e) {
+	if(ASPxClientEdit.ValidateGroup('ExpenseEdit')){
+ SaveARPopup.Show();
+}
+}
+" />
+                                            <Border BorderColor="#006838" />
+                                        </dx:ASPxButton>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                            </dx:LayoutItem>
+                            <dx:LayoutItem Caption="" ClientVisible="False" ColSpan="1" Name="CashSave" Width="20%">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxButton ID="BtnCashSave" runat="server" AutoPostBack="False" BackColor="#006838" ClientInstanceName="BtnCashSave" Text="Disburse">
@@ -592,12 +643,11 @@
                                     <dx:LayoutItem Caption="AR Reference No." ClientVisible="False" ColSpan="1" FieldName="AR_Reference_No" Name="ARNo">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxTextBox ID="txt_CTDepartment0" runat="server" ClientInstanceName="txt_CTDepartment" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
+                                                <dx:ASPxTextBox ID="txt_ARReference" runat="server" ClientInstanceName="txt_ARReference" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" Width="100%">
                                                     <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
-                                                        <RequiredField ErrorText="*Required" />
+                                                        <RequiredField ErrorText="*Required" IsRequired="True" />
                                                     </ValidationSettings>
-                                                    <Border BorderStyle="None" />
-                                                    <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                    <Border BorderColor="#006838" />
                                                 </dx:ASPxTextBox>
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
@@ -1666,6 +1716,63 @@ saveFinChanges(1); SavePopup.Hide();
                                 <dx:ASPxButton ID="ASPxButton2" runat="server" Text="No" AutoPostBack="False" BackColor="White" ForeColor="Gray">
                                     <ClientSideEvents Click="function(s, e) {
 	SavePopup.Hide();
+}" />
+                                    <Border BorderColor="Gray" />
+                                </dx:ASPxButton>
+                            </dx:LayoutItemNestedControlContainer>
+                        </LayoutItemNestedControlCollection>
+                    </dx:LayoutItem>
+                </Items>
+            </dx:LayoutGroup>
+        </Items>
+    </dx:ASPxFormLayout>
+            </dx:PopupControlContentControl>
+</ContentCollection>
+    </dx:ASPxPopupControl>
+        <dx:ASPxPopupControl ID="SaveARPopup" runat="server" HeaderText="Save Changes" Modal="True" AllowDragging="True" AutoUpdatePosition="True" ClientInstanceName="SaveARPopup" CloseAction="CloseButton" CloseOnEscape="True" EnableViewState="False" PopupAnimationType="None" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter">
+        <SettingsAdaptivity Mode="Always" VerticalAlign="WindowCenter" />
+        <ContentCollection>
+<dx:PopupControlContentControl runat="server">
+    <dx:ASPxFormLayout ID="ASPxFormLayout1" runat="server" Width="100%">
+        <Items>
+            <dx:LayoutItem ColSpan="1" ShowCaption="False" HorizontalAlign="Center">
+                <LayoutItemNestedControlCollection>
+                    <dx:LayoutItemNestedControlContainer runat="server">
+                        <dx:ASPxImage ID="ASPxImage2" runat="server" Height="50px" ImageAlign="Middle" ImageUrl="~/Content/Images/warning.png" Width="50px">
+                        </dx:ASPxImage>
+                    </dx:LayoutItemNestedControlContainer>
+                </LayoutItemNestedControlCollection>
+                <TabImage IconID="businessobjects_bo_attention_svg_16x16">
+                </TabImage>
+            </dx:LayoutItem>
+            <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Center">
+                <LayoutItemNestedControlCollection>
+                    <dx:LayoutItemNestedControlContainer runat="server">
+                        <dx:ASPxMemo ID="ASPxMemo3" runat="server" Font-Size="Medium" HorizontalAlign="Center" Text="Are you sure you want to save changes?" Width="100%">
+                            <Border BorderStyle="None" />
+                        </dx:ASPxMemo>
+                    </dx:LayoutItemNestedControlContainer>
+                </LayoutItemNestedControlCollection>
+            </dx:LayoutItem>
+            <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="HeadingLine" HorizontalAlign="Center">
+                <Items>
+                    <dx:LayoutItem Caption="" ColSpan="1">
+                        <LayoutItemNestedControlCollection>
+                            <dx:LayoutItemNestedControlContainer runat="server">
+                                <dx:ASPxButton ID="ASPxButton6" runat="server" Text="Save" ClientInstanceName="btnSaveAR" AutoPostBack="False">
+                                    <ClientSideEvents Click="function(s, e) {
+saveAR(); SaveARPopup.Hide();
+}" />
+                                </dx:ASPxButton>
+                            </dx:LayoutItemNestedControlContainer>
+                        </LayoutItemNestedControlCollection>
+                    </dx:LayoutItem>
+                    <dx:LayoutItem Caption="" ColSpan="1">
+                        <LayoutItemNestedControlCollection>
+                            <dx:LayoutItemNestedControlContainer runat="server">
+                                <dx:ASPxButton ID="ASPxButton9" runat="server" Text="No" AutoPostBack="False" BackColor="White" ForeColor="Gray">
+                                    <ClientSideEvents Click="function(s, e) {
+	SaveARPopup.Hide();
 }" />
                                     <Border BorderColor="Gray" />
                                 </dx:ASPxButton>

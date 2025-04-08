@@ -963,11 +963,12 @@ RecallClick(); RecallPopup.Hide();
             <asp:Parameter DefaultValue="" Name="Exp_ID" Type="Int32" />
         </SelectParameters>
      </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlWFActivity" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_T_WorkflowActivity] WHERE (([AppId] = @AppId) AND ([AppDocTypeId] = @AppDocTypeId) AND ([Document_Id] = @Document_Id))">
+    <asp:SqlDataSource ID="SqlWFActivity" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_ExpWFActivity] WHERE (([AppId] = @AppId) AND ([Document_Id] = @Document_Id) AND ([isTravel] &lt;&gt; @isTravel) AND ([DCT_Name] = @DCT_Name)) ORDER BY [DateAssigned]">
         <SelectParameters>
             <asp:Parameter DefaultValue="1032" Name="AppId" Type="Int32" />
-            <asp:Parameter DefaultValue="1016" Name="AppDocTypeId" Type="Int32" />
             <asp:Parameter DefaultValue="" Name="Document_Id" Type="Int32" />
+            <asp:Parameter DefaultValue="True" Name="isTravel" Type="Boolean" />
+            <asp:Parameter DefaultValue="ACDE Expense" Name="DCT_Name" Type="String" />
         </SelectParameters>
      </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlDocs" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT [ID], [FileName], [Description], [FileExtension], [URL], [DateUploaded], [App_ID], [Company_ID], [Doc_ID], [Doc_No], [User_ID], [FileSize], [DocType_Id] FROM [ITP_T_FileAttachment] WHERE (([Doc_ID] = @Doc_ID) AND ([App_ID] = @App_ID) AND ([DocType_Id] = @DocType_Id))">

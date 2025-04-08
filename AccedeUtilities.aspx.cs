@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DevExpress.Internal.WinApi.Windows.UI.Notifications;
+using DevExpress.Web;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
@@ -58,6 +60,43 @@ namespace DX_WebTemplate
         {
             vatTB.Text = context.ACCEDE_S_Computations.Where(x => x.Type == "VAT").Select(x => x.Value1.ToString()).FirstOrDefault();
             ewtTB.Text = context.ACCEDE_S_Computations.Where(x => x.Type == "EWT").Select(x => x.Value2.ToString()).FirstOrDefault();
+        }
+
+        protected void gridMain_RowInserting(object sender, DevExpress.Web.Data.ASPxDataInsertingEventArgs e)
+        {
+            ASPxGridView gridView = (ASPxGridView)sender;
+            var dept_id = e.NewValues["DepartmentId"].ToString();
+            var costCenter = e.NewValues["CostCenter"].ToString();
+            var costCenter_detail = context.ACCEDE_S_CostCenters.Where(x=>x.CostCenter == costCenter).FirstOrDefault();
+
+            if(costCenter_detail != null)
+            {
+                gridView.JSProperties["cpErrorMessage"] = "Insertion canceled: Cost center already exists.";
+                gridView.CancelEdit();
+                e.Cancel = true;
+                return;
+            }
+            else
+            {
+                var deptDetails = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(dept_id)).FirstOrDefault();
+                e.NewValues["Department"] = deptDetails.DepDesc.ToString();
+            }
+                
+        }
+
+        protected void gridMain_RowUpdating(object sender, DevExpress.Web.Data.ASPxDataUpdatingEventArgs e)
+        {
+            ASPxGridView gridView = (ASPxGridView)sender;
+            var costCenter = e.NewValues["CostCenter"].ToString();
+            var costCenter_detail = context.ACCEDE_S_CostCenters.Where(x => x.CostCenter == costCenter).FirstOrDefault();
+
+            if (costCenter_detail != null)
+            {
+                gridView.JSProperties["cpErrorMessage"] = "Insertion canceled: Cost center already exists.";
+                gridView.CancelEdit();
+                e.Cancel = true;
+                return;
+            }
         }
     }
 }

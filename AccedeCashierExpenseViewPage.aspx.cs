@@ -1,4 +1,5 @@
-﻿using DevExpress.Web;
+﻿using DevExpress.Data.Filtering.Helpers;
+using DevExpress.Web;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -16,7 +17,7 @@ namespace DX_WebTemplate
     public partial class AccedeCashierExpenseViewPage : System.Web.UI.Page
     {
         ITPORTALDataContext _DataContext = new ITPORTALDataContext(ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString);
-
+        decimal dueComp = new decimal(0.00);
         protected void Page_Load(object sender, EventArgs e)
         {
             try
@@ -66,10 +67,13 @@ namespace DX_WebTemplate
                     var user_id = exp.UserId.ToString();
 
                     var myLayoutGroup = FormExpApprovalView.FindItemOrGroupByName("ExpTitle") as LayoutGroup;
+                    var btnAR = FormExpApprovalView.FindItemOrGroupByName("SaveAR") as LayoutItem;
+                    var btnDisburse = FormExpApprovalView.FindItemOrGroupByName("CashSave") as LayoutItem;
 
                     if (myLayoutGroup != null)
                     {
                         myLayoutGroup.Caption = exp.DocNo.ToString() + " (View)";
+
                     }
 
                     var RFPCA = _DataContext.ACCEDE_T_RFPMains
@@ -93,7 +97,7 @@ namespace DX_WebTemplate
                         totalExp += Convert.ToDecimal(item.NetAmount);
                     }
                     expenseTotal.Text = totalExp.ToString("#,##0.00") + "  PHP ";
-                    decimal dueComp = totalCA - totalExp;
+                    dueComp = totalCA - totalExp;
 
                     if (dueComp < 0)
                     {
@@ -110,6 +114,8 @@ namespace DX_WebTemplate
                         {
                             var SAPdoc = FormExpApprovalView.FindItemOrGroupByName("SAPDoc") as LayoutItem;
                             SAPdoc.ClientVisible = true;
+
+                            btnDisburse.ClientVisible = true;
                         }
 
                     }
@@ -122,6 +128,9 @@ namespace DX_WebTemplate
                         {
                             var AR_Reference = FormExpApprovalView.FindItemOrGroupByName("ARNo") as LayoutItem;
                             AR_Reference.ClientVisible = true;
+
+                            btnAR.ClientVisible = true;
+                            btnDisburse.ClientVisible = false;
                         }
                     }
 
@@ -196,6 +205,12 @@ namespace DX_WebTemplate
                     .Where(x => x.isTravel != true)
                     .FirstOrDefault();
 
+                var rfp_main_ca = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.Exp_ID == exp_main.ID)
+                    .Where(x => x.IsExpenseCA == true)
+                    .Where(x => x.isTravel != true)
+                    .FirstOrDefault();
+
                 var release_cash_status = _DataContext.ITP_S_Status
                     .Where(x => x.STS_Description == "Disbursed")
                     .FirstOrDefault();
@@ -213,6 +228,41 @@ namespace DX_WebTemplate
                     .Where(x => x.OrgRoleId == Convert.ToInt32(cashierWFDetail.OrgRole_Id))
                     .Where(x => x.UserId == Session["userID"].ToString())
                     .FirstOrDefault();
+
+                var rfp_app_docType = _DataContext.ITP_S_DocumentTypes
+                        .Where(x => x.DCT_Name == "ACDE RFP")
+                        .Where(x => x.App_Id == 1032)
+                        .FirstOrDefault();
+
+                var exp_app_doctype = _DataContext.ITP_S_DocumentTypes
+                        .Where(x => x.DCT_Name == "ACDE Expense")
+                        .Where(x => x.App_Id == 1032)
+                        .FirstOrDefault();
+
+                var payMethod = "";
+                var tranType = "";
+
+                if (rfp_main_reim != null)
+                {
+                    payMethod = _DataContext.ACCEDE_S_PayMethods
+                        .Where(x => x.ID == rfp_main_reim.PayMethod)
+                        .FirstOrDefault().PMethod_name;
+
+                    tranType = _DataContext.ACCEDE_S_RFPTranTypes
+                        .Where(x => x.ID == rfp_main_reim.TranType)
+                        .FirstOrDefault().RFPTranType_Name;
+                }
+                else
+                {
+                    payMethod = _DataContext.ACCEDE_S_PayMethods
+                        .Where(x => x.ID == rfp_main_ca.PayMethod)
+                        .FirstOrDefault().PMethod_name;
+
+                    tranType = _DataContext.ACCEDE_S_RFPTranTypes
+                        .Where(x => x.ID == rfp_main_ca.TranType)
+                        .FirstOrDefault().RFPTranType_Name;
+
+                }
 
                 if (stats == 1)
                 {
@@ -260,7 +310,7 @@ namespace DX_WebTemplate
                         new_activity_exp.IsActive = true;
                         new_activity_exp.OrgRole_Id = cashierWFDetail.OrgRole_Id;
                         new_activity_exp.WFD_Id = cashierWFDetail.WFD_Id;
-                        new_activity_exp.AppDocTypeId = app_docType_rfp.DCT_Id;
+                        new_activity_exp.AppDocTypeId = app_docType_exp.DCT_Id;
                         new_activity_exp.ActedBy_User_Id = Session["userID"].ToString();
                         new_activity_exp.DateAction = DateTime.Now;
                     }
@@ -268,7 +318,7 @@ namespace DX_WebTemplate
 
                     exp_main.Status = completed_status.STS_Id;
                 }
-                
+
 
                 _DataContext.SubmitChanges();
 
@@ -280,6 +330,163 @@ namespace DX_WebTemplate
                 return ex.Message;
             }
 
+        }
+
+        [WebMethod]
+        public static string ReleaseARReferenceAJAX(string ARReference)
+        {
+            AccedeCashierExpenseViewPage exp = new AccedeCashierExpenseViewPage();
+            return exp.ReleaseARReference(ARReference);
+
+        }
+
+        public string ReleaseARReference(string ARReference)
+        {
+            var exp_main = _DataContext.ACCEDE_T_ExpenseMains
+                    .Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"]))
+                    .FirstOrDefault();
+
+            var rfp_main_reim = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]))
+                    .Where(x => x.IsExpenseReim == true).Where(x => x.Status != 4)
+                    .Where(x => x.isTravel != true)
+                    .FirstOrDefault();
+
+            var app_docType_exp = _DataContext.ITP_S_DocumentTypes
+                    .Where(x => x.DCT_Name == "ACDE Expense")
+                    .Where(x => x.App_Id == 1032)
+                    .FirstOrDefault();
+
+            var app_docType_rfp = _DataContext.ITP_S_DocumentTypes
+                    .Where(x => x.DCT_Name == "ACDE RFP")
+                    .Where(x => x.App_Id == 1032)
+                    .FirstOrDefault();
+
+            var rfp_main_ca = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.Exp_ID == exp_main.ID)
+                    .Where(x => x.IsExpenseCA == true)
+                    .Where(x => x.isTravel != true)
+                    .FirstOrDefault();
+
+            var payMethod = "";
+            var tranType = "";
+
+            if (rfp_main_reim != null)
+            {
+                payMethod = _DataContext.ACCEDE_S_PayMethods
+                    .Where(x => x.ID == rfp_main_reim.PayMethod)
+                    .FirstOrDefault().PMethod_name;
+
+                tranType = _DataContext.ACCEDE_S_RFPTranTypes
+                    .Where(x => x.ID == rfp_main_reim.TranType)
+                    .FirstOrDefault().RFPTranType_Name;
+
+                rfp_main_reim.Status = 1;
+            }
+            else
+            {
+                payMethod = _DataContext.ACCEDE_S_PayMethods
+                    .Where(x => x.ID == rfp_main_ca.PayMethod)
+                    .FirstOrDefault().PMethod_name;
+
+                tranType = _DataContext.ACCEDE_S_RFPTranTypes
+                    .Where(x => x.ID == rfp_main_ca.TranType)
+                    .FirstOrDefault().RFPTranType_Name;
+
+            }
+
+            //transition to finance wf
+            var finance_wf_data = _DataContext.ITP_S_WorkflowHeaders
+                .Where(x => x.WF_Id == exp_main.FAPWF_Id)
+                .FirstOrDefault();
+
+            if (finance_wf_data != null)
+            {
+                var fin_wfDetail_data = _DataContext.ITP_S_WorkflowDetails
+                    .Where(x => x.WF_Id == finance_wf_data.WF_Id)
+                    .Where(x => x.Sequence == 1)
+                    .FirstOrDefault();
+
+                var org_id = fin_wfDetail_data.OrgRole_Id;
+                var date2day = DateTime.Now;
+                //DELEGATE CHECK
+                foreach (var del in _DataContext.ITP_S_TaskDelegations.Where(x => x.OrgRole_ID_Orig == fin_wfDetail_data.OrgRole_Id).Where(x => x.DateFrom <= date2day).Where(x => x.DateTo >= date2day).Where(x => x.isActive == true))
+                {
+                    if (del != null)
+                    {
+                        org_id = Convert.ToInt32(del.OrgRole_ID_Delegate);
+                    }
+
+                }
+
+                if (rfp_main_reim != null)
+                {
+                    //Insert new activity to RFP Reimburse
+                    ITP_T_WorkflowActivity new_activity = new ITP_T_WorkflowActivity();
+                    {
+                        new_activity.Status = 1;
+                        new_activity.AppId = 1032;
+                        new_activity.CompanyId = rfp_main_reim.Company_ID;
+                        new_activity.Document_Id = rfp_main_reim.ID;
+                        new_activity.WF_Id = fin_wfDetail_data.WF_Id;
+                        new_activity.DateAssigned = DateTime.Now;
+                        new_activity.DateCreated = DateTime.Now;
+                        new_activity.IsActive = true;
+                        new_activity.OrgRole_Id = org_id;
+                        new_activity.WFD_Id = fin_wfDetail_data.WFD_Id;
+                        new_activity.AppDocTypeId = app_docType_rfp.DCT_Id;
+                    }
+                    _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(new_activity);
+
+                }
+
+                //Insert new activity to Expense
+                ITP_T_WorkflowActivity new_activity_exp = new ITP_T_WorkflowActivity();
+                {
+                    new_activity_exp.Status = 1;
+                    new_activity_exp.AppId = 1032;
+                    new_activity_exp.CompanyId = exp_main.CompanyId;
+                    new_activity_exp.Document_Id = exp_main.ID;
+                    new_activity_exp.WF_Id = fin_wfDetail_data.WF_Id;
+                    new_activity_exp.DateAssigned = DateTime.Now;
+                    new_activity_exp.DateCreated = DateTime.Now;
+                    new_activity_exp.IsActive = true;
+                    new_activity_exp.OrgRole_Id = org_id;
+                    new_activity_exp.WFD_Id = fin_wfDetail_data.WFD_Id;
+                    new_activity_exp.AppDocTypeId = app_docType_exp.DCT_Id;
+                }
+                _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(new_activity_exp);
+
+                ///////---START EMAIL PROCESS-----////////
+                foreach (var user in _DataContext.ITP_S_SecurityUserOrgRoles.Where(x => x.OrgRoleId == org_id))
+                {
+                    var nexApprover_detail = _DataContext.ITP_S_UserMasters
+                        .Where(x => x.EmpCode == user.UserId)
+                        .FirstOrDefault();
+
+                    var sender_detail = _DataContext.ITP_S_UserMasters
+                        .Where(x => x.EmpCode == Session["UserID"].ToString())
+                        .FirstOrDefault();
+
+                    ExpenseApprovalView exp = new ExpenseApprovalView();
+
+                    exp.SendEmailTo(exp_main.ID, nexApprover_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, "", "Pending", payMethod.ToString(), tranType.ToString(), "");
+
+                }
+
+                exp_main.AR_Reference_No = ARReference;
+                exp_main.Status = 1;
+                _DataContext.SubmitChanges();
+            }
+            else
+            {
+                return "Workflow data does not exist.";
+            }
+
+            //End of Finance WF transition
+
+            return "success";
+            
         }
 
         protected void btnPrint_Click(object sender, EventArgs e)

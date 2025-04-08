@@ -41,7 +41,7 @@ namespace DX_WebTemplate
 
                     var pending_audit = _DataContext.ITP_S_Status.Where(x=>x.STS_Name == "Pending at Audit").FirstOrDefault();
                     SqlExpReport.SelectParameters["Status"].DefaultValue = pending_audit.STS_Id.ToString();
-
+                    SqlApprovalHistory.SelectParameters["ActedBy_User_Id"].DefaultValue = empCode;
                 }
                 else
                 {
@@ -106,6 +106,31 @@ namespace DX_WebTemplate
                     e.Cell.Font.Bold = true;
                 }
             }
+        }
+
+        protected void gridMainApproved_CustomButtonInitialize(object sender, ASPxGridViewCustomButtonEventArgs e)
+        {
+
+        }
+
+        protected void gridMainApproved_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            string[] args = e.Parameters.Split('|');
+            string rowKey = args[0];
+            string buttonId = args[1];
+
+            Session["ExpenseId"] = rowKey;
+
+            if (buttonId == "btnPrint")
+                ASPxWebControl.RedirectOnCallback("~/AccedeExpenseReportPrinting.aspx");
+
+            if (buttonId == "btnViewAppHistory")
+                ASPxWebControl.RedirectOnCallback("~/AccedeExpenseViewPage.aspx");
+        }
+
+        protected void gridMainApproved_HtmlDataCellPrepared(object sender, ASPxGridViewTableDataCellEventArgs e)
+        {
+
         }
     }
 }

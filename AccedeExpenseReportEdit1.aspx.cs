@@ -52,7 +52,7 @@ namespace DX_WebTemplate
 
                     SqlCompany.SelectParameters["UserId"].DefaultValue = mainExp.ExpenseName.ToString();
                     SqlCostCenterAll.SelectParameters["CompanyId"].DefaultValue = mainExp.ExpChargedTo_CompanyId.ToString();
-                    sqlCostCenter.SelectParameters["DepartmentId"].DefaultValue = mainExp.ExpChargedTo_DeptId.ToString();
+                    //sqlCostCenter.SelectParameters["DepartmentId"].DefaultValue = mainExp.ExpChargedTo_DeptId.ToString();
 
                     SqlDepartment.SelectParameters["UserId"].DefaultValue = mainExp.ExpenseName.ToString();
                     //sqlCostCenter.SelectParameters["CompanyId"].DefaultValue = mainExp.CompanyId.ToString();
@@ -200,11 +200,12 @@ namespace DX_WebTemplate
                         var dueField = ExpenseEditForm.FindItemOrGroupByName("due_lbl") as LayoutItem;
                         dueField.Caption = "Net Due to Company";
 
-                        if(totalDue > 0)
-                        {
-                            var AR_Reference = ExpenseEditForm.FindItemOrGroupByName("ARNo") as LayoutItem;
-                            AR_Reference.ClientVisible = true;
-                        }
+                        //DO NOT DELETE THIS CODE
+                        //if(totalDue > 0)
+                        //{
+                        //    var AR_Reference = ExpenseEditForm.FindItemOrGroupByName("ARNo") as LayoutItem;
+                        //    AR_Reference.ClientVisible = true;
+                        //}
 
                         if (reimRFP.Count() != 0)
                         {
@@ -810,6 +811,9 @@ namespace DX_WebTemplate
 
         protected void drpdwn_FAPWF_Callback(object sender, CallbackEventArgsBase e)
         {
+            var param = e.Parameter.Split('|');
+            var comp_id = param[0];
+            var classTypeVal = param[1];
             var mainExp = _DataContext.ACCEDE_T_ExpenseMains
                 .Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"]))
                 .FirstOrDefault();
@@ -847,7 +851,7 @@ namespace DX_WebTemplate
             totalDue = totalCA - totalExp;
 
             //// - - Setting FAP workflow - - ////
-            var classTypeId = drpdown_ExpCategory.Value != null ? drpdown_ExpCategory.Value : 0;
+            var classTypeId = classTypeVal != "" ? classTypeVal : "0";
             var classType = _DataContext.ACCEDE_S_ExpenseClassifications
                 .Where(x => x.ID == Convert.ToInt32(classTypeId))
                 .FirstOrDefault();
@@ -857,7 +861,7 @@ namespace DX_WebTemplate
             if (classType != null && Convert.ToBoolean(classType.withFAPLogic) == true)
             {
                 var fapwf = _DataContext.ITP_S_WorkflowHeaders
-                    .Where(x => x.Company_Id == Convert.ToInt32(e.Parameter))
+                    .Where(x => x.Company_Id == Convert.ToInt32(comp_id))
                     .Where(x => x.App_Id == 1032)
                     .Where(x => x.With_DivHead == true)
                     .Where(x => x.Minimum <= Convert.ToDecimal(Math.Abs(totalExp)))
@@ -873,7 +877,7 @@ namespace DX_WebTemplate
             else
             {
                 var fapwf = _DataContext.ITP_S_WorkflowHeaders
-                    .Where(x => x.Company_Id == Convert.ToInt32(e.Parameter))
+                    .Where(x => x.Company_Id == Convert.ToInt32(comp_id))
                     .Where(x => x.App_Id == 1032)
                     .Where(x => x.With_DivHead == false || x.With_DivHead == null)
                     .Where(x => x.Minimum <= Convert.ToDecimal(Math.Abs(totalExp)))
@@ -1214,6 +1218,8 @@ namespace DX_WebTemplate
                     .Where(x => x.isTravel != true)
                     .FirstOrDefault();
 
+                var expDet = _DataContext.ACCEDE_T_ExpenseDetails.Where(x => x.ExpenseMain_ID == exp.ID);
+
                 if (expType == "1")
                 {
                     if(expCA == null && btn != "Save" && btn != "Save2")
@@ -1229,9 +1235,14 @@ namespace DX_WebTemplate
                     }
                 }
 
-                if(expCA == null && reim == null && btn != "Save" && btn != "Save2")
+                if(expCA == null && reim == null && btn != "Save" && btn != "Save2" && btn != "CreateSubmit")
                 {
                     return "This transaction cannot be submitted. Please check your Cash Advance, Expense Items, or Reimbursement.";
+                }
+
+                if(expCA != null && expDet.Count() == 0 && (btn == "Submit" || btn == "CreateSubmit"))
+                {
+                    return "You are trying to submit expense report without expense items. Please check your expense items.";
                 }
 
                 var tranType = _DataContext.ACCEDE_S_ExpenseTypes
@@ -1328,39 +1339,39 @@ namespace DX_WebTemplate
                         int orID = (int)orgRole.FirstOrDefault();
 
                         //IF DOCUMENT WAS RECALLED
-                        if (exp.Status == 15)//15 IS A RECALL STATUS
-                        {
-                            var expDoctype = _DataContext.ITP_S_DocumentTypes
-                                .Where(x => x.DCT_Name == "ACDE Expense")
-                                .FirstOrDefault();
+                        //if (exp.Status == 15)//15 IS A RECALL STATUS
+                        //{
+                        //    var expDoctype = _DataContext.ITP_S_DocumentTypes
+                        //        .Where(x => x.DCT_Name == "ACDE Expense")
+                        //        .FirstOrDefault();
 
-                            var wfAct = _DataContext.ITP_T_WorkflowActivities
-                                .Where(x => x.Document_Id == exp.ID)
-                                .Where(x => x.AppId == 1032)
-                                .Where(x => x.AppDocTypeId == expDoctype.DCT_Id)
-                                .Where(x => x.Status == 15)//15 IS A RECALL STATUS
-                                .FirstOrDefault();
+                        //    var wfAct = _DataContext.ITP_T_WorkflowActivities
+                        //        .Where(x => x.Document_Id == exp.ID)
+                        //        .Where(x => x.AppId == 1032)
+                        //        .Where(x => x.AppDocTypeId == expDoctype.DCT_Id)
+                        //        .Where(x => x.Status == 15)//15 IS A RECALL STATUS
+                        //        .FirstOrDefault();
 
-                            var wfDetail = _DataContext.ITP_S_WorkflowDetails
-                                .Where(x => x.WFD_Id == wfAct.WFD_Id)
-                                .FirstOrDefault();
+                        //    var wfDetail = _DataContext.ITP_S_WorkflowDetails
+                        //        .Where(x => x.WFD_Id == wfAct.WFD_Id)
+                        //        .FirstOrDefault();
 
-                            wfID = Convert.ToInt32(wfDetail.WF_Id);
+                        //    wfID = Convert.ToInt32(wfDetail.WF_Id);
 
-                            // GET WORKFLOW DETAILS ID
-                            wfDetails = from wfd in _DataContext.ITP_S_WorkflowDetails
-                                        where wfd.WF_Id == wfID && wfd.Sequence == Convert.ToInt32(wfDetail.Sequence)
-                                        select wfd.WFD_Id;
+                        //    // GET WORKFLOW DETAILS ID
+                        //    wfDetails = from wfd in _DataContext.ITP_S_WorkflowDetails
+                        //                where wfd.WF_Id == wfID && wfd.Sequence == Convert.ToInt32(wfDetail.Sequence)
+                        //                select wfd.WFD_Id;
 
-                            wfdID = wfDetails.FirstOrDefault();
+                        //    wfdID = wfDetails.FirstOrDefault();
 
-                            // GET ORG ROLE ID
-                            orgRole = from or in _DataContext.ITP_S_WorkflowDetails
-                                      where or.WF_Id == wfID && or.Sequence == Convert.ToInt32(wfDetail.Sequence)
-                                      select or.OrgRole_Id;
+                        //    // GET ORG ROLE ID
+                        //    orgRole = from or in _DataContext.ITP_S_WorkflowDetails
+                        //              where or.WF_Id == wfID && or.Sequence == Convert.ToInt32(wfDetail.Sequence)
+                        //              select or.OrgRole_Id;
 
-                            orID = (int)orgRole.FirstOrDefault();
-                        }
+                        //    orID = (int)orgRole.FirstOrDefault();
+                        //}
                         //END RECALL PROCESS
 
                         //Add reim to workflow activity

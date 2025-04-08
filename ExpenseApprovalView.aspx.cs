@@ -16,7 +16,7 @@ namespace DX_WebTemplate
     public partial class ExpenseApprovalView : System.Web.UI.Page
     {
         ITPORTALDataContext _DataContext = new ITPORTALDataContext(ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString);
-
+        decimal dueComp = new decimal(0.00);
         protected void Page_Load(object sender, EventArgs e)
         {
             
@@ -159,7 +159,7 @@ namespace DX_WebTemplate
                             }
                             expenseTotal.Text = totalExp.ToString("#,##0.00") + "  " + exp.Exp_Currency + " ";
 
-                            decimal dueComp = totalCA - totalExp;
+                            dueComp = totalCA - totalExp;
                             if (dueComp < 0)
                             {
                                 var dueField = FormExpApprovalView.FindItemOrGroupByName("due_lbl") as LayoutItem;
@@ -170,11 +170,12 @@ namespace DX_WebTemplate
                                 var dueField = FormExpApprovalView.FindItemOrGroupByName("due_lbl") as LayoutItem;
                                 dueField.Caption = "Net Due to Company";
 
-                                if(dueComp > 0)
-                                {
-                                    var AR_Reference = FormExpApprovalView.FindItemOrGroupByName("ARNo") as LayoutItem;
-                                    AR_Reference.ClientVisible = true;
-                                }
+                                //DO NOT DELETE THIS CODE
+                                //if(dueComp > 0)
+                                //{
+                                //    var AR_Reference = FormExpApprovalView.FindItemOrGroupByName("ARNo") as LayoutItem;
+                                //    AR_Reference.ClientVisible = true;
+                                //}
                             }
 
                             //APPROVE AND FORWARD BUTTON AND GENERATE AAF WF
@@ -389,6 +390,14 @@ namespace DX_WebTemplate
                         .Where(x => x.isTravel != true)
                         .FirstOrDefault();
 
+                    var rfp_main_ca = _DataContext.ACCEDE_T_RFPMains
+                            .Where(x => x.Exp_ID == act_detail_id.Document_Id)
+                            .Where(x => x.IsExpenseCA == true)
+                            .Where(x => x.isTravel != true)
+                            .FirstOrDefault();
+
+
+
                     var payMethod = "";
                     var tranType = "";
 
@@ -414,11 +423,7 @@ namespace DX_WebTemplate
                     }
                     else
                     {
-                        var rfp_main_ca = _DataContext.ACCEDE_T_RFPMains
-                            .Where(x => x.Exp_ID == act_detail_id.Document_Id)
-                            .Where(x => x.IsExpenseCA == true)
-                            .Where(x => x.isTravel != true)
-                            .FirstOrDefault();
+                        
 
                         payMethod = _DataContext.ACCEDE_S_PayMethods
                             .Where(x => x.ID == rfp_main_ca.PayMethod)
@@ -457,18 +462,17 @@ namespace DX_WebTemplate
                     var next_seq = 0;
                     var wf_detail = 0;
 
-
                     if (ExpActDetails != null)
                     {
                         wf_detail = Convert.ToInt32(ExpActDetails.WFD_Id);
 
-                        //Update expense Activity
+                        //Update current expense Activity
                         ExpActDetails.Status = 7;
                         ExpActDetails.DateAction = DateTime.Now;
                         ExpActDetails.Remarks = Session["AuthUser"].ToString() + ": " + remarks + ";";
                         ExpActDetails.ActedBy_User_Id = Session["userID"].ToString();
 
-                        //Update reimburse Activity
+                        //Update current reimburse Activity
                         if (reimActDetails != null)
                         {
                             reimActDetails.Status = 7;
@@ -563,7 +567,7 @@ namespace DX_WebTemplate
                                     .Where(x => x.EmpCode == Session["UserID"].ToString())
                                     .FirstOrDefault();
 
-                                SendEmailTo(exp_main.ID, nexApprover_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Pending", payMethod.ToString(), tranType.ToString());
+                                SendEmailTo(exp_main.ID, nexApprover_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Pending", payMethod.ToString(), tranType.ToString(), "");
 
                             }
                         }
@@ -571,89 +575,126 @@ namespace DX_WebTemplate
                         {
                             if (wfHead_data.IsRA == true)
                             {
-                                //transition to finance wf
-                                var finance_wf_data = _DataContext.ITP_S_WorkflowHeaders
-                                    .Where(x => x.WF_Id == exp_main.FAPWF_Id)
-                                    .FirstOrDefault();
+                                var RFPCA = _DataContext.ACCEDE_T_RFPMains
+                                .Where(x => x.Exp_ID == Convert.ToInt32(exp_main.ID))
+                                .Where(x => x.isTravel != true)
+                                .Where(x => x.IsExpenseCA == true);
 
-                                if (finance_wf_data != null)
+                                decimal totalCA = 0;
+                                foreach (var item in RFPCA)
                                 {
-                                    var fin_wfDetail_data = _DataContext.ITP_S_WorkflowDetails
-                                        .Where(x => x.WF_Id == finance_wf_data.WF_Id)
-                                        .Where(x => x.Sequence == 1)
-                                        .FirstOrDefault();
+                                    totalCA += Convert.ToDecimal(item.Amount);
+                                }
+                                
+                                var ExpDetails = _DataContext.ACCEDE_T_ExpenseDetails
+                                    .Where(x => x.ExpenseMain_ID == Convert.ToInt32(exp_main.ID));
 
-                                    var org_id = fin_wfDetail_data.OrgRole_Id;
-                                    var date2day = DateTime.Now;
-                                    //DELEGATE CHECK
-                                    foreach (var del in _DataContext.ITP_S_TaskDelegations.Where(x => x.OrgRole_ID_Orig == fin_wfDetail_data.OrgRole_Id).Where(x => x.DateFrom <= date2day).Where(x => x.DateTo >= date2day).Where(x => x.isActive == true))
+                                decimal totalExp = 0;
+                                foreach (var item in ExpDetails)
+                                {
+                                    totalExp += Convert.ToDecimal(item.NetAmount);
+                                }
+                                
+                                dueComp = totalCA - totalExp;
+
+                                if (dueComp > 0 && exp_main.AR_Reference_No == null)
+                                {
+                                    //Proceed to Cashier
+                                    var PendingCashier = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Pending at Cashier").FirstOrDefault();
+
+                                    exp_main.Status = PendingCashier.STS_Id;
+                                    if(rfp_main != null)
                                     {
-                                        if (del != null)
-                                        {
-                                            org_id = Convert.ToInt32(del.OrgRole_ID_Delegate);
-                                        }
-
-                                    }
-
-                                    if (reimActDetails != null)
-                                    {
-                                        //Insert new activity to RFP Reimburse
-                                        ITP_T_WorkflowActivity new_activity = new ITP_T_WorkflowActivity();
-                                        {
-                                            new_activity.Status = 1;
-                                            new_activity.AppId = 1032;
-                                            new_activity.CompanyId = rfp_main.Company_ID;
-                                            new_activity.Document_Id = rfp_main.ID;
-                                            new_activity.WF_Id = fin_wfDetail_data.WF_Id;
-                                            new_activity.DateAssigned = DateTime.Now;
-                                            new_activity.DateCreated = DateTime.Now;
-                                            new_activity.IsActive = true;
-                                            new_activity.OrgRole_Id = org_id;
-                                            new_activity.WFD_Id = fin_wfDetail_data.WFD_Id;
-                                            new_activity.AppDocTypeId = rfp_app_docType.DCT_Id;
-                                        }
-                                        _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(new_activity);
-
-                                    }
-
-                                    //Insert new activity to Expense
-                                    ITP_T_WorkflowActivity new_activity_exp = new ITP_T_WorkflowActivity();
-                                    {
-                                        new_activity_exp.Status = 1;
-                                        new_activity_exp.AppId = 1032;
-                                        new_activity_exp.CompanyId = exp_main.CompanyId;
-                                        new_activity_exp.Document_Id = exp_main.ID;
-                                        new_activity_exp.WF_Id = fin_wfDetail_data.WF_Id;
-                                        new_activity_exp.DateAssigned = DateTime.Now;
-                                        new_activity_exp.DateCreated = DateTime.Now;
-                                        new_activity_exp.IsActive = true;
-                                        new_activity_exp.OrgRole_Id = org_id;
-                                        new_activity_exp.WFD_Id = fin_wfDetail_data.WFD_Id;
-                                        new_activity_exp.AppDocTypeId = exp_app_doctype;
-                                    }
-                                    _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(new_activity_exp);
-
-                                    ///////---START EMAIL PROCESS-----////////
-                                    foreach (var user in _DataContext.ITP_S_SecurityUserOrgRoles.Where(x => x.OrgRoleId == org_id))
-                                    {
-                                        var nexApprover_detail = _DataContext.ITP_S_UserMasters
-                                            .Where(x => x.EmpCode == user.UserId)
-                                            .FirstOrDefault();
-
-                                        var sender_detail = _DataContext.ITP_S_UserMasters
-                                            .Where(x => x.EmpCode == Session["UserID"].ToString())
-                                            .FirstOrDefault();
-
-                                        SendEmailTo(exp_main.ID, nexApprover_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Pending", payMethod.ToString(), tranType.ToString());
-
+                                        rfp_main.Status = PendingCashier.STS_Id;
                                     }
                                 }
                                 else
                                 {
-                                    return "Workflow data does not exist.";
+                                    //transition to finance wf
+                                    var finance_wf_data = _DataContext.ITP_S_WorkflowHeaders
+                                        .Where(x => x.WF_Id == exp_main.FAPWF_Id)
+                                        .FirstOrDefault();
+
+                                    if (finance_wf_data != null)
+                                    {
+                                        var fin_wfDetail_data = _DataContext.ITP_S_WorkflowDetails
+                                            .Where(x => x.WF_Id == finance_wf_data.WF_Id)
+                                            .Where(x => x.Sequence == 1)
+                                            .FirstOrDefault();
+
+                                        var org_id = fin_wfDetail_data.OrgRole_Id;
+                                        var date2day = DateTime.Now;
+                                        //DELEGATE CHECK
+                                        foreach (var del in _DataContext.ITP_S_TaskDelegations.Where(x => x.OrgRole_ID_Orig == fin_wfDetail_data.OrgRole_Id).Where(x => x.DateFrom <= date2day).Where(x => x.DateTo >= date2day).Where(x => x.isActive == true))
+                                        {
+                                            if (del != null)
+                                            {
+                                                org_id = Convert.ToInt32(del.OrgRole_ID_Delegate);
+                                            }
+
+                                        }
+
+                                        if (reimActDetails != null)
+                                        {
+                                            //Insert new activity to RFP Reimburse
+                                            ITP_T_WorkflowActivity new_activity = new ITP_T_WorkflowActivity();
+                                            {
+                                                new_activity.Status = 1;
+                                                new_activity.AppId = 1032;
+                                                new_activity.CompanyId = rfp_main.Company_ID;
+                                                new_activity.Document_Id = rfp_main.ID;
+                                                new_activity.WF_Id = fin_wfDetail_data.WF_Id;
+                                                new_activity.DateAssigned = DateTime.Now;
+                                                new_activity.DateCreated = DateTime.Now;
+                                                new_activity.IsActive = true;
+                                                new_activity.OrgRole_Id = org_id;
+                                                new_activity.WFD_Id = fin_wfDetail_data.WFD_Id;
+                                                new_activity.AppDocTypeId = rfp_app_docType.DCT_Id;
+                                            }
+                                            _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(new_activity);
+
+                                        }
+
+                                        //Insert new activity to Expense
+                                        ITP_T_WorkflowActivity new_activity_exp = new ITP_T_WorkflowActivity();
+                                        {
+                                            new_activity_exp.Status = 1;
+                                            new_activity_exp.AppId = 1032;
+                                            new_activity_exp.CompanyId = exp_main.CompanyId;
+                                            new_activity_exp.Document_Id = exp_main.ID;
+                                            new_activity_exp.WF_Id = fin_wfDetail_data.WF_Id;
+                                            new_activity_exp.DateAssigned = DateTime.Now;
+                                            new_activity_exp.DateCreated = DateTime.Now;
+                                            new_activity_exp.IsActive = true;
+                                            new_activity_exp.OrgRole_Id = org_id;
+                                            new_activity_exp.WFD_Id = fin_wfDetail_data.WFD_Id;
+                                            new_activity_exp.AppDocTypeId = exp_app_doctype;
+                                        }
+                                        _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(new_activity_exp);
+
+                                        ///////---START EMAIL PROCESS-----////////
+                                        foreach (var user in _DataContext.ITP_S_SecurityUserOrgRoles.Where(x => x.OrgRoleId == org_id))
+                                        {
+                                            var nexApprover_detail = _DataContext.ITP_S_UserMasters
+                                                .Where(x => x.EmpCode == user.UserId)
+                                                .FirstOrDefault();
+
+                                            var sender_detail = _DataContext.ITP_S_UserMasters
+                                                .Where(x => x.EmpCode == Session["UserID"].ToString())
+                                                .FirstOrDefault();
+
+                                            SendEmailTo(exp_main.ID, nexApprover_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Pending", payMethod.ToString(), tranType.ToString(), "");
+
+                                        }
+                                    }
+                                    else
+                                    {
+                                        return "Workflow data does not exist.";
+                                    }
+
+                                    //End of Finance WF transition
                                 }
 
-                                //End of Finance WF transition
                             }
                             else
                             {
@@ -676,7 +717,7 @@ namespace DX_WebTemplate
                                     .Where(x => x.EmpCode == Session["UserID"].ToString())
                                     .FirstOrDefault();
 
-                                SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Approve", payMethod.ToString(), tranType.ToString());
+                                SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Approve", payMethod.ToString(), tranType.ToString(), "PendingAudit");
 
                             }
 
@@ -789,7 +830,7 @@ namespace DX_WebTemplate
                         .FirstOrDefault();
 
 
-                    SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Return", "", tranType.Description);
+                    SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Return", "", tranType.Description, "");
                     _DataContext.SubmitChanges();
 
                     return "success";
@@ -893,7 +934,7 @@ namespace DX_WebTemplate
                         .FirstOrDefault();
 
 
-                    SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Disapprove", "", tranType.Description);
+                    SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Disapprove", "", tranType.Description, "");
                     _DataContext.SubmitChanges();
 
                     return "success";
@@ -1073,7 +1114,7 @@ namespace DX_WebTemplate
                 DateTime dateAdd = Convert.ToDateTime(expMain.DateAdded);
 
                 exp.acctCharge = acct_charge != null ? acct_charge.Description : "";
-                exp.costCenter = cc != null ? cc.CostCenter.ToString() + " - " + cc.Department.ToString() : "";
+                exp.costCenter = cc != null ? cc.CostCenter.ToString() + " - " + cc.Description.ToString() : "";
                 exp.particulars = expMain.P_Name != null ? expMain.P_Name.ToString() : "";
                 exp.supplier = expMain.Supplier != null ? expMain.Supplier : "";
                 exp.tin = expMain.TIN != null ? expMain.TIN : "";
@@ -1092,7 +1133,7 @@ namespace DX_WebTemplate
             return exp;
         }
 
-        public bool SendEmailTo(int doc_id, string receiver_id, int Comp_id, string sender_fullname, string sender_email, string doc_no, string date_created, string document_purpose, string remarks, string status, string payMethod, string tranType)
+        public bool SendEmailTo(int doc_id, string receiver_id, int Comp_id, string sender_fullname, string sender_email, string doc_no, string date_created, string document_purpose, string remarks, string status, string payMethod, string tranType, string status2)
         {
             try
             {
@@ -1129,6 +1170,10 @@ namespace DX_WebTemplate
                 foreach (var text in queryText)
                 {
                     emailSubMessage = text.Text2.ToString();
+                    if(status2 == "PendingAudit")
+                    {
+                        emailSubMessage = "You can now proceed with the next steps based on the approved document. Please bring physical documents required by Audit";
+                    }
                     emailColor = text.Color.ToString();
                     emailMessage = text.Text1.ToString();
                     emailSubTitle = text.Text3.ToString();
@@ -1452,7 +1497,7 @@ namespace DX_WebTemplate
                                 .Where(x => x.EmpCode == Session["UserID"].ToString())
                                 .FirstOrDefault();
 
-                            SendEmailTo(exp_main.ID, nexApprover_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Pending", payMethod.ToString(), tranType.ToString());
+                            SendEmailTo(exp_main.ID, nexApprover_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Pending", payMethod.ToString(), tranType.ToString(), "");
 
                         }
 

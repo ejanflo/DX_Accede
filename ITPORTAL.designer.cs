@@ -183,9 +183,6 @@ namespace DX_WebTemplate
     partial void InsertACCEDE_T_ExpenseDetailsMap(ACCEDE_T_ExpenseDetailsMap instance);
     partial void UpdateACCEDE_T_ExpenseDetailsMap(ACCEDE_T_ExpenseDetailsMap instance);
     partial void DeleteACCEDE_T_ExpenseDetailsMap(ACCEDE_T_ExpenseDetailsMap instance);
-    partial void InsertACCEDE_S_CostCenter(ACCEDE_S_CostCenter instance);
-    partial void UpdateACCEDE_S_CostCenter(ACCEDE_S_CostCenter instance);
-    partial void DeleteACCEDE_S_CostCenter(ACCEDE_S_CostCenter instance);
     partial void InsertACCEDE_T_TravelForAccounting(ACCEDE_T_TravelForAccounting instance);
     partial void UpdateACCEDE_T_TravelForAccounting(ACCEDE_T_TravelForAccounting instance);
     partial void DeleteACCEDE_T_TravelForAccounting(ACCEDE_T_TravelForAccounting instance);
@@ -237,6 +234,9 @@ namespace DX_WebTemplate
     partial void InsertACCEDE_S_DocumentType(ACCEDE_S_DocumentType instance);
     partial void UpdateACCEDE_S_DocumentType(ACCEDE_S_DocumentType instance);
     partial void DeleteACCEDE_S_DocumentType(ACCEDE_S_DocumentType instance);
+    partial void InsertACCEDE_S_CostCenter(ACCEDE_S_CostCenter instance);
+    partial void UpdateACCEDE_S_CostCenter(ACCEDE_S_CostCenter instance);
+    partial void DeleteACCEDE_S_CostCenter(ACCEDE_S_CostCenter instance);
     #endregion
 		
 		public ITPORTALDataContext(string connection) : 
@@ -743,14 +743,6 @@ namespace DX_WebTemplate
 			}
 		}
 		
-		public System.Data.Linq.Table<ACCEDE_S_CostCenter> ACCEDE_S_CostCenters
-		{
-			get
-			{
-				return this.GetTable<ACCEDE_S_CostCenter>();
-			}
-		}
-		
 		public System.Data.Linq.Table<ACCEDE_T_TravelForAccounting> ACCEDE_T_TravelForAccountings
 		{
 			get
@@ -900,6 +892,14 @@ namespace DX_WebTemplate
 			get
 			{
 				return this.GetTable<ACCEDE_S_DocumentType>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ACCEDE_S_CostCenter> ACCEDE_S_CostCenters
+		{
+			get
+			{
+				return this.GetTable<ACCEDE_S_CostCenter>();
 			}
 		}
 	}
@@ -19255,164 +19255,6 @@ namespace DX_WebTemplate
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_S_CostCenter")]
-	public partial class ACCEDE_S_CostCenter : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _CostCenter_ID;
-		
-		private string _Department;
-		
-		private string _CostCenter;
-		
-		private System.Nullable<int> _CompanyId;
-		
-		private System.Nullable<int> _DepartmentId;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnCostCenter_IDChanging(int value);
-    partial void OnCostCenter_IDChanged();
-    partial void OnDepartmentChanging(string value);
-    partial void OnDepartmentChanged();
-    partial void OnCostCenterChanging(string value);
-    partial void OnCostCenterChanged();
-    partial void OnCompanyIdChanging(System.Nullable<int> value);
-    partial void OnCompanyIdChanged();
-    partial void OnDepartmentIdChanging(System.Nullable<int> value);
-    partial void OnDepartmentIdChanged();
-    #endregion
-		
-		public ACCEDE_S_CostCenter()
-		{
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CostCenter_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int CostCenter_ID
-		{
-			get
-			{
-				return this._CostCenter_ID;
-			}
-			set
-			{
-				if ((this._CostCenter_ID != value))
-				{
-					this.OnCostCenter_IDChanging(value);
-					this.SendPropertyChanging();
-					this._CostCenter_ID = value;
-					this.SendPropertyChanged("CostCenter_ID");
-					this.OnCostCenter_IDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Department", DbType="NVarChar(50)")]
-		public string Department
-		{
-			get
-			{
-				return this._Department;
-			}
-			set
-			{
-				if ((this._Department != value))
-				{
-					this.OnDepartmentChanging(value);
-					this.SendPropertyChanging();
-					this._Department = value;
-					this.SendPropertyChanged("Department");
-					this.OnDepartmentChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CostCenter", DbType="VarChar(50)")]
-		public string CostCenter
-		{
-			get
-			{
-				return this._CostCenter;
-			}
-			set
-			{
-				if ((this._CostCenter != value))
-				{
-					this.OnCostCenterChanging(value);
-					this.SendPropertyChanging();
-					this._CostCenter = value;
-					this.SendPropertyChanged("CostCenter");
-					this.OnCostCenterChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CompanyId", DbType="Int")]
-		public System.Nullable<int> CompanyId
-		{
-			get
-			{
-				return this._CompanyId;
-			}
-			set
-			{
-				if ((this._CompanyId != value))
-				{
-					this.OnCompanyIdChanging(value);
-					this.SendPropertyChanging();
-					this._CompanyId = value;
-					this.SendPropertyChanged("CompanyId");
-					this.OnCompanyIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DepartmentId", DbType="Int")]
-		public System.Nullable<int> DepartmentId
-		{
-			get
-			{
-				return this._DepartmentId;
-			}
-			set
-			{
-				if ((this._DepartmentId != value))
-				{
-					this.OnDepartmentIdChanging(value);
-					this.SendPropertyChanging();
-					this._DepartmentId = value;
-					this.SendPropertyChanged("DepartmentId");
-					this.OnDepartmentIdChanged();
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_T_TravelForAccounting")]
 	public partial class ACCEDE_T_TravelForAccounting : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -24450,6 +24292,140 @@ namespace DX_WebTemplate
 					this._Document_Type = value;
 					this.SendPropertyChanged("Document_Type");
 					this.OnDocument_TypeChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_S_CostCenter")]
+	public partial class ACCEDE_S_CostCenter : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _CostCenter_ID;
+		
+		private string _Description;
+		
+		private string _CostCenter;
+		
+		private System.Nullable<int> _CompanyId;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnCostCenter_IDChanging(int value);
+    partial void OnCostCenter_IDChanged();
+    partial void OnDescriptionChanging(string value);
+    partial void OnDescriptionChanged();
+    partial void OnCostCenterChanging(string value);
+    partial void OnCostCenterChanged();
+    partial void OnCompanyIdChanging(System.Nullable<int> value);
+    partial void OnCompanyIdChanged();
+    #endregion
+		
+		public ACCEDE_S_CostCenter()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CostCenter_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int CostCenter_ID
+		{
+			get
+			{
+				return this._CostCenter_ID;
+			}
+			set
+			{
+				if ((this._CostCenter_ID != value))
+				{
+					this.OnCostCenter_IDChanging(value);
+					this.SendPropertyChanging();
+					this._CostCenter_ID = value;
+					this.SendPropertyChanged("CostCenter_ID");
+					this.OnCostCenter_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="NVarChar(50)")]
+		public string Description
+		{
+			get
+			{
+				return this._Description;
+			}
+			set
+			{
+				if ((this._Description != value))
+				{
+					this.OnDescriptionChanging(value);
+					this.SendPropertyChanging();
+					this._Description = value;
+					this.SendPropertyChanged("Description");
+					this.OnDescriptionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CostCenter", DbType="VarChar(50)")]
+		public string CostCenter
+		{
+			get
+			{
+				return this._CostCenter;
+			}
+			set
+			{
+				if ((this._CostCenter != value))
+				{
+					this.OnCostCenterChanging(value);
+					this.SendPropertyChanging();
+					this._CostCenter = value;
+					this.SendPropertyChanged("CostCenter");
+					this.OnCostCenterChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CompanyId", DbType="Int")]
+		public System.Nullable<int> CompanyId
+		{
+			get
+			{
+				return this._CompanyId;
+			}
+			set
+			{
+				if ((this._CompanyId != value))
+				{
+					this.OnCompanyIdChanging(value);
+					this.SendPropertyChanging();
+					this._CompanyId = value;
+					this.SendPropertyChanged("CompanyId");
+					this.OnCompanyIdChanged();
 				}
 			}
 		}

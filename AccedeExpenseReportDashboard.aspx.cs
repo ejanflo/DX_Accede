@@ -130,9 +130,9 @@ namespace DX_WebTemplate
             {
                 //Get the value of the "Status" column for the current row
                 object statusValue = expenseGrid.GetRowValues(e.VisibleIndex, "Status");
-                var completeStat = context.ITP_S_Status.Where(x => x.STS_Name == "Complete").FirstOrDefault();
+                var PendingAuditStat = context.ITP_S_Status.Where(x => x.STS_Name == "Pending at Audit").FirstOrDefault();
                 //Check if the status is "saved" and make the button visible accordingly
-                if (statusValue != null && (statusValue.ToString() == completeStat.STS_Id.ToString()))
+                if (statusValue != null && (statusValue.ToString() == PendingAuditStat.STS_Id.ToString()))
                     e.Visible = DevExpress.Utils.DefaultBoolean.True;
                 else
                     e.Visible = DevExpress.Utils.DefaultBoolean.False;
@@ -224,8 +224,8 @@ namespace DX_WebTemplate
                         main.Dept_Id = Convert.ToInt32(department);
                     }
                     main.ExpenseClassification = Convert.ToInt32(classification);
-                    main.ExpChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
-                    main.ExpChargedTo_DeptId = Convert.ToInt32(CTDept_id);
+                    //main.ExpChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
+                    //main.ExpChargedTo_DeptId = Convert.ToInt32(CTDept_id);
                     main.ExpComp_Location_Id = Convert.ToInt32(CompLoc);
                 }
                 context.ACCEDE_T_ExpenseMains.InsertOnSubmit(main);

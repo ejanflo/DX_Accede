@@ -536,7 +536,7 @@ namespace DX_WebTemplate
                                     .Where(x => x.EmpCode == Session["UserID"].ToString())
                                     .FirstOrDefault();
 
-                                SendEmailTo(Convert.ToInt32(rfp_main.ID), nexApprover_detail.EmpCode, Convert.ToInt32(rfp_main.Company_ID), sender_detail.FullName, sender_detail.Email, rfp_main.RFP_DocNum, rfp_main.DateCreated.ToString(), rfp_main.Purpose, approve_remarks, "Pending", payMethod.PMethod_name, tranType.RFPTranType_Name);
+                                SendEmailTo(Convert.ToInt32(rfp_main.ID), nexApprover_detail.EmpCode, Convert.ToInt32(rfp_main.Company_ID), sender_detail.FullName, sender_detail.Email, rfp_main.RFP_DocNum, rfp_main.DateCreated.ToString(), rfp_main.Purpose, approve_remarks, "Pending", payMethod.PMethod_name, tranType.RFPTranType_Name, "");
 
                             }
                         }
@@ -613,7 +613,7 @@ namespace DX_WebTemplate
                                             .Where(x => x.EmpCode == Session["UserID"].ToString())
                                             .FirstOrDefault();
 
-                                        SendEmailTo(Convert.ToInt32(rfp_main.ID), nexApprover_detail.EmpCode, Convert.ToInt32(rfp_main.Company_ID), sender_detail.FullName, sender_detail.Email, rfp_main.RFP_DocNum, rfp_main.DateCreated.ToString(), rfp_main.Purpose, approve_remarks, "Pending", payMethod.PMethod_name, tranType.RFPTranType_Name);
+                                        SendEmailTo(Convert.ToInt32(rfp_main.ID), nexApprover_detail.EmpCode, Convert.ToInt32(rfp_main.Company_ID), sender_detail.FullName, sender_detail.Email, rfp_main.RFP_DocNum, rfp_main.DateCreated.ToString(), rfp_main.Purpose, approve_remarks, "Pending", payMethod.PMethod_name, tranType.RFPTranType_Name, "");
 
                                     }
                                 }
@@ -637,6 +637,17 @@ namespace DX_WebTemplate
                                         .FirstOrDefault();
 
                                     rfp_main.Status = P2PStatus.STS_Id;
+
+                                    var creator_detail = _DataContext.ITP_S_UserMasters
+                                        .Where(x => x.EmpCode == rfp_main.User_ID)
+                                        .FirstOrDefault();
+
+                                    var sender_detail = _DataContext.ITP_S_UserMasters
+                                        .Where(x => x.EmpCode == Session["UserID"].ToString())
+                                        .FirstOrDefault();
+
+                                    SendEmailTo(Convert.ToInt32(rfp_main.ID), creator_detail.EmpCode, Convert.ToInt32(rfp_main.Company_ID), sender_detail.FullName, sender_detail.Email, rfp_main.RFP_DocNum, rfp_main.DateCreated.ToString(), rfp_main.Purpose, approve_remarks, "Approve", payMethod.PMethod_name, tranType.RFPTranType_Name, "PendingP2P");
+
                                 }
                                 else
                                 {
@@ -654,7 +665,7 @@ namespace DX_WebTemplate
                                         .Where(x => x.EmpCode == Session["UserID"].ToString())
                                         .FirstOrDefault();
 
-                                    SendEmailTo(Convert.ToInt32(rfp_main.ID), creator_detail.EmpCode, Convert.ToInt32(rfp_main.Company_ID), sender_detail.FullName, sender_detail.Email, rfp_main.RFP_DocNum, rfp_main.DateCreated.ToString(), rfp_main.Purpose, approve_remarks, "Approve", payMethod.PMethod_name, tranType.RFPTranType_Name);
+                                    SendEmailTo(Convert.ToInt32(rfp_main.ID), creator_detail.EmpCode, Convert.ToInt32(rfp_main.Company_ID), sender_detail.FullName, sender_detail.Email, rfp_main.RFP_DocNum, rfp_main.DateCreated.ToString(), rfp_main.Purpose, approve_remarks, "Approve", payMethod.PMethod_name, tranType.RFPTranType_Name, "PendingCash");
 
                                 }
 
@@ -741,7 +752,7 @@ namespace DX_WebTemplate
                         .FirstOrDefault();
 
 
-                    SendEmailTo(Convert.ToInt32(rfp_main.ID), creator_detail.EmpCode, Convert.ToInt32(rfp_main.Company_ID), sender_detail.FullName, sender_detail.Email, rfp_main.RFP_DocNum, rfp_main.DateCreated.ToString(), rfp_main.Purpose, remarks, "Return", payMethod.PMethod_name, tranType.RFPTranType_Name);
+                    SendEmailTo(Convert.ToInt32(rfp_main.ID), creator_detail.EmpCode, Convert.ToInt32(rfp_main.Company_ID), sender_detail.FullName, sender_detail.Email, rfp_main.RFP_DocNum, rfp_main.DateCreated.ToString(), rfp_main.Purpose, remarks, "Return", payMethod.PMethod_name, tranType.RFPTranType_Name, "");
                     _DataContext.SubmitChanges();
 
                     return true;
@@ -819,7 +830,7 @@ namespace DX_WebTemplate
                         .FirstOrDefault();
 
 
-                    SendEmailTo(Convert.ToInt32(rfp_main.ID), creator_detail.EmpCode, Convert.ToInt32(rfp_main.Company_ID), sender_detail.FullName, sender_detail.Email, rfp_main.RFP_DocNum, rfp_main.DateCreated.ToString(), rfp_main.Purpose, remarks, "Disapprove", payMethod.PMethod_name, tranType.RFPTranType_Name);
+                    SendEmailTo(Convert.ToInt32(rfp_main.ID), creator_detail.EmpCode, Convert.ToInt32(rfp_main.Company_ID), sender_detail.FullName, sender_detail.Email, rfp_main.RFP_DocNum, rfp_main.DateCreated.ToString(), rfp_main.Purpose, remarks, "Disapprove", payMethod.PMethod_name, tranType.RFPTranType_Name, "");
                     _DataContext.SubmitChanges();
 
                     return true;
@@ -876,7 +887,7 @@ namespace DX_WebTemplate
             
         }
 
-        public bool SendEmailTo(int doc_id, string receiver_id, int Comp_id, string sender_fullname, string sender_email, string doc_no, string date_created, string document_purpose, string remarks, string status, string payMethod, string tranType)
+        public bool SendEmailTo(int doc_id, string receiver_id, int Comp_id, string sender_fullname, string sender_email, string doc_no, string date_created, string document_purpose, string remarks, string status, string payMethod, string tranType, string status2)
         {
             try
             {
@@ -913,6 +924,15 @@ namespace DX_WebTemplate
                 foreach (var text in queryText)
                 {
                     emailSubMessage = text.Text2.ToString();
+                    if(status2 == "PendingP2P")
+                    {
+                        emailSubMessage = "Your request is now pending at P2P for disbursement.";
+                    }
+
+                    if (status2 == "PendingCash")
+                    {
+                        emailSubMessage = "Your request is now pending at Cashier for disbursement of cash.";
+                    }
                     emailColor = text.Color.ToString();
                     emailMessage = text.Text1.ToString();
                     emailSubTitle = text.Text3.ToString();
@@ -1138,7 +1158,7 @@ namespace DX_WebTemplate
                         .FirstOrDefault();
 
 
-                    SendEmailTo(Convert.ToInt32(rfp_main.ID), creator_detail.EmpCode, Convert.ToInt32(rfp_main.Company_ID), sender_detail.FullName, sender_detail.Email, rfp_main.RFP_DocNum, rfp_main.DateCreated.ToString(), rfp_main.Purpose, remarks, "Return", payMethod.PMethod_name, tranType.RFPTranType_Name);
+                    SendEmailTo(Convert.ToInt32(rfp_main.ID), creator_detail.EmpCode, Convert.ToInt32(rfp_main.Company_ID), sender_detail.FullName, sender_detail.Email, rfp_main.RFP_DocNum, rfp_main.DateCreated.ToString(), rfp_main.Purpose, remarks, "Return", payMethod.PMethod_name, tranType.RFPTranType_Name, "");
                     _DataContext.SubmitChanges();
 
                     return "success";

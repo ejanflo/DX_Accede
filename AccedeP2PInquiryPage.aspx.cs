@@ -45,7 +45,9 @@ namespace DX_WebTemplate
 
                     //var pending_audit = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Pending at Audit").FirstOrDefault();
                     //SqlExpReport.SelectParameters["Status"].DefaultValue = pending_audit.STS_Id.ToString();
-
+                    SqlRFPDisbursed.SelectParameters["ActedBy_User_Id"].DefaultValue = empCode;
+                    SqlRFPDisbursed.SelectParameters["STS_Name"].DefaultValue = "Disbursed";
+                    SqlExpDisbursed.SelectParameters["ActedBy_User_Id"].DefaultValue = empCode;
                 }
                 else
                 {
@@ -122,6 +124,82 @@ namespace DX_WebTemplate
                     e.Cell.Font.Bold = true;
                 }
             }
+        }
+
+        protected void gridMainDisbursed_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            string[] args = e.Parameters.Split('|');
+            string rowKey = args[0];
+            string buttonId = args[1];
+
+            Session["passRFPID"] = rowKey;
+
+            if (buttonId == "btnPrint")
+                ASPxWebControl.RedirectOnCallback("~/RFPPrintPage.aspx");
+
+            if (buttonId == "btnViewDisbursed")
+                ASPxWebControl.RedirectOnCallback("~/RFPViewPage.aspx");
+        }
+
+        protected void gridMainDisbursed_HtmlDataCellPrepared(object sender, ASPxGridViewTableDataCellEventArgs e)
+        {
+            if (e.DataColumn.FieldName == "Amount")
+            {
+                if (e.CellValue != null && e.CellValue is decimal)
+                {
+                    e.Cell.Text = ((decimal)e.CellValue).ToString("#,##0.##");
+                }
+            }
+
+            if (e.DataColumn.FieldName == "Status")
+            {
+                string value = e.CellValue.ToString();
+                if (value == "7")
+                {
+                    e.Cell.ForeColor = System.Drawing.ColorTranslator.FromHtml("#0D6943");//approved
+                    e.Cell.Font.Bold = true;
+                }
+                else if (value == "2" || value == "3" || value == "18" || value == "19")
+                {
+                    e.Cell.ForeColor = System.Drawing.ColorTranslator.FromHtml("#E67C0E");//rejected
+                    e.Cell.Font.Bold = true;
+                }
+                else if (value == "1")
+                {
+                    e.Cell.ForeColor = System.Drawing.ColorTranslator.FromHtml("#006DD6");//pending
+                    e.Cell.Font.Bold = true;
+                }
+                else if (value == "8")
+                {
+                    e.Cell.ForeColor = System.Drawing.ColorTranslator.FromHtml("#CC2A17");//disapproved
+                    e.Cell.Font.Bold = true;
+                }
+                else
+                {
+                    e.Cell.ForeColor = System.Drawing.Color.Gray;
+                    e.Cell.Font.Bold = true;
+                }
+            }
+        }
+
+        protected void gridMainDisburseExp_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            string[] args = e.Parameters.Split('|');
+            string rowKey = args[0];
+            string buttonId = args[1];
+
+            Session["ExpenseID"] = rowKey;
+
+            //if (buttonId == "btnPrint")
+            //    ASPxWebControl.RedirectOnCallback("~/RFPPrintPage.aspx");
+
+            if (buttonId == "btnViewDisbursedExp")
+                ASPxWebControl.RedirectOnCallback("~/AccedeExpenseViewPage.aspx");
+        }
+
+        protected void gridMainDisburseExp_HtmlDataCellPrepared(object sender, ASPxGridViewTableDataCellEventArgs e)
+        {
+
         }
     }
 }

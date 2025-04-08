@@ -7,6 +7,7 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Web;
 using System.Web.Services;
 using System.Web.UI;
@@ -125,8 +126,8 @@ namespace DX_WebTemplate
                     {
                         btn_Edit.ClientVisible = true;
                     }
-
-                    if (status_id == "7")
+                    var PendingAuditStat = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Pending at Audit").FirstOrDefault();
+                    if (status_id == PendingAuditStat.STS_Id.ToString())
                     {
                         var print = FormExpApprovalView.FindItemOrGroupByName("PrintBtn") as LayoutItem;
                         print.ClientVisible = true;

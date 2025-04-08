@@ -40,6 +40,7 @@ namespace DX_WebTemplate
                     //End ------------------ Page Security
 
                     SqlRFPDisbursed.SelectParameters["ActedBy_User_Id"].DefaultValue = empCode;
+                    SqlExpDisbursed.SelectParameters["ActedBy_User_Id"].DefaultValue = empCode;
                     SqlRFPDisbursed.SelectParameters["STS_Name"].DefaultValue = "Disbursed";
 
                     var p2pStatus = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Pending at Cashier").FirstOrDefault();
@@ -151,8 +152,8 @@ namespace DX_WebTemplate
 
             Session["passRFPID"] = rowKey;
 
-            if (buttonId == "btnPrint")
-                ASPxWebControl.RedirectOnCallback("~/RFPPrintPage.aspx");
+            //if (buttonId == "btnPrint")
+            //    ASPxWebControl.RedirectOnCallback("~/RFPPrintPage.aspx");
 
             if (buttonId == "btnViewDisbursed")
                 ASPxWebControl.RedirectOnCallback("~/RFPViewPage.aspx");
@@ -197,6 +198,26 @@ namespace DX_WebTemplate
                     e.Cell.Font.Bold = true;
                 }
             }
+        }
+
+        protected void gridMainDisburseExp_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            string[] args = e.Parameters.Split('|');
+            string rowKey = args[0];
+            string buttonId = args[1];
+
+            Session["ExpenseID"] = rowKey;
+
+            //if (buttonId == "btnPrint")
+            //    ASPxWebControl.RedirectOnCallback("~/RFPPrintPage.aspx");
+
+            if (buttonId == "btnViewDisbursedExp")
+                ASPxWebControl.RedirectOnCallback("~/AccedeExpenseViewPage.aspx");
+        }
+
+        protected void gridMainDisburseExp_HtmlDataCellPrepared(object sender, ASPxGridViewTableDataCellEventArgs e)
+        {
+
         }
     }
 }

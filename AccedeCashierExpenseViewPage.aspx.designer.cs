@@ -24,6 +24,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxFormLayout FormExpApprovalView;
 
         /// <summary>
+        /// FormExpApprovalView_E1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton FormExpApprovalView_E1;
+
+        /// <summary>
         /// BtnCashSave control.
         /// </summary>
         /// <remarks>
@@ -168,13 +177,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox dueTotal;
 
         /// <summary>
-        /// txt_CTDepartment0 control.
+        /// txt_ARReference control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox txt_CTDepartment0;
+        protected global::DevExpress.Web.ASPxTextBox txt_ARReference;
 
         /// <summary>
         /// memo_remarks control.
@@ -724,6 +733,60 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxButton ASPxButton2;
+
+        /// <summary>
+        /// SaveARPopup control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxPopupControl SaveARPopup;
+
+        /// <summary>
+        /// ASPxFormLayout1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxFormLayout ASPxFormLayout1;
+
+        /// <summary>
+        /// ASPxImage2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxImage ASPxImage2;
+
+        /// <summary>
+        /// ASPxMemo3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxMemo ASPxMemo3;
+
+        /// <summary>
+        /// ASPxButton6 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton ASPxButton6;
+
+        /// <summary>
+        /// ASPxButton9 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton ASPxButton9;
 
         /// <summary>
         /// sqlMain control.

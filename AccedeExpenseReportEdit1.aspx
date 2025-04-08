@@ -8,7 +8,7 @@
             align-items: center; /* Vertically centers the radio buttons */
             gap: 10px; /* Adjust the spacing between the radio buttons */
         }
-        #scrollablecontainer1, #scrollablecontainer3 {
+        #scrollablecontainer1, #scrollablecontainer3, #scrollablecontainer2 {
             overflow: auto;
             height: 600px;
             border: 1px solid #ccc; 
@@ -1021,7 +1021,8 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
 exp_CTDepartment.PerformCallback(s.GetValue());
 drpdown_CostCenter.SetValue(&quot;&quot;);
 //exp_EmpId.PerformCallback(s.GetValue());
-drpdwn_FAPWF.PerformCallback(s.GetValue());
+var classType = drpdown_classification.GetValue() != null ? drpdown_classification.GetValue() : &quot;&quot;;
+drpdwn_FAPWF.PerformCallback(s.GetValue()+&quot;|&quot;+classType );
 exp_CompLocation.PerformCallback(s.GetValue());
 }" />
                                                                 <ClearButton DisplayMode="Always">
@@ -1156,7 +1157,7 @@ exp_CompLocation.PerformCallback(s.GetValue());
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxComboBox ID="drpdown_classification" runat="server" ClientInstanceName="drpdown_classification" DataSourceID="SqlClassification" EnableTheming="True" Font-Bold="True" Font-Size="Small" TextField="ClassificationName" ValueField="ID" Width="100%">
                                                                 <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	drpdwn_FAPWF.PerformCallback();
+	drpdwn_FAPWF.PerformCallback(exp_CTCompany.GetValue()+&quot;|&quot;+s.GetValue());
 }" />
                                                                 <ClearButton DisplayMode="Always">
                                                                 </ClearButton>
@@ -1984,6 +1985,7 @@ exp_EmpId.PerformCallback(s.GetValue());
                 </dx:LayoutGroup>
             </Items>
         </dx:ASPxFormLayout>
+        </div>
         <dx:ASPxLoadingPanel ID="LoadingPanel" runat="server" Theme="MaterialCompact" ClientInstanceName="LoadingPanel" ShowImage="true" ShowText="true" Text="     Processing..." Modal="True">
         </dx:ASPxLoadingPanel>
 
@@ -2001,6 +2003,7 @@ exp_EmpId.PerformCallback(s.GetValue());
                                     <dx:LayoutItem Caption="" ColSpan="2" ColumnSpan="2">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
+                                                <div id="scrollablecontainer2">
                                                 <dx:ASPxGridView ID="capopGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="capopGrid" DataSourceID="sqlRFPMainCA" Font-Size="Smaller" KeyFieldName="ID" OnRowUpdating="DocuGrid_RowUpdating" Width="100%" OnCustomCallback="capopGrid_CustomCallback">
                                                     <ClientSideEvents ToolbarItemClick="onToolbarItemClick" />
                                                     <SettingsAdaptivity AdaptivityMode="HideDataCells">
@@ -2058,7 +2061,7 @@ exp_EmpId.PerformCallback(s.GetValue());
                                                             </PropertiesComboBox>
                                                         </dx:GridViewDataComboBoxColumn>
                                                         <dx:GridViewDataComboBoxColumn Caption="Department" FieldName="Department_ID" ShowInCustomizationForm="True" VisibleIndex="4">
-                                                            <PropertiesComboBox DataSourceID="sqlDept" TextField="DepDesc" ValueField="ID">
+                                                            <PropertiesComboBox DataSourceID="SqlDepartmentAll" TextField="DepDesc" ValueField="ID">
                                                             </PropertiesComboBox>
                                                         </dx:GridViewDataComboBoxColumn>
                                                         <dx:GridViewDataComboBoxColumn Caption="Payment Method" FieldName="PayMethod" ShowInCustomizationForm="True" VisibleIndex="5">
@@ -2069,6 +2072,7 @@ exp_EmpId.PerformCallback(s.GetValue());
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:ASPxGridView>
+                                             </div>
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
                                     </dx:LayoutItem>
@@ -2745,13 +2749,15 @@ exp_EmpId.PerformCallback(s.GetValue());
                                         <dx:LayoutItem Caption="Cost Center" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="costCenter" runat="server" ClientInstanceName="costCenter" DataSourceID="sqlCostCenter" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" OnCallback="costCenter_Callback" TextField="Department" TextFormatString="{0} - {1}" ValueField="CostCenter" Width="100%">
+                                                    <dx:ASPxComboBox ID="costCenter" runat="server" ClientInstanceName="costCenter" DataSourceID="sqlCostCenter" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" OnCallback="costCenter_Callback" TextField="Department" TextFormatString="{0} - {1}" ValueField="CostCenter" Width="100%" DropDownWidth="300px">
                                                         <Columns>
-                                                            <dx:ListBoxColumn FieldName="CostCenter" Width="100px">
+                                                            <dx:ListBoxColumn FieldName="CostCenter">
                                                             </dx:ListBoxColumn>
-                                                            <dx:ListBoxColumn FieldName="Department" Width="220px">
+                                                            <dx:ListBoxColumn FieldName="Department" Caption="Description">
                                                             </dx:ListBoxColumn>
                                                         </Columns>
+                                                        <ClearButton DisplayMode="Always">
+                                                        </ClearButton>
                                                         <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
                                                             <RequiredField ErrorText="*Required" IsRequired="True" />
                                                         </ValidationSettings>
@@ -2842,13 +2848,12 @@ exp_EmpId.PerformCallback(s.GetValue());
                                         <dx:LayoutItem Caption="Vendor TIN" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxTextBox ID="tin" runat="server" ClientInstanceName="tin" Font-Bold="False" Font-Size="Small" Width="50%">
-                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
-                                                            <RequiredField ErrorText="*Required" />
-                                                        </ValidationSettings>
+                                                    <dx:ASPxSpinEdit ID="tin" runat="server" ClientInstanceName="tin" Font-Size="Small" NumberType="Integer" Width="100%">
+                                                        <SpinButtons ClientVisible="False">
+                                                        </SpinButtons>
                                                         <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                    </dx:ASPxTextBox>
+                                                    </dx:ASPxSpinEdit>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                             <CaptionSettings HorizontalAlign="Right" />
@@ -3003,11 +3008,11 @@ exp_EmpId.PerformCallback(s.GetValue());
                                                             <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="160px">
                                                             </dx:GridViewCommandColumn>
                                                             <dx:GridViewDataComboBoxColumn Caption="Cost Center" FieldName="CostCenter" ShowInCustomizationForm="True" VisibleIndex="5">
-                                                                <PropertiesComboBox DataSourceID="SqlCostCenterAll" TextField="CostCenter" ValueField="CostCenter_ID" TextFormatString="{0}">
+                                                                <PropertiesComboBox DataSourceID="sqlCostCenter" TextField="CostCenter" ValueField="CostCenter_ID" TextFormatString="{0}">
                                                                     <Columns>
                                                                         <dx:ListBoxColumn Caption="Cost Center" FieldName="CostCenter">
                                                                         </dx:ListBoxColumn>
-                                                                        <dx:ListBoxColumn Caption="Department" FieldName="DepDesc" Width="300px">
+                                                                        <dx:ListBoxColumn Caption="Department" FieldName="Department" Width="300px">
                                                                         </dx:ListBoxColumn>
                                                                     </Columns>
                                                                     <ItemStyle Font-Size="Smaller" />
@@ -3165,13 +3170,15 @@ exp_EmpId.PerformCallback(s.GetValue());
                                         <dx:LayoutItem Caption="Cost Center" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="costCenter_edit" runat="server" ClientInstanceName="costCenter_edit" DataSourceID="sqlCostCenter" Font-Bold="False" Font-Size="Small" OnCallback="costCenter_Callback" TextField="Department" ValueField="CostCenter" Width="100%" NullValueItemDisplayText="{0} - {1}" TextFormatString="{0} - {1}">
+                                                    <dx:ASPxComboBox ID="costCenter_edit" runat="server" ClientInstanceName="costCenter_edit" DataSourceID="sqlCostCenter" Font-Bold="False" Font-Size="Small" OnCallback="costCenter_Callback" TextField="Department" ValueField="CostCenter" Width="100%" NullValueItemDisplayText="{0} - {1}" TextFormatString="{0} - {1}" DropDownWidth="200px">
                                                         <Columns>
-                                                            <dx:ListBoxColumn FieldName="CostCenter" Width="100px">
+                                                            <dx:ListBoxColumn FieldName="CostCenter">
                                                             </dx:ListBoxColumn>
-                                                            <dx:ListBoxColumn FieldName="Department" Width="220px">
+                                                            <dx:ListBoxColumn FieldName="Department" Caption="Description">
                                                             </dx:ListBoxColumn>
                                                         </Columns>
+                                                        <ClearButton DisplayMode="Always">
+                                                        </ClearButton>
                                                         <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
                                                             <RequiredField ErrorText="*Required" IsRequired="True" />
                                                         </ValidationSettings>
@@ -3260,13 +3267,12 @@ computeNetAmount(&quot;edit&quot;);
                                         <dx:LayoutItem Caption="Vendor TIN" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxTextBox ID="tin_edit" runat="server" ClientInstanceName="tin_edit" Font-Bold="False" Font-Size="Small" Width="50%">
-                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
-                                                            <RequiredField ErrorText="*Required" />
-                                                        </ValidationSettings>
+                                                    <dx:ASPxSpinEdit ID="tin_edit" runat="server" ClientInstanceName="tin_edit" Font-Size="Small" NumberType="Integer" Width="100%">
+                                                        <SpinButtons ClientVisible="False">
+                                                        </SpinButtons>
                                                         <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                    </dx:ASPxTextBox>
+                                                    </dx:ASPxSpinEdit>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                             <CaptionSettings HorizontalAlign="Right" />
@@ -3429,11 +3435,11 @@ computeNetAmount(&quot;edit&quot;);
                                                             <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="160px">
                                                             </dx:GridViewCommandColumn>
                                                             <dx:GridViewDataComboBoxColumn Caption="Cost Center" FieldName="CostCenterIOWBS" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                                <PropertiesComboBox DataSourceID="SqlCostCenterAll" TextField="CostCenter" ValueField="CostCenter_ID" TextFormatString="{0}">
+                                                                <PropertiesComboBox DataSourceID="sqlCostCenter" TextField="CostCenter" ValueField="CostCenter_ID" TextFormatString="{0}">
                                                                     <Columns>
                                                                         <dx:ListBoxColumn Caption="Cost Center" FieldName="CostCenter">
                                                                         </dx:ListBoxColumn>
-                                                                        <dx:ListBoxColumn Caption="Department" FieldName="DepDesc" Width="300px">
+                                                                        <dx:ListBoxColumn Caption="Department" FieldName="Department" Width="300px">
                                                                         </dx:ListBoxColumn>
                                                                     </Columns>
                                                                 </PropertiesComboBox>
@@ -3595,7 +3601,7 @@ computeNetAmount(&quot;edit&quot;);
             <asp:Parameter DefaultValue="" Name="Exp_ID" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="sqlRFPMainCA" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_RFPMain] WHERE (([IsExpenseCA] = @IsExpenseCA) AND ([isTravel] &lt;&gt; @isTravel) AND ([Status] = @Status) AND ([Payee] = @Payee))">
+    <asp:SqlDataSource ID="sqlRFPMainCA" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_RFPMain] WHERE (([IsExpenseCA] = @IsExpenseCA) AND ([isTravel] &lt;&gt; @isTravel) AND ([Status] = @Status) AND ([Payee] = @Payee) AND ([Exp_ID] IS NULL))">
             <SelectParameters>
                 <asp:Parameter DefaultValue="true" Name="IsExpenseCA" Type="Boolean" />
                 <asp:Parameter DefaultValue="true" Name="isTravel" Type="Boolean" />
@@ -3728,15 +3734,13 @@ computeNetAmount(&quot;edit&quot;);
             <asp:Parameter Name="Company_ID" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="sqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_CostCenter] WHERE ([DepartmentId] = @DepartmentId)">
-        <SelectParameters>
-            <asp:Parameter Name="DepartmentId" Type="Int32" />
-        </SelectParameters>
+    <asp:SqlDataSource ID="sqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_CostCenter] ORDER BY [CostCenter]">
     </asp:SqlDataSource>
         <asp:SqlDataSource ID="SqlCompLocation" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_CompanyBranch] WHERE ([Comp_Id] = @Comp_Id)">
         <SelectParameters>
             <asp:Parameter Name="Comp_Id" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
+        <asp:SqlDataSource ID="SqlDepartmentAll" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster]"></asp:SqlDataSource>
 </asp:Content>
 

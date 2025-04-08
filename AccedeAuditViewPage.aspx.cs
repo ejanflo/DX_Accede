@@ -274,7 +274,7 @@ namespace DX_WebTemplate
                             .FirstOrDefault();
 
                         RFPApprovalView rfp = new RFPApprovalView();
-                        rfp.SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(rfp_main_reimburse.ChargedTo_CompanyId), sender_detail.FullName, sender_detail.Email, rfp_main_reimburse.RFP_DocNum, rfp_main_reimburse.DateCreated.ToString(), rfp_main_reimburse.Purpose, approve_remarks, "Approve", payMethodDesc.PMethod_name, tranTypeDesc.RFPTranType_Name);
+                        rfp.SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(rfp_main_reimburse.ChargedTo_CompanyId), sender_detail.FullName, sender_detail.Email, rfp_main_reimburse.RFP_DocNum, rfp_main_reimburse.DateCreated.ToString(), rfp_main_reimburse.Purpose, approve_remarks, "Approve", payMethodDesc.PMethod_name, tranTypeDesc.RFPTranType_Name, "");
 
                     }
                 }
@@ -467,7 +467,7 @@ namespace DX_WebTemplate
 
                     ExpenseApprovalView exp = new ExpenseApprovalView();
 
-                    exp.SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(exp_main.ExpChargedTo_CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Return", "", tranType.Description);
+                    exp.SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(exp_main.ExpChargedTo_CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Return", "", tranType.Description, "");
                     _DataContext.SubmitChanges();
                 }
 
@@ -510,7 +510,7 @@ namespace DX_WebTemplate
                 DateTime dateAdd = Convert.ToDateTime(expMain.DateAdded);
 
                 exp.acctCharge = acct_charge != null ? acct_charge.Description : "";
-                exp.costCenter = cc != null ? cc.CostCenter.ToString() + " - " + cc.Department.ToString() : "";
+                exp.costCenter = cc != null ? cc.CostCenter.ToString() + " - " + cc.Description.ToString() : "";
                 exp.particulars = expMain.P_Name != null ? expMain.P_Name.ToString() : "";
                 exp.supplier = expMain.Supplier != null ? expMain.Supplier : "";
                 exp.tin = expMain.TIN != null ? expMain.TIN : "";
@@ -664,7 +664,7 @@ namespace DX_WebTemplate
 
                 RFPApprovalView rfp = new RFPApprovalView();
 
-                rfp.SendEmailTo(Convert.ToInt32(rfp_main.ID), creator_detail.EmpCode, Convert.ToInt32(rfp_main.ChargedTo_CompanyId), sender_detail.FullName, sender_detail.Email, rfp_main.RFP_DocNum, rfp_main.DateCreated.ToString(), rfp_main.Purpose, remarks, "Return", payMethod.PMethod_name, tranType.RFPTranType_Name);
+                rfp.SendEmailTo(Convert.ToInt32(rfp_main.ID), creator_detail.EmpCode, Convert.ToInt32(rfp_main.ChargedTo_CompanyId), sender_detail.FullName, sender_detail.Email, rfp_main.RFP_DocNum, rfp_main.DateCreated.ToString(), rfp_main.Purpose, remarks, "Return", payMethod.PMethod_name, tranType.RFPTranType_Name, "");
                 _DataContext.SubmitChanges();
 
                 return "success";
@@ -808,7 +808,7 @@ namespace DX_WebTemplate
 
                 ExpenseApprovalView exp = new ExpenseApprovalView();
 
-                exp.SendEmailTo(exp_details.ID, lastActDetails.ActedBy_User_Id, Convert.ToInt32(exp_details.ExpChargedTo_CompanyId), sender_detail.FullName, sender_detail.Email, exp_details.DocNo, exp_details.DateCreated.ToString(), exp_details.Purpose, return_remarks, "ReturnApprover", "", tranType.Description);
+                exp.SendEmailTo(exp_details.ID, lastActDetails.ActedBy_User_Id, Convert.ToInt32(exp_details.ExpChargedTo_CompanyId), sender_detail.FullName, sender_detail.Email, exp_details.DocNo, exp_details.DateCreated.ToString(), exp_details.Purpose, return_remarks, "ReturnApprover", "", tranType.Description, "");
                 _DataContext.SubmitChanges();
 
                 return "success";

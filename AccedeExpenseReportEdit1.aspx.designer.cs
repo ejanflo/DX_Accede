@@ -1002,7 +1002,7 @@ namespace DX_WebTemplate
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox tin;
+        protected global::DevExpress.Web.ASPxSpinEdit tin;
 
         /// <summary>
         /// vat control.
@@ -1209,7 +1209,7 @@ namespace DX_WebTemplate
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox tin_edit;
+        protected global::DevExpress.Web.ASPxSpinEdit tin_edit;
 
         /// <summary>
         /// vat_edit control.
@@ -1561,5 +1561,14 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlCompLocation;
+
+        /// <summary>
+        /// SqlDepartmentAll control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlDepartmentAll;
     }
 }
