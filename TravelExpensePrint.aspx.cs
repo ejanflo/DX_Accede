@@ -28,11 +28,16 @@ namespace DX_WebTemplate
 
                     DateTime finapprdate = DateTime.Now;
                     DateTime depapprdate = DateTime.Now;
+                    DateTime fwdapprdate0 = DateTime.Now;
                     DateTime fwdapprdate = DateTime.Now;
+                    DateTime p2papprdate = DateTime.Now;
+                    DateTime cashapprdate = DateTime.Now;
                     var finapprname = string.Empty;
                     var depapprname = string.Empty;
                     var fwdapprname0 = string.Empty;
                     var fwdapprname = string.Empty;
+                    var p2papprname = string.Empty;
+                    var cashapprname = string.Empty;
 
                     if (travel != null)
                     {
@@ -78,20 +83,28 @@ namespace DX_WebTemplate
                         // P2P Approvers
                         var p2pwf = context.ITP_S_WorkflowHeaders.Where(x => x.Name == "ACDE P2P" && x.Company_Id == travel.Company_Id && x.Description == "ACDE P2P" && x.App_Id == 1032).Select(x => x.WF_Id).FirstOrDefault();
                         var p2papprid = context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WF_Id == p2pwf && x.AppId == 1032).FirstOrDefault();
-                        var p2papprdate = context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WF_Id == p2pwf && x.AppId == 1032).Select(x => x.DateAction).FirstOrDefault();
-                        var p2papprname = context.ITP_S_UserMasters.Where(x => x.EmpCode == p2papprid.ActedBy_User_Id).Select(x => x.FullName).FirstOrDefault().ToUpper() ?? string.Empty;
+
+                        if (p2papprid != null)
+                        {
+                            p2papprdate = (DateTime)context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WF_Id == p2pwf && x.AppId == 1032).Select(x => x.DateAction).FirstOrDefault();
+                            p2papprname = context.ITP_S_UserMasters.Where(x => x.EmpCode == p2papprid.ActedBy_User_Id).Select(x => x.FullName).FirstOrDefault().ToUpper() ?? string.Empty;
+                        }
 
                         // Cashier Approvers
                         var cashpwf = context.ITP_S_WorkflowHeaders.Where(x => x.Name == "ACDE CASHIER" && x.Company_Id == travel.Company_Id && x.Description == "ACDE CASHIER" && x.App_Id == 1032).Select(x => x.WF_Id).FirstOrDefault();
                         var cashapprid = context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WF_Id == cashpwf && x.AppId == 1032).FirstOrDefault();
-                        var cashapprdate = context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WF_Id == cashpwf && x.AppId == 1032).Select(x => x.DateAction).FirstOrDefault();
-                        var cashapprname = context.ITP_S_UserMasters.Where(x => x.EmpCode == cashapprid.ActedBy_User_Id).Select(x => x.FullName).FirstOrDefault().ToUpper() ?? string.Empty;
+
+                        if (cashapprid != null)
+                        {
+                            cashapprdate = (DateTime)cashapprid.DateAction;
+                            cashapprname = context.ITP_S_UserMasters.Where(x => x.EmpCode == cashapprid.ActedBy_User_Id).Select(x => x.FullName).FirstOrDefault().ToUpper() ?? string.Empty;
+                        }
 
                         // Forwarded Approvers
                         var fwdapprid0 = context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.IsDelete == true && x.AppId == 1032).FirstOrDefault();
-                        var fwdapprdate0 = context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.IsDelete == true && x.AppId == 1032).Select(x => x.DateAction).FirstOrDefault();
                         if (fwdapprid0 != null)
                         {
+                            fwdapprdate0 = (DateTime)fwdapprid0.DateAction;
                             fwdapprname0 = context.ITP_S_UserMasters.Where(x => x.EmpCode == fwdapprid0.ActedBy_User_Id).Select(x => x.FullName).FirstOrDefault().ToUpper() ?? string.Empty;
                         }
 
