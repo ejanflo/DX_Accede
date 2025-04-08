@@ -791,7 +791,7 @@ namespace DX_WebTemplate
                     rfp.PayMethod = 2; //2 - Cash
                     rfp.Purpose = purpose;
                     rfp.Department_ID = Convert.ToInt32(department);
-                    rfp.SAPCostCenter = Convert.ToString(_DataContext.ACCEDE_S_CostCenters.Where(x => x.CompanyId == Convert.ToInt32(company) && x.DepartmentId == Convert.ToInt32(department)).Select(x => x.CostCenter).FirstOrDefault());
+                    rfp.SAPCostCenter = Convert.ToString(_DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.Company_ID == Convert.ToInt32(company) && x.ID == Convert.ToInt32(department)).Select(x => x.SAP_CostCenter).FirstOrDefault());
                     rfp.Payee = empname;
                     rfp.Amount = Convert.ToDecimal(Math.Abs(totalReim));
                     rfp.Exp_ID = expMain.ID;
