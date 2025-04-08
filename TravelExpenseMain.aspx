@@ -803,7 +803,7 @@
                 <asp:Parameter Name="Employee_Id" />
             </SelectParameters>
         </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([Company_ID] = @Company_ID)">
+    <asp:SqlDataSource ID="SqlDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([Company_ID] = @Company_ID) AND ([SAP_CostCenter] IS NOT NULL)">
         <SelectParameters>
             <asp:Parameter Name="Company_ID" />
         </SelectParameters>
