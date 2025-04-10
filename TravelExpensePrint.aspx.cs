@@ -111,7 +111,7 @@ namespace DX_WebTemplate
 
                         var fwdapprid = context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.IsDelete == true && x.AppId == 1032).OrderByDescending(x => x.WFA_Id).FirstOrDefault();
 
-                        if (fwdapprid != null)
+                        if (fwdapprid != null && fwdapprid.WFA_Id != fwdapprid0.WFA_Id)
                         {
                             fwdapprdate = (DateTime)fwdapprid.DateAction;
                             fwdapprname = context.ITP_S_UserMasters.Where(x => x.EmpCode == fwdapprid.ActedBy_User_Id).Select(x => x.FullName).FirstOrDefault().ToUpper() ?? string.Empty;
