@@ -20,6 +20,7 @@ namespace DX_WebTemplate
             if (!IsPostBack)
             {
                 AccedeTravelMain report = new AccedeTravelMain();
+                AccedeTravelMainTrails report2 = new AccedeTravelMainTrails();
 
                 try
                 {
@@ -125,6 +126,8 @@ namespace DX_WebTemplate
                             .Where(x => x.TravelExpenseMain_ID == id)
                             .Sum(x => (decimal?)x.Total_Expenses) ?? 0;
 
+                        var ford = travel.ForeignDomestic.ToUpper();
+                        var docnum = travel.Doc_No;
                         var companyid = travel.Company_Id;
                         var companyname = context.CompanyMasters.Where(x => x.WASSId == companyid).Select(x => x.CompanyDesc).FirstOrDefault().ToUpper();
                         var exptype = travel.ExpenseType_ID;
@@ -148,7 +151,11 @@ namespace DX_WebTemplate
                         else if (string.IsNullOrEmpty(cComp) && !string.IsNullOrEmpty(cDept))
                             chargedto = cDept;
 
-                        report.Parameters["id"].Value = id;
+                        report.Parameters["id"].Value = id; 
+                        report2.Parameters["id2"].Value = id;
+                        report2.Parameters["docnum"].Value = docnum;
+                        report.Parameters["ford"].Value = ford;
+                        report.Parameters["docnum"].Value = docnum;
                         report.Parameters["companyid"].Value = companyid;
                         report.Parameters["companyname"].Value = companyname;
                         report.Parameters["exptype"].Value = exptype;
@@ -186,6 +193,21 @@ namespace DX_WebTemplate
 
                     // Create report and generate its document.
                     report.CreateDocument();
+                    report2.CreateDocument();
+
+                    // Merge pages of two reports, page-by-page.
+                    int minPageCount = Math.Min(report.Pages.Count, report2.Pages.Count);
+                    for (int i = 0; i < minPageCount; i++)
+                    {
+                        report.Pages.Insert(i * 2 + 1, report2.Pages[i]);
+                    }
+                    if (report2.Pages.Count != minPageCount)
+                    {
+                        for (int i = minPageCount; i < report2.Pages.Count; i++)
+                        {
+                            report.Pages.Add(report2.Pages[i]);
+                        }
+                    }
 
                     // Reset all page numbers in the resulting document.
                     report.PrintingSystem.ContinuousPageNumbering = true;

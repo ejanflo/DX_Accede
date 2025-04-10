@@ -16,7 +16,8 @@ namespace DX_WebTemplate
             if (!IsPostBack)
             {
                 // Create an instance of your report
-                AccedeExpenseReportView report = new AccedeExpenseReportView();
+                AccedeExpenseReportView report = new AccedeExpenseReportView(); 
+                AccedeTravelMainTrails report3 = new AccedeTravelMainTrails();
                 AccedeRFPForm report2 = new AccedeRFPForm();
 
                 try
@@ -199,6 +200,8 @@ namespace DX_WebTemplate
                     // Set the parameter value
                     report.Parameters["id"].Value = Convert.ToInt32(Session["cID"].ToString());
                     report2.Parameters["id"].Value = Convert.ToInt32(Session["cID"].ToString());
+                    report3.Parameters["id2"].Value = Convert.ToInt32(Session["cID"].ToString());
+                    report3.Parameters["docnum"].Value = em.DocNo;
                     report.Parameters["company"].Value = company.ToString();
                     report2.Parameters["company"].Value = company.ToString();
                     report.Parameters["fullname"].Value = FormatName(fullname.ToString());
@@ -236,6 +239,7 @@ namespace DX_WebTemplate
                     // Create report and generate its document.
                     report.CreateDocument();
                     report2.CreateDocument();
+                    report3.CreateDocument();
 
                     if (cashexpense > cashadvance && em.ExpenseType_ID == 2)
                     {
@@ -243,7 +247,8 @@ namespace DX_WebTemplate
                         int minPageCount = Math.Min(report.Pages.Count, report2.Pages.Count);
                         for (int i = 0; i < minPageCount; i++)
                         {
-                            report.Pages.Insert(i * 2 + 1, report2.Pages[i]);
+                            report.Pages.Insert(i * 2 + 1, report2.Pages[i]); 
+                            report.Pages.Insert(i * 2 + 2, report3.Pages[i]);
                         }
                         if (report2.Pages.Count != minPageCount)
                         {
@@ -252,10 +257,33 @@ namespace DX_WebTemplate
                                 report.Pages.Add(report2.Pages[i]);
                             }
                         }
+                        if (report3.Pages.Count != minPageCount)
+                        {
+                            for (int i = minPageCount; i < report3.Pages.Count; i++)
+                            {
+                                report.Pages.Add(report3.Pages[i]);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Merge pages of two reports, page-by-page.
+                        int minPageCount = Math.Min(report.Pages.Count, report3.Pages.Count);
+                        for (int i = 0; i < minPageCount; i++)
+                        {
+                            report.Pages.Insert(i * 2 + 1, report3.Pages[i]);
+                        }
+                        if (report3.Pages.Count != minPageCount)
+                        {
+                            for (int i = minPageCount; i < report3.Pages.Count; i++)
+                            {
+                                report.Pages.Add(report3.Pages[i]);
+                            }
+                        }
                     }
 
-                    // Reset all page numbers in the resulting document.
-                    report.PrintingSystem.ContinuousPageNumbering = true;
+                        // Reset all page numbers in the resulting document.
+                        report.PrintingSystem.ContinuousPageNumbering = true;
 
                     docViewer.OpenReport(report);
                 }
