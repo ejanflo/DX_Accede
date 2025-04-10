@@ -661,7 +661,7 @@ namespace DX_WebTemplate
             }
         }
 
-        public void insertWA(int wf_id, int wfd_id, int org_id, int doc_id, int comps_id, int stat, int reim_docID)
+        public void insertWA(int wf_id, int wfd_id, int org_id, int doc_id, int comps_id, int stat, int reim_docID, bool isforward = false)
         {
             try
             {
@@ -681,6 +681,7 @@ namespace DX_WebTemplate
                     AppId = 1032,
                     CompanyId = comps_id,
                     IsActive = true,
+                    IsDelete = isforward,
                     AppDocTypeId = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel" || x.DCT_Description == "Accede Expense Travel").Select(x => x.DCT_Id).FirstOrDefault()
                 };
                 _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(wfa);
@@ -699,6 +700,7 @@ namespace DX_WebTemplate
                         AppId = 1032,
                         CompanyId = comps_id,
                         IsActive = true,
+                        IsDelete = isforward,
                         AppDocTypeId = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP" || x.DCT_Description == "Accede Request For Payment").Select(x => x.DCT_Id).FirstOrDefault()
                     };
                     _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(reimwfa);
@@ -894,7 +896,7 @@ namespace DX_WebTemplate
                 var fstatus = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Forwarded").Select(x => x.STS_Id).FirstOrDefault();
 
                 updateWA(docID, wfID, wfaID, 7, "", aforwardRemarks, userID, DateTime.Now, reim_docID);
-                insertWA(Convert.ToInt32(fin_wfDetail_data.WF_Id), Convert.ToInt32(fin_wfDetail_data.WFD_Id), Convert.ToInt32(org_id), Convert.ToInt32(travelmain.ID), Convert.ToInt32(travelmain.Company_Id), Convert.ToInt32(fstatus), reim_docID);
+                insertWA(Convert.ToInt32(fin_wfDetail_data.WF_Id), Convert.ToInt32(fin_wfDetail_data.WFD_Id), Convert.ToInt32(org_id), Convert.ToInt32(travelmain.ID), Convert.ToInt32(travelmain.Company_Id), Convert.ToInt32(fstatus), reim_docID, true);
 
                 return true;
             }
