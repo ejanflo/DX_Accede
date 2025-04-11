@@ -503,6 +503,10 @@
                                                     <CellStyle Font-Bold="True" ForeColor="#878787">
                                                     </CellStyle>
                                                 </dx:GridViewFormatConditionHighlight>
+                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 5" FieldName="Status" Format="Custom">
+                                                    <CellStyle Font-Bold="True" ForeColor="#006838">
+                                                    </CellStyle>
+                                                </dx:GridViewFormatConditionHighlight>
                                             </FormatConditions>
                                             <Styles>
                                                 <Header Font-Bold="True" HorizontalAlign="Center" BackColor="#E9ECEF">

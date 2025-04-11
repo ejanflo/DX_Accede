@@ -213,7 +213,7 @@ namespace DX_WebTemplate
                 object statusValue = expenseGrid.GetRowValues(e.VisibleIndex, "Status");
 
                 //Check if the status is "saved" and make the button visible accordingly
-                if (statusValue != null && (statusValue.ToString() == "7"))
+                if (statusValue != null && (statusValue.ToString() == "7" || statusValue.ToString() == "5"))
                     e.Visible = DevExpress.Utils.DefaultBoolean.True;
                 else
                     e.Visible = DevExpress.Utils.DefaultBoolean.False;
