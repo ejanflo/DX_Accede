@@ -131,7 +131,7 @@ namespace DX_WebTemplate
                     var CashierVerify = _DataContext.vw_ACCEDE_FinApproverVerifies.Where(x => x.UserId == empCode)
                         .Where(x => x.Role_Name == "Accede Cashier").FirstOrDefault();
 
-                    if (CashierVerify != null && rfp_details.User_ID != empCode)
+                    if (CashierVerify != null/* && rfp_details.User_ID != empCode*/)
                     //if (CashierVerify != null && rfp_details.Status == 7)
                     {
                         var edit_SAPDoc = formRFP.FindItemOrGroupByName("edit_SAPDoc") as LayoutItem;

@@ -838,7 +838,7 @@ onTravelClick();
                                                     <dx:LayoutItemNestedControlContainer runat="server">
                                                         <dx:ASPxComboBox ID="edit_Department" runat="server" ClientInstanceName="edit_Department" DataSourceID="SqlCTDepartment" Font-Bold="True" OnCallback="edit_Department_Callback" TextField="DepDesc" ValueField="ID" Width="100%" Font-Size="Medium">
                                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	drpdown_CostCenter.PerformCallback(s.GetValue());
+	drpdown_CostCenter.PerformCallback(edit_Company.GetValue()+&quot;|&quot;+s.GetValue());
 }" />
                                                             <ValidationSettings Display="Dynamic" ValidationGroup="ViewFormCashier">
                                                                 <RequiredField ErrorText="*Required" IsRequired="True" />
@@ -851,7 +851,7 @@ onTravelClick();
                                             <dx:LayoutItem Caption="Cost Center" ColSpan="1" FieldName="SAPCostCenter">
                                                 <LayoutItemNestedControlCollection>
                                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                                        <dx:ASPxComboBox ID="drpdown_CostCenter" runat="server" ClientInstanceName="drpdown_CostCenter" DataSourceID="SqlCostCenter" Font-Bold="True" OnCallback="drpdown_CostCenter_Callback" TextField="CostCenter" ValueField="CostCenter" Width="100%" Font-Size="Medium">
+                                                        <dx:ASPxComboBox ID="drpdown_CostCenter" runat="server" ClientInstanceName="drpdown_CostCenter" DataSourceID="SqlCostCenterCT" Font-Bold="True" OnCallback="drpdown_CostCenter_Callback" TextField="SAP_CostCenter" ValueField="SAP_CostCenter" Width="100%" Font-Size="Medium">
                                                             <ValidationSettings ValidationGroup="ViewFormCashier">
                                                             </ValidationSettings>
                                                             <Border BorderColor="#006838" BorderWidth="1px" />
@@ -1440,7 +1440,7 @@ saveFinChanges(1); SavePopup.Hide();
             <asp:Parameter DefaultValue="ExpCat" Name="Code" Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlCTDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([Company_ID] = @Company_ID)">
+    <asp:SqlDataSource ID="SqlCTDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE (([Company_ID] = @Company_ID) AND ([SAP_CostCenter] IS NOT NULL)) ORDER BY [DepDesc]">
         <SelectParameters>
             <asp:Parameter Name="Company_ID" Type="Int32" />
         </SelectParameters>
@@ -1455,4 +1455,9 @@ saveFinChanges(1); SavePopup.Hide();
             <asp:Parameter DefaultValue="true" Name="isActive" Type="Boolean" />
         </SelectParameters>
     </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlCostCenterCT" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE (([Company_ID] = @Company_ID) AND ([SAP_CostCenter] IS NOT NULL)) ORDER BY [SAP_CostCenter]">
+        <SelectParameters>
+        <asp:Parameter Name="Company_ID" Type="Int32" />
+    </SelectParameters>
+</asp:SqlDataSource>
 </asp:Content>
