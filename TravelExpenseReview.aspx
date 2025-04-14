@@ -317,7 +317,9 @@
                                         <dx:LayoutItemNestedControlContainer runat="server">
                                             <dx:ASPxButton ID="approveBtn" runat="server" BackColor="#006838" ClientInstanceName="approveBtn" Font-Bold="True" Font-Size="Small" Text="Approve" AutoPostBack="False" UseSubmitBehavior="False" ValidationGroup="submitValid">
                                                 <ClientSideEvents Click="function(s, e) {
-	 ApprovePopup.Show();
+                if(ASPxClientEdit.ValidateGroup('submitValid')){
+	                 ApprovePopup.Show();
+               }
 }" />
                                                 <Border BorderColor="#006838" />
                                             </dx:ASPxButton>
@@ -771,8 +773,8 @@
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxTextBox ID="arNoTB" runat="server" ClientEnabled="False" ClientInstanceName="arNoTB" Font-Bold="True" Width="100%">
-                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True">
-                                                                    <RequiredField ErrorText="*Required" />
+                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="submitValid">
+                                                                    <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
                                                                 <DisabledStyle ForeColor="#333333" BackColor="#F7FDF7">
                                                                     <Border BorderColor="#329832" />
@@ -1488,7 +1490,6 @@
                                                                                                                         <FilterControl AutoUpdatePosition="False">
                                                                                                                         </FilterControl>
                                                                                                                     </SettingsPopup>
-                                                                                                                    <SettingsLoadingPanel Mode="Disabled" />
                                                                                                                     <Columns>
                                                                                                                         <dx:GridViewDataTextColumn FieldName="WFA_Id" ShowInCustomizationForm="True" Visible="False" VisibleIndex="0" ReadOnly="True">
                                                                                                                             <EditFormSettings Visible="False" />
@@ -1662,14 +1663,8 @@
                                                                                                                             </SettingsPopup>
                                                                                                                             <SettingsLoadingPanel Mode="Disabled" />
                                                                                                                             <Columns>
-                                                                                                                                <dx:GridViewDataComboBoxColumn Caption="Approver" FieldName="FullName" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                                                                                                    <PropertiesComboBox TextFormatString="{0}" ValueField="TerritoryID">
-                                                                                                                                        <Columns>
-                                                                                                                                            <dx:ListBoxColumn Caption="Territory" FieldName="TerritoryDescription">
-                                                                                                                                            </dx:ListBoxColumn>
-                                                                                                                                            <dx:ListBoxColumn Caption="Region" FieldName="RegionID">
-                                                                                                                                            </dx:ListBoxColumn>
-                                                                                                                                        </Columns>
+                                                                                                                                <dx:GridViewDataComboBoxColumn Caption="Approver" FieldName="OrgRole_Id" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                                                                                                    <PropertiesComboBox TextFormatString="{0}" ValueField="OrgRole_Id" DataSourceID="SqlUserOrgRole" TextField="FullName">
                                                                                                                                     </PropertiesComboBox>
                                                                                                                                 </dx:GridViewDataComboBoxColumn>
                                                                                                                                 <dx:GridViewDataTextColumn Caption="Sequence" FieldName="Sequence" ShowInCustomizationForm="True" VisibleIndex="1">
@@ -4123,7 +4118,7 @@ onTravelClick();
             <asp:Parameter Name="WF_Id" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlFAPWF" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_RS_Workflow_Sequence] WHERE ([WF_Id] = @WF_Id) ORDER BY [Sequence]">
+    <asp:SqlDataSource ID="SqlFAPWF" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_WorkflowDetails] WHERE ([WF_Id] = @WF_Id) ORDER BY [Sequence]">
         <SelectParameters>
             <asp:Parameter Name="WF_Id" Type="Int32" />
         </SelectParameters>
@@ -4161,7 +4156,7 @@ onTravelClick();
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([DepCode] IS NOT NULL) AND ([SAP_CostCenter] IS NOT NULL)">
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlExpDetails" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_TravelExpenseDetails] WHERE ([TravelExpenseMain_ID] = @TravelExpenseMain_ID) ORDER BY [TravelExpenseDetail_ID] DESC">
+    <asp:SqlDataSource ID="SqlExpDetails" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_TravelExpenseDetails] WHERE ([TravelExpenseMain_ID] = @TravelExpenseMain_ID) ORDER BY [TravelExpenseDetail_Date] ASC">
         <SelectParameters>
             <asp:SessionParameter Name="TravelExpenseMain_ID" SessionField="TravelExp_Id" Type="Int32" />
         </SelectParameters>

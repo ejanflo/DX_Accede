@@ -246,6 +246,23 @@ namespace DX_WebTemplate
                         {
                             disapproveItem.Visible = false;
                             returnItem.Visible = false;
+
+                            var fapWACount = _DataContext.ITP_T_WorkflowActivities.Count(x => x.AppId == 1032 && x.AppDocTypeId == app_docType.DCT_Id && x.Document_Id == mainExp.ID && x.WF_Id == mainExp.FAPWF_Id);
+
+                            if (fapWACount > 0)
+                            {
+                                approveBtn.Text = "Disburse";
+                                approvePopBtn.Text = "Disburse";
+                                ApprovePopup.HeaderText = "Disburse Expense Item";
+                                ASPxFormLayout1_E2.Text = "Are you sure to disburse item?";
+                            }
+                            else
+                            {
+                                approveBtn.Text = "Approve";
+                                approvePopBtn.Text = "Approve";
+                                ApprovePopup.HeaderText = "Approve Expense Report";
+                                ASPxFormLayout1_E2.Text = "Are you sure to approve item?";
+                            }
                         }
                     }
 
@@ -321,6 +338,8 @@ namespace DX_WebTemplate
                         arNoTB.ClientEnabled = true;
                         UploadController.ClientVisible = true;
                     }
+                    else if(status == "Pending")
+                        remItem.ClientVisible = false;
                 }
                 else
                 {
@@ -661,7 +680,7 @@ namespace DX_WebTemplate
             }
         }
 
-        public void insertWA(int wf_id, int wfd_id, int org_id, int doc_id, int comps_id, int stat, int reim_docID)
+        public void insertWA(int wf_id, int wfd_id, int org_id, int doc_id, int comps_id, int stat, int reim_docID, bool isforward = false)
         {
             try
             {
@@ -681,6 +700,7 @@ namespace DX_WebTemplate
                     AppId = 1032,
                     CompanyId = comps_id,
                     IsActive = true,
+                    IsDelete = isforward,
                     AppDocTypeId = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel" || x.DCT_Description == "Accede Expense Travel").Select(x => x.DCT_Id).FirstOrDefault()
                 };
                 _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(wfa);
@@ -699,6 +719,7 @@ namespace DX_WebTemplate
                         AppId = 1032,
                         CompanyId = comps_id,
                         IsActive = true,
+                        IsDelete = isforward,
                         AppDocTypeId = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP" || x.DCT_Description == "Accede Request For Payment").Select(x => x.DCT_Id).FirstOrDefault()
                     };
                     _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(reimwfa);
@@ -741,7 +762,7 @@ namespace DX_WebTemplate
 
             try
             {
-                if (action == "return")
+                if (action == "return" || action == "returnPrev")
                 {
                     if (doc_desc == "Pending at Audit")
                         status = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Returned by Audit").Select(x => x.STS_Id).FirstOrDefault();
@@ -894,7 +915,7 @@ namespace DX_WebTemplate
                 var fstatus = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Forwarded").Select(x => x.STS_Id).FirstOrDefault();
 
                 updateWA(docID, wfID, wfaID, 7, "", aforwardRemarks, userID, DateTime.Now, reim_docID);
-                insertWA(Convert.ToInt32(fin_wfDetail_data.WF_Id), Convert.ToInt32(fin_wfDetail_data.WFD_Id), Convert.ToInt32(org_id), Convert.ToInt32(travelmain.ID), Convert.ToInt32(travelmain.Company_Id), Convert.ToInt32(fstatus), reim_docID);
+                insertWA(Convert.ToInt32(fin_wfDetail_data.WF_Id), Convert.ToInt32(fin_wfDetail_data.WFD_Id), Convert.ToInt32(org_id), Convert.ToInt32(travelmain.ID), Convert.ToInt32(travelmain.Company_Id), Convert.ToInt32(fstatus), reim_docID, true);
 
                 return true;
             }
@@ -982,6 +1003,7 @@ namespace DX_WebTemplate
                 }
                 else
                 {
+                    var completeStat = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Completed").Select(x => x.STS_Id).FirstOrDefault();
                     if (Convert.ToString(Session["doc_stat2"]) == "Pending at Cashier")
                     {
                         if (Convert.ToDecimal(Session["totalCA"]) > Convert.ToDecimal(Session["totalEXP"]))
@@ -998,14 +1020,14 @@ namespace DX_WebTemplate
                             var travel = _DataContext.ACCEDE_T_TravelExpenseMains.Where(w => w.ID == docID);
                             foreach (ACCEDE_T_TravelExpenseMain t in travel)
                             {
-                                t.Status = 7;
+                                t.Status = completeStat;
                             }
                             _DataContext.SubmitChanges();
 
                             var updateReim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == reim_docID);
                             foreach (ACCEDE_T_RFPMain r in updateReim)
                             {
-                                r.Status = 7;
+                                r.Status = completeStat;
                             }
                             _DataContext.SubmitChanges();
                         }
@@ -1026,14 +1048,14 @@ namespace DX_WebTemplate
                             var travel = _DataContext.ACCEDE_T_TravelExpenseMains.Where(w => w.ID == docID);
                             foreach (ACCEDE_T_TravelExpenseMain t in travel)
                             {
-                                t.Status = 7;
+                                t.Status = completeStat;
                             }
                             _DataContext.SubmitChanges();
 
                             var updateReim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == reim_docID);
                             foreach (ACCEDE_T_RFPMain r in updateReim)
                             {
-                                r.Status = 7;
+                                r.Status = completeStat;
                             }
                             _DataContext.SubmitChanges();
                         }
@@ -1064,7 +1086,7 @@ namespace DX_WebTemplate
 
                             var hasRetStatus = _DataContext.ITP_T_WorkflowActivities.Any(w => w.AppId == 1032 && w.Document_Id == docID && w.AppDocTypeId == doctype_id && w.Status == 3);
 
-                            if (countFAPWF > 0 && (!hasRetStatus || Convert.ToString(Session["doc_stat2"]) == "Forwarded" || Convert.ToString(Session["doc_stat2"]) == "Pending at Audit"))
+                            if (countFAPWF > 0 && (!hasRetStatus || Convert.ToString(Session["doc_stat2"]) == "Forwarded" || Convert.ToString(Session["doc_stat2"]) == "Pending at Audit" || Convert.ToString(Session["doc_stat2"]) == "Pending at Finance"))
                             {
                                 Debug.WriteLine("There's FAPWF");
                                 var fapRetStatus = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Returned by Finance").Select(x => x.STS_Id).FirstOrDefault();
