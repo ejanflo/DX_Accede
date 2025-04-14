@@ -195,9 +195,9 @@
               //drpdwn_FAPWF.PerformCallback();
           }
 
-          function onCTDeptChanged() {
-              var dept_id = drpdown_CTDepartment.GetValue();
-              drpdown_CostCenter.PerformCallback(dept_id);
+          function onCTDeptChanged(dept_id) {
+              //var dept_id = drpdown_CTDepartment.GetValue();
+              drpdown_CostCenter.PerformCallback(drpdown_CTCompany.GetValue()+"|"+dept_id);
               //$.ajax({
               //    type: "POST",
               //    url: "RFPCreationPage.aspx/CostCenterUpdateField",
@@ -662,7 +662,7 @@ console.log(travType);
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxComboBox ID="drpdown_CTDepartment" runat="server" ClientInstanceName="drpdown_CTDepartment" DataSourceID="SqlCTDepartment" OnCallback="drpdown_CTDepartment_Callback" TextField="DepDesc" ValueField="ID" Width="100%">
                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	onCTDeptChanged();
+	onCTDeptChanged(s.GetValue());
 }" />
                                             <ClearButton DisplayMode="Always">
                                             </ClearButton>
@@ -676,7 +676,7 @@ console.log(travType);
                             <dx:LayoutItem ColSpan="1" Caption="Cost Center" FieldName="SAPCostCenter">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="drpdown_CostCenter" runat="server" ClientInstanceName="drpdown_CostCenter" DataSourceID="SqlCostCenter" OnCallback="drpdown_CostCenter_Callback" TextField="CostCenter" ValueField="CostCenter" Width="100%">
+                                        <dx:ASPxComboBox ID="drpdown_CostCenter" runat="server" ClientInstanceName="drpdown_CostCenter" DataSourceID="SqlCostCenterCT" OnCallback="drpdown_CostCenter_Callback" TextField="SAP_CostCenter" ValueField="SAP_CostCenter" Width="100%">
                                             <ClearButton DisplayMode="Always">
                                             </ClearButton>
                                             <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="CreationForm">
@@ -1560,7 +1560,7 @@ SavePopup.Hide();
             <asp:Parameter DefaultValue="true" Name="isActive" Type="Boolean" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlCTDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([Company_ID] = @Company_ID)">
+    <asp:SqlDataSource ID="SqlCTDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE (([Company_ID] = @Company_ID) AND ([SAP_CostCenter] IS NOT NULL)) ORDER BY [DepDesc]">
         <SelectParameters>
             <asp:Parameter Name="Company_ID" Type="Int32" />
         </SelectParameters>
@@ -1575,4 +1575,9 @@ SavePopup.Hide();
             <asp:Parameter Name="Comp_Id" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlCostCenterCT" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE (([Company_ID] = @Company_ID) AND ([SAP_CostCenter] IS NOT NULL)) ORDER BY [SAP_CostCenter]">
+    <SelectParameters>
+        <asp:Parameter Name="Company_ID" Type="Int32" />
+    </SelectParameters>
+</asp:SqlDataSource>
 </asp:Content>
