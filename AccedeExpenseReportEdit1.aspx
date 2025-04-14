@@ -95,7 +95,9 @@
         }
 
         function OnCTDeptChanged(dept_id) {
-            drpdown_CostCenter.PerformCallback(dept_id);
+            drpdown_CostCenter.PerformCallback(exp_CTCompany.GetValue() + "|" + dept_id);
+            costCenter.PerformCallback(exp_CTCompany.GetValue());
+            costCenter_edit.PerformCallback(exp_CTCompany.GetValue());
         }
 
         function OnDeptChanged(dept_id) {
@@ -1017,9 +1019,9 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                             <dx:ASPxComboBox ID="exp_CTCompany" runat="server" ClientInstanceName="exp_CTCompany" DataSourceID="SqlCompany" EnableTheming="True" Font-Bold="True" Font-Size="Small" OnCallback="exp_Company_Callback" TextField="CompanyDesc" ValueField="CompanyId" Width="100%">
                                                                 <ClientSideEvents SelectedIndexChanged="function(s, e) {
 //exp_Company.SetValue(s.GetValue());
-	//costCenter.PerformCallback();
+	//costCenter.PerformCallback(s.GetValue()+&quot;|&quot;+exp_CTDepartment.GetValue());
 exp_CTDepartment.PerformCallback(s.GetValue());
-drpdown_CostCenter.SetValue(&quot;&quot;);
+drpdown_CostCenter.PerformCallback(s.GetValue()+&quot;|&quot;+exp_CTDepartment.GetValue());
 //exp_EmpId.PerformCallback(s.GetValue());
 var classType = drpdown_classification.GetValue() != null ? drpdown_classification.GetValue() : &quot;&quot;;
 drpdwn_FAPWF.PerformCallback(s.GetValue()+&quot;|&quot;+classType );
@@ -1105,7 +1107,7 @@ exp_CompLocation.PerformCallback(s.GetValue());
                                                 <dx:LayoutItem Caption="Cost Center" ColSpan="1" FieldName="CostCenter">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxComboBox ID="drpdown_CostCenter" runat="server" ClientInstanceName="drpdown_CostCenter" DataSourceID="SqlCostCenter" Font-Bold="True" Font-Size="Small" OnCallback="drpdown_CostCenter_Callback" TextField="CostCenter" ValueField="CostCenter" Width="100%">
+                                                            <dx:ASPxComboBox ID="drpdown_CostCenter" runat="server" ClientInstanceName="drpdown_CostCenter" DataSourceID="sqlCostCenter" Font-Bold="True" Font-Size="Small" OnCallback="drpdown_CostCenter_Callback" TextField="SAP_CostCenter" ValueField="SAP_CostCenter" Width="100%">
                                                                 <ClearButton DisplayMode="Always">
                                                                 </ClearButton>
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
@@ -1561,7 +1563,7 @@ ReimbursementTrap2();
                                                                         </PropertiesComboBox>
                                                                     </dx:GridViewDataComboBoxColumn>
                                                                     <dx:GridViewDataComboBoxColumn Caption="CostCenter/IO/WBS" FieldName="CostCenterIOWBS" ShowInCustomizationForm="True" Visible="False" VisibleIndex="6">
-                                                                        <PropertiesComboBox DataSourceID="sqlCostCenter" TextField="CostCenter" ValueField="CostCenter_ID">
+                                                                        <PropertiesComboBox DataSourceID="sqlCostCenter" TextField="SAP_CostCenter" ValueField="SAP_CostCenter">
                                                                         </PropertiesComboBox>
                                                                     </dx:GridViewDataComboBoxColumn>
                                                                     <dx:GridViewDataComboBoxColumn Caption="Particulars" FieldName="Particulars" ShowInCustomizationForm="True" VisibleIndex="3">
@@ -2749,13 +2751,7 @@ exp_EmpId.PerformCallback(s.GetValue());
                                         <dx:LayoutItem Caption="Cost Center" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="costCenter" runat="server" ClientInstanceName="costCenter" DataSourceID="sqlCostCenter" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" OnCallback="costCenter_Callback" TextField="Department" TextFormatString="{0} - {1}" ValueField="CostCenter" Width="100%" DropDownWidth="300px">
-                                                        <Columns>
-                                                            <dx:ListBoxColumn FieldName="CostCenter">
-                                                            </dx:ListBoxColumn>
-                                                            <dx:ListBoxColumn FieldName="Department" Caption="Description">
-                                                            </dx:ListBoxColumn>
-                                                        </Columns>
+                                                    <dx:ASPxComboBox ID="costCenter" runat="server" ClientInstanceName="costCenter" DataSourceID="sqlCostCenter" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" OnCallback="costCenter_Callback" TextField="SAP_CostCenter" TextFormatString="{0}" ValueField="SAP_CostCenter" Width="100%" DropDownWidth="300px">
                                                         <ClearButton DisplayMode="Always">
                                                         </ClearButton>
                                                         <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
@@ -3008,13 +3004,7 @@ exp_EmpId.PerformCallback(s.GetValue());
                                                             <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="160px">
                                                             </dx:GridViewCommandColumn>
                                                             <dx:GridViewDataComboBoxColumn Caption="Cost Center" FieldName="CostCenter" ShowInCustomizationForm="True" VisibleIndex="5">
-                                                                <PropertiesComboBox DataSourceID="sqlCostCenter" TextField="CostCenter" ValueField="CostCenter_ID" TextFormatString="{0}">
-                                                                    <Columns>
-                                                                        <dx:ListBoxColumn Caption="Cost Center" FieldName="CostCenter">
-                                                                        </dx:ListBoxColumn>
-                                                                        <dx:ListBoxColumn Caption="Department" FieldName="Department" Width="300px">
-                                                                        </dx:ListBoxColumn>
-                                                                    </Columns>
+                                                                <PropertiesComboBox DataSourceID="SqlCostCenterAll" TextField="SAP_CostCenter" ValueField="SAP_CostCenter" TextFormatString="{0}">
                                                                     <ItemStyle Font-Size="Smaller" />
                                                                 </PropertiesComboBox>
                                                             </dx:GridViewDataComboBoxColumn>
@@ -3170,13 +3160,7 @@ exp_EmpId.PerformCallback(s.GetValue());
                                         <dx:LayoutItem Caption="Cost Center" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="costCenter_edit" runat="server" ClientInstanceName="costCenter_edit" DataSourceID="sqlCostCenter" Font-Bold="False" Font-Size="Small" OnCallback="costCenter_Callback" TextField="Department" ValueField="CostCenter" Width="100%" NullValueItemDisplayText="{0} - {1}" TextFormatString="{0} - {1}" DropDownWidth="200px">
-                                                        <Columns>
-                                                            <dx:ListBoxColumn FieldName="CostCenter">
-                                                            </dx:ListBoxColumn>
-                                                            <dx:ListBoxColumn FieldName="Department" Caption="Description">
-                                                            </dx:ListBoxColumn>
-                                                        </Columns>
+                                                    <dx:ASPxComboBox ID="costCenter_edit" runat="server" ClientInstanceName="costCenter_edit" DataSourceID="sqlCostCenter" Font-Bold="False" Font-Size="Small" OnCallback="costCenter_edit_Callback" TextField="SAP_CostCenter" ValueField="SAP_CostCenter" Width="100%" NullValueItemDisplayText="{0} - {1}" TextFormatString="{0}" DropDownWidth="200px">
                                                         <ClearButton DisplayMode="Always">
                                                         </ClearButton>
                                                         <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
@@ -3435,13 +3419,7 @@ computeNetAmount(&quot;edit&quot;);
                                                             <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="160px">
                                                             </dx:GridViewCommandColumn>
                                                             <dx:GridViewDataComboBoxColumn Caption="Cost Center" FieldName="CostCenterIOWBS" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                                <PropertiesComboBox DataSourceID="sqlCostCenter" TextField="CostCenter" ValueField="CostCenter_ID" TextFormatString="{0}">
-                                                                    <Columns>
-                                                                        <dx:ListBoxColumn Caption="Cost Center" FieldName="CostCenter">
-                                                                        </dx:ListBoxColumn>
-                                                                        <dx:ListBoxColumn Caption="Department" FieldName="Department" Width="300px">
-                                                                        </dx:ListBoxColumn>
-                                                                    </Columns>
+                                                                <PropertiesComboBox DataSourceID="SqlCostCenterAll" TextField="SAP_CostCenter" ValueField="SAP_CostCenter" TextFormatString="{0}">
                                                                 </PropertiesComboBox>
                                                             </dx:GridViewDataComboBoxColumn>
                                                             <dx:GridViewDataSpinEditColumn Caption="Allocated Amount" FieldName="NetAmount" ShowInCustomizationForm="True" VisibleIndex="2">
@@ -3615,7 +3593,7 @@ computeNetAmount(&quot;edit&quot;);
             <asp:Parameter DefaultValue="" Name="Exp_ID" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_SecurityUserDept] WHERE (([AppId] = @AppId) AND ([IsActive] = @IsActive) AND ([CompanyId] = @CompanyId) AND ([UserId] = @UserId))">
+    <asp:SqlDataSource ID="SqlDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_SecurityUserDept] WHERE (([AppId] = @AppId) AND ([IsActive] = @IsActive) AND ([CompanyId] = @CompanyId) AND ([UserId] = @UserId) AND ([SAP_CostCenter] IS NOT NULL)) ORDER BY [DepDesc]">
         <SelectParameters>
             <asp:Parameter DefaultValue="1032" Name="AppId" Type="Int32" />
             <asp:Parameter DefaultValue="true" Name="IsActive" Type="Boolean" />
@@ -3675,7 +3653,7 @@ computeNetAmount(&quot;edit&quot;);
         </DeleteParameters>
         <InsertParameters>
             <asp:Parameter Name="AccountToCharged" Type="Int32" />
-            <asp:Parameter Name="CostCenterIOWBS" Type="Int32" />
+            <asp:Parameter Name="CostCenterIOWBS" Type="String" />
             <asp:Parameter Name="VAT" Type="Decimal" />
             <asp:Parameter Name="EWT" Type="Decimal" />
             <asp:Parameter Name="NetAmount" Type="Decimal" />
@@ -3688,7 +3666,7 @@ computeNetAmount(&quot;edit&quot;);
         </SelectParameters>
         <UpdateParameters>
             <asp:Parameter Name="AccountToCharged" Type="Int32" />
-            <asp:Parameter Name="CostCenterIOWBS" Type="Int32" />
+            <asp:Parameter Name="CostCenterIOWBS" Type="String" />
             <asp:Parameter Name="VAT" Type="Decimal" />
             <asp:Parameter Name="EWT" Type="Decimal" />
             <asp:Parameter Name="NetAmount" Type="Decimal" />
@@ -3705,10 +3683,7 @@ computeNetAmount(&quot;edit&quot;);
             <asp:SessionParameter Name="ExpDetail_Id" SessionField="ExpDetailsID" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlCostCenterAll" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_CostCenterDept] WHERE ([CompanyId] = @CompanyId)">
-        <SelectParameters>
-            <asp:Parameter Name="CompanyId" Type="Int32" />
-        </SelectParameters>
+    <asp:SqlDataSource ID="SqlCostCenterAll" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([SAP_CostCenter] IS NOT NULL)">
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlUser" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_UserDelegationUMaster] WHERE (([DelegateTo_UserID] = @DelegateTo_UserID) AND ([Company_ID] = @Company_ID) AND ([DateFrom] &lt;= @DateFrom) AND ([DateTo] &gt;= @DateTo) AND ([IsActive] = @IsActive)) ORDER BY [FullName]">
         <SelectParameters>
@@ -3734,8 +3709,13 @@ computeNetAmount(&quot;edit&quot;);
             <asp:Parameter Name="Company_ID" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="sqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_CostCenter] ORDER BY [CostCenter]">
-    </asp:SqlDataSource>
+    <%--<asp:SqlDataSource ID="sqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_CostCenter] ORDER BY [CostCenter]">
+    </asp:SqlDataSource>--%>
+    <asp:SqlDataSource ID="sqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE (([Company_ID] = @Company_ID) AND ([SAP_CostCenter] IS NOT NULL)) ORDER BY [SAP_CostCenter]">
+        <SelectParameters>
+            <asp:Parameter Name="Company_ID" Type="Int32" />
+        </SelectParameters>
+</asp:SqlDataSource>
         <asp:SqlDataSource ID="SqlCompLocation" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_CompanyBranch] WHERE ([Comp_Id] = @Comp_Id)">
         <SelectParameters>
             <asp:Parameter Name="Comp_Id" Type="Int32" />

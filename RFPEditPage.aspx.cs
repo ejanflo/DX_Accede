@@ -74,7 +74,7 @@ namespace DX_WebTemplate
                         SqlDocs.SelectParameters["Doc_ID"].DefaultValue = rfp_id.ToString();
                         SqlDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType != null ? app_docType.DCT_Id.ToString() : null;
                         SqlCompLocation.SelectParameters["Comp_Id"].DefaultValue = rfp_details.ChargedTo_CompanyId.ToString();
-
+                        SqlCostCenterCT.SelectParameters["Company_ID"].DefaultValue = rfp_details.ChargedTo_CompanyId.ToString();
                         var depCode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == rfp_details.Department_ID).FirstOrDefault();
                         SqlWF.SelectParameters["DepCode"].DefaultValue = depCode.DepCode.ToString();
 
@@ -766,18 +766,28 @@ namespace DX_WebTemplate
 
         protected void drpdown_CostCenter_Callback(object sender, CallbackEventArgsBase e)
         {
-            var Dept_id = e.Parameter.ToString();
+            var param = e.Parameter.Split('|');
+            var comp_id = param[0];
+            var Dept_id = param[1] != "null" ? param[1] : "0";
 
-            SqlCostCenter.SelectParameters["DepartmentId"].DefaultValue = Dept_id;
-            SqlCostCenter.DataBind();
+            var dept_details = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(Dept_id)).FirstOrDefault();
+
+            SqlCostCenterCT.SelectParameters["Company_ID"].DefaultValue = comp_id.ToString();
+            SqlCostCenterCT.DataBind();
 
             drpdown_CostCenter.DataSourceID = null;
-            drpdown_CostCenter.DataSource = SqlCostCenter;
+            drpdown_CostCenter.DataSource = SqlCostCenterCT;
             drpdown_CostCenter.DataBind();
 
-            var count = drpdown_CostCenter.Items.Count;
-            if (count == 1)
-                drpdown_CostCenter.SelectedIndex = 0; drpdown_CostCenter.DataBind();
+            if (dept_details != null)
+            {
+                drpdown_CostCenter.Value = dept_details.SAP_CostCenter.ToString();
+            }
+
+
+            //var count = drpdown_CostCenter.Items.Count;
+            //if(count == 1)
+            //    drpdown_CostCenter.SelectedIndex = 0; drpdown_CostCenter.DataBind();
         }
 
         protected void drpdown_CTDepartment_Callback(object sender, CallbackEventArgsBase e)

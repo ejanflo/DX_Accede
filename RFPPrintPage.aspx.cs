@@ -92,12 +92,14 @@ namespace DX_WebTemplate
 
                         var ra1 = context.vw_ACCEDE_I_RAWFActivities.Where(x => x.Document_Id == id).Where(x => x.Status == 7)
                             .Where(x => x.IsRA == true)
+                            .Where(x => x.WF_Id == rfp.WF_Id)
                             .Where(x=>x.DCT_Name == "ACDE RFP")
                             .OrderBy(x => x.WFA_Id)
                             .FirstOrDefault();
 
                         var ra2 = context.vw_ACCEDE_I_RAWFActivities.Where(x => x.Document_Id == id).Where(x => x.Status == 7)
                             .Where(x => x.IsRA == true)
+                            .Where(x => x.WF_Id == rfp.WF_Id)
                             .Where(x => x.DCT_Name == "ACDE RFP")
                             .OrderBy(x => x.WFA_Id)
                             .Skip(1) // Skip the first row (index 0)
@@ -128,12 +130,18 @@ namespace DX_WebTemplate
 
                         var fin1 = context.vw_ACCEDE_I_WorkflowActivities.Where(x => x.Document_Id == id).Where(x => x.Status == 7)
                             .Where(x => x.IsRA == false || x.IsRA == null)
+                            .Where(x => !x.WF_Name.Contains("ACDE AUDIT"))
+                            .Where(x => !x.WF_Name.Contains("ACDE P2P"))
+                            .Where(x => !x.WF_Name.Contains("ACDE CASHIER"))
                             .Where(x => x.DCT_Name == "ACDE RFP")
                             .OrderBy(x => x.WFA_Id)
                             .FirstOrDefault();
 
                         var fin2 = context.vw_ACCEDE_I_WorkflowActivities.Where(x => x.Document_Id == id).Where(x => x.Status == 7)
                             .Where(x => x.IsRA == false || x.IsRA == null)
+                            .Where(x => !x.WF_Name.Contains("ACDE AUDIT"))
+                            .Where(x => !x.WF_Name.Contains("ACDE P2P"))
+                            .Where(x => !x.WF_Name.Contains("ACDE CASHIER"))
                             .Where(x => x.DCT_Name == "ACDE RFP")
                             .OrderBy(x => x.WFA_Id)
                             .Skip(1) // Skip the first row (index 0)
@@ -142,6 +150,9 @@ namespace DX_WebTemplate
 
                         var fin3 = context.vw_ACCEDE_I_WorkflowActivities.Where(x => x.Document_Id == id).Where(x => x.Status == 7)
                             .Where(x => x.IsRA == false || x.IsRA == null)
+                            .Where(x => !x.WF_Name.Contains("ACDE AUDIT"))
+                            .Where(x => !x.WF_Name.Contains("ACDE P2P"))
+                            .Where(x => !x.WF_Name.Contains("ACDE CASHIER"))
                             .Where(x => x.DCT_Name == "ACDE RFP")
                             .OrderBy(x => x.WFA_Id)
                             .Skip(2) // Skip the first row (index 0)
@@ -150,6 +161,9 @@ namespace DX_WebTemplate
 
                         var fin4 = context.vw_ACCEDE_I_WorkflowActivities.Where(x => x.Document_Id == id).Where(x => x.Status == 7)
                             .Where(x => x.IsRA == false || x.IsRA == null)
+                            .Where(x => !x.WF_Name.Contains("ACDE AUDIT"))
+                            .Where(x => !x.WF_Name.Contains("ACDE P2P"))
+                            .Where(x => !x.WF_Name.Contains("ACDE CASHIER"))
                             .Where(x => x.DCT_Name == "ACDE RFP")
                             .OrderBy(x => x.WFA_Id)
                             .Skip(3) // Skip the first row (index 0)

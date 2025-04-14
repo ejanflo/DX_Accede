@@ -51,8 +51,8 @@ namespace DX_WebTemplate
                     SqlDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType != null ? app_docType.DCT_Id.ToString() : null;
 
                     SqlCompany.SelectParameters["UserId"].DefaultValue = mainExp.ExpenseName.ToString();
-                    SqlCostCenterAll.SelectParameters["CompanyId"].DefaultValue = mainExp.ExpChargedTo_CompanyId.ToString();
-                    //sqlCostCenter.SelectParameters["DepartmentId"].DefaultValue = mainExp.ExpChargedTo_DeptId.ToString();
+                    //SqlCostCenterAll.SelectParameters["CompanyId"].DefaultValue = mainExp.ExpChargedTo_CompanyId.ToString();
+                    sqlCostCenter.SelectParameters["Company_ID"].DefaultValue = mainExp.ExpChargedTo_CompanyId.ToString();
 
                     SqlDepartment.SelectParameters["UserId"].DefaultValue = mainExp.ExpenseName.ToString();
                     //sqlCostCenter.SelectParameters["CompanyId"].DefaultValue = mainExp.CompanyId.ToString();
@@ -332,7 +332,7 @@ namespace DX_WebTemplate
                         dsExpAlloc = new DataSet();
                         DataTable masterTable = new DataTable();
                         masterTable.Columns.Add("ID", typeof(int));
-                        masterTable.Columns.Add("CostCenter", typeof(int));
+                        masterTable.Columns.Add("CostCenter", typeof(string));
                         masterTable.Columns.Add("NetAmount", typeof(decimal));
                         masterTable.Columns.Add("Remarks", typeof(string));
                         masterTable.PrimaryKey = new DataColumn[] { masterTable.Columns["ID"] };
@@ -703,7 +703,7 @@ namespace DX_WebTemplate
                         {
                             ACCEDE_T_ExpenseDetailsMap map = new ACCEDE_T_ExpenseDetailsMap();
                             {
-                                map.CostCenterIOWBS = Convert.ToInt32(row["CostCenter"]);
+                                map.CostCenterIOWBS = row["CostCenter"].ToString();
                                 map.NetAmount = Convert.ToDecimal(row["NetAmount"]);
                                 map.ExpenseReportDetail_ID = ExpDetail_ID;
                                 map.Preparer_ID = Session["userID"].ToString();
@@ -1059,9 +1059,13 @@ namespace DX_WebTemplate
 
         protected void costCenter_Callback(object sender, CallbackEventArgsBase e)
         {
-            sqlCostCenter.SelectParameters["CompanyId"].DefaultValue = exp_EmpId.Value.ToString();
+            var comp_id = e.Parameter.ToString();
+            sqlCostCenter.SelectParameters["Company_ID"].DefaultValue = comp_id;
             sqlCostCenter.DataBind();
 
+            costCenter.DataSourceID = null;
+            costCenter.DataSource = sqlCostCenter;
+            costCenter.DataBind();
         }
 
         protected void dept_reim_Callback(object sender, CallbackEventArgsBase e)
@@ -2381,18 +2385,28 @@ namespace DX_WebTemplate
 
         protected void drpdown_CostCenter_Callback(object sender, CallbackEventArgsBase e)
         {
-            var Dept_id = e.Parameter.ToString();
+            var param = e.Parameter.Split('|');
+            var comp_id = param[0];
+            var dept_id = param[1] != "null" ? param[1] : "0";
+            var CostCenter = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(dept_id)).FirstOrDefault();
 
-            sqlCostCenter.SelectParameters["DepartmentId"].DefaultValue = Dept_id;
+            sqlCostCenter.SelectParameters["Company_ID"].DefaultValue = comp_id;
             sqlCostCenter.DataBind();
 
-            drpdown_CostCenter.DataSourceID = null;
-            drpdown_CostCenter.DataSource = sqlCostCenter;
-            drpdown_CostCenter.DataBind();
+            //drpdown_CostCenter.DataSourceID = null;
+            //drpdown_CostCenter.DataSource = sqlCostCenter;
+            //drpdown_CostCenter.DataBind();
+            if (CostCenter != null)
+            {
+                drpdown_CostCenter.DataSourceID = null;
+                drpdown_CostCenter.DataSource = sqlCostCenter;
+                drpdown_CostCenter.DataBind();
+                drpdown_CostCenter.Value = CostCenter.SAP_CostCenter != null ? CostCenter.SAP_CostCenter.ToString() : "";
+            }
 
-            var count = drpdown_CostCenter.Items.Count;
-            if (count == 1)
-                drpdown_CostCenter.SelectedIndex = 0; drpdown_CostCenter.DataBind();
+            //var count = drpdown_CostCenter.Items.Count;
+            //if (count == 1)
+            //    drpdown_CostCenter.SelectedIndex = 0; drpdown_CostCenter.DataBind();
         }
 
         protected void exp_EmpId_Callback(object sender, CallbackEventArgsBase e)
@@ -2438,6 +2452,17 @@ namespace DX_WebTemplate
             exp_CompLocation.DataSourceID = null;
             exp_CompLocation.DataSource = SqlCompLocation;
             exp_CompLocation.DataBind();
+        }
+
+        protected void costCenter_edit_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var comp_id = e.Parameter.ToString();
+            sqlCostCenter.SelectParameters["Company_ID"].DefaultValue = comp_id;
+            sqlCostCenter.DataBind();
+
+            costCenter_edit.DataSourceID = null;
+            costCenter_edit.DataSource = sqlCostCenter;
+            costCenter_edit.DataBind();
         }
     }
 }

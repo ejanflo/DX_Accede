@@ -27,24 +27,25 @@
             drpdown_EmpId.PerformCallback(comp);
         }
         function OnDeptChanged(dept_id) {
-            $.ajax({
-                type: "POST",
-                url: "AccedeExpenseReportDashboard.aspx/GetCosCenterFrmDeptAJAX",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                data: JSON.stringify({
-                    dept_id: dept_id
-                }),
-                success: function (response) {
-                    // Update the description text box with the response value
-                    console.log(response.d);
-                    txtbox_CostCenter.SetValue(response.d);
-                    
-                },
-                error: function (xhr, status, error) {
-                    console.log("Error:", error);
-                }
-            });
+            //$.ajax({
+            //    type: "POST",
+            //    url: "AccedeExpenseReportDashboard.aspx/GetCosCenterFrmDeptAJAX",
+            //    contentType: "application/json; charset=utf-8",
+            //    dataType: "json",
+            //    data: JSON.stringify({
+            //        dept_id: dept_id
+            //    }),
+            //    success: function (response) {
+            //        // Update the description text box with the response value
+            //        console.log(response.d);
+            //        txtbox_CostCenter.SetValue(response.d);
+
+            //    },
+            //    error: function (xhr, status, error) {
+            //        console.log("Error:", error);
+            //    }
+            //});
+            drpdown_CostCenter.PerformCallback(drpdown_CTComp.GetValue() +"|"+ dept_id);
         }
 
         function onToolbarItemClick(s, e) { 
@@ -64,7 +65,7 @@
             var expDate = date_expDate.GetValue();
             var payType = drpdown_PayType.GetValue();
             var Comp = drpdown_Comp.GetValue() != null ? drpdown_Comp.GetValue() : "";
-            var CostCenter = txtbox_CostCenter.GetValue() != null ? txtbox_CostCenter.GetValue() : "";
+            var CostCenter = drpdown_CostCenter.GetValue() != null ? drpdown_CostCenter.GetValue() : "";
             var expCat = drpdown_expCat.GetValue();
             var Purpose = memo_Purpose.GetValue();
             var isTrav = rdButton_Trav.GetValue();
@@ -541,6 +542,7 @@
                                         <dx:ASPxComboBox ID="drpdown_CTComp" runat="server" Width="100%" DataSourceID="SqlUserCompany" TextField="CompanyShortName" ValueField="CompanyId" ClientInstanceName="drpdown_CTComp" OnCallback="drpdown_Comp_Callback">
                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	drpdown_CTDepartment.PerformCallback(s.GetValue());
+drpdown_CostCenter.SetValue(&quot;&quot;);
 drpdown_Department.PerformCallback(s.GetValue());
 OnCompanyChanged(s.GetValue());
 drpdown_Comp.SetValue(s.GetValue());
@@ -581,7 +583,7 @@ drpdown_CompLocation.PerformCallback(s.GetValue());
                             <dx:LayoutItem Caption="Charged To Department" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="drpdown_CTDepartment" runat="server" ClientInstanceName="drpdown_CTDepartment" DataSourceID="sqlDept" DropDownWidth="500px" NullValueItemDisplayText="{1}" OnCallback="drpdown_CTDepartment_Callback" TextField="DepDesc" TextFormatString="{1}" ValueField="ID" Width="100%">
+                                        <dx:ASPxComboBox ID="drpdown_CTDepartment" runat="server" ClientInstanceName="drpdown_CTDepartment" DataSourceID="SqlCTDepartment" DropDownWidth="500px" NullValueItemDisplayText="{1}" OnCallback="drpdown_CTDepartment_Callback" TextField="DepDesc" TextFormatString="{1}" ValueField="ID" Width="100%">
                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	OnDeptChanged(s.GetValue());
 }" />
@@ -612,11 +614,11 @@ drpdown_CompLocation.PerformCallback(s.GetValue());
                             <dx:LayoutItem Caption="Cost Center" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="txtbox_CostCenter" runat="server" ClientInstanceName="txtbox_CostCenter" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" ValidationGroup="CreateForm">
-                                                <RequiredField ErrorText="This field is required." IsRequired="True" />
+                                        <dx:ASPxComboBox ID="drpdown_CostCenter" runat="server" ClientInstanceName="drpdown_CostCenter" DataSourceID="SqlCostCenter" DropDownWidth="500px" OnCallback="drpdown_CostCenter_Callback" TextField="SAP_CostCenter" ValueField="SAP_CostCenter" Width="100%">
+                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreateForm">
+                                                <RequiredField ErrorText="Required field." IsRequired="True" />
                                             </ValidationSettings>
-                                        </dx:ASPxTextBox>
+                                        </dx:ASPxComboBox>
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
                             </dx:LayoutItem>
@@ -853,10 +855,12 @@ drpdown_CompLocation.PerformCallback(s.GetValue());
             <asp:Parameter Name="Company_ID" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="sqlDept" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT ID, DepCode, DepDesc FROM [vw_ACCEDE_I_SecurityUserDept] WHERE ([CompanyId] = @CompanyId) AND ([UserId] = @UserId) GROUP BY ID, DepDesc, DepCode">
+    <asp:SqlDataSource ID="sqlDept" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_SecurityUserDept] WHERE (([AppId] = @AppId) AND ([IsActive] = @IsActive) AND ([CompanyId] = @CompanyId) AND ([UserId] = @UserId)) ORDER BY [DepDesc]">
         <SelectParameters>
-            <asp:Parameter Name="CompanyId" Type="Int32" />
-            <asp:Parameter Name="UserId" Type="Int32" />
+            <asp:Parameter Name="AppId" Type="Int32" DefaultValue="1032" />
+            <asp:Parameter Name="IsActive" Type="Boolean" DefaultValue="true" />
+            <asp:Parameter DefaultValue="" Name="CompanyId" Type="Int32" />
+            <asp:Parameter Name="UserId" Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlPaymethod" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_PayMethod]"></asp:SqlDataSource>
@@ -880,16 +884,16 @@ drpdown_CompLocation.PerformCallback(s.GetValue());
             <asp:Parameter DefaultValue="true" Name="isActive" Type="Boolean" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlCTDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([Company_ID] = @Company_ID)">
+    <asp:SqlDataSource ID="SqlCTDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE (([Company_ID] = @Company_ID) AND ([SAP_CostCenter] IS NOT NULL))">
         <SelectParameters>
             <asp:Parameter Name="Company_ID" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_CostCenter] WHERE ([DepartmentId] = @DepartmentId)">
+        <asp:SqlDataSource ID="SqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE (([Company_ID] = @Company_ID) AND ([SAP_CostCenter] IS NOT NULL)) ORDER BY [SAP_CostCenter]">
         <SelectParameters>
-            <asp:Parameter Name="DepartmentId" Type="Int32" />
+            <asp:Parameter Name="Company_ID" Type="Int32" />
         </SelectParameters>
-    </asp:SqlDataSource>
+</asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlCompLocation" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_CompanyBranch] WHERE ([Comp_Id] = @Comp_Id)">
         <SelectParameters>
             <asp:Parameter Name="Comp_Id" Type="Int32" />

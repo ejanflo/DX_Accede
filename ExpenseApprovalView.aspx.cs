@@ -73,7 +73,7 @@ namespace DX_WebTemplate
                             SqlWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp.WF_Id).ToString();
                             SqlFAPWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp.FAPWF_Id).ToString();
 
-                            SqlCostCenterCT.SelectParameters["DepartmentId"].DefaultValue = Convert.ToInt32(exp.ExpChargedTo_DeptId).ToString();
+                            SqlCostCenterCT.SelectParameters["Company_ID"].DefaultValue = Convert.ToInt32(exp.ExpChargedTo_CompanyId).ToString();
 
                             var FinApproverVerify = _DataContext.vw_ACCEDE_FinApproverVerifies
                                 .Where(x => x.UserId == empCode)
@@ -1102,19 +1102,20 @@ namespace DX_WebTemplate
             ExpItemDetails exp = new ExpItemDetails();
             if(expMain != null)
             {
+                var expMainMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(expMain.ExpenseMain_ID)).FirstOrDefault();
                 var acct_charge = _DataContext.ACDE_T_MasterCodes
                     .Where(x => x.ID == Convert.ToInt32(expMain.AccountToCharged))
                     .FirstOrDefault();
 
                 //var cost_center = _DataContext.ACCEDE_S_CostCenters.Where(x=>x.CostCenter_ID == Convert.ToInt32(expMain.CostCenterIOWBS)).FirstOrDefault();
-                var cc = _DataContext.ACCEDE_S_CostCenters
-                    .Where(x=>x.CostCenter == expMain.CostCenterIOWBS)
+                var cc = _DataContext.ITP_S_OrgDepartmentMasters
+                    .Where(x=>x.ID == Convert.ToInt32(expMainMain.ExpChargedTo_DeptId))
                     .FirstOrDefault();
 
                 DateTime dateAdd = Convert.ToDateTime(expMain.DateAdded);
 
                 exp.acctCharge = acct_charge != null ? acct_charge.Description : "";
-                exp.costCenter = cc != null ? cc.CostCenter.ToString() + " - " + cc.Description.ToString() : "";
+                exp.costCenter = cc != null ? cc.SAP_CostCenter.ToString() : "";
                 exp.particulars = expMain.P_Name != null ? expMain.P_Name.ToString() : "";
                 exp.supplier = expMain.Supplier != null ? expMain.Supplier : "";
                 exp.tin = expMain.TIN != null ? expMain.TIN : "";
@@ -1174,6 +1175,12 @@ namespace DX_WebTemplate
                     {
                         emailSubMessage = "You can now proceed with the next steps based on the approved document. Please bring physical documents required by Audit";
                     }
+
+                    if (status2 == "ApprovedP2P")
+                    {
+                        emailSubMessage = "Procure to Payment has approved your request. You can now proceed with the next steps based on the approved document.";
+                    }
+
                     emailColor = text.Color.ToString();
                     emailMessage = text.Text1.ToString();
                     emailSubTitle = text.Text3.ToString();
@@ -1528,18 +1535,24 @@ namespace DX_WebTemplate
 
         protected void drpdown_CostCenter_Callback(object sender, CallbackEventArgsBase e)
         {
-            var Dept_id = e.Parameter.ToString();
+            var param = e.Parameter.Split('|');
+            var comp = param[0];
+            var dept = param[1];
 
-            SqlCostCenterCT.SelectParameters["DepartmentId"].DefaultValue = Dept_id;
+            SqlCostCenterCT.SelectParameters["Company_ID"].DefaultValue = comp;
             SqlCostCenterCT.DataBind();
+
+            var dept_details = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(dept)).FirstOrDefault();
 
             drpdown_CostCenter.DataSourceID = null;
             drpdown_CostCenter.DataSource = SqlCostCenterCT;
             drpdown_CostCenter.DataBind();
 
-            var count = drpdown_CostCenter.Items.Count;
-            if (count == 1)
-                drpdown_CostCenter.SelectedIndex = 0; drpdown_CostCenter.DataBind();
+            drpdown_CostCenter.Value = dept_details.SAP_CostCenter.ToString();
+
+            //var count = drpdown_CostCenter.Items.Count;
+            //if (count == 1)
+            //    drpdown_CostCenter.SelectedIndex = 0; drpdown_CostCenter.DataBind();
         }
     }
 

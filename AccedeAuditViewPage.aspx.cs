@@ -498,19 +498,20 @@ namespace DX_WebTemplate
             ExpItemDetails exp = new ExpItemDetails();
             if (expMain != null)
             {
+                var expMainMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(expMain.ExpenseMain_ID)).FirstOrDefault();
                 var acct_charge = _DataContext.ACDE_T_MasterCodes
                     .Where(x => x.ID == Convert.ToInt32(expMain.AccountToCharged))
                     .FirstOrDefault();
 
                 //var cost_center = _DataContext.ACCEDE_S_CostCenters.Where(x=>x.CostCenter_ID == Convert.ToInt32(expMain.CostCenterIOWBS)).FirstOrDefault();
-                var cc = _DataContext.ACCEDE_S_CostCenters
-                    .Where(x => x.CostCenter == expMain.CostCenterIOWBS)
+                var cc = _DataContext.ITP_S_OrgDepartmentMasters
+                    .Where(x => x.ID == Convert.ToInt32(expMainMain.ExpChargedTo_DeptId))
                     .FirstOrDefault();
 
                 DateTime dateAdd = Convert.ToDateTime(expMain.DateAdded);
 
                 exp.acctCharge = acct_charge != null ? acct_charge.Description : "";
-                exp.costCenter = cc != null ? cc.CostCenter.ToString() + " - " + cc.Description.ToString() : "";
+                exp.costCenter = cc != null ? cc.SAP_CostCenter.ToString() : "";
                 exp.particulars = expMain.P_Name != null ? expMain.P_Name.ToString() : "";
                 exp.supplier = expMain.Supplier != null ? expMain.Supplier : "";
                 exp.tin = expMain.TIN != null ? expMain.TIN : "";
