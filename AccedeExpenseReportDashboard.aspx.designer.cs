@@ -123,13 +123,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxDateEdit date_expDate;
 
         /// <summary>
-        /// txtbox_CostCenter control.
+        /// drpdown_CostCenter control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox txtbox_CostCenter;
+        protected global::DevExpress.Web.ASPxComboBox drpdown_CostCenter;
 
         /// <summary>
         /// drpdown_PayType control.

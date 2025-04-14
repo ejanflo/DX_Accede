@@ -118,32 +118,47 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="customSqlQuery1.Sql" xml:space="preserve">
-    <value>select "ACCEDE_T_ExpenseDetails"."InvoiceOR",
-       "ACCEDE_T_ExpenseDetailsMap"."ExpenseDetailMap_ID",
-       "ACCEDE_T_ExpenseDetailsMap"."AccountToCharged",
-       "ACCEDE_T_ExpenseDetailsMap"."CostCenterIOWBS",
-       "ACCEDE_T_ExpenseDetailsMap"."VAT",
-       "ACCEDE_T_ExpenseDetailsMap"."EWT",
-       "ACCEDE_T_ExpenseDetailsMap"."NetAmount",
-       "ACCEDE_T_ExpenseDetailsMap"."ExpenseReportDetail_ID",
-       "ACCEDE_T_ExpenseDetailsMap"."Preparer_ID",
-       "ACCEDE_S_CostCenter"."CostCenter",
-       "ACCEDE_T_ExpenseMain"."ID",
-       "ACCEDE_S_CostCenter"."Department"
-  from ((("dbo"."ACCEDE_T_ExpenseDetailsMap"
-       "ACCEDE_T_ExpenseDetailsMap"
-  inner join "dbo"."ACCEDE_T_ExpenseDetails"
-       "ACCEDE_T_ExpenseDetails"
-       on ("ACCEDE_T_ExpenseDetails"."ExpenseReportDetail_ID" = "ACCEDE_T_ExpenseDetailsMap"."ExpenseReportDetail_ID"))
-  inner join "dbo"."ACCEDE_S_CostCenter"
-       "ACCEDE_S_CostCenter"
-       on ("ACCEDE_S_CostCenter"."CostCenter_ID" = "ACCEDE_T_ExpenseDetailsMap"."CostCenterIOWBS"))
-  inner join "dbo"."ACCEDE_T_ExpenseMain"
-       "ACCEDE_T_ExpenseMain"
-       on ("ACCEDE_T_ExpenseMain"."ID" = "ACCEDE_T_ExpenseDetails"."ExpenseMain_ID"))
-  order by "ACCEDE_T_ExpenseDetailsMap"."ExpenseReportDetail_ID"</value>
+    <value>SELECT 
+    "ACCEDE_T_ExpenseDetails"."InvoiceOR",
+    "ACCEDE_T_ExpenseDetailsMap"."ExpenseDetailMap_ID",
+    "ACCEDE_T_ExpenseDetailsMap"."AccountToCharged",
+    "ACCEDE_T_ExpenseDetailsMap"."CostCenterIOWBS",
+    "ACCEDE_T_ExpenseDetailsMap"."VAT",
+    "ACCEDE_T_ExpenseDetailsMap"."EWT",
+    "ACCEDE_T_ExpenseDetailsMap"."NetAmount",
+    "ACCEDE_T_ExpenseDetailsMap"."ExpenseReportDetail_ID",
+    "ACCEDE_T_ExpenseDetailsMap"."Preparer_ID",
+    "ITP_S_OrgDepartmentMaster"."SAP_CostCenter",
+    "ACCEDE_T_ExpenseMain"."ID",
+    "ITP_S_OrgDepartmentMaster"."DepDesc"
+FROM 
+    "dbo"."ACCEDE_T_ExpenseDetailsMap" "ACCEDE_T_ExpenseDetailsMap"
+INNER JOIN 
+    "dbo"."ACCEDE_T_ExpenseDetails" "ACCEDE_T_ExpenseDetails"
+    ON "ACCEDE_T_ExpenseDetails"."ExpenseReportDetail_ID" = "ACCEDE_T_ExpenseDetailsMap"."ExpenseReportDetail_ID"
+LEFT OUTER JOIN 
+    "dbo"."ITP_S_OrgDepartmentMaster" "ITP_S_OrgDepartmentMaster"
+    ON "ITP_S_OrgDepartmentMaster"."SAP_CostCenter" = "ACCEDE_T_ExpenseDetailsMap"."CostCenterIOWBS"
+INNER JOIN 
+    "dbo"."ACCEDE_T_ExpenseMain" "ACCEDE_T_ExpenseMain"
+    ON "ACCEDE_T_ExpenseMain"."ID" = "ACCEDE_T_ExpenseDetails"."ExpenseMain_ID"
+GROUP BY 
+    "ACCEDE_T_ExpenseDetails"."InvoiceOR",
+    "ACCEDE_T_ExpenseDetailsMap"."ExpenseDetailMap_ID",
+    "ACCEDE_T_ExpenseDetailsMap"."AccountToCharged",
+    "ACCEDE_T_ExpenseDetailsMap"."CostCenterIOWBS",
+    "ACCEDE_T_ExpenseDetailsMap"."VAT",
+    "ACCEDE_T_ExpenseDetailsMap"."EWT",
+    "ACCEDE_T_ExpenseDetailsMap"."NetAmount",
+    "ACCEDE_T_ExpenseDetailsMap"."ExpenseReportDetail_ID",
+    "ACCEDE_T_ExpenseDetailsMap"."Preparer_ID",
+    "ITP_S_OrgDepartmentMaster"."SAP_CostCenter",
+    "ACCEDE_T_ExpenseMain"."ID",
+    "ITP_S_OrgDepartmentMaster"."DepDesc"
+ORDER BY 
+    "ACCEDE_T_ExpenseDetailsMap"."ExpenseReportDetail_ID";</value>
   </data>
   <data name="sqlDataSource1.ResultSchemaSerializable" xml:space="preserve">
-    <value>PERhdGFTZXQgTmFtZT0ic3FsRGF0YVNvdXJjZTEiPjxWaWV3IE5hbWU9IkFDQ0VERV9UX0V4cGVuc2VEZXRhaWxzTWFwXzEiPjxGaWVsZCBOYW1lPSJJbnZvaWNlT1IiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iRXhwZW5zZURldGFpbE1hcF9JRCIgVHlwZT0iSW50MzIiIC8+PEZpZWxkIE5hbWU9IkFjY291bnRUb0NoYXJnZWQiIFR5cGU9IkludDMyIiAvPjxGaWVsZCBOYW1lPSJDb3N0Q2VudGVySU9XQlMiIFR5cGU9IkludDMyIiAvPjxGaWVsZCBOYW1lPSJWQVQiIFR5cGU9IkRlY2ltYWwiIC8+PEZpZWxkIE5hbWU9IkVXVCIgVHlwZT0iRGVjaW1hbCIgLz48RmllbGQgTmFtZT0iTmV0QW1vdW50IiBUeXBlPSJEZWNpbWFsIiAvPjxGaWVsZCBOYW1lPSJFeHBlbnNlUmVwb3J0RGV0YWlsX0lEIiBUeXBlPSJJbnQzMiIgLz48RmllbGQgTmFtZT0iUHJlcGFyZXJfSUQiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iQ29zdENlbnRlciIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJJRCIgVHlwZT0iSW50MzIiIC8+PEZpZWxkIE5hbWU9IkRlcGFydG1lbnQiIFR5cGU9IlN0cmluZyIgLz48L1ZpZXc+PC9EYXRhU2V0Pg==</value>
+    <value>PERhdGFTZXQgTmFtZT0ic3FsRGF0YVNvdXJjZTEiPjxWaWV3IE5hbWU9IkFDQ0VERV9UX0V4cGVuc2VEZXRhaWxzTWFwXzEiPjxGaWVsZCBOYW1lPSJJbnZvaWNlT1IiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iRXhwZW5zZURldGFpbE1hcF9JRCIgVHlwZT0iSW50MzIiIC8+PEZpZWxkIE5hbWU9IkFjY291bnRUb0NoYXJnZWQiIFR5cGU9IkludDMyIiAvPjxGaWVsZCBOYW1lPSJDb3N0Q2VudGVySU9XQlMiIFR5cGU9IkludDMyIiAvPjxGaWVsZCBOYW1lPSJWQVQiIFR5cGU9IkRlY2ltYWwiIC8+PEZpZWxkIE5hbWU9IkVXVCIgVHlwZT0iRGVjaW1hbCIgLz48RmllbGQgTmFtZT0iTmV0QW1vdW50IiBUeXBlPSJEZWNpbWFsIiAvPjxGaWVsZCBOYW1lPSJFeHBlbnNlUmVwb3J0RGV0YWlsX0lEIiBUeXBlPSJJbnQzMiIgLz48RmllbGQgTmFtZT0iUHJlcGFyZXJfSUQiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iU0FQX0Nvc3RDZW50ZXIiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iSUQiIFR5cGU9IkludDMyIiAvPjxGaWVsZCBOYW1lPSJEZXBEZXNjIiBUeXBlPSJTdHJpbmciIC8+PC9WaWV3PjwvRGF0YVNldD4=</value>
   </data>
 </root>

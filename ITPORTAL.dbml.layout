@@ -129,14 +129,14 @@
         <classShapeMoniker Id="62d68465-2518-44c7-9974-d2df9d274728" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(5.968748 : 10.6074039713542); (5.968748 : 10.6875); (7.0625 : 10.6875); (7.0625 : 19.1162019856771); (7 : 19.1162019856771)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(6.0000005 : 10.6074039713542); (6.0000005 : 10.6875); (7.0625 : 10.6875); (7.0625 : 19.1162019856771); (7 : 19.1162019856771)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_SecurityOrgRole/ITP_S_SecurityOrgRole_ITP_S_SecurityUserOrgRole" />
       <nodes>
         <classShapeMoniker Id="b41b6e4a-6187-4e97-941d-39b1b036318d" />
         <classShapeMoniker Id="265283d0-c9ae-4531-8cdd-148b4cadc3f4" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(7 : 10.6074039713542); (7.25 : 10.75)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(6.99999999999994 : 10.6074039713542); (7.25 : 10.75)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_SecurityOrgRole/ITP_S_SecurityOrgRole_ITP_S_SecurityOrgRole_AppRole" />
       <nodes>
         <classShapeMoniker Id="b41b6e4a-6187-4e97-941d-39b1b036318d" />
@@ -157,7 +157,7 @@
         <classShapeMoniker Id="81128d5a-0277-4043-a70a-20632f80b2de" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(4.75 : 19.24240034375); (4.76041666666667 : 19.24240034375 : JumpStart); (4.92708333333333 : 19.24240034375 : JumpEnd); (4.9375 : 19.24240034375); (4.9375 : 14.5376611328125); (6 : 14.5376611328125); (6 : 14.4439111328125)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(4.75 : 19.24240034375); (4.9375 : 19.24240034375); (4.9375 : 14.5376611328125); (6 : 14.5376611328125); (6 : 14.4439111328125)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_SecurityApp/ITP_S_SecurityApp_ITP_S_SecurityPage" />
       <nodes>
         <classShapeMoniker Id="62d68465-2518-44c7-9974-d2df9d274728" />
@@ -199,7 +199,7 @@
         <classShapeMoniker Id="ff8dc947-be66-4bc0-9d6f-df130ee38c36" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(4.75 : 17.0420926274539); (4.76041666666667 : 17.0420926274539 : JumpStart); (4.92708333333333 : 17.0420926274539 : JumpEnd); (4.96875 : 17.0420926274539); (4.96875 : 14.5625); (7.125 : 14.5625); (7.125 : 13.8125); (7.13541666666667 : 13.8125 : JumpStart); (7.30208333333333 : 13.8125 : JumpEnd); (7.7500005 : 13.8125); (7.7500005 : 13.875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(4.75 : 17.0420926274539); (4.96875 : 17.0420926274539); (4.96875 : 14.5625); (7.125 : 14.5625); (7.125 : 13.8125); (7.13541666666667 : 13.8125 : JumpStart); (7.30208333333333 : 13.8125 : JumpEnd); (7.7500005 : 13.8125); (7.7500005 : 13.875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_SecurityRole/ITP_S_SecurityRole_ITP_S_SecurityUserAppRole" />
       <nodes>
         <classShapeMoniker Id="86688401-531d-4c70-b470-02e7d53710d2" />
@@ -242,14 +242,14 @@
         <elementListCompartment Id="b422dbde-1f7d-443b-9401-26c33f29db1a" absoluteBounds="2.7650000000000006, 26.835, 1.9700000000000002, 3.3262125651041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(5 : 9.24120198567708); (4.90625 : 9.24120198567708); (4.90625 : 20.53125); (6 : 20.53125); (6 : 20.625)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(5 : 9.24120198567708); (4.90625 : 9.24120198567708); (4.90625 : 20.53125); (6 : 20.53125); (6 : 20.625)]" fixedFrom="Algorithm" fixedTo="Algorithm">
       <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_SecurityOrgRole/ITP_S_SecurityOrgRole_ITP_S_WorkflowDetail" />
       <nodes>
         <classShapeMoniker Id="b41b6e4a-6187-4e97-941d-39b1b036318d" />
         <classShapeMoniker Id="c4971415-efc2-4d45-9493-33e7606086dc" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(4.281252 : 26.375); (4.281252 : 26.3125); (4.9375 : 26.3125); (4.9375 : 22.4719555664062); (5 : 22.4719555664062)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(4.281252 : 26.375); (4.281252 : 26.3125); (4.68229166666667 : 26.3125 : JumpStart); (4.86458333333333 : 26.3125 : JumpEnd); (4.9375 : 26.3125); (4.9375 : 22.4719555664062); (5 : 22.4719555664062)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ITPORTALDataContext/ITP_S_WorkflowHeader/ITP_S_WorkflowHeader_ITP_S_WorkflowDetail" />
       <nodes>
         <classShapeMoniker Id="94eaf726-a367-460a-96cd-f3ebf891e702" />
@@ -452,12 +452,6 @@
         <elementListCompartment Id="532ca1f7-110f-493e-9ad0-a67abb97776c" absoluteBounds="5.015, 3.585, 1.9700000000000002, 4.095418294270833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="fc21d928-4d36-46fd-b55e-6b8171fb4f86" absoluteBounds="2.75, 7.25, 2, 4.6554182942708326">
-      <DataClassMoniker Name="/ITPORTALDataContext/vw_ACCEDE_I_WorkflowActivity" />
-      <nestedChildShapes>
-        <elementListCompartment Id="83c7bea8-64d2-4e3f-a5d5-aaf9eccb5da3" absoluteBounds="2.765, 7.71, 1.9700000000000002, 4.095418294270833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
-      </nestedChildShapes>
-    </classShape>
     <classShape Id="f3b60536-abb2-4a2e-8974-5e357e241002" absoluteBounds="11.75, 19.5, 2, 4.2708154296875">
       <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_T_ExpenseDetail" />
       <nestedChildShapes>
@@ -480,12 +474,6 @@
       <DataClassMoniker Name="/ITPORTALDataContext/vw_ACCEDE_I_UserWFAccess" />
       <nestedChildShapes>
         <elementListCompartment Id="a16a4d76-ff8e-4270-97a9-af0e78d2ece4" absoluteBounds="2.765, 21.335, 1.9700000000000002, 3.3262125651041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
-      </nestedChildShapes>
-    </classShape>
-    <classShape Id="6b37555e-011b-403b-829d-715e99ca0382" absoluteBounds="0.5, 15.25, 2, 2.5401025390625">
-      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_T_ExpenseDetailsMap" />
-      <nestedChildShapes>
-        <elementListCompartment Id="443b4bfd-1022-4e9d-a47d-40874ad3cabe" absoluteBounds="0.515, 15.71, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="6200d279-e87c-4507-b638-0e17f7de2275" absoluteBounds="16.25, 0.5, 2.625, 1.5785953776041666">
@@ -606,6 +594,18 @@
       <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_S_CostCenter" />
       <nestedChildShapes>
         <elementListCompartment Id="d1015d97-899e-47b1-80b9-abf3b459f86c" absoluteBounds="14.015, 2.71, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="0e307583-ce02-4d25-a18f-859fc4640434" absoluteBounds="0.5, 15.25, 2, 2.5401025390625">
+      <DataClassMoniker Name="/ITPORTALDataContext/ACCEDE_T_ExpenseDetailsMap" />
+      <nestedChildShapes>
+        <elementListCompartment Id="4e91be9d-8270-47da-bcb4-33659cb90fd3" absoluteBounds="0.515, 15.71, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="c2e6ed8e-7921-4b74-a656-049457bdcecc" absoluteBounds="2.75, 7.125, 2, 4.8477197265625">
+      <DataClassMoniker Name="/ITPORTALDataContext/vw_ACCEDE_I_WorkflowActivity" />
+      <nestedChildShapes>
+        <elementListCompartment Id="a10a4c8e-1729-4a8d-bcb4-d4cec0cec0d4" absoluteBounds="2.765, 7.585, 1.9700000000000002, 4.2877197265625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
   </nestedChildShapes>

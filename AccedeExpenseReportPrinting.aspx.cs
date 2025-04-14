@@ -82,12 +82,14 @@ namespace DX_WebTemplate
 
                     var ra1 = context.vw_ACCEDE_I_RAWFActivities.Where(x => x.Document_Id == em.ID).Where(x => x.Status == 7)
                         .Where(x => x.IsRA == true)
+                        .Where(x=>x.WF_Id == em.WF_Id)
                         .Where(x => x.DCT_Name == "ACDE Expense")
                         .OrderBy(x => x.WFA_Id)
                         .FirstOrDefault();
 
                     var ra2 = context.vw_ACCEDE_I_RAWFActivities.Where(x => x.Document_Id == em.ID).Where(x => x.Status == 7)
                         .Where(x => x.IsRA == true)
+                        .Where(x => x.WF_Id == em.WF_Id)
                         .Where(x => x.DCT_Name == "ACDE Expense")
                         .OrderBy(x => x.WFA_Id)
                         .Skip(1) // Skip the first row (index 0)
@@ -116,39 +118,32 @@ namespace DX_WebTemplate
                         recAppr2Date = Convert.ToDateTime("01/01/0001");
                     }
 
-                    var fin1 = context.vw_ACCEDE_I_WorkflowActivities.Where(x => x.Document_Id == em.ID).Where(x => x.Status == 7)
+                    var fin = context.vw_ACCEDE_I_WorkflowActivities
+                        .Where(x => x.Document_Id == em.ID)
+                        .Where(x => x.Status == 7)
                         .Where(x => x.IsRA == false || x.IsRA == null)
                         .Where(x => x.DCT_Name == "ACDE Expense")
-                        .Where(x=>x.WF_Id == em.FAPWF_Id)
+                        .Where(x => !x.WF_Name.Contains("ACDE AUDIT"))
+                        .Where(x => !x.WF_Name.Contains("ACDE P2P"))
+                        .Where(x => !x.WF_Name.Contains("ACDE CASHIER"))
                         .OrderBy(x => x.WFA_Id)
-                        .FirstOrDefault();
+                        .GroupBy(x => x.ActedBy_User_Id) // group by WF_Name to avoid duplicates
+                        .Select(g => g.First())  // get the first item from each group
+                        .OrderBy(x => x.WFA_Id); // Optional: to re-sort ascending
 
-                    var fin2 = context.vw_ACCEDE_I_WorkflowActivities.Where(x => x.Document_Id == em.ID).Where(x => x.Status == 7)
-                        .Where(x => x.IsRA == false || x.IsRA == null)
-                        .Where(x => x.DCT_Name == "ACDE Expense")
-                        .Where(x => x.WF_Id == em.FAPWF_Id)
-                        .OrderBy(x => x.WFA_Id)
-                        .Skip(1) // Skip the first row (index 0)
-                        .Take(1) // Take only one row (index 1)
-                        .SingleOrDefault(); // Retrieve the single result;
+                    var fin1 = fin.FirstOrDefault();
 
-                    var fin3 = context.vw_ACCEDE_I_WorkflowActivities.Where(x => x.Document_Id == em.ID).Where(x => x.Status == 7)
-                        .Where(x => x.IsRA == false || x.IsRA == null)
-                        .Where(x => x.DCT_Name == "ACDE Expense")
-                        .Where(x => x.WF_Id == em.FAPWF_Id)
-                        .OrderBy(x => x.WFA_Id)
-                        .Skip(2) // Skip the first row (index 0)
-                        .Take(1) // Take only one row (index 1)
-                        .SingleOrDefault(); // Retrieve the single result;
+                    var fin2 = fin.Skip(1)
+                        .Take(1)
+                        .SingleOrDefault();
 
-                    var fin4 = context.vw_ACCEDE_I_WorkflowActivities.Where(x => x.Document_Id == em.ID).Where(x => x.Status == 7)
-                        .Where(x => x.IsRA == false || x.IsRA == null)
-                        .Where(x => x.DCT_Name == "ACDE Expense")
-                        .Where(x => x.WF_Id == em.FAPWF_Id)
-                        .OrderBy(x => x.WFA_Id)
-                        .Skip(3) // Skip the first row (index 0)
-                        .Take(1) // Take only one row (index 1)
-                        .SingleOrDefault(); // Retrieve the single result;
+                    var fin3 = fin.Skip(2)
+                        .Take(1)
+                        .SingleOrDefault();
+
+                    var fin4 = fin.Skip(3)
+                        .Take(1)
+                        .SingleOrDefault();
 
                     var fin1_id = fin1 != null ? fin1.ActedBy_User_Id : "";
                     var fin2_id = fin2 != null ? fin2.ActedBy_User_Id : "";

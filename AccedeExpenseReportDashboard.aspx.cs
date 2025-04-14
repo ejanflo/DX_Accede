@@ -131,8 +131,11 @@ namespace DX_WebTemplate
                 //Get the value of the "Status" column for the current row
                 object statusValue = expenseGrid.GetRowValues(e.VisibleIndex, "Status");
                 var PendingAuditStat = context.ITP_S_Status.Where(x => x.STS_Name == "Pending at Audit").FirstOrDefault();
+                var liquidationDoc = context.ACCEDE_S_ExpenseTypes.Where(x => x.Description == "Liquidation").FirstOrDefault();
+                var doc_id = expenseGrid.GetRowValues(e.VisibleIndex, "ID").ToString();
+                var expDetails = context.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(doc_id)).FirstOrDefault();
                 //Check if the status is "saved" and make the button visible accordingly
-                if (statusValue != null && (statusValue.ToString() == PendingAuditStat.STS_Id.ToString()))
+                if (statusValue != null && (statusValue.ToString() == PendingAuditStat.STS_Id.ToString()) && expDetails.ExpenseType_ID == Convert.ToInt32(liquidationDoc.ExpenseType_ID))
                     e.Visible = DevExpress.Utils.DefaultBoolean.True;
                 else
                     e.Visible = DevExpress.Utils.DefaultBoolean.False;
@@ -146,14 +149,19 @@ namespace DX_WebTemplate
 
         protected void drpdown_CostCenter_Callback(object sender, CallbackEventArgsBase e)
         {
-            SqlCostCenter.SelectParameters["DepartmentId"].DefaultValue = drpdown_Department.Value != null ? drpdown_Department.Value.ToString() : "";
+            var param = e.Parameter.Split('|');
+            var comp = param[0];
+            var dept = param[1];
+            SqlCostCenter.SelectParameters["Company_ID"].DefaultValue = comp;
             SqlCostCenter.DataBind();
 
-            //drpdown_CostCenter.DataSourceID = null;
-            //drpdown_CostCenter.DataSource = SqlCostCenter;
-            //drpdown_CostCenter.DataBindItems();
+            drpdown_CostCenter.DataSourceID = null;
+            drpdown_CostCenter.DataSource = SqlCostCenter;
+            drpdown_CostCenter.DataBind();
 
-            //if(drpdown_CostCenter.Items.Count == 1)
+            var dept_details = context.ITP_S_OrgDepartmentMasters.Where(x=>x.ID == Convert.ToInt32(dept)).FirstOrDefault();
+            drpdown_CostCenter.Value = dept_details.SAP_CostCenter.ToString();
+            //if (drpdown_CostCenter.Items.Count == 1)
             //{
             //    drpdown_CostCenter.SelectedIndex = 0;
             //}
@@ -224,8 +232,8 @@ namespace DX_WebTemplate
                         main.Dept_Id = Convert.ToInt32(department);
                     }
                     main.ExpenseClassification = Convert.ToInt32(classification);
-                    //main.ExpChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
-                    //main.ExpChargedTo_DeptId = Convert.ToInt32(CTDept_id);
+                    main.ExpChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
+                    main.ExpChargedTo_DeptId = Convert.ToInt32(CTDept_id);
                     main.ExpComp_Location_Id = Convert.ToInt32(CompLoc);
                 }
                 context.ACCEDE_T_ExpenseMains.InsertOnSubmit(main);
@@ -394,5 +402,6 @@ namespace DX_WebTemplate
             drpdown_CompLocation.DataSource = SqlCompLocation;
             drpdown_CompLocation.DataBind();
         }
+
     }
 }

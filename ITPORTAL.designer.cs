@@ -180,9 +180,6 @@ namespace DX_WebTemplate
     partial void InsertACCEDE_T_ExpenseDetailFileAttach(ACCEDE_T_ExpenseDetailFileAttach instance);
     partial void UpdateACCEDE_T_ExpenseDetailFileAttach(ACCEDE_T_ExpenseDetailFileAttach instance);
     partial void DeleteACCEDE_T_ExpenseDetailFileAttach(ACCEDE_T_ExpenseDetailFileAttach instance);
-    partial void InsertACCEDE_T_ExpenseDetailsMap(ACCEDE_T_ExpenseDetailsMap instance);
-    partial void UpdateACCEDE_T_ExpenseDetailsMap(ACCEDE_T_ExpenseDetailsMap instance);
-    partial void DeleteACCEDE_T_ExpenseDetailsMap(ACCEDE_T_ExpenseDetailsMap instance);
     partial void InsertACCEDE_T_TravelForAccounting(ACCEDE_T_TravelForAccounting instance);
     partial void UpdateACCEDE_T_TravelForAccounting(ACCEDE_T_TravelForAccounting instance);
     partial void DeleteACCEDE_T_TravelForAccounting(ACCEDE_T_TravelForAccounting instance);
@@ -237,6 +234,9 @@ namespace DX_WebTemplate
     partial void InsertACCEDE_S_CostCenter(ACCEDE_S_CostCenter instance);
     partial void UpdateACCEDE_S_CostCenter(ACCEDE_S_CostCenter instance);
     partial void DeleteACCEDE_S_CostCenter(ACCEDE_S_CostCenter instance);
+    partial void InsertACCEDE_T_ExpenseDetailsMap(ACCEDE_T_ExpenseDetailsMap instance);
+    partial void UpdateACCEDE_T_ExpenseDetailsMap(ACCEDE_T_ExpenseDetailsMap instance);
+    partial void DeleteACCEDE_T_ExpenseDetailsMap(ACCEDE_T_ExpenseDetailsMap instance);
     #endregion
 		
 		public ITPORTALDataContext(string connection) : 
@@ -695,14 +695,6 @@ namespace DX_WebTemplate
 			}
 		}
 		
-		public System.Data.Linq.Table<vw_ACCEDE_I_WorkflowActivity> vw_ACCEDE_I_WorkflowActivities
-		{
-			get
-			{
-				return this.GetTable<vw_ACCEDE_I_WorkflowActivity>();
-			}
-		}
-		
 		public System.Data.Linq.Table<ACCEDE_T_ExpenseDetail> ACCEDE_T_ExpenseDetails
 		{
 			get
@@ -732,14 +724,6 @@ namespace DX_WebTemplate
 			get
 			{
 				return this.GetTable<vw_ACCEDE_I_UserWFAccess>();
-			}
-		}
-		
-		public System.Data.Linq.Table<ACCEDE_T_ExpenseDetailsMap> ACCEDE_T_ExpenseDetailsMaps
-		{
-			get
-			{
-				return this.GetTable<ACCEDE_T_ExpenseDetailsMap>();
 			}
 		}
 		
@@ -900,6 +884,22 @@ namespace DX_WebTemplate
 			get
 			{
 				return this.GetTable<ACCEDE_S_CostCenter>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ACCEDE_T_ExpenseDetailsMap> ACCEDE_T_ExpenseDetailsMaps
+		{
+			get
+			{
+				return this.GetTable<ACCEDE_T_ExpenseDetailsMap>();
+			}
+		}
+		
+		public System.Data.Linq.Table<vw_ACCEDE_I_WorkflowActivity> vw_ACCEDE_I_WorkflowActivities
+		{
+			get
+			{
+				return this.GetTable<vw_ACCEDE_I_WorkflowActivity>();
 			}
 		}
 	}
@@ -17404,375 +17404,6 @@ namespace DX_WebTemplate
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.vw_ACCEDE_I_WorkflowActivity")]
-	public partial class vw_ACCEDE_I_WorkflowActivity
-	{
-		
-		private int _WFA_Id;
-		
-		private System.Nullable<int> _Status;
-		
-		private System.Nullable<System.DateTime> _DateAssigned;
-		
-		private System.Nullable<System.DateTime> _DateAction;
-		
-		private System.Nullable<int> _OrgRole_Id;
-		
-		private System.Nullable<int> _WF_Id;
-		
-		private System.Nullable<int> _WFD_Id;
-		
-		private System.Nullable<bool> _IsActive;
-		
-		private System.Nullable<bool> _IsDelete;
-		
-		private System.Nullable<System.DateTime> _DateCreated;
-		
-		private System.Nullable<int> _Document_Id;
-		
-		private string _Remarks;
-		
-		private System.Nullable<int> _AppId;
-		
-		private System.Nullable<int> _CompanyId;
-		
-		private System.Nullable<int> _OrgRole_Id_Orig;
-		
-		private System.Nullable<bool> _IsDelegated;
-		
-		private string _ActedBy_User_Id;
-		
-		private System.Nullable<bool> _IsRA;
-		
-		private string _UserId;
-		
-		private string _DCT_Name;
-		
-		public vw_ACCEDE_I_WorkflowActivity()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WFA_Id", DbType="Int NOT NULL")]
-		public int WFA_Id
-		{
-			get
-			{
-				return this._WFA_Id;
-			}
-			set
-			{
-				if ((this._WFA_Id != value))
-				{
-					this._WFA_Id = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Status", DbType="Int")]
-		public System.Nullable<int> Status
-		{
-			get
-			{
-				return this._Status;
-			}
-			set
-			{
-				if ((this._Status != value))
-				{
-					this._Status = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DateAssigned", DbType="SmallDateTime")]
-		public System.Nullable<System.DateTime> DateAssigned
-		{
-			get
-			{
-				return this._DateAssigned;
-			}
-			set
-			{
-				if ((this._DateAssigned != value))
-				{
-					this._DateAssigned = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DateAction", DbType="SmallDateTime")]
-		public System.Nullable<System.DateTime> DateAction
-		{
-			get
-			{
-				return this._DateAction;
-			}
-			set
-			{
-				if ((this._DateAction != value))
-				{
-					this._DateAction = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OrgRole_Id", DbType="Int")]
-		public System.Nullable<int> OrgRole_Id
-		{
-			get
-			{
-				return this._OrgRole_Id;
-			}
-			set
-			{
-				if ((this._OrgRole_Id != value))
-				{
-					this._OrgRole_Id = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WF_Id", DbType="Int")]
-		public System.Nullable<int> WF_Id
-		{
-			get
-			{
-				return this._WF_Id;
-			}
-			set
-			{
-				if ((this._WF_Id != value))
-				{
-					this._WF_Id = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WFD_Id", DbType="Int")]
-		public System.Nullable<int> WFD_Id
-		{
-			get
-			{
-				return this._WFD_Id;
-			}
-			set
-			{
-				if ((this._WFD_Id != value))
-				{
-					this._WFD_Id = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsActive", DbType="Bit")]
-		public System.Nullable<bool> IsActive
-		{
-			get
-			{
-				return this._IsActive;
-			}
-			set
-			{
-				if ((this._IsActive != value))
-				{
-					this._IsActive = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsDelete", DbType="Bit")]
-		public System.Nullable<bool> IsDelete
-		{
-			get
-			{
-				return this._IsDelete;
-			}
-			set
-			{
-				if ((this._IsDelete != value))
-				{
-					this._IsDelete = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DateCreated", DbType="SmallDateTime")]
-		public System.Nullable<System.DateTime> DateCreated
-		{
-			get
-			{
-				return this._DateCreated;
-			}
-			set
-			{
-				if ((this._DateCreated != value))
-				{
-					this._DateCreated = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Document_Id", DbType="Int")]
-		public System.Nullable<int> Document_Id
-		{
-			get
-			{
-				return this._Document_Id;
-			}
-			set
-			{
-				if ((this._Document_Id != value))
-				{
-					this._Document_Id = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Remarks", DbType="NVarChar(MAX)")]
-		public string Remarks
-		{
-			get
-			{
-				return this._Remarks;
-			}
-			set
-			{
-				if ((this._Remarks != value))
-				{
-					this._Remarks = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AppId", DbType="Int")]
-		public System.Nullable<int> AppId
-		{
-			get
-			{
-				return this._AppId;
-			}
-			set
-			{
-				if ((this._AppId != value))
-				{
-					this._AppId = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CompanyId", DbType="Int")]
-		public System.Nullable<int> CompanyId
-		{
-			get
-			{
-				return this._CompanyId;
-			}
-			set
-			{
-				if ((this._CompanyId != value))
-				{
-					this._CompanyId = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OrgRole_Id_Orig", DbType="Int")]
-		public System.Nullable<int> OrgRole_Id_Orig
-		{
-			get
-			{
-				return this._OrgRole_Id_Orig;
-			}
-			set
-			{
-				if ((this._OrgRole_Id_Orig != value))
-				{
-					this._OrgRole_Id_Orig = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsDelegated", DbType="Bit")]
-		public System.Nullable<bool> IsDelegated
-		{
-			get
-			{
-				return this._IsDelegated;
-			}
-			set
-			{
-				if ((this._IsDelegated != value))
-				{
-					this._IsDelegated = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActedBy_User_Id", DbType="VarChar(50)")]
-		public string ActedBy_User_Id
-		{
-			get
-			{
-				return this._ActedBy_User_Id;
-			}
-			set
-			{
-				if ((this._ActedBy_User_Id != value))
-				{
-					this._ActedBy_User_Id = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsRA", DbType="Bit")]
-		public System.Nullable<bool> IsRA
-		{
-			get
-			{
-				return this._IsRA;
-			}
-			set
-			{
-				if ((this._IsRA != value))
-				{
-					this._IsRA = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", DbType="NVarChar(50)")]
-		public string UserId
-		{
-			get
-			{
-				return this._UserId;
-			}
-			set
-			{
-				if ((this._UserId != value))
-				{
-					this._UserId = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DCT_Name", DbType="VarChar(50)")]
-		public string DCT_Name
-		{
-			get
-			{
-				return this._DCT_Name;
-			}
-			set
-			{
-				if ((this._DCT_Name != value))
-				{
-					this._DCT_Name = value;
-				}
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_T_ExpenseDetails")]
 	public partial class ACCEDE_T_ExpenseDetail : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -18997,260 +18628,6 @@ namespace DX_WebTemplate
 				{
 					this._Maximum = value;
 				}
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_T_ExpenseDetailsMap")]
-	public partial class ACCEDE_T_ExpenseDetailsMap : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _ExpenseDetailMap_ID;
-		
-		private System.Nullable<int> _AccountToCharged;
-		
-		private System.Nullable<int> _CostCenterIOWBS;
-		
-		private System.Nullable<decimal> _VAT;
-		
-		private System.Nullable<decimal> _EWT;
-		
-		private System.Nullable<decimal> _NetAmount;
-		
-		private System.Nullable<int> _ExpenseReportDetail_ID;
-		
-		private string _Preparer_ID;
-		
-		private string _EDM_Remarks;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnExpenseDetailMap_IDChanging(int value);
-    partial void OnExpenseDetailMap_IDChanged();
-    partial void OnAccountToChargedChanging(System.Nullable<int> value);
-    partial void OnAccountToChargedChanged();
-    partial void OnCostCenterIOWBSChanging(System.Nullable<int> value);
-    partial void OnCostCenterIOWBSChanged();
-    partial void OnVATChanging(System.Nullable<decimal> value);
-    partial void OnVATChanged();
-    partial void OnEWTChanging(System.Nullable<decimal> value);
-    partial void OnEWTChanged();
-    partial void OnNetAmountChanging(System.Nullable<decimal> value);
-    partial void OnNetAmountChanged();
-    partial void OnExpenseReportDetail_IDChanging(System.Nullable<int> value);
-    partial void OnExpenseReportDetail_IDChanged();
-    partial void OnPreparer_IDChanging(string value);
-    partial void OnPreparer_IDChanged();
-    partial void OnEDM_RemarksChanging(string value);
-    partial void OnEDM_RemarksChanged();
-    #endregion
-		
-		public ACCEDE_T_ExpenseDetailsMap()
-		{
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExpenseDetailMap_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int ExpenseDetailMap_ID
-		{
-			get
-			{
-				return this._ExpenseDetailMap_ID;
-			}
-			set
-			{
-				if ((this._ExpenseDetailMap_ID != value))
-				{
-					this.OnExpenseDetailMap_IDChanging(value);
-					this.SendPropertyChanging();
-					this._ExpenseDetailMap_ID = value;
-					this.SendPropertyChanged("ExpenseDetailMap_ID");
-					this.OnExpenseDetailMap_IDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountToCharged", DbType="Int")]
-		public System.Nullable<int> AccountToCharged
-		{
-			get
-			{
-				return this._AccountToCharged;
-			}
-			set
-			{
-				if ((this._AccountToCharged != value))
-				{
-					this.OnAccountToChargedChanging(value);
-					this.SendPropertyChanging();
-					this._AccountToCharged = value;
-					this.SendPropertyChanged("AccountToCharged");
-					this.OnAccountToChargedChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CostCenterIOWBS", DbType="Int")]
-		public System.Nullable<int> CostCenterIOWBS
-		{
-			get
-			{
-				return this._CostCenterIOWBS;
-			}
-			set
-			{
-				if ((this._CostCenterIOWBS != value))
-				{
-					this.OnCostCenterIOWBSChanging(value);
-					this.SendPropertyChanging();
-					this._CostCenterIOWBS = value;
-					this.SendPropertyChanged("CostCenterIOWBS");
-					this.OnCostCenterIOWBSChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_VAT", DbType="Decimal(11,2)")]
-		public System.Nullable<decimal> VAT
-		{
-			get
-			{
-				return this._VAT;
-			}
-			set
-			{
-				if ((this._VAT != value))
-				{
-					this.OnVATChanging(value);
-					this.SendPropertyChanging();
-					this._VAT = value;
-					this.SendPropertyChanged("VAT");
-					this.OnVATChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EWT", DbType="Decimal(11,2)")]
-		public System.Nullable<decimal> EWT
-		{
-			get
-			{
-				return this._EWT;
-			}
-			set
-			{
-				if ((this._EWT != value))
-				{
-					this.OnEWTChanging(value);
-					this.SendPropertyChanging();
-					this._EWT = value;
-					this.SendPropertyChanged("EWT");
-					this.OnEWTChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NetAmount", DbType="Decimal(11,2)")]
-		public System.Nullable<decimal> NetAmount
-		{
-			get
-			{
-				return this._NetAmount;
-			}
-			set
-			{
-				if ((this._NetAmount != value))
-				{
-					this.OnNetAmountChanging(value);
-					this.SendPropertyChanging();
-					this._NetAmount = value;
-					this.SendPropertyChanged("NetAmount");
-					this.OnNetAmountChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExpenseReportDetail_ID", DbType="Int")]
-		public System.Nullable<int> ExpenseReportDetail_ID
-		{
-			get
-			{
-				return this._ExpenseReportDetail_ID;
-			}
-			set
-			{
-				if ((this._ExpenseReportDetail_ID != value))
-				{
-					this.OnExpenseReportDetail_IDChanging(value);
-					this.SendPropertyChanging();
-					this._ExpenseReportDetail_ID = value;
-					this.SendPropertyChanged("ExpenseReportDetail_ID");
-					this.OnExpenseReportDetail_IDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Preparer_ID", DbType="VarChar(50)")]
-		public string Preparer_ID
-		{
-			get
-			{
-				return this._Preparer_ID;
-			}
-			set
-			{
-				if ((this._Preparer_ID != value))
-				{
-					this.OnPreparer_IDChanging(value);
-					this.SendPropertyChanging();
-					this._Preparer_ID = value;
-					this.SendPropertyChanged("Preparer_ID");
-					this.OnPreparer_IDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EDM_Remarks", DbType="VarChar(MAX)")]
-		public string EDM_Remarks
-		{
-			get
-			{
-				return this._EDM_Remarks;
-			}
-			set
-			{
-				if ((this._EDM_Remarks != value))
-				{
-					this.OnEDM_RemarksChanging(value);
-					this.SendPropertyChanging();
-					this._EDM_Remarks = value;
-					this.SendPropertyChanged("EDM_Remarks");
-					this.OnEDM_RemarksChanged();
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
 	}
@@ -24447,6 +23824,647 @@ namespace DX_WebTemplate
 			if ((this.PropertyChanged != null))
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_T_ExpenseDetailsMap")]
+	public partial class ACCEDE_T_ExpenseDetailsMap : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ExpenseDetailMap_ID;
+		
+		private System.Nullable<int> _AccountToCharged;
+		
+		private string _CostCenterIOWBS;
+		
+		private System.Nullable<decimal> _VAT;
+		
+		private System.Nullable<decimal> _EWT;
+		
+		private System.Nullable<decimal> _NetAmount;
+		
+		private System.Nullable<int> _ExpenseReportDetail_ID;
+		
+		private string _Preparer_ID;
+		
+		private string _EDM_Remarks;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnExpenseDetailMap_IDChanging(int value);
+    partial void OnExpenseDetailMap_IDChanged();
+    partial void OnAccountToChargedChanging(System.Nullable<int> value);
+    partial void OnAccountToChargedChanged();
+    partial void OnCostCenterIOWBSChanging(string value);
+    partial void OnCostCenterIOWBSChanged();
+    partial void OnVATChanging(System.Nullable<decimal> value);
+    partial void OnVATChanged();
+    partial void OnEWTChanging(System.Nullable<decimal> value);
+    partial void OnEWTChanged();
+    partial void OnNetAmountChanging(System.Nullable<decimal> value);
+    partial void OnNetAmountChanged();
+    partial void OnExpenseReportDetail_IDChanging(System.Nullable<int> value);
+    partial void OnExpenseReportDetail_IDChanged();
+    partial void OnPreparer_IDChanging(string value);
+    partial void OnPreparer_IDChanged();
+    partial void OnEDM_RemarksChanging(string value);
+    partial void OnEDM_RemarksChanged();
+    #endregion
+		
+		public ACCEDE_T_ExpenseDetailsMap()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExpenseDetailMap_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ExpenseDetailMap_ID
+		{
+			get
+			{
+				return this._ExpenseDetailMap_ID;
+			}
+			set
+			{
+				if ((this._ExpenseDetailMap_ID != value))
+				{
+					this.OnExpenseDetailMap_IDChanging(value);
+					this.SendPropertyChanging();
+					this._ExpenseDetailMap_ID = value;
+					this.SendPropertyChanged("ExpenseDetailMap_ID");
+					this.OnExpenseDetailMap_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountToCharged", DbType="Int")]
+		public System.Nullable<int> AccountToCharged
+		{
+			get
+			{
+				return this._AccountToCharged;
+			}
+			set
+			{
+				if ((this._AccountToCharged != value))
+				{
+					this.OnAccountToChargedChanging(value);
+					this.SendPropertyChanging();
+					this._AccountToCharged = value;
+					this.SendPropertyChanged("AccountToCharged");
+					this.OnAccountToChargedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CostCenterIOWBS", DbType="VarChar(50)")]
+		public string CostCenterIOWBS
+		{
+			get
+			{
+				return this._CostCenterIOWBS;
+			}
+			set
+			{
+				if ((this._CostCenterIOWBS != value))
+				{
+					this.OnCostCenterIOWBSChanging(value);
+					this.SendPropertyChanging();
+					this._CostCenterIOWBS = value;
+					this.SendPropertyChanged("CostCenterIOWBS");
+					this.OnCostCenterIOWBSChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_VAT", DbType="Decimal(11,2)")]
+		public System.Nullable<decimal> VAT
+		{
+			get
+			{
+				return this._VAT;
+			}
+			set
+			{
+				if ((this._VAT != value))
+				{
+					this.OnVATChanging(value);
+					this.SendPropertyChanging();
+					this._VAT = value;
+					this.SendPropertyChanged("VAT");
+					this.OnVATChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EWT", DbType="Decimal(11,2)")]
+		public System.Nullable<decimal> EWT
+		{
+			get
+			{
+				return this._EWT;
+			}
+			set
+			{
+				if ((this._EWT != value))
+				{
+					this.OnEWTChanging(value);
+					this.SendPropertyChanging();
+					this._EWT = value;
+					this.SendPropertyChanged("EWT");
+					this.OnEWTChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NetAmount", DbType="Decimal(11,2)")]
+		public System.Nullable<decimal> NetAmount
+		{
+			get
+			{
+				return this._NetAmount;
+			}
+			set
+			{
+				if ((this._NetAmount != value))
+				{
+					this.OnNetAmountChanging(value);
+					this.SendPropertyChanging();
+					this._NetAmount = value;
+					this.SendPropertyChanged("NetAmount");
+					this.OnNetAmountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExpenseReportDetail_ID", DbType="Int")]
+		public System.Nullable<int> ExpenseReportDetail_ID
+		{
+			get
+			{
+				return this._ExpenseReportDetail_ID;
+			}
+			set
+			{
+				if ((this._ExpenseReportDetail_ID != value))
+				{
+					this.OnExpenseReportDetail_IDChanging(value);
+					this.SendPropertyChanging();
+					this._ExpenseReportDetail_ID = value;
+					this.SendPropertyChanged("ExpenseReportDetail_ID");
+					this.OnExpenseReportDetail_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Preparer_ID", DbType="VarChar(50)")]
+		public string Preparer_ID
+		{
+			get
+			{
+				return this._Preparer_ID;
+			}
+			set
+			{
+				if ((this._Preparer_ID != value))
+				{
+					this.OnPreparer_IDChanging(value);
+					this.SendPropertyChanging();
+					this._Preparer_ID = value;
+					this.SendPropertyChanged("Preparer_ID");
+					this.OnPreparer_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EDM_Remarks", DbType="VarChar(MAX)")]
+		public string EDM_Remarks
+		{
+			get
+			{
+				return this._EDM_Remarks;
+			}
+			set
+			{
+				if ((this._EDM_Remarks != value))
+				{
+					this.OnEDM_RemarksChanging(value);
+					this.SendPropertyChanging();
+					this._EDM_Remarks = value;
+					this.SendPropertyChanged("EDM_Remarks");
+					this.OnEDM_RemarksChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.vw_ACCEDE_I_WorkflowActivity")]
+	public partial class vw_ACCEDE_I_WorkflowActivity
+	{
+		
+		private int _WFA_Id;
+		
+		private System.Nullable<int> _Status;
+		
+		private System.Nullable<System.DateTime> _DateAssigned;
+		
+		private System.Nullable<System.DateTime> _DateAction;
+		
+		private System.Nullable<int> _OrgRole_Id;
+		
+		private System.Nullable<int> _WF_Id;
+		
+		private System.Nullable<int> _WFD_Id;
+		
+		private System.Nullable<bool> _IsActive;
+		
+		private System.Nullable<bool> _IsDelete;
+		
+		private System.Nullable<System.DateTime> _DateCreated;
+		
+		private System.Nullable<int> _Document_Id;
+		
+		private string _Remarks;
+		
+		private System.Nullable<int> _AppId;
+		
+		private System.Nullable<int> _CompanyId;
+		
+		private System.Nullable<int> _OrgRole_Id_Orig;
+		
+		private System.Nullable<bool> _IsDelegated;
+		
+		private string _ActedBy_User_Id;
+		
+		private System.Nullable<bool> _IsRA;
+		
+		private string _UserId;
+		
+		private string _DCT_Name;
+		
+		private string _WF_Name;
+		
+		public vw_ACCEDE_I_WorkflowActivity()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WFA_Id", DbType="Int NOT NULL")]
+		public int WFA_Id
+		{
+			get
+			{
+				return this._WFA_Id;
+			}
+			set
+			{
+				if ((this._WFA_Id != value))
+				{
+					this._WFA_Id = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Status", DbType="Int")]
+		public System.Nullable<int> Status
+		{
+			get
+			{
+				return this._Status;
+			}
+			set
+			{
+				if ((this._Status != value))
+				{
+					this._Status = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DateAssigned", DbType="SmallDateTime")]
+		public System.Nullable<System.DateTime> DateAssigned
+		{
+			get
+			{
+				return this._DateAssigned;
+			}
+			set
+			{
+				if ((this._DateAssigned != value))
+				{
+					this._DateAssigned = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DateAction", DbType="SmallDateTime")]
+		public System.Nullable<System.DateTime> DateAction
+		{
+			get
+			{
+				return this._DateAction;
+			}
+			set
+			{
+				if ((this._DateAction != value))
+				{
+					this._DateAction = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OrgRole_Id", DbType="Int")]
+		public System.Nullable<int> OrgRole_Id
+		{
+			get
+			{
+				return this._OrgRole_Id;
+			}
+			set
+			{
+				if ((this._OrgRole_Id != value))
+				{
+					this._OrgRole_Id = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WF_Id", DbType="Int")]
+		public System.Nullable<int> WF_Id
+		{
+			get
+			{
+				return this._WF_Id;
+			}
+			set
+			{
+				if ((this._WF_Id != value))
+				{
+					this._WF_Id = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WFD_Id", DbType="Int")]
+		public System.Nullable<int> WFD_Id
+		{
+			get
+			{
+				return this._WFD_Id;
+			}
+			set
+			{
+				if ((this._WFD_Id != value))
+				{
+					this._WFD_Id = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsActive", DbType="Bit")]
+		public System.Nullable<bool> IsActive
+		{
+			get
+			{
+				return this._IsActive;
+			}
+			set
+			{
+				if ((this._IsActive != value))
+				{
+					this._IsActive = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsDelete", DbType="Bit")]
+		public System.Nullable<bool> IsDelete
+		{
+			get
+			{
+				return this._IsDelete;
+			}
+			set
+			{
+				if ((this._IsDelete != value))
+				{
+					this._IsDelete = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DateCreated", DbType="SmallDateTime")]
+		public System.Nullable<System.DateTime> DateCreated
+		{
+			get
+			{
+				return this._DateCreated;
+			}
+			set
+			{
+				if ((this._DateCreated != value))
+				{
+					this._DateCreated = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Document_Id", DbType="Int")]
+		public System.Nullable<int> Document_Id
+		{
+			get
+			{
+				return this._Document_Id;
+			}
+			set
+			{
+				if ((this._Document_Id != value))
+				{
+					this._Document_Id = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Remarks", DbType="NVarChar(MAX)")]
+		public string Remarks
+		{
+			get
+			{
+				return this._Remarks;
+			}
+			set
+			{
+				if ((this._Remarks != value))
+				{
+					this._Remarks = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AppId", DbType="Int")]
+		public System.Nullable<int> AppId
+		{
+			get
+			{
+				return this._AppId;
+			}
+			set
+			{
+				if ((this._AppId != value))
+				{
+					this._AppId = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CompanyId", DbType="Int")]
+		public System.Nullable<int> CompanyId
+		{
+			get
+			{
+				return this._CompanyId;
+			}
+			set
+			{
+				if ((this._CompanyId != value))
+				{
+					this._CompanyId = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OrgRole_Id_Orig", DbType="Int")]
+		public System.Nullable<int> OrgRole_Id_Orig
+		{
+			get
+			{
+				return this._OrgRole_Id_Orig;
+			}
+			set
+			{
+				if ((this._OrgRole_Id_Orig != value))
+				{
+					this._OrgRole_Id_Orig = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsDelegated", DbType="Bit")]
+		public System.Nullable<bool> IsDelegated
+		{
+			get
+			{
+				return this._IsDelegated;
+			}
+			set
+			{
+				if ((this._IsDelegated != value))
+				{
+					this._IsDelegated = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActedBy_User_Id", DbType="VarChar(50)")]
+		public string ActedBy_User_Id
+		{
+			get
+			{
+				return this._ActedBy_User_Id;
+			}
+			set
+			{
+				if ((this._ActedBy_User_Id != value))
+				{
+					this._ActedBy_User_Id = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsRA", DbType="Bit")]
+		public System.Nullable<bool> IsRA
+		{
+			get
+			{
+				return this._IsRA;
+			}
+			set
+			{
+				if ((this._IsRA != value))
+				{
+					this._IsRA = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", DbType="NVarChar(50)")]
+		public string UserId
+		{
+			get
+			{
+				return this._UserId;
+			}
+			set
+			{
+				if ((this._UserId != value))
+				{
+					this._UserId = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DCT_Name", DbType="VarChar(50)")]
+		public string DCT_Name
+		{
+			get
+			{
+				return this._DCT_Name;
+			}
+			set
+			{
+				if ((this._DCT_Name != value))
+				{
+					this._DCT_Name = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WF_Name", DbType="NVarChar(50)")]
+		public string WF_Name
+		{
+			get
+			{
+				return this._WF_Name;
+			}
+			set
+			{
+				if ((this._WF_Name != value))
+				{
+					this._WF_Name = value;
+				}
 			}
 		}
 	}

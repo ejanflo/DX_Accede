@@ -58,7 +58,7 @@ namespace DX_WebTemplate
                     SqlWFActivity.SelectParameters["Document_Id"].DefaultValue = exp_details.ID.ToString();
 
                     SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = exp_details.ExpChargedTo_CompanyId.ToString();
-                    SqlCostCenterCT.SelectParameters["DepartmentId"].DefaultValue = exp_details.ExpChargedTo_DeptId.ToString();
+                    SqlCostCenterCT.SelectParameters["Company_ID"].DefaultValue = exp_details.ExpChargedTo_CompanyId.ToString();
 
                     SqlCompanyCT.SelectParameters["UserId"].DefaultValue = exp_details.ExpenseName.ToString();
 
@@ -202,6 +202,12 @@ namespace DX_WebTemplate
                     .Where(x => x.isTravel != true)
                     .FirstOrDefault();
 
+                var rfp_main_ca = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.Exp_ID == exp_main.ID)
+                    .Where(x => x.IsExpenseCA == true)
+                    .Where(x => x.isTravel != true)
+                    .FirstOrDefault();
+
                 //var payMethodDesc = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == exp_main.PaymentType).FirstOrDefault();
                 //var tranTypeDesc = _DataContext.ACCEDE_S_RFPTranTypes.Where(x => x.ID == exp_main.type).FirstOrDefault();
 
@@ -217,8 +223,10 @@ namespace DX_WebTemplate
                 exp_main.ExpChargedTo_DeptId = Convert.ToInt32(CTDept_id);
                 exp_main.ExpenseClassification = Convert.ToInt32(ClassType);
                 exp_main.CostCenter = costCenter;
-                
-                
+
+                var payMethod = "";
+                var tranType = "";
+
                 if (rfp_main_reimburse != null)
                 {
                     
@@ -231,10 +239,26 @@ namespace DX_WebTemplate
                     rfp_main_reimburse.SAPDocNo = SAPDoc;
 
                     exp_main.Status = Cash_status.STS_Id;
+
+                    payMethod = _DataContext.ACCEDE_S_PayMethods
+                            .Where(x => x.ID == rfp_main_reimburse.PayMethod)
+                            .FirstOrDefault().PMethod_name;
+
+                    tranType = _DataContext.ACCEDE_S_RFPTranTypes
+                        .Where(x => x.ID == rfp_main_reimburse.TranType)
+                        .FirstOrDefault().RFPTranType_Name;
                 }
                 else
                 {
                     exp_main.Status = completed_status.STS_Id;
+
+                    payMethod = _DataContext.ACCEDE_S_PayMethods
+                            .Where(x => x.ID == rfp_main_ca.PayMethod)
+                            .FirstOrDefault().PMethod_name;
+
+                    tranType = _DataContext.ACCEDE_S_RFPTranTypes
+                        .Where(x => x.ID == rfp_main_ca.TranType)
+                        .FirstOrDefault().RFPTranType_Name;
                 }
 
                 //else
@@ -279,7 +303,7 @@ namespace DX_WebTemplate
 
                     if(Cash_status != null && wfDetails != null && orgRole != null)
                     {
-                        //INSERT EXPENSE TO ITP_T_WorkflowActivity
+                        //INSERT EXPENSE ACTIVITY TO ITP_T_WorkflowActivity
                         DateTime currentDate = DateTime.Now;
                         ITP_T_WorkflowActivity wfa = new ITP_T_WorkflowActivity()
                         {
@@ -306,6 +330,19 @@ namespace DX_WebTemplate
                 {
                     return "There is no workflow (ACDE P2P) setup for your company. Please contact Admin to setup the workflow.";
                 }
+
+                var creator_detail = _DataContext.ITP_S_UserMasters
+                                    .Where(x => x.EmpCode == exp_main.UserId)
+                                    .FirstOrDefault();
+
+                var sender_detail = _DataContext.ITP_S_UserMasters
+                    .Where(x => x.EmpCode == Session["UserID"].ToString())
+                    .FirstOrDefault();
+
+                ExpenseApprovalView exp = new ExpenseApprovalView();
+
+                exp.SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, "N/A", "Approve", payMethod.ToString(), tranType.ToString(), "ApprovedP2P");
+
 
                 return "success";
             }
@@ -441,19 +478,21 @@ namespace DX_WebTemplate
             ExpItemDetails exp = new ExpItemDetails();
             if (expMain != null)
             {
+                var expMainMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(expMain.ExpenseMain_ID)).FirstOrDefault();
+
                 var acct_charge = _DataContext.ACDE_T_MasterCodes
                     .Where(x => x.ID == Convert.ToInt32(expMain.AccountToCharged))
                     .FirstOrDefault();
 
                 //var cost_center = _DataContext.ACCEDE_S_CostCenters.Where(x=>x.CostCenter_ID == Convert.ToInt32(expMain.CostCenterIOWBS)).FirstOrDefault();
-                var cc = _DataContext.ACCEDE_S_CostCenters
-                    .Where(x => x.CostCenter == expMain.CostCenterIOWBS)
+                var cc = _DataContext.ITP_S_OrgDepartmentMasters
+                    .Where(x => x.ID == Convert.ToInt32(expMainMain.ExpChargedTo_DeptId))
                     .FirstOrDefault();
 
                 DateTime dateAdd = Convert.ToDateTime(expMain.DateAdded);
 
                 exp.acctCharge = acct_charge != null ? acct_charge.Description : "";
-                exp.costCenter = cc != null ? cc.CostCenter.ToString() + " - " + cc.Description.ToString() : "";
+                exp.costCenter = cc != null ? cc.SAP_CostCenter.ToString() : "";
                 exp.particulars = expMain.P_Name != null ? expMain.P_Name.ToString() : "";
                 exp.supplier = expMain.Supplier != null ? expMain.Supplier : "";
                 exp.tin = expMain.TIN != null ? expMain.TIN : "";
@@ -516,19 +555,21 @@ namespace DX_WebTemplate
             ExpItemDetails exp = new ExpItemDetails();
             if (expMain != null)
             {
+                var expMainMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(expMain.ExpenseMain_ID)).FirstOrDefault();
+
                 var acct_charge = _DataContext.ACDE_T_MasterCodes
                     .Where(x => x.ID == Convert.ToInt32(expMain.AccountToCharged))
                     .FirstOrDefault();
 
                 //var cost_center = _DataContext.ACCEDE_S_CostCenters.Where(x=>x.CostCenter_ID == Convert.ToInt32(expMain.CostCenterIOWBS)).FirstOrDefault();
-                var cc = _DataContext.ACCEDE_S_CostCenters
-                    .Where(x => x.CostCenter == expMain.CostCenterIOWBS)
+                var cc = _DataContext.ITP_S_OrgDepartmentMasters
+                    .Where(x => x.ID == Convert.ToInt32(expMainMain.ExpChargedTo_DeptId))
                     .FirstOrDefault();
 
                 DateTime dateAdd = Convert.ToDateTime(expMain.DateAdded);
 
                 exp.acctCharge = acct_charge != null ? acct_charge.Description : "";
-                exp.costCenter = cc != null ? cc.CostCenter.ToString() + " - " + cc.Description.ToString() : "";
+                exp.costCenter = cc != null ? cc.SAP_CostCenter.ToString() : "";
                 exp.particulars = expMain.P_Name != null ? expMain.P_Name.ToString() : "";
                 exp.supplier = expMain.Supplier != null ? expMain.Supplier : "";
                 exp.tin = expMain.TIN != null ? expMain.TIN : "";

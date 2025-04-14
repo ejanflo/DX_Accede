@@ -33,7 +33,7 @@
         }
 
         function OnCTDeptChanged(dept_id) {
-            drpdown_CostCenter.PerformCallback(dept_id);
+            drpdown_CostCenter.PerformCallback(drpdown_CTComp.GetValue()+"|"+dept_id);
         }
 
         function onCustomButtonClick(s, e) {
@@ -219,7 +219,7 @@
                     ewt_lbl.SetValue(response.d.ewt);
                     io_expd_lbl.SetValue(response.d.io);
                     wbs_expd_lbl.SetValue(response.d.wbs);
-
+                    console.log(response.d.costCenter);
                     ExpAllocGrid.Refresh();
                     DocuGrid1.Refresh();
                     ExpItemMapPopup.Show();
@@ -1017,7 +1017,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                     <dx:LayoutItem Caption="Cost Center" ColSpan="1" Name="edit_CostCenter" FieldName="CostCenter">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxComboBox ID="drpdown_CostCenter" runat="server" ClientInstanceName="drpdown_CostCenter" DataSourceID="SqlCostCenterCT" Font-Bold="True" Font-Size="Small" OnCallback="drpdown_CostCenter_Callback" TextField="CostCenter" ValueField="CostCenter" Width="100%">
+                                                <dx:ASPxComboBox ID="drpdown_CostCenter" runat="server" ClientInstanceName="drpdown_CostCenter" DataSourceID="SqlCostCenterCT" Font-Bold="True" Font-Size="Small" OnCallback="drpdown_CostCenter_Callback" TextField="SAP_CostCenter" ValueField="SAP_CostCenter" Width="100%">
                                                     <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                         <RequiredField ErrorText="*Required" IsRequired="True" />
                                                     </ValidationSettings>
@@ -2463,20 +2463,16 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                         <Columns>
                                                             <dx:GridViewCommandColumn ShowInCustomizationForm="True" Visible="False" VisibleIndex="0" Width="160px">
                                                             </dx:GridViewCommandColumn>
-                                                            <dx:GridViewDataComboBoxColumn Caption="Cost Center" FieldName="CostCenterIOWBS" ShowInCustomizationForm="True" VisibleIndex="6">
-                                                                <PropertiesComboBox DataSourceID="sqlCostCenter" TextField="CostCenter" TextFormatString="{0} - {1}" ValueField="CostCenter_ID">
-                                                                    <Columns>
-                                                                        <dx:ListBoxColumn Caption="Cost Center" FieldName="CostCenter">
-                                                                        </dx:ListBoxColumn>
-                                                                        <dx:ListBoxColumn Caption="Department" FieldName="Department" Width="300px">
-                                                                        </dx:ListBoxColumn>
-                                                                    </Columns>
+                                                            <dx:GridViewDataComboBoxColumn Caption="Cost Center" FieldName="CostCenterIOWBS" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                                <PropertiesComboBox DataSourceID="sqlCostCenter" TextField="SAP_CostCenter" ValueField="SAP_CostCenter">
                                                                 </PropertiesComboBox>
                                                             </dx:GridViewDataComboBoxColumn>
-                                                            <dx:GridViewDataSpinEditColumn Caption="Allocated Amount" FieldName="NetAmount" ShowInCustomizationForm="True" VisibleIndex="7">
+                                                            <dx:GridViewDataSpinEditColumn Caption="Allocated Amount" FieldName="NetAmount" ShowInCustomizationForm="True" VisibleIndex="6">
                                                                 <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatString="#,##0.00" NumberFormat="Custom">
                                                                 </PropertiesSpinEdit>
                                                             </dx:GridViewDataSpinEditColumn>
+                                                            <dx:GridViewDataTextColumn Caption="Remarks" FieldName="EDM_Remarks" ShowInCustomizationForm="True" VisibleIndex="7">
+                                                            </dx:GridViewDataTextColumn>
                                                         </Columns>
                                                         <TotalSummary>
                                                             <dx:ASPxSummaryItem DisplayFormat="Total: #,#00.00" FieldName="NetAmount" ShowInColumn="NetAmount" ShowInGroupFooterColumn="NetAmount" SummaryType="Sum" />
@@ -2606,13 +2602,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                         <dx:LayoutItem Caption="Cost Center" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="costCenter_edit" runat="server" ClientInstanceName="costCenter_edit" DataSourceID="sqlCostCenter" Font-Bold="True" Font-Size="Small" TextField="Department" ValueField="CostCenter" Width="100%" NullValueItemDisplayText="{0} - {1}" TextFormatString="{0} - {1}" ReadOnly="True">
-                                                        <Columns>
-                                                            <dx:ListBoxColumn FieldName="CostCenter" Width="100px">
-                                                            </dx:ListBoxColumn>
-                                                            <dx:ListBoxColumn FieldName="Department" Width="220px">
-                                                            </dx:ListBoxColumn>
-                                                        </Columns>
+                                                    <dx:ASPxComboBox ID="costCenter_edit" runat="server" ClientInstanceName="costCenter_edit" DataSourceID="sqlCostCenter" Font-Bold="True" Font-Size="Small" TextField="SAP_CostCenter" ValueField="SAP_CostCenter" Width="100%" ReadOnly="True">
                                                         <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
                                                             <RequiredField ErrorText="*Required" IsRequired="True" />
                                                         </ValidationSettings>
@@ -2845,13 +2835,7 @@ computeNetAmount(&quot;edit&quot;);
                                                             <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="160px" Visible="False">
                                                             </dx:GridViewCommandColumn>
                                                             <dx:GridViewDataComboBoxColumn Caption="Cost Center" FieldName="CostCenterIOWBS" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                                <PropertiesComboBox DataSourceID="sqlCostCenter" TextField="CostCenter" ValueField="CostCenter_ID">
-                                                                    <Columns>
-                                                                        <dx:ListBoxColumn Caption="Cost Center" FieldName="CostCenter">
-                                                                        </dx:ListBoxColumn>
-                                                                        <dx:ListBoxColumn Caption="Department" FieldName="Department" Width="300px">
-                                                                        </dx:ListBoxColumn>
-                                                                    </Columns>
+                                                                <PropertiesComboBox DataSourceID="sqlCostCenter" TextField="SAP_CostCenter" ValueField="SAP_CostCenter">
                                                                 </PropertiesComboBox>
                                                             </dx:GridViewDataComboBoxColumn>
                                                             <dx:GridViewDataSpinEditColumn Caption="Allocated Amount" FieldName="NetAmount" ShowInCustomizationForm="True" VisibleIndex="2">
@@ -2869,6 +2853,8 @@ computeNetAmount(&quot;edit&quot;);
                                                             <dx:GridViewDataTextColumn FieldName="Preparer_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="7">
                                                             </dx:GridViewDataTextColumn>
                                                             <dx:GridViewDataTextColumn FieldName="VAT" ShowInCustomizationForm="True" Visible="False" VisibleIndex="8">
+                                                            </dx:GridViewDataTextColumn>
+                                                            <dx:GridViewDataTextColumn Caption="Remarks" FieldName="EDM_Remarks" ShowInCustomizationForm="True" VisibleIndex="9">
                                                             </dx:GridViewDataTextColumn>
                                                         </Columns>
                                                         <TotalSummary>
@@ -3567,7 +3553,7 @@ DisapproveClick(); DisapprovePopup.Hide();
             <asp:SessionParameter Name="ExpenseReportDetail_ID" SessionField="ExpMainId" Type="Int32" />
         </SelectParameters>
      </asp:SqlDataSource>
-    <asp:SqlDataSource ID="sqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_CostCenter]">
+    <asp:SqlDataSource ID="sqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([SAP_CostCenter] IS NOT NULL) ORDER BY [SAP_CostCenter]">
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlUser" runat="server"></asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlExpDetailAttach" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_ExpDetailsFileAttach] WHERE ([ExpDetail_Id] = @ExpDetail_Id)">
@@ -3600,9 +3586,9 @@ DisapproveClick(); DisapprovePopup.Hide();
             <asp:Parameter Name="Company_ID" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlCostCenterCT" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_CostCenter] WHERE ([DepartmentId] = @DepartmentId)">
+            <asp:SqlDataSource ID="SqlCostCenterCT" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE (([Company_ID] = @Company_ID) AND ([SAP_CostCenter] IS NOT NULL)) ORDER BY [SAP_CostCenter]">
         <SelectParameters>
-            <asp:Parameter Name="DepartmentId" Type="Int32" />
+            <asp:Parameter Name="Company_ID" Type="Int32" />
         </SelectParameters>
-    </asp:SqlDataSource>
+</asp:SqlDataSource>
 </asp:Content>

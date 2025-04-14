@@ -72,7 +72,7 @@
                 <Items>
                     <dx:EmptyLayoutItem ColSpan="1">
                     </dx:EmptyLayoutItem>
-                    <dx:TabbedLayoutGroup ActiveTabIndex="1" ColSpan="1">
+                    <dx:TabbedLayoutGroup ColSpan="1">
                         <Items>
                             <dx:LayoutGroup Caption="For Approval" ColSpan="1">
                                 <Items>
@@ -131,7 +131,7 @@
                                                             <CellStyle HorizontalAlign="Left" VerticalAlign="Middle">
                                                             </CellStyle>
                                                         </dx:GridViewCommandColumn>
-                                                        <dx:GridViewDataTextColumn Caption="Purpose" FieldName="Purpose" ShowInCustomizationForm="True" VisibleIndex="4">
+                                                        <dx:GridViewDataTextColumn Caption="Purpose" FieldName="Purpose" ShowInCustomizationForm="True" VisibleIndex="5">
                                                         </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataTextColumn FieldName="DateCreated" ShowInCustomizationForm="True" VisibleIndex="1">
                                                             <PropertiesTextEdit DisplayFormatString="M/dd/yyyy">
@@ -151,6 +151,8 @@
                                                             <PropertiesComboBox DataSourceID="SqlStatus" TextField="STS_Name" ValueField="STS_Id">
                                                             </PropertiesComboBox>
                                                         </dx:GridViewDataComboBoxColumn>
+                                                        <dx:GridViewDataTextColumn Caption="Creator" FieldName="FullName" ShowInCustomizationForm="True" VisibleIndex="4">
+                                                        </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                     <Toolbars>
                                                         <dx:GridViewToolbar>
@@ -289,7 +291,7 @@
                                                             <PropertiesTextEdit DisplayFormatString="M/dd/yyyy">
                                                             </PropertiesTextEdit>
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn AdaptivePriority="2" Caption="Transaction Type" FieldName="ExpType_Name" ShowInCustomizationForm="True" VisibleIndex="6">
+                                                        <dx:GridViewDataTextColumn AdaptivePriority="2" Caption="Transaction Type" FieldName="ExpType_Name" ShowInCustomizationForm="True" VisibleIndex="5">
                                                         </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataTextColumn Caption="Doc No." FieldName="DocNo" ShowInCustomizationForm="True" VisibleIndex="2">
                                                             <CellStyle Font-Bold="True">
@@ -299,10 +301,12 @@
                                                             <CellStyle Font-Bold="True">
                                                             </CellStyle>
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataComboBoxColumn FieldName="Status" ShowInCustomizationForm="True" VisibleIndex="7">
+                                                        <dx:GridViewDataComboBoxColumn FieldName="Status" ShowInCustomizationForm="True" VisibleIndex="6">
                                                             <PropertiesComboBox DataSourceID="SqlStatus" TextField="STS_Name" ValueField="STS_Id">
                                                             </PropertiesComboBox>
                                                         </dx:GridViewDataComboBoxColumn>
+                                                        <dx:GridViewDataTextColumn Caption="Creator" FieldName="FullName" ShowInCustomizationForm="True" VisibleIndex="7">
+                                                        </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                     <Toolbars>
                                                         <dx:GridViewToolbar>
