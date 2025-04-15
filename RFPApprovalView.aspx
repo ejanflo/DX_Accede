@@ -12,6 +12,28 @@
             }
         }
 
+        function onCTDeptChanged(dept_id) {
+            //var dept_id = drpdown_CTDepartment.GetValue();
+            drpdown_CostCenter.PerformCallback(edit_Company.GetValue() + "|" + dept_id);
+            //$.ajax({
+            //    type: "POST",
+            //    url: "RFPCreationPage.aspx/CostCenterUpdateField",
+            //    contentType: "application/json; charset=utf-8",
+            //    dataType: "json",
+            //    data: JSON.stringify({ dept_id: dept_id }),
+            //    success: function (response) {
+            //        // Update the description text box with the response value
+            //        if (response) {
+            //            txtbox_costCenter.SetValue(response.d);
+            //            txtbox_costCenter.Validate();
+            //        }
+            //    },
+            //    error: function (xhr, status, error) {
+            //        console.log("Error:", error);
+            //    }
+            //});
+        }
+
         function OnFowardWFChanged(wf_id) {
             WFSequenceGrid0.PerformCallback(wf_id);
         }
@@ -1021,7 +1043,7 @@ drpdown_CostCenter.PerformCallback();
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxComboBox ID="edit_Department" runat="server" ClientInstanceName="edit_Department" DataSourceID="SqlCTDepartment" Font-Bold="True" TextField="DepDesc" ValueField="ID" Width="100%" OnCallback="edit_Department_Callback">
                                                     <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	drpdown_CostCenter.PerformCallback(s.GetValue());
+	onCTDeptChanged(s.GetValue())
 }" />
                                                     <ValidationSettings Display="Dynamic" ValidationGroup="RFPApproval">
                                                         <RequiredField ErrorText="*Required" IsRequired="True" />
@@ -1031,7 +1053,7 @@ drpdown_CostCenter.PerformCallback();
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Cost Center" ColSpan="1" FieldName="SAPCostCenter" ClientVisible="False" Name="lblCostCenter">
+                                    <dx:LayoutItem Caption="Cost Center" ColSpan="1" FieldName="SAPCostCenter" Name="lblCostCenter">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxTextBox ID="lbl_CostCenter" runat="server" ClientInstanceName="lbl_CostCenter" Font-Bold="True" ReadOnly="True" Width="100%">
@@ -1045,10 +1067,10 @@ drpdown_CostCenter.PerformCallback();
                                         </LayoutItemNestedControlCollection>
                                         <CaptionSettings HorizontalAlign="Right" />
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Cost Center" ColSpan="1" FieldName="SAPCostCenter" Name="editCostCenter">
+                                    <dx:LayoutItem Caption="Cost Center" ColSpan="1" FieldName="SAPCostCenter" Name="editCostCenter" ClientVisible="False">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxComboBox ID="drpdown_CostCenter" runat="server" ClientInstanceName="drpdown_CostCenter" DataSourceID="SqlCostCenter" OnCallback="drpdown_CostCenter_Callback" TextField="CostCenter" ValueField="CostCenter" Width="100%" Font-Bold="True">
+                                                <dx:ASPxComboBox ID="drpdown_CostCenter" runat="server" ClientInstanceName="drpdown_CostCenter" DataSourceID="SqlCostCenterCT" OnCallback="drpdown_CostCenter_Callback" TextField="SAP_CostCenter" ValueField="SAP_CostCenter" Width="100%" Font-Bold="True">
                                                     <Border BorderColor="#006838" BorderWidth="1px" />
                                                 </dx:ASPxComboBox>
                                             </dx:LayoutItemNestedControlContainer>
@@ -1961,7 +1983,7 @@ DisapproveClick(); DisapprovePopup.Hide();
                 <asp:Parameter Name="WF_Id" Type="Int32" />
             </SelectParameters>
         </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlCTDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([Company_ID] = @Company_ID)">
+    <asp:SqlDataSource ID="SqlCTDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE (([Company_ID] = @Company_ID) AND ([SAP_CostCenter] IS NOT NULL)) ORDER BY [DepDesc]">
         <SelectParameters>
             <asp:Parameter Name="Company_ID" Type="Int32" />
         </SelectParameters>
@@ -1976,4 +1998,9 @@ DisapproveClick(); DisapprovePopup.Hide();
             <asp:Parameter DefaultValue="true" Name="isActive" Type="Boolean" />
         </SelectParameters>
     </asp:SqlDataSource>
+        <asp:SqlDataSource ID="SqlCostCenterCT" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE (([Company_ID] = @Company_ID) AND ([SAP_CostCenter] IS NOT NULL)) ORDER BY [SAP_CostCenter]">
+    <SelectParameters>
+        <asp:Parameter Name="Company_ID" Type="Int32" />
+    </SelectParameters>
+</asp:SqlDataSource>
 </asp:Content>

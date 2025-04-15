@@ -1173,7 +1173,7 @@ namespace DX_WebTemplate
                     emailSubMessage = text.Text2.ToString();
                     if(status2 == "PendingAudit")
                     {
-                        emailSubMessage = "You can now proceed with the next steps based on the approved document. Please bring physical documents required by Audit";
+                        emailSubMessage = "Your request is pending for audit. Please forward the original supporting documents to the Internal Audit Department and indicate the Accede Reference Document number";
                     }
 
                     if (status2 == "ApprovedP2P")

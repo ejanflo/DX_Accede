@@ -1488,13 +1488,25 @@ namespace DX_WebTemplate
             }
             //End--     Get Text info
 
+            var expMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x=>x.ID == doc_id).FirstOrDefault();
+
+            //var requestor_fullname = _DataContext.ITP_S_UserMasters
+            //    .Where(um => um.EmpCode == Convert.ToString(Session["prep"]))
+            //    .Select(um => um.FullName)
+            //    .FirstOrDefault();
+
             var requestor_fullname = _DataContext.ITP_S_UserMasters
-                .Where(um => um.EmpCode == Convert.ToString(Session["prep"]))
+                .Where(um => um.EmpCode == Convert.ToString(expMain.ExpenseName))
                 .Select(um => um.FullName)
                 .FirstOrDefault();
 
+            //var requestor_email = _DataContext.ITP_S_UserMasters
+            //    .Where(um => um.EmpCode == Convert.ToString(Session["prep"]))
+            //    .Select(um => um.Email)
+            //    .FirstOrDefault();
+
             var requestor_email = _DataContext.ITP_S_UserMasters
-                .Where(um => um.EmpCode == Convert.ToString(Session["prep"]))
+                .Where(um => um.EmpCode == Convert.ToString(expMain.ExpenseName))
                 .Select(um => um.Email)
                 .FirstOrDefault();
 

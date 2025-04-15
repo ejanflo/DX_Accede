@@ -455,10 +455,10 @@ namespace DX_WebTemplate
 
                     bool ins_wf = InsertWorkflowAct(generatedID);
 
-                    //if (!ins_wf)
-                    //{
-                    //    return 0;
-                    //}
+                    if (!ins_wf)
+                    {
+                        return 0;
+                    }
 
                 }
 
@@ -552,7 +552,7 @@ namespace DX_WebTemplate
                     _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(activity);
                     _DataContext.SubmitChanges();
 
-                    var creator_details = _DataContext.ITP_S_UserMasters.Where(x=>x.EmpCode == app.UserId).FirstOrDefault();
+                    var creator_details = _DataContext.ITP_S_UserMasters.Where(x=>x.EmpCode == rfp_main_query.Payee.ToString()).FirstOrDefault();
 
                     bool emailApprover = SendEmailToApprover(app.UserId, Convert.ToInt32(app.Company_Id), creator_details.FullName, creator_details.Email, rfp_main_query.RFP_DocNum, rfp_main_query.DateCreated.ToString(), rfp_main_query.Purpose, payMethod.PMethod_name, tranType.RFPTranType_Name);
 
