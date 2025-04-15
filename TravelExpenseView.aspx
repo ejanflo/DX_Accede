@@ -1329,10 +1329,12 @@
                                                                                                                                 </dx:GridViewDataTextColumn>
                                                                                                                                 <dx:GridViewDataTextColumn FieldName="Description" ShowInCustomizationForm="True" Visible="False" VisibleIndex="2">
                                                                                                                                 </dx:GridViewDataTextColumn>
-                                                                                                                                <dx:GridViewDataTextColumn Caption="Approver" FieldName="FullName" ShowInCustomizationForm="True" VisibleIndex="3">
-                                                                                                                                </dx:GridViewDataTextColumn>
                                                                                                                                 <dx:GridViewDataTextColumn FieldName="Sequence" ShowInCustomizationForm="True" VisibleIndex="4">
                                                                                                                                 </dx:GridViewDataTextColumn>
+                                                                                                                                <dx:GridViewDataComboBoxColumn Caption="Approver" FieldName="OrgRole_Id" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                                                                                                    <PropertiesComboBox DataSourceID="SqlUserOrgRole" TextField="FullName" ValueField="OrgRole_Id">
+                                                                                                                                    </PropertiesComboBox>
+                                                                                                                                </dx:GridViewDataComboBoxColumn>
                                                                                                                             </Columns>
                                                                                                                             <Styles>
                                                                                                                                 <Header>
@@ -1391,14 +1393,8 @@
                                                                                                                             </SettingsPopup>
                                                                                                                             <SettingsLoadingPanel Mode="Disabled" />
                                                                                                                             <Columns>
-                                                                                                                                <dx:GridViewDataComboBoxColumn Caption="Approver" FieldName="FullName" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                                                                                                    <PropertiesComboBox TextFormatString="{0}" ValueField="TerritoryID">
-                                                                                                                                        <Columns>
-                                                                                                                                            <dx:ListBoxColumn Caption="Territory" FieldName="TerritoryDescription">
-                                                                                                                                            </dx:ListBoxColumn>
-                                                                                                                                            <dx:ListBoxColumn Caption="Region" FieldName="RegionID">
-                                                                                                                                            </dx:ListBoxColumn>
-                                                                                                                                        </Columns>
+                                                                                                                                <dx:GridViewDataComboBoxColumn Caption="Approver" FieldName="OrgRole_Id" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                                                                                                    <PropertiesComboBox ValueField="OrgRole_Id" DataSourceID="SqlUserOrgRole" TextField="FullName">
                                                                                                                                     </PropertiesComboBox>
                                                                                                                                 </dx:GridViewDataComboBoxColumn>
                                                                                                                                 <dx:GridViewDataTextColumn Caption="Sequence" FieldName="Sequence" ShowInCustomizationForm="True" VisibleIndex="1">
@@ -2907,12 +2903,12 @@
             <asp:Parameter Name="WF_Id" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlWorkflowSequence" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_RS_Workflow_Sequence] WHERE ([WF_Id] = @WF_Id) ORDER BY [Sequence]">
+    <asp:SqlDataSource ID="SqlWorkflowSequence" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_WorkflowDetails] WHERE ([WF_Id] = @WF_Id) ORDER BY [Sequence]">
         <SelectParameters>
             <asp:Parameter Name="WF_Id" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlFAPWF" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_RS_Workflow_Sequence] WHERE ([WF_Id] = @WF_Id) ORDER BY [Sequence]">
+    <asp:SqlDataSource ID="SqlFAPWF" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_WorkflowDetails] WHERE ([WF_Id] = @WF_Id) ORDER BY [Sequence]">
         <SelectParameters>
             <asp:Parameter Name="WF_Id" Type="Int32" />
         </SelectParameters>
@@ -2936,7 +2932,7 @@
             <asp:Parameter DefaultValue="7" Name="Status" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlReim" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_RFPMain] WHERE (([TranType] = @TranType) AND ([Exp_ID] = @Exp_ID))">
+    <asp:SqlDataSource ID="SqlReim" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_RFPMain] WHERE (([TranType] = @TranType) AND ([Exp_ID] = @Exp_ID) AND ([isTravel] = 1))">
         <SelectParameters>
             <asp:Parameter DefaultValue="2" Name="TranType" Type="Int32" />
             <asp:SessionParameter DefaultValue="TravelExp_Id" Name="Exp_ID" SessionField="TravelExp_Id" Type="Int32" />
@@ -3202,9 +3198,19 @@
             <asp:SessionParameter Name="ExpenseReportDetail_ID" SessionField="ExpDetailsID" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlWFA" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT ITP_T_WorkflowActivity.WFA_Id, ITP_T_WorkflowActivity.OrgRole_Id, ITP_S_WorkflowDetails.Description, ITP_T_WorkflowActivity.DateAssigned, ITP_T_WorkflowActivity.DateAction, ITP_T_WorkflowActivity.Remarks, ITP_T_WorkflowActivity.Document_Id, ACCEDE_T_TravelExpenseMain.ID, ITP_T_WorkflowActivity.Status, ITP_T_WorkflowActivity.WF_Id, ITP_T_WorkflowActivity.WFD_Id FROM ITP_T_WorkflowActivity INNER JOIN ITP_S_WorkflowDetails ON ITP_T_WorkflowActivity.WFD_Id = ITP_S_WorkflowDetails.WFD_Id AND ITP_T_WorkflowActivity.WF_Id = ITP_S_WorkflowDetails.WF_Id AND ITP_T_WorkflowActivity.OrgRole_Id = ITP_S_WorkflowDetails.OrgRole_Id INNER JOIN ACCEDE_T_TravelExpenseMain ON ITP_T_WorkflowActivity.Document_Id = ACCEDE_T_TravelExpenseMain.ID WHERE (ITP_T_WorkflowActivity.Document_Id = @Document_Id) AND (ITP_T_WorkflowActivity.AppId = 1032) AND (ITP_T_WorkflowActivity.AppDocTypeId = 1018) ORDER BY ITP_T_WorkflowActivity.WFA_Id">
+    <asp:SqlDataSource ID="SqlWFA" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT ITP_T_WorkflowActivity.WFA_Id, ITP_T_WorkflowActivity.OrgRole_Id, ITP_S_WorkflowDetails.Description, ITP_T_WorkflowActivity.DateAssigned, ITP_T_WorkflowActivity.DateAction, ITP_T_WorkflowActivity.Remarks, 
+                  ITP_T_WorkflowActivity.Document_Id, ACCEDE_T_TravelExpenseMain.ID, ITP_T_WorkflowActivity.WF_Id, ITP_T_WorkflowActivity.WFD_Id, ITP_T_WorkflowActivity.ActedBy_User_Id, ITP_T_WorkflowActivity.Status, 
+                  ITP_S_Status.STS_Description
+FROM     ITP_T_WorkflowActivity INNER JOIN
+                  ITP_S_WorkflowDetails ON ITP_T_WorkflowActivity.WFD_Id = ITP_S_WorkflowDetails.WFD_Id AND ITP_T_WorkflowActivity.WF_Id = ITP_S_WorkflowDetails.WF_Id AND 
+                  ITP_T_WorkflowActivity.OrgRole_Id = ITP_S_WorkflowDetails.OrgRole_Id INNER JOIN
+                  ACCEDE_T_TravelExpenseMain ON ITP_T_WorkflowActivity.Document_Id = ACCEDE_T_TravelExpenseMain.ID INNER JOIN
+                  ITP_S_Status ON ITP_T_WorkflowActivity.Status = ITP_S_Status.STS_Id
+WHERE  (ITP_T_WorkflowActivity.Document_Id = @Document_Id) AND (ITP_T_WorkflowActivity.AppId = 1032) AND (ITP_T_WorkflowActivity.AppDocTypeId = @AppDocTypeId) AND (ITP_S_Status.STS_Description NOT LIKE '%Pending%')
+ORDER BY ITP_T_WorkflowActivity.WFA_Id">
         <SelectParameters>
             <asp:SessionParameter Name="Document_Id" SessionField="TravelExp_Id" />
+            <asp:SessionParameter Name="AppDocTypeId" SessionField="appdoctype" />
         </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlUserOrgRole" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT TOP (100) PERCENT wd.OrgRole_Id, wd.Sequence, uor.UserId, um.FullName FROM ITP_S_WorkflowDetails AS wd INNER JOIN ITP_S_SecurityUserOrgRoles AS uor ON wd.OrgRole_Id = uor.OrgRoleId INNER JOIN ITP_S_UserMaster AS um ON uor.UserId = um.EmpCode">

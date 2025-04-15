@@ -174,6 +174,7 @@ namespace DX_WebTemplate
             string rowKey = args[0];
 
             Session["TravelExp_Id"] = e.Parameters.Split('|').First();
+            Session["prep"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "Preparer_Id");
             Session["doc_stat"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "Status");
             Session["main_action"] = "edit";
             if (e.Parameters.Split('|').Last() == "btnEdit")

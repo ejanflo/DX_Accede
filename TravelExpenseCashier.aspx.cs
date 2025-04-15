@@ -23,6 +23,7 @@ namespace DX_WebTemplate
             {
                 AnfloSession.Current.CreateSession(HttpContext.Current.User.ToString());
                 Session["statid"] = context.ITP_S_Status.Where(x => x.STS_Name == "Pending at Cashier" || x.STS_Description == "Pending at Cashier").Select(x => x.STS_Id).FirstOrDefault();
+                Session["doctype"] = context.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel" || x.DCT_Description == "ACDE Expense Travel").Select(x => x.DCT_Id).FirstOrDefault();
             }
             else
                 Response.Redirect("~/Logon.aspx");

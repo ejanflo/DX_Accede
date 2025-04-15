@@ -221,7 +221,7 @@
                                                     <PropertiesComboBox DataSourceID="sqlStatus" TextField="STS_Description" ValueField="STS_Id">
                                                     </PropertiesComboBox>
                                                     <Columns>
-                                                        <dx:GridViewDataTextColumn FieldName="ActRemarks" ShowInCustomizationForm="True" VisibleIndex="0" Caption="Remarks">
+                                                        <dx:GridViewDataTextColumn FieldName="Remarks" ShowInCustomizationForm="True" VisibleIndex="0" Caption="Remarks">
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:GridViewDataComboBoxColumn>
@@ -373,8 +373,18 @@
     <asp:SqlDataSource ID="sqlName" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT [FullName], [EmpCode] FROM [ITP_S_UserMaster]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="sqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [CompanyMaster] WHERE ([WASSId] IS NOT NULL)"></asp:SqlDataSource>
     <asp:SqlDataSource ID="sqlStatus" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_Status]"></asp:SqlDataSource>
-    <asp:SqlDataSource ID="sqlTravelExp" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_TravelPendingApproval] WHERE (([UserId] = @UserId) AND ([Status] = 36)) ORDER BY [WFA_Id] DESC">
+    <asp:SqlDataSource ID="sqlTravelExp" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT stat.STS_Description, main.ID, main.Status, main.Doc_No, main.Employee_Id, main.Preparer_Id, main.Company_Id, main.Trip_To, main.Purpose, main.Remarks, main.Dep_Code, main.Date_From, main.Date_To, main.Date_Created, 
+                  main.Time_Departed, main.Time_Arrived, main.ExpenseType_ID, main.ForeignDomestic, main.ChargedToComp, main.ChargedToDept, main.LocBranch, main.ARRefNo, main.SAP_Id, org.UserId, wfa.WF_Id, wfa.WFD_Id, wfa.WFA_Id,
+                  wfa.DateAssigned
+FROM     ITP_T_WorkflowActivity AS wfa INNER JOIN
+                  ACCEDE_T_TravelExpenseMain AS main ON wfa.Document_Id = main.ID INNER JOIN
+                  ITP_S_SecurityUserOrgRoles AS org ON wfa.OrgRole_Id = org.OrgRoleId INNER JOIN
+                  ITP_S_Status AS stat ON wfa.Status = stat.STS_Id
+WHERE  (stat.STS_Description = @Description) AND (wfa.AppDocTypeId = @AppDocTypeId) AND (org.UserId = @UserId)
+ORDER BY wfa.WFA_Id">
         <SelectParameters>
+            <asp:Parameter DefaultValue="Pending at P2P" Name="Description" />
+            <asp:SessionParameter Name="AppDocTypeId" SessionField="doctype" />
             <asp:SessionParameter Name="UserId" SessionField="userID" Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>

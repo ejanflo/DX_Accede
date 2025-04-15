@@ -58,7 +58,9 @@ namespace DX_WebTemplate
                     string empCode = Session["userID"].ToString();
                     var mainExp = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).FirstOrDefault();
                     var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).FirstOrDefault();
-                    var status = ""; 
+                    var status = "";
+                    Session["statusid"] = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Disbursed").Select(x => x.STS_Id).FirstOrDefault();
+                    Session["appdoctype"] = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).Select(x => x.DCT_Id).FirstOrDefault();
 
                     if (mainExp != null)
                     {
@@ -361,11 +363,11 @@ namespace DX_WebTemplate
 
                 if (Convert.ToString(Session["ford"]) == "Foreign")
                 {
-                    Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.Description == "Foreign Test WF Finance Exec>CFO/Pres" && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
+                    Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.ChargedToComp && x.Description.Contains("Travel Foreign FAP>Manager>VP>CFO/PRES") && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
                 }
                 else
                 {
-                    Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && (x.IsRA == false || x.IsRA == null && totExpCA >= x.Minimum && totExpCA <= x.Maximum)).Select(x => x.WF_Id).FirstOrDefault());
+                    Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.ChargedToComp && x.Description.Contains("Travel Domestic FAP>Manager>VP") && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
                 }
 
                 SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
@@ -543,6 +545,132 @@ namespace DX_WebTemplate
             };
         }
 
+        public void SendEmailFromCashP2P(int id, int status, int prepID)
+        {
+            DateTime currentDate = DateTime.Now;
+
+            var main = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).FirstOrDefault();
+            var compname = _DataContext.CompanyMasters.Where(x => x.WASSId == main.Company_Id).Select(x => x.CompanyShortName).FirstOrDefault();
+            var stat = _DataContext.ITP_S_Status
+                .Where(x => x.STS_Id == status)
+                .Select(x => x.STS_Description)
+                .FirstOrDefault();
+
+            ///////---START EMAIL PROCESS-----////////
+
+            //Start--   Get Text info
+
+            var emailMessage = "Your request is now pending at cashier.";
+            var emailSubMessage = "";
+            var emailColor = "#006DD6";
+            //End--     Get Text info
+
+            var requestor_fullname = _DataContext.ITP_S_UserMasters
+                .Where(um => um.EmpCode == Convert.ToString(Session["prep"]))
+                .Select(um => um.FullName)
+                .FirstOrDefault();
+            var requestor_email = Convert.ToString(_DataContext.ITP_S_UserMasters
+                .Where(um => um.EmpCode == Convert.ToString(Session["prep"]))
+                .Select(um => um.Email)
+                .FirstOrDefault()) ?? string.Empty;
+
+            string appName = "ACCEDE EXPENSE REPORT";
+            string recipientName = requestor_fullname;
+            string senderName = "";
+            string emailSender = "";
+            string senderRemarks = "";
+            string emailSite = "https://devapps.anflocor.com/AccedeExpenseReportApproval.aspx";
+            string sendEmailTo = requestor_email;
+            string emailSubject = "Document No. " + main.Doc_No + " (" + stat + ")";
+
+            ANFLO anflo = new ANFLO();
+
+            //Body Details Sample
+            string emailDetails = "";
+
+            var queryER = from er in _DataContext.ACCEDE_T_TravelExpenseDetails
+                          where er.TravelExpenseMain_ID == id
+                          select er;
+
+            emailDetails = "<table border='1' cellpadding='2' cellspacing='0' width='100%' class='main' style='border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;background:#fff;border-radius:3px;width:100%;'>";
+            emailDetails += "<tr><td>Company</td><td><strong>" + compname + "</strong></td></tr>";
+            emailDetails += "<tr><td>Document Date</td><td><strong>" + currentDate + "</strong></td></tr>";
+            emailDetails += "<tr><td>Document No.</td><td><strong>" + main.Doc_No + "</strong></td></tr>";
+            emailDetails += "<tr><td>Status</td><td><strong>" + stat + "</strong></td></tr>";
+            emailDetails += "<tr><td>Document Purpose</td><td><strong>" + "Expense Report" + "</strong></td></tr>";
+            emailDetails += "</table>";
+            emailDetails += "<br>";
+
+            //End of Body Details Sample
+            string emailTemplate = anflo
+                .Email_Content_Formatter(appName, recipientName, emailMessage, emailSubMessage, senderName, emailSender,
+                emailDetails, senderRemarks, emailSite, emailColor);
+
+            if (anflo.Send_Email(emailSubject, emailTemplate, sendEmailTo))
+            {
+            }
+            ;
+        }
+
+        public void SendEmailFromAudit(int id, int status, int prepID, string remarks)
+        {
+            ///////---START EMAIL PROCESS-----////////
+            var docno = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.Doc_No).FirstOrDefault();
+            var stat = _DataContext.ITP_S_Status
+                .Where(x => x.STS_Id == status)
+                .FirstOrDefault();
+
+            //Start--   Get Text info
+            var queryText = from texts in _DataContext.ITP_S_Texts
+                            where texts.Type == "Email" && texts.Name == "PendingAudit"
+                            select texts;
+
+            var emailMessage = "";
+            var emailSubMessage = "";
+            var emailColor = "";
+
+            foreach (var text in queryText)
+            {
+                emailMessage = text.Text1.ToString();
+                emailSubMessage = text.Text2.ToString();
+                emailColor = text.Color.ToString();
+            }
+            //End--     Get Text info
+
+            var requestor_fullname = _DataContext.ITP_S_UserMasters
+                .Where(um => um.EmpCode == Convert.ToString(prepID))
+                .Select(um => um.FullName)
+                .FirstOrDefault();
+            var requestor_email = _DataContext.ITP_S_UserMasters
+                .Where(um => um.EmpCode == Convert.ToString(prepID))
+                .Select(um => um.Email)
+                .FirstOrDefault();
+            string appName = "ACCEDE EXPENSE REPORT";
+            string recipientName = requestor_fullname;
+            //string senderName = user_email.FullName;
+            //string emailSender = user_email.Email;
+            string senderRemarks = remarks;
+            string emailSite = "https://apps.anflocor.com/ecclear/WebClearView.aspx";
+            string sendEmailTo = requestor_email;
+            string emailSubject = "Document No. " + docno + " (" + stat + ")";
+
+            ANFLO anflo = new ANFLO();
+
+            //Body Details Sample
+            string emailDetails = "";
+            DateTime currentDate = DateTime.Now;
+
+            //End of Body Details Sample
+            string emailTemplate = anflo
+                .Email_Content_Formatter(appName, recipientName, emailMessage, emailSubMessage, string.Empty, string.Empty,
+                emailDetails, senderRemarks, emailSite, emailColor);
+
+            if (anflo.Send_Email(emailSubject, emailTemplate, sendEmailTo))
+            {
+            }
+            ;
+        }
+
         public void SendEmail(int doc_id, int org_id, int comps_id, int statusID)
         {
             DateTime currentDate = DateTime.Now;
@@ -686,7 +814,10 @@ namespace DX_WebTemplate
             {
                 DateTime currentDate = DateTime.Now;
 
-                SendEmail(doc_id, org_id, comps_id, stat);
+                if (Convert.ToString(Session["doc_stat2"]) != "Pending at Audit" || Convert.ToString(Session["doc_stat2"]) != "Pending at P2P" || Convert.ToString(Session["doc_stat2"]) != "Pending at Cashier")
+                {
+                    SendEmail(doc_id, org_id, comps_id, stat);
+                }
 
                 var wfa = new ITP_T_WorkflowActivity()
                 {
@@ -1042,6 +1173,7 @@ namespace DX_WebTemplate
                             var cashstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Cashier" || s.STS_Name == "Pending at Cashier").Select(s => s.STS_Id).FirstOrDefault();
 
                             insertWA(cashierwf, cashierwfd, (int)cashierorID, docID, companyID, cashstatus, reim_docID);
+                            SendEmailFromCashP2P(docID, cashstatus, preparerID);
                         }
                         else
                         {
@@ -1075,6 +1207,7 @@ namespace DX_WebTemplate
                             var cashstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Cashier" || s.STS_Name == "Pending at Cashier").Select(s => s.STS_Id).FirstOrDefault();
 
                             insertWA(cashierwf, cashierwfd, (int)cashierorID, docID, companyID, cashstatus, reim_docID);
+                            SendEmail(docID, (int)cashierorID, companyID, cashstatus);
                         }
                         else
                         {
@@ -1140,6 +1273,7 @@ namespace DX_WebTemplate
                                                 var p2pstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at P2P" || s.STS_Name == "Pending at P2P").Select(s => s.STS_Id).FirstOrDefault();
 
                                                 insertWA(p2pwf, p2pwfd, (int)p2porID, docID, companyID, p2pstatus, reim_docID);
+                                                SendEmailFromCashP2P(docID, p2pstatus, preparerID);
                                             }
                                             else
                                             {
@@ -1149,6 +1283,7 @@ namespace DX_WebTemplate
                                                 var cashstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Cashier" || s.STS_Name == "Pending at Cashier").Select(s => s.STS_Id).FirstOrDefault();
 
                                                 insertWA(cashierwf, cashierwfd, (int)cashierorID, docID, companyID, cashstatus, reim_docID);
+                                                SendEmailFromCashP2P(docID, cashstatus, preparerID);
                                             }
                                         }
                                     }
@@ -1157,6 +1292,8 @@ namespace DX_WebTemplate
                                         Debug.WriteLine("No AUDWF");
                                         var audstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Audit" || s.STS_Name == "Pending at Audit").Select(s => s.STS_Id).FirstOrDefault();
                                         insertWA(Convert.ToInt32(audwf), Convert.ToInt32(audwfd), Convert.ToInt32(audorID), docID, companyID, audstatus, reim_docID);
+                                        
+                                        SendEmailFromAudit(docID, audstatus, preparerID, string.Empty);
                                     }
                                 }
                             }

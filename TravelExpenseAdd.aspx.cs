@@ -109,6 +109,7 @@ namespace DX_WebTemplate
                     var mainExp = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).FirstOrDefault();
                     var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).FirstOrDefault();
                     Session["statusid"] = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Disbursed").Select(x => x.STS_Id).FirstOrDefault();
+                    Session["appdoctype"] = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).Select(x => x.DCT_Id).FirstOrDefault();
 
                     if (mainExp != null)
                     {
@@ -284,11 +285,11 @@ namespace DX_WebTemplate
                     //// - - Setting FAP workflow - - ////
                     if (Convert.ToString(Session["ford"]) == "Foreign")
                     {
-                        Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.ChargedToComp && x.Description == "Foreign Test WF Finance Exec>CFO/Pres" && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
+                        Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.ChargedToComp && x.Description.Contains("Travel Foreign FAP>Manager>VP>CFO/PRES") && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
                     }
                     else
                     {
-                        Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.ChargedToComp && (x.IsRA == false || x.IsRA == null && totExpCA >= x.Minimum && totExpCA <= x.Maximum)).Select(x => x.WF_Id).FirstOrDefault());
+                        Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.ChargedToComp && x.Description.Contains("Travel Domestic FAP>Manager>VP") && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
                     }
                     
                     SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
@@ -1001,6 +1002,8 @@ namespace DX_WebTemplate
         {
             DateTime currentDate = DateTime.Now;
 
+            var docno = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == doc_id).Select(x => x.Doc_No).FirstOrDefault();
+
             var status = _DataContext.ITP_S_Status
                 .Where(x => x.STS_Id == statusID)
                 .Select(x => x.STS_Description)
@@ -1036,11 +1039,11 @@ namespace DX_WebTemplate
             //End--     Get Text info
 
             var requestor_fullname = _DataContext.ITP_S_UserMasters
-                .Where(um => um.EmpCode == Convert.ToString(Session["prep"]))
+                .Where(um => um.EmpCode == Convert.ToString(Session["userID"]))
                 .Select(um => um.FullName)
                 .FirstOrDefault();
             var requestor_email = _DataContext.ITP_S_UserMasters
-                .Where(um => um.EmpCode == Convert.ToString(Session["prep"]))
+                .Where(um => um.EmpCode == Convert.ToString(Session["userID"]))
                 .Select(um => um.Email)
                 .FirstOrDefault();
 
@@ -1051,21 +1054,21 @@ namespace DX_WebTemplate
             string senderRemarks = "";
             string emailSite = "https://devapps.anflocor.com/AccedeExpenseReportApproval.aspx";
             string sendEmailTo = user_email.Email;
-            string emailSubject = "Document No. " + doc_id + " (" + status + ")";
+            string emailSubject = "Document No. " + docno + " (" + status + ")";
 
             ANFLO anflo = new ANFLO();
 
             //Body Details Sample
             string emailDetails = "";
 
-            var queryER = from er in _DataContext.ACCEDE_T_ExpenseDetails
-                          where er.ExpenseMain_ID == doc_id
+            var queryER = from er in _DataContext.ACCEDE_T_TravelExpenseDetails
+                          where er.TravelExpenseMain_ID == doc_id
                           select er;
 
             emailDetails = "<table border='1' cellpadding='2' cellspacing='0' width='100%' class='main' style='border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;background:#fff;border-radius:3px;width:100%;'>";
             emailDetails += "<tr><td>Company</td><td><strong>" + comp_name.CompanyShortName + "</strong></td></tr>";
             emailDetails += "<tr><td>Document Date</td><td><strong>" + currentDate + "</strong></td></tr>";
-            emailDetails += "<tr><td>Document No.</td><td><strong>" + doc_id + "</strong></td></tr>";
+            emailDetails += "<tr><td>Document No.</td><td><strong>" + docno + "</strong></td></tr>";
             emailDetails += "<tr><td>Preparer</td><td><strong>" + senderName + "</strong></td></tr>";
             emailDetails += "<tr><td>Status</td><td><strong>" + status + "</strong></td></tr>";
             emailDetails += "<tr><td>Document Purpose</td><td><strong>" + "Expense Report" + "</strong></td></tr>";
@@ -1074,19 +1077,18 @@ namespace DX_WebTemplate
 
             emailDetails += "<table border='1' cellpadding='2' cellspacing='0' width='100%' class='main' style='border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;background:#fff;border-radius:3px;width:100%;'>";
             emailDetails += "<tr><th colspan='6'> Document Details </th> </tr>";
-            emailDetails += "<tr><th>Expense Type</th><th>Particulars</th><th>Supplier</th><th>Net Amount</th><th>Date Created</th></tr>";
+            emailDetails += "<tr><th>Expense Type</th><th>Date</th><th>Location</th><th>Total Expenses</th></tr>";
 
             foreach (var item in queryER)
             {
-                var exp = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == doc_id).Select(x => x.ExpenseType_ID).FirstOrDefault();
+                var exp = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == doc_id).Select(x => x.ExpenseType_ID).FirstOrDefault();
                 var expType = _DataContext.ACCEDE_S_ExpenseTypes.Where(x => x.ExpenseType_ID == exp).Select(x => x.Description).FirstOrDefault();
                 emailDetails +=
                             "<tr>" +
                             "<td style='text-align: center;'>" + expType + "</td>" +
-                            "<td style='text-align: center;'>" + item.Particulars + "</td>" +
-                            "<td style='text-align: center;'>" + item.Supplier + "</td>" +
-                            "<td style='text-align: center;'>" + item.NetAmount + "</td>" +
-                            "<td style='text-align: center;'>" + item.DateAdded.Value.ToLongDateString() + "</td>" +
+                            "<td style='text-align: center;'>" + item.TravelExpenseDetail_Date + "</td>" +
+                            "<td style='text-align: center;'>" + item.LocParticulars + "</td>" +
+                            "<td style='text-align: center;'>" + item.Total_Expenses + "</td>" +
                             "</tr>";
             }
             emailDetails += "</table>";
@@ -1916,7 +1918,7 @@ namespace DX_WebTemplate
 
             if (Convert.ToString(fordCB.Value) == "Foreign")
             {
-                Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.ChargedToComp && x.Description.Contains("Foreign Test WF Finance Exec>CFO/Pres") && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
+                Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.ChargedToComp && x.Description.Contains("Foreign Test FN EXEC>CFO/PRES") && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
             }
             else
             {

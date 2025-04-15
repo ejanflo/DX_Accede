@@ -17,7 +17,7 @@
             border: 1px solid #ccc;
             max-height: 200px;
             overflow-y: auto;
-            width: 335px;
+            width: 400px;
             z-index: 1000;
             display: none;
         }
@@ -34,46 +34,50 @@
     </style>
     <script>
         function onKeyPress(s, e) {
-            //var input = s.GetInputElement();  // Get the textbox input element
-            //var query = input.value.trim();
-            //var suggestionBox = document.getElementById("locationSuggestions");
+            var input = s.GetInputElement();  // Get the textbox input element
+            var query = input.value.trim();
+            var suggestionBox = document.getElementById("locationSuggestions");
 
-            //if (query.length < 3) {
-            //    suggestionBox.innerHTML = "";
-            //    suggestionBox.style.display = "none";
-            //    return;
-            //}
+            if (query.length < 3) {
+                suggestionBox.innerHTML = "";
+                suggestionBox.style.display = "none";
+                ForD.SetSelectedIndex(-1);
+                return;
+            }
 
-            //// Fetch location suggestions from OpenStreetMap (Nominatim API)
-            //fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`)
-            //    .then(response => response.json())
-            //    .then(data => {
-            //        suggestionBox.innerHTML = "";
-            //        suggestionBox.style.display = "block";
+            fetch(`https://photon.komoot.io/api/?q=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                suggestionBox.innerHTML = "";
+                suggestionBox.style.display = "block";
 
-            //        data.forEach(item => {
-            //            var div = document.createElement("div");
-            //            div.textContent = item.display_name;
-            //            div.classList.add("suggestion-item");
+                data.features.forEach(item => {
+                    const name = item.properties.name || '';
+                    const city = item.properties.city ? `, ${item.properties.city}` : '';
+                    const state = item.properties.state ? `, ${item.properties.state}` : '';
+                    const country = item.properties.country ? `, ${item.properties.country}` : '';
 
-            //            // Handle click event to select a location
-            //            div.addEventListener("click", function () {
-            //                s.SetText(item.display_name);  // Set the selected location in ASPxTextBox
+                    const div = document.createElement("div");
+                    div.textContent = `${name}${city}${state}${country}`;
+                    div.classList.add("suggestion-item");
 
-            //                // Check if the location is in the Philippines
-            //                //if (item.address && item.address.country_code !== "ph") 
-            //                //    ForD.SetValue('Foreign');
-            //                //else
-            //                //    ForD.SetValue('Domestic');
+                    // Handle click event to select a location
+                    div.addEventListener("click", function () {
+                        s.SetText(`${name}${city}${state}${country}`);
 
-            //                suggestionBox.innerHTML = "";
-            //                suggestionBox.style.display = "none";
-            //            });
+                         if (item.properties.countrycode !== "PH")
+                             ForD.SetValue('Foreign');
+                         else
+                             ForD.SetValue('Domestic');
 
-            //            suggestionBox.appendChild(div);
-            //        });
-            //    })
-            //    .catch(error => console.error("Error fetching locations:", error));
+                        suggestionBox.innerHTML = "";
+                        suggestionBox.style.display = "none";
+                    });
+
+                    suggestionBox.appendChild(div);
+                });
+            })
+            .catch(error => console.error("Error fetching locations:", error));
         }
 
         // Hide suggestions when clicking outside
@@ -556,7 +560,7 @@
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
                                 <dx:ASPxTextBox ID="triptoTB" runat="server" ClientInstanceName="triptoTB" Width="100%" Font-Bold="True">
-                                    <ClientSideEvents KeyPress="onKeyPress" />
+                                    <ClientSideEvents UserInput="onKeyPress" />
                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="CreateForm">
                                         <RequiredField ErrorText="*Required field" IsRequired="True" />
                                     </ValidationSettings>
