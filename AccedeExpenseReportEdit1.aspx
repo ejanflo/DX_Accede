@@ -8,12 +8,12 @@
             align-items: center; /* Vertically centers the radio buttons */
             gap: 10px; /* Adjust the spacing between the radio buttons */
         }
-        #scrollablecontainer1, #scrollablecontainer3, #scrollablecontainer2 {
+        /*#scrollablecontainer1, #scrollablecontainer3, #scrollablecontainer2 {
             overflow: auto;
             height: 600px;
             border: 1px solid #ccc; 
             padding: 10px; 
-        }
+        }*/
         .modal-fullscreen {
             width: 100vw;
             max-width: none;
@@ -811,6 +811,22 @@
         function onPopupClosing() {
             DocuGrid_edit.PerformCallback();
             console.log("closing");
+        }
+
+        function DownloadCostAllocTemp() {
+            $.ajax({
+                type: "POST",
+                url: "AccedeExpenseReportEdit1.aspx/GenerateTempCostAllocAJAX",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    var downloadUrl = response.d;
+                    window.location.href = downloadUrl;
+                },
+                error: function (xhr, status, error) {
+                    alert("Error generating Excel file.");
+                }
+            });
         }
 
         var pdfjsLib = window['pdfjs-dist/build/pdf'];
@@ -2985,47 +3001,86 @@ exp_EmpId.PerformCallback(s.GetValue());
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                         </dx:LayoutItem>
-                                        <dx:LayoutItem ClientVisible="False" ColSpan="2" ColumnSpan="2" Name="WFLayout" ShowCaption="False" Width="100%">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxGridView ID="ExpAllocGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="ExpAllocGrid" KeyFieldName="ID" OnCustomCallback="ExpAllocGrid_CustomCallback" OnRowDeleting="ExpAllocGrid_RowDeleting" OnRowInserting="ExpAllocGrid_RowInserting" Width="100%">
-                                                        <ClientSideEvents EndCallback="onEndCallback" />
-                                                        <SettingsPager Mode="EndlessPaging">
-                                                        </SettingsPager>
-                                                        <SettingsEditing Mode="Inline">
-                                                        </SettingsEditing>
-                                                        <Settings GridLines="None" ShowFooter="True" />
-                                                        <SettingsPopup>
-                                                            <FilterControl AutoUpdatePosition="False">
-                                                            </FilterControl>
-                                                        </SettingsPopup>
-                                                        <SettingsText CommandDelete="Remove" />
-                                                        <Columns>
-                                                            <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="160px">
-                                                            </dx:GridViewCommandColumn>
-                                                            <dx:GridViewDataComboBoxColumn Caption="Cost Center" FieldName="CostCenter" ShowInCustomizationForm="True" VisibleIndex="5">
-                                                                <PropertiesComboBox DataSourceID="SqlCostCenterAll" TextField="SAP_CostCenter" ValueField="SAP_CostCenter" TextFormatString="{0}">
-                                                                    <ItemStyle Font-Size="Smaller" />
-                                                                </PropertiesComboBox>
-                                                            </dx:GridViewDataComboBoxColumn>
-                                                            <dx:GridViewDataSpinEditColumn Caption="Allocated Amount" FieldName="NetAmount" ShowInCustomizationForm="True" VisibleIndex="6">
-                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatString="#,##0.00" NumberFormat="Custom">
-                                                                </PropertiesSpinEdit>
-                                                            </dx:GridViewDataSpinEditColumn>
-                                                            <dx:GridViewDataMemoColumn FieldName="Remarks" ShowInCustomizationForm="True" VisibleIndex="7">
-                                                            </dx:GridViewDataMemoColumn>
-                                                        </Columns>
-                                                        <TotalSummary>
-                                                            <dx:ASPxSummaryItem DisplayFormat="Total: #,#00.00" FieldName="NetAmount" ShowInColumn="NetAmount" ShowInGroupFooterColumn="NetAmount" SummaryType="Sum" />
-                                                        </TotalSummary>
-                                                        <Styles>
-                                                            <Footer Font-Bold="True" Font-Size="Medium">
-                                                            </Footer>
-                                                        </Styles>
-                                                    </dx:ASPxGridView>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                        </dx:LayoutItem>
+                                        <dx:LayoutGroup Caption="" ColSpan="2" ColumnSpan="2" Width="100%" ClientVisible="False" Name="WFLayout">
+                                            <Items>
+                                                <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="None" Width="100%">
+                                                    <Items>
+                                                        <dx:LayoutItem Caption="Upload Template" ColSpan="1" Width="70%">
+                                                            <LayoutItemNestedControlCollection>
+                                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                                    <dx:ASPxUploadControl ID="UploadControllerExpD0" runat="server" AutoStartUpload="True" ShowProgressPanel="True" UploadMode="Auto" Width="100%" OnFileUploadComplete="UploadControllerExpD0_FileUploadComplete">
+                                                                        <ClientSideEvents FilesUploadComplete="function(s, e) {
+	ExpAllocGrid.Refresh();
+}
+" />
+                                                                        <AdvancedModeSettings EnableFileList="True" EnableMultiSelect="True">
+                                                                        </AdvancedModeSettings>
+                                                                    </dx:ASPxUploadControl>
+                                                                </dx:LayoutItemNestedControlContainer>
+                                                            </LayoutItemNestedControlCollection>
+                                                            <CaptionSettings HorizontalAlign="Left" Location="Top" />
+                                                        </dx:LayoutItem>
+                                                        <dx:LayoutItem Caption="" ColSpan="1" Width="30%">
+                                                            <LayoutItemNestedControlCollection>
+                                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                                    <dx:ASPxButton ID="submitBtn0" runat="server" AutoPostBack="False" BackColor="#006838" ClientInstanceName="submitBtn" Font-Bold="True" Font-Size="Small" Text="Download Template" UseSubmitBehavior="False">
+                                                                        <ClientSideEvents Click="function(s, e) {
+	DownloadCostAllocTemp();
+        }" />
+                                                                        <Image IconID="pdfviewer_next_svg_white_16x16">
+                                                                        </Image>
+                                                                        <HoverStyle BackColor="Black">
+                                                                        </HoverStyle>
+                                                                    </dx:ASPxButton>
+                                                                </dx:LayoutItemNestedControlContainer>
+                                                            </LayoutItemNestedControlCollection>
+                                                            <CaptionSettings HorizontalAlign="Left" Location="Top" />
+                                                        </dx:LayoutItem>
+                                                    </Items>
+                                                </dx:LayoutGroup>
+                                                <dx:LayoutItem ColSpan="1" Width="100%" ShowCaption="False">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxGridView ID="ExpAllocGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="ExpAllocGrid" KeyFieldName="ID" OnCustomCallback="ExpAllocGrid_CustomCallback" OnRowDeleting="ExpAllocGrid_RowDeleting" OnRowInserting="ExpAllocGrid_RowInserting" Width="100%">
+                                                                <ClientSideEvents EndCallback="onEndCallback" />
+                                                                <SettingsPager Mode="EndlessPaging">
+                                                                </SettingsPager>
+                                                                <SettingsEditing Mode="Inline">
+                                                                </SettingsEditing>
+                                                                <Settings GridLines="None" ShowFooter="True" />
+                                                                <SettingsPopup>
+                                                                    <FilterControl AutoUpdatePosition="False">
+                                                                    </FilterControl>
+                                                                </SettingsPopup>
+                                                                <SettingsText CommandDelete="Remove" />
+                                                                <Columns>
+                                                                    <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="160px">
+                                                                    </dx:GridViewCommandColumn>
+                                                                    <dx:GridViewDataComboBoxColumn Caption="Cost Center" FieldName="CostCenter" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                                        <PropertiesComboBox DataSourceID="SqlCostCenterAll" TextField="SAP_CostCenter" TextFormatString="{0}" ValueField="SAP_CostCenter">
+                                                                            <ItemStyle Font-Size="Smaller" />
+                                                                        </PropertiesComboBox>
+                                                                    </dx:GridViewDataComboBoxColumn>
+                                                                    <dx:GridViewDataSpinEditColumn Caption="Allocated Amount" FieldName="NetAmount" ShowInCustomizationForm="True" VisibleIndex="6">
+                                                                        <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatString="#,##0.00" NumberFormat="Custom">
+                                                                        </PropertiesSpinEdit>
+                                                                    </dx:GridViewDataSpinEditColumn>
+                                                                    <dx:GridViewDataMemoColumn FieldName="Remarks" ShowInCustomizationForm="True" VisibleIndex="7">
+                                                                    </dx:GridViewDataMemoColumn>
+                                                                </Columns>
+                                                                <TotalSummary>
+                                                                    <dx:ASPxSummaryItem DisplayFormat="Total: #,#00.00" FieldName="NetAmount" ShowInColumn="NetAmount" ShowInGroupFooterColumn="NetAmount" SummaryType="Sum" />
+                                                                </TotalSummary>
+                                                                <Styles>
+                                                                    <Footer Font-Bold="True" Font-Size="Medium">
+                                                                    </Footer>
+                                                                </Styles>
+                                                            </dx:ASPxGridView>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                </dx:LayoutItem>
+                                            </Items>
+                                        </dx:LayoutGroup>
                                     </Items>
                                 </dx:LayoutGroup>
                                 <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2" Width="100%">

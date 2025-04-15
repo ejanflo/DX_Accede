@@ -1077,6 +1077,24 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox Unalloc_amnt;
 
         /// <summary>
+        /// UploadControllerExpD0 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxUploadControl UploadControllerExpD0;
+
+        /// <summary>
+        /// submitBtn0 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton submitBtn0;
+
+        /// <summary>
         /// ExpAllocGrid control.
         /// </summary>
         /// <remarks>
