@@ -110,6 +110,8 @@ namespace DX_WebTemplate
                     var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).FirstOrDefault();
                     Session["statusid"] = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Disbursed").Select(x => x.STS_Id).FirstOrDefault();
                     Session["appdoctype"] = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).Select(x => x.DCT_Id).FirstOrDefault();
+                    SqlDepartment.SelectParameters["Company_ID"].DefaultValue = Convert.ToString(mainExp.ChargedToComp);
+                    SqlDepartment.DataBind();
 
                     if (mainExp != null)
                     {
@@ -1000,7 +1002,7 @@ namespace DX_WebTemplate
 
         public void SendEmail(int doc_id, int org_id, int comps_id, int statusID)
         {
-            DateTime currentDate = DateTime.Now;
+            string currentDate = DateTime.Now.ToShortDateString();
 
             var docno = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == doc_id).Select(x => x.Doc_No).FirstOrDefault();
 
@@ -2183,9 +2185,9 @@ namespace DX_WebTemplate
                 SqlLocBranch.SelectParameters["Comp_Id"].DefaultValue = e.Parameter.ToString();
                 SqlLocBranch.DataBind();
 
-                fordCB.DataSourceID = null;
-                fordCB.DataSource = SqlLocBranch;
-                fordCB.DataBind();
+                locBranch.DataSourceID = null;
+                locBranch.DataSource = SqlLocBranch;
+                locBranch.DataBind();
             }
         }
 
@@ -2209,9 +2211,9 @@ namespace DX_WebTemplate
             SqlDepartment.SelectParameters["Company_ID"].DefaultValue = comp_id;
             SqlDepartment.DataBind();
 
-            fordCB.DataSourceID = null;
-            fordCB.DataSource = SqlDepartment;
-            fordCB.DataBind();
+            chargedCB0.DataSourceID = null;
+            chargedCB0.DataSource = SqlDepartment;
+            chargedCB0.DataBind();
         }
 
         protected void TraDocuGrid_CellEditorInitialize(object sender, ASPxGridViewEditorEventArgs e)

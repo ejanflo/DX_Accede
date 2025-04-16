@@ -361,7 +361,7 @@
                                                     </PropertiesComboBox>
                                                     <Columns>
                                                         <dx:GridViewDataComboBoxColumn Caption="Department" FieldName="Dep_Code" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                            <PropertiesComboBox DataSourceID="SqlDepartmentList" TextField="DepCode" ValueField="ID">
+                                                            <PropertiesComboBox DataSourceID="SqlDepartmentList" TextField="DepDesc" ValueField="ID">
                                                             </PropertiesComboBox>
                                                         </dx:GridViewDataComboBoxColumn>
                                                     </Columns>

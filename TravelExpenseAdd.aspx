@@ -983,7 +983,7 @@
                             <Items>
                                 <dx:TabbedLayoutGroup ColSpan="3" VerticalAlign="Top" ColumnSpan="3">
                                     <Items>
-                                        <dx:LayoutGroup Caption="REPORT HEADER DETAILS" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="None" RowSpan="2">
+                                        <dx:LayoutGroup Caption="REPORT HEADER DETAILS" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="None" RowSpan="2" Width="100%">
                                             <GroupBoxStyle>
                                                 <Border BorderColor="#006838" />
                                             </GroupBoxStyle>
@@ -1029,7 +1029,7 @@
                                                 <dx:LayoutItem Caption="Workflow Department" ColSpan="1" FieldName="Dep_Code">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxComboBox ID="departmentCB" runat="server" ClientEnabled="False" ClientInstanceName="departmentCB" DataSourceID="SqlDepartment" Font-Bold="True" Font-Size="Small" ReadOnly="True" TextField="DepCode" ValueField="ID" Width="100%">
+                                                            <dx:ASPxComboBox ID="departmentCB" runat="server" ClientEnabled="False" ClientInstanceName="departmentCB" DataSourceID="SqlDepartment0" Font-Bold="True" Font-Size="Small" ReadOnly="True" TextField="DepDesc" ValueField="ID" Width="100%">
                                                                 <DropDownButton Visible="False">
                                                                 </DropDownButton>
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
@@ -1172,15 +1172,7 @@
                                                 <dx:LayoutItem Caption="Charged To Department" ColSpan="1" FieldName="ChargedToDept">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxComboBox ID="chargedCB0" runat="server" ClientInstanceName="chargedCB0" DataSourceID="SqlDepartment" Font-Bold="True" Font-Size="Small" NullValueItemDisplayText="{0}" OnDataBound="chargedCB0_DataBound" TextField="DepDesc" TextFormatString="{1}" ValueField="ID" Width="100%" OnCallback="chargedCB0_Callback">
-                                                                <Columns>
-                                                                    <dx:ListBoxColumn Caption="Company" FieldName="Company_Code" Width="110px">
-                                                                    </dx:ListBoxColumn>
-                                                                    <dx:ListBoxColumn Caption="Dept Code" FieldName="DepCode" Width="100px">
-                                                                    </dx:ListBoxColumn>
-                                                                    <dx:ListBoxColumn Caption="Dept Description" FieldName="DepDesc" Width="280px">
-                                                                    </dx:ListBoxColumn>
-                                                                </Columns>
+                                                            <dx:ASPxComboBox ID="chargedCB0" runat="server" ClientInstanceName="chargedCB0" DataSourceID="SqlDepartment" Font-Bold="True" Font-Size="Small" OnDataBound="chargedCB0_DataBound" TextField="DepDesc" ValueField="ID" Width="100%" OnCallback="chargedCB0_Callback">
                                                                 <ClearButton DisplayMode="Always">
                                                                 </ClearButton>
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
@@ -1308,7 +1300,7 @@
                                 </dx:TabbedLayoutGroup>
                                 <dx:TabbedLayoutGroup ColSpan="2" VerticalAlign="Top" ColumnSpan="2">
                                     <Items>
-                                        <dx:LayoutGroup Caption="CASH ADVANCE DETAILS" ColSpan="1" GroupBoxDecoration="None">
+                                        <dx:LayoutGroup Caption="CASH ADVANCE DETAILS" ColSpan="1" GroupBoxDecoration="None" Width="100%">
                                             <GroupBoxStyle>
                                                 <Border BorderColor="#006838" />
                                             </GroupBoxStyle>
@@ -4535,7 +4527,12 @@
             <asp:Parameter DefaultValue="" Name="Exp_ID" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([DepCode] IS NOT NULL) AND ([SAP_CostCenter] IS NOT NULL)"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([Company_ID] = @Company_ID) AND ([SAP_CostCenter] IS NOT NULL)">
+        <SelectParameters>
+            <asp:Parameter Name="Company_ID" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlDepartment0" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([DepCode] IS NOT NULL) AND ([SAP_CostCenter] IS NOT NULL)"></asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlExpDetails" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_TravelExpenseDetails] WHERE ([TravelExpenseMain_ID] = @TravelExpenseMain_ID) ORDER BY [TravelExpenseDetail_Date] ASC">
         <SelectParameters>
             <asp:SessionParameter Name="TravelExpenseMain_ID" SessionField="TravelExp_Id" Type="Int32" />
