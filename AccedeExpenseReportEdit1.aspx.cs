@@ -23,6 +23,11 @@ using System.Web;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using OfficeOpenXml;
+using OfficeOpenXml.DataValidation.Contracts;
+using System.Windows.Media;
+using OfficeOpenXml.Style;
+using System.IO;
 
 namespace DX_WebTemplate
 {
@@ -2476,5 +2481,182 @@ namespace DX_WebTemplate
             costCenter_edit.DataSource = sqlCostCenter;
             costCenter_edit.DataBind();
         }
+
+        [WebMethod]
+        public static string GenerateTempCostAllocAJAX()
+        {
+            string filePath = HttpContext.Current.Server.MapPath("~/Temp/ExportedData.xlsx");
+
+            AccedeExpenseReportEdit1 exp = new AccedeExpenseReportEdit1();
+            exp.GenerateTempCostAlloc(filePath);
+
+            // Return a URL to be used by JS to trigger download
+            return "/Temp/ExportedData.xlsx";
+        }
+
+
+        public void GenerateTempCostAlloc(string filePath)
+        {
+            List<string> costCenters = GetCostCenters();
+            // Set the LicenseContext for EPPlus
+            ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+
+            using (var package = new ExcelPackage())
+            {
+                var ws = package.Workbook.Worksheets.Add("MainSheet");
+                var hiddenSheet = package.Workbook.Worksheets.Add("Hidden");
+
+                ws.Cells[1, 1].Value = "COST CENTER";
+                ws.Cells[1, 2].Value = "AMOUNT";
+                ws.Cells[1, 3].Value = "REMARKS";
+
+                // Add Cost Centers to HiddenSheet
+                int i = 1;
+                foreach (var cc in costCenters)
+                {
+                    hiddenSheet.Cells[i, 1].Value = cc;
+                    i++;
+                }
+
+                // Define named range
+                var range = hiddenSheet.Cells[1, 1, costCenters.Count, 1];
+                var namedRange = package.Workbook.Names.Add("CostCenterList", range);
+                hiddenSheet.Hidden = eWorkSheetHidden.VeryHidden;
+
+                // Add data validation that references the named range
+                for (int row = 2; row <= 100; row++)
+                {
+                    var validation = ws.DataValidations.AddListValidation(ws.Cells[row, 1].Address);
+                    validation.Formula.ExcelFormula = "CostCenterList";
+
+                    ws.Column(1).Width = 35;
+                    ws.Column(2).Width = 25;
+                    ws.Column(3).Width = 25;
+
+                    ws.Cells["A1"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    ws.Cells["B1"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    ws.Cells["C1"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    ws.Cells["A1"].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+                    ws.Cells["B1"].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+                    ws.Cells["C1"].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+                    ws.Cells["A1"].Style.Font.Bold = true;
+                    ws.Cells["B1"].Style.Font.Bold = true;
+                    ws.Cells["C1"].Style.Font.Bold = true;
+
+                    ws.Cells["B2:B100"].Style.Numberformat.Format = "#,##0.00";
+
+                    var validationAmnt = ws.DataValidations.AddDecimalValidation(ws.Cells[row, 2].Address);
+                    validationAmnt.ShowErrorMessage = true;
+                    validationAmnt.Error = "Please enter a valid number (decimal or integer).";
+                    validationAmnt.ErrorTitle = "Invalid Input";
+                    validationAmnt.Operator = OfficeOpenXml.DataValidation.ExcelDataValidationOperator.between;
+                    validationAmnt.Formula.Value = 0;       // Minimum value allowed
+                    validationAmnt.Formula2.Value = 999999; // Max value (you can change this as needed)
+                }
+
+                package.SaveAs(new System.IO.FileInfo(filePath));
+            }
+        }
+
+
+        private List<string> GetCostCenters()
+        {
+            var costCenterList = _DataContext.ITP_S_OrgDepartmentMasters
+                .Where(x => x.SAP_CostCenter != null)
+                .OrderBy(x => x.DepDesc)
+                .Select(x => x.SAP_CostCenter)
+                .Distinct()
+                .ToList();
+
+            return costCenterList;
+        }
+
+        protected void UploadControllerExpD0_FileUploadComplete(object sender, FileUploadCompleteEventArgs e)
+        {
+            string filePath = Server.MapPath("~/Temp/" + e.UploadedFile.FileName);
+            e.UploadedFile.SaveAs(filePath);
+
+            // Process the uploaded Excel file and insert data into SQL Server
+            ProcessAndInsertData(filePath);
+
+            File.Delete(filePath); // Delete the uploaded file if needed
+        }
+
+        private void ProcessAndInsertData(string filePath)
+        {
+            // Set the LicenseContext for EPPlus
+            ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+            using (var package = new ExcelPackage(new FileInfo(filePath)))
+            {
+                var worksheet = package.Workbook.Worksheets[0]; // Assuming the data is on the first worksheet
+
+                for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
+                {
+                    string cc = worksheet.Cells[row, 1].Text?.Trim();
+                    string rawAmount = worksheet.Cells[row, 2].Text?.Replace(",", "").Trim();
+
+                    // Stop reading once CostCenter or Amount is blank
+                    if (string.IsNullOrEmpty(cc) && string.IsNullOrEmpty(rawAmount))
+                        break;
+
+                    if (string.IsNullOrEmpty(rawAmount))
+                        throw new Exception($"Amount is required in row {row}.");
+
+                    if (!decimal.TryParse(rawAmount, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal amnt))
+                        throw new Exception($"Invalid amount format in row {row}: '{rawAmount}'");
+
+                    string remarks = worksheet.Cells[row, 3].Text?.Trim();
+                    int id = GetNewId();
+                    InsertDataIntoDataTable(id, cc, amnt, remarks);
+                }
+
+            }
+        }
+
+        private void InsertDataIntoDataTable(int id, string cc, decimal amnt, string remarks)
+        {
+            decimal totalNetAmount = 0;
+            ASPxGridView grid = (ASPxGridView)ExpAllocGrid;
+
+            // Sum up all existing NetAmounts
+            for (int i = 0; i < grid.VisibleRowCount; i++)
+            {
+                object netAmountObj = grid.GetRowValues(i, "NetAmount");
+                if (netAmountObj != null && netAmountObj != DBNull.Value)
+                {
+                    totalNetAmount += Convert.ToDecimal(netAmountObj);
+                }
+            }
+
+            // Add the new amount
+            totalNetAmount += amnt;
+
+            // Compare with gross
+            //decimal gross = Convert.ToDecimal(grossAmount.Value);
+            //if (totalNetAmount > gross)
+            //{
+            //    grid.JSProperties["cpAllocationExceeded"] = true;
+            //    return;
+            //}
+
+            // Get session and data table
+            dsExpAlloc = (DataSet)Session["DataSetExpAlloc"];
+            ASPxGridView gridView = (ASPxGridView)ExpAllocGrid;
+            DataTable dataTable = gridView.GetMasterRowKeyValue() != null ? dsExpAlloc.Tables[1] : dsExpAlloc.Tables[0];
+
+            // Create and fill new row
+            DataRow row = dataTable.NewRow();
+            row["ID"] = id;
+            row["CostCenter"] = cc;
+            row["NetAmount"] = amnt;
+            row["Remarks"] = remarks;
+            dataTable.Rows.Add(row);
+
+            // Send updated value to client
+            grid.JSProperties["cpComputeUnalloc"] = totalNetAmount;
+        }
+
+
+
     }
 }
