@@ -102,6 +102,7 @@
 
         function OnDeptChanged(dept_id) {
             drpdown_WF.PerformCallback(dept_id);
+            WFSequenceGrid.PerformCallback(dept_id);
             //exp_costCenter.PerformCallback();
             //$.ajax({
             //    type: "POST",
@@ -1880,7 +1881,7 @@ exp_EmpId.PerformCallback(s.GetValue());
                                                                 <dx:LayoutItem Caption="Workflow" ColSpan="1">
                                                                     <LayoutItemNestedControlCollection>
                                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                                            <dx:ASPxComboBox ID="drpdown_WF" runat="server" ClientInstanceName="drpdown_WF" DataSourceID="SqlWF" Height="39px" OnCallback="drpdown_WF_Callback" SelectedIndex="0" TextField="Name" ValueField="WF_Id" Width="100%">
+                                                                            <dx:ASPxComboBox ID="drpdown_WF" runat="server" ClientInstanceName="drpdown_WF" Height="39px" OnCallback="drpdown_WF_Callback" TextField="Name" ValueField="WF_Id" Width="100%">
                                                                                 <ClientSideEvents Init="function(s, e) {
 	//WFSequenceGrid.PerformCallback();
 }" SelectedIndexChanged="function(s, e) {
@@ -1905,7 +1906,7 @@ exp_EmpId.PerformCallback(s.GetValue());
                                                                 <dx:LayoutItem Caption="" ColSpan="1">
                                                                     <LayoutItemNestedControlCollection>
                                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                                            <dx:ASPxGridView ID="WFSequenceGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="WFSequenceGrid" DataSourceID="SqlWorkflowSequence" OnCustomCallback="WFSequenceGrid_CustomCallback" Theme="iOS" Width="100%">
+                                                                            <dx:ASPxGridView ID="WFSequenceGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="WFSequenceGrid" OnCustomCallback="WFSequenceGrid_CustomCallback" Theme="iOS" Width="100%">
                                                                                 <SettingsPopup>
                                                                                     <FilterControl AutoUpdatePosition="False">
                                                                                     </FilterControl>
