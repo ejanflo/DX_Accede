@@ -545,7 +545,7 @@
                     <dx:LayoutItem Caption="Employee Name" ColSpan="2" ColumnSpan="2" VerticalAlign="Top" Width="50%">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
-                                <dx:ASPxComboBox ID="employeeCB" runat="server" DataSourceID="SqlUsersDelegated" TextField="FullName" ValueField="DelegateFor_UserID" Width="100%" ClientInstanceName="employeeCB" Font-Bold="True">
+                                <dx:ASPxComboBox ID="employeeCB" runat="server" TextField="FullName" ValueField="EmpCode" Width="100%" ClientInstanceName="employeeCB" Font-Bold="True">
                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="CreateForm">
                                         <RequiredField ErrorText="*Required field" IsRequired="True" />
                                     </ValidationSettings>
@@ -794,7 +794,11 @@
 
     <dx:ASPxLoadingPanel ID="loadPanel" ClientInstanceName="loadPanel" Modal="true" runat="server" Theme="MaterialCompact" Text=""></dx:ASPxLoadingPanel>
 
-        <asp:SqlDataSource ID="sqlName" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT [FullName], [EmpCode] FROM [ITP_S_UserMaster]"></asp:SqlDataSource>
+        <asp:SqlDataSource ID="sqlName" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT [FullName], [EmpCode] FROM [ITP_S_UserMaster] WHERE ([EmpCode] = @EmpCode)">
+            <SelectParameters>
+                <asp:SessionParameter Name="EmpCode" SessionField="userID" Type="String" />
+            </SelectParameters>
+    </asp:SqlDataSource>
         <asp:SqlDataSource ID="sqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_SecurityUserComp] WHERE (([AppId] = @AppId) AND ([IsActive] = @IsActive) AND ([UserId] = @UserId))">
             <SelectParameters>
                 <asp:Parameter DefaultValue="1032" Name="AppId" />
@@ -818,9 +822,9 @@
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlDepartmentList" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([DepCode] IS NOT NULL)">
     </asp:SqlDataSource>
-        <asp:SqlDataSource ID="SqlUsersDelegated" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT ITP_S_UserMaster.EmpCode, ITP_S_UserMaster.FullName AS EmpName, vw_ACCEDE_I_UserDelegationUMaster.FullName, vw_ACCEDE_I_UserDelegationUMaster.DelegateFor_UserID, vw_ACCEDE_I_UserDelegationUMaster.DelegateTo_UserID, vw_ACCEDE_I_UserDelegationUMaster.DateFrom, vw_ACCEDE_I_UserDelegationUMaster.DateTo, vw_ACCEDE_I_UserDelegationUMaster.Company_ID, vw_ACCEDE_I_UserDelegationUMaster.isActive FROM ITP_S_UserMaster FULL OUTER JOIN vw_ACCEDE_I_UserDelegationUMaster ON ITP_S_UserMaster.EmpCode = vw_ACCEDE_I_UserDelegationUMaster.DelegateTo_UserID WHERE (ITP_S_UserMaster.EmpCode = @EmpCode)">
+        <asp:SqlDataSource ID="SqlUsersDelegated" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT FullName, DelegateTo_UserID, DelegateFor_UserID, DateFrom, Company_ID, DateTo, isActive FROM vw_ACCEDE_I_UserDelegationUMaster WHERE (DelegateTo_UserID = @DelegateTo_UserID)">
             <SelectParameters>
-                <asp:SessionParameter Name="EmpCode" SessionField="userID" />
+                <asp:SessionParameter Name="DelegateTo_UserID" SessionField="userID" />
             </SelectParameters>
         </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlUser" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_UserMaster]">

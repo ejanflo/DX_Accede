@@ -1,12 +1,16 @@
 ﻿using DevExpress.Web;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Services;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace DX_WebTemplate
 {
@@ -43,11 +47,47 @@ namespace DX_WebTemplate
 
                 SqlDepartmentEdit.SelectParameters["CompanyId"].DefaultValue = Convert.ToString(compCB.Value);
                 SqlDepartmentEdit.DataBind();
+
+                sqlName.SelectParameters["EmpCode"].DefaultValue = Session["userID"].ToString();
+
+                DataView dv = (DataView)sqlName.Select(DataSourceSelectArguments.Empty);
+                DataTable dt = dv.ToTable();
+
+                var list = dt.AsEnumerable()
+                             .Select(row => new MyItem
+                             {
+                                 ID = row.Field<string>("EmpCode"),
+                                 Name = row.Field<string>("FullName")
+                             })
+                             .ToList();
+
+                DataView dv1 = (DataView)SqlUsersDelegated.Select(DataSourceSelectArguments.Empty);
+                DataTable dt1 = dv1.ToTable();
+
+                var list2 = dt1.AsEnumerable()
+                             .Select(row => new MyItem
+                             {
+                                 ID = row.Field<string>("DelegateFor_UserID"),
+                                 Name = row.Field<string>("FullName")
+                             })
+                             .ToList();
+
+                var combinedList = list.Concat(list2).ToList();
+
+                employeeCB.DataSource = combinedList;
+                employeeCB.TextField = "Name";
+                employeeCB.ValueField = "ID";
+                employeeCB.DataBind();
             }
             else
                 Response.Redirect("~/Logon.aspx");
         }
 
+        public class MyItem
+        {
+            public string ID { get; set; }
+            public string Name { get; set; }
+        }
 
         [WebMethod]
 
