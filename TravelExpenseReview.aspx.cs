@@ -491,7 +491,7 @@ namespace DX_WebTemplate
 
             //Body Details Sample
             string emailDetails = "";
-            DateTime currentDate = DateTime.Now;
+            string currentDate = DateTime.Now.ToShortDateString();
 
             var queryER = from er in _DataContext.ACCEDE_T_TravelExpenseDetails
                           where er.TravelExpenseMain_ID == id
@@ -529,7 +529,7 @@ namespace DX_WebTemplate
                             "<tr>" +
                             "<td style='text-align: center;'>" + expType + "</td>" +
                             "<td style='text-align: center;'>" + item.LocParticulars + "</td>" +
-                            "<td style='text-align: center;'>" + item.TravelExpenseDetail_Date.Value.ToLongDateString() + "</td>" +
+                            "<td style='text-align: center;'>" + item.TravelExpenseDetail_Date.Value.ToShortDateString() + "</td>" +
                             "<td style='text-align: center;'>" + item.Total_Expenses + "</td>" +
                             "</tr>";
             }
@@ -547,7 +547,7 @@ namespace DX_WebTemplate
 
         public void SendEmailFromCashP2P(int id, int status, int prepID)
         {
-            DateTime currentDate = DateTime.Now;
+            string currentDate = DateTime.Now.ToShortDateString();
 
             var main = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).FirstOrDefault();
             var compname = _DataContext.CompanyMasters.Where(x => x.WASSId == main.Company_Id).Select(x => x.CompanyShortName).FirstOrDefault();
@@ -658,7 +658,7 @@ namespace DX_WebTemplate
 
             //Body Details Sample
             string emailDetails = "";
-            DateTime currentDate = DateTime.Now;
+            string currentDate = DateTime.Now.ToShortDateString();
 
             //End of Body Details Sample
             string emailTemplate = anflo
@@ -673,7 +673,9 @@ namespace DX_WebTemplate
 
         public void SendEmail(int doc_id, int org_id, int comps_id, int statusID)
         {
-            DateTime currentDate = DateTime.Now;
+            string currentDate = DateTime.Now.ToShortDateString();
+
+            var docno = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == doc_id).Select(x => x.Doc_No).FirstOrDefault();
 
             var status = _DataContext.ITP_S_Status
                 .Where(x => x.STS_Id == statusID)
@@ -710,11 +712,11 @@ namespace DX_WebTemplate
             //End--     Get Text info
 
             var requestor_fullname = _DataContext.ITP_S_UserMasters
-                .Where(um => um.EmpCode == Convert.ToString(Session["prep"]))
+                .Where(um => um.EmpCode == Convert.ToString(Session["userID"]))
                 .Select(um => um.FullName)
                 .FirstOrDefault();
             var requestor_email = Convert.ToString(_DataContext.ITP_S_UserMasters
-                .Where(um => um.EmpCode == Convert.ToString(Session["prep"]))
+                .Where(um => um.EmpCode == Convert.ToString(Session["userID"]))
                 .Select(um => um.Email)
                 .FirstOrDefault()) ?? string.Empty;
 
@@ -725,7 +727,7 @@ namespace DX_WebTemplate
             string senderRemarks = "";
             string emailSite = "https://devapps.anflocor.com/AccedeExpenseReportApproval.aspx";
             string sendEmailTo = user_email.Email;
-            string emailSubject = "Document No. " + doc_id + " (" + status + ")";
+            string emailSubject = "Document No. " + docno + " (" + status + ")";
 
             ANFLO anflo = new ANFLO();
 
@@ -739,7 +741,7 @@ namespace DX_WebTemplate
             emailDetails = "<table border='1' cellpadding='2' cellspacing='0' width='100%' class='main' style='border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;background:#fff;border-radius:3px;width:100%;'>";
             emailDetails += "<tr><td>Company</td><td><strong>" + comp_name.CompanyShortName + "</strong></td></tr>";
             emailDetails += "<tr><td>Document Date</td><td><strong>" + currentDate + "</strong></td></tr>";
-            emailDetails += "<tr><td>Document No.</td><td><strong>" + doc_id + "</strong></td></tr>";
+            emailDetails += "<tr><td>Document No.</td><td><strong>" + docno + "</strong></td></tr>";
             emailDetails += "<tr><td>Preparer</td><td><strong>" + senderName + "</strong></td></tr>";
             emailDetails += "<tr><td>Status</td><td><strong>" + status + "</strong></td></tr>";
             emailDetails += "<tr><td>Document Purpose</td><td><strong>" + "Expense Report" + "</strong></td></tr>";
@@ -758,7 +760,7 @@ namespace DX_WebTemplate
                             "<tr>" +
                             "<td style='text-align: center;'>" + expType + "</td>" +
                             "<td style='text-align: center;'>" + item.LocParticulars + "</td>" +
-                            "<td style='text-align: center;'>" + item.TravelExpenseDetail_Date.Value.ToLongDateString() + "</td>" +
+                            "<td style='text-align: center;'>" + item.TravelExpenseDetail_Date.Value.ToShortDateString() + "</td>" +
                             "<td style='text-align: center;'>" + item.Total_Expenses + "</td>" +
                             "</tr>";
             }
@@ -813,8 +815,9 @@ namespace DX_WebTemplate
             try
             {
                 DateTime currentDate = DateTime.Now;
+                string stats = _DataContext.ITP_S_Status.Where(x => x.STS_Id == stat).Select(x => x.STS_Description).FirstOrDefault();
 
-                if (Convert.ToString(Session["doc_stat2"]) != "Pending at Audit" || Convert.ToString(Session["doc_stat2"]) != "Pending at P2P" || Convert.ToString(Session["doc_stat2"]) != "Pending at Cashier")
+                if (stats != "Pending at Audit" || stats != "Pending at P2P" || stats != "Pending at Cashier")
                 {
                     SendEmail(doc_id, org_id, comps_id, stat);
                 }

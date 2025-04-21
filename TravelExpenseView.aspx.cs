@@ -66,7 +66,7 @@ namespace DX_WebTemplate
                         ExpenseEditForm.Items[0].Caption = status != null ? "Travel Expense Document No.: " + mainExp.Doc_No + " (" + status + ")" : "Travel Expense Document No.: " + mainExp.Doc_No;
 
                         var chargedComp = Convert.ToString(_DataContext.CompanyMasters.Where(x => x.WASSId == mainExp.ChargedToComp).Select(x => x.CompanyShortName).FirstOrDefault());
-                        var chargedDept = Convert.ToString(_DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == mainExp.ChargedToDept).Select(x => x.DepCode).FirstOrDefault());
+                        var chargedDept = Convert.ToString(_DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == mainExp.ChargedToDept).Select(x => x.DepDesc).FirstOrDefault());
 
                         if (!string.IsNullOrEmpty(chargedComp) && !string.IsNullOrEmpty(chargedDept))
                             chargedCB.Text = chargedComp + " - " + chargedDept;

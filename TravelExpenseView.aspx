@@ -285,7 +285,7 @@
                                                 <dx:LayoutItem Caption="Workflow Department" ColSpan="1" FieldName="Dep_Code">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxComboBox ID="departmentCB" runat="server" ClientEnabled="False" ClientInstanceName="departmentCB" DataSourceID="SqlDepartment" Font-Bold="True" TextField="DepCode" ValueField="ID" Width="100%">
+                                                            <dx:ASPxComboBox ID="departmentCB" runat="server" ClientEnabled="False" ClientInstanceName="departmentCB" DataSourceID="SqlDepartment" Font-Bold="True" TextField="DepDesc" ValueField="ID" Width="100%">
                                                                 <DropDownButton Visible="False">
                                                                 </DropDownButton>
                                                                 <Border BorderStyle="None" />

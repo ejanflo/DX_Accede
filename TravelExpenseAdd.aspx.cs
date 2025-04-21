@@ -1088,7 +1088,7 @@ namespace DX_WebTemplate
                 emailDetails +=
                             "<tr>" +
                             "<td style='text-align: center;'>" + expType + "</td>" +
-                            "<td style='text-align: center;'>" + item.TravelExpenseDetail_Date + "</td>" +
+                            "<td style='text-align: center;'>" + item.TravelExpenseDetail_Date.Value.ToShortDateString() + "</td>" +
                             "<td style='text-align: center;'>" + item.LocParticulars + "</td>" +
                             "<td style='text-align: center;'>" + item.Total_Expenses + "</td>" +
                             "</tr>";
