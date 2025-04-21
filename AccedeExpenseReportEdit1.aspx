@@ -8,12 +8,12 @@
             align-items: center; /* Vertically centers the radio buttons */
             gap: 10px; /* Adjust the spacing between the radio buttons */
         }
-        /*#scrollablecontainer1, #scrollablecontainer3, #scrollablecontainer2 {
+        #scrollablecontainer1, #scrollablecontainer3, #scrollablecontainer2 {
             overflow: auto;
             height: 600px;
             border: 1px solid #ccc; 
             padding: 10px; 
-        }*/
+        }
         .modal-fullscreen {
             width: 100vw;
             max-width: none;
