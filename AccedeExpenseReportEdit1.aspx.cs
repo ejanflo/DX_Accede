@@ -2491,7 +2491,7 @@ namespace DX_WebTemplate
             exp.GenerateTempCostAlloc(filePath);
 
             // Return a URL to be used by JS to trigger download
-            return "/Temp/ExportedData.xlsx";
+            return "/accede/Temp/ExportedData.xlsx";
         }
 
 
