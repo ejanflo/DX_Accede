@@ -69,7 +69,6 @@
                                     <SettingsDetail AllowOnlyOneMasterRowExpanded="True" />
                                     <SettingsContextMenu Enabled="True">
                                     </SettingsContextMenu>
-                                    <SettingsLoadingPanel Mode="Disabled" />
                                     <SettingsAdaptivity AdaptivityMode="HideDataCells" AdaptiveDetailColumnCount="2">
                                     </SettingsAdaptivity>
                                     <SettingsCustomizationDialog Enabled="True" />
@@ -82,7 +81,7 @@
                                     <Settings ShowHeaderFilterButton="True" VerticalScrollableHeight="350" GridLines="Horizontal" />
                                     <SettingsBehavior EnableCustomizationWindow="True" />
                                     <SettingsResizing ColumnResizeMode="Control" Visualization="Postponed" />
-                                    <SettingsDataSecurity AllowDelete="False" AllowInsert="False" />
+                                    <SettingsDataSecurity AllowInsert="False" />
                                     <SettingsPopup>
                                         <FilterControl AutoUpdatePosition="False">
                                         </FilterControl>
@@ -94,6 +93,8 @@
                                         <SettingsItemCaptions ChangeCaptionLocationInAdaptiveMode="False" />
                                     </EditFormLayoutProperties>
                                     <Columns>
+                                        <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" VisibleIndex="0">
+                                        </dx:GridViewCommandColumn>
                                         <dx:GridViewDataTextColumn ShowInCustomizationForm="True" VisibleIndex="4" Caption="Date From" FieldName="DateFrom">
                                         </dx:GridViewDataTextColumn>
                                         <dx:GridViewDataTextColumn ShowInCustomizationForm="True" VisibleIndex="5" Caption="Date To" FieldName="DateTo">
