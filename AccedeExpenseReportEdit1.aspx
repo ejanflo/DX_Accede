@@ -393,6 +393,7 @@
             var CTCompany_id = exp_CTCompany.GetValue();
             var CTDept_id = exp_CTDepartment.GetValue();
             var AR = txt_AR.GetValue() != null ? txt_AR.GetValue() : "";
+            var compLoc = exp_CompLocation.GetValue() != null ? exp_CompLocation.GetValue() : "";
 
             $.ajax({
                 type: "POST",
@@ -416,7 +417,8 @@
                     costCenter: costCenter,
                     CTCompany_id: CTCompany_id,
                     CTDept_id: CTDept_id,
-                    AR: AR
+                    AR: AR,
+                    compLoc: compLoc
 
                 }),
                 contentType: "application/json; charset=utf-8",

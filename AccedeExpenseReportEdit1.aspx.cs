@@ -1297,14 +1297,14 @@ namespace DX_WebTemplate
 
         [WebMethod]
         public static string UpdateExpenseAJAX(string dateFile, string repName, string comp_id, string expType, string expCat,
-            string purpose, bool trav, string wf, string fapwf, string currency, string department, string payType, string btn, string classification, string costCenter, string CTCompany_id, string CTDept_id, string AR)
+            string purpose, bool trav, string wf, string fapwf, string currency, string department, string payType, string btn, string classification, string costCenter, string CTCompany_id, string CTDept_id, string AR, string compLoc)
         {
             AccedeExpenseReportEdit1 exp = new AccedeExpenseReportEdit1();
-            return exp.UpdateExpense(dateFile, repName, comp_id, expType, expCat,purpose, trav, wf, fapwf, currency, department, payType, btn, classification, costCenter, CTCompany_id, CTDept_id, AR);
+            return exp.UpdateExpense(dateFile, repName, comp_id, expType, expCat,purpose, trav, wf, fapwf, currency, department, payType, btn, classification, costCenter, CTCompany_id, CTDept_id, AR, compLoc);
         }
 
         public string UpdateExpense(string dateFile, string repName, string comp_id, string expType, string expCat,
-            string purpose, bool trav, string wf, string fapwf, string currency, string department, string payType, string btn, string classification, string costCenter, string CTCompany_id, string CTDept_id, string AR)
+            string purpose, bool trav, string wf, string fapwf, string currency, string department, string payType, string btn, string classification, string costCenter, string CTCompany_id, string CTDept_id, string AR, string compLoc)
         {
             try
             {
@@ -1373,6 +1373,12 @@ namespace DX_WebTemplate
                 exp.ExpChargedTo_CompanyId = Convert.ToInt32(CTCompany_id);
                 exp.ExpChargedTo_DeptId = Convert.ToInt32(CTDept_id);
                 exp.PaymentType = Convert.ToInt32(payType);
+
+                if(compLoc != "")
+                {
+                    exp.ExpComp_Location_Id = Convert.ToInt32(compLoc);
+                }
+
                 if(payType != null)
                 {
                     exp.PaymentType = Convert.ToInt32(payType);
