@@ -902,6 +902,14 @@ namespace DX_WebTemplate
 				return this.GetTable<vw_ACCEDE_I_WorkflowActivity>();
 			}
 		}
+		
+		public System.Data.Linq.Table<vw_ACCEDE_I_WFMapping> vw_ACCEDE_I_WFMappings
+		{
+			get
+			{
+				return this.GetTable<vw_ACCEDE_I_WFMapping>();
+			}
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ITP_S_EmailTemplate")]
@@ -24464,6 +24472,105 @@ namespace DX_WebTemplate
 				if ((this._WF_Name != value))
 				{
 					this._WF_Name = value;
+				}
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.vw_ACCEDE_I_WFMapping")]
+	public partial class vw_ACCEDE_I_WFMapping
+	{
+		
+		private int _WFM_ID;
+		
+		private string _UserId;
+		
+		private System.Nullable<int> _WF_ID;
+		
+		private System.Nullable<int> _App_Id;
+		
+		private System.Nullable<int> _Company_Id;
+		
+		public vw_ACCEDE_I_WFMapping()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WFM_ID", DbType="Int NOT NULL")]
+		public int WFM_ID
+		{
+			get
+			{
+				return this._WFM_ID;
+			}
+			set
+			{
+				if ((this._WFM_ID != value))
+				{
+					this._WFM_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", DbType="NVarChar(50)")]
+		public string UserId
+		{
+			get
+			{
+				return this._UserId;
+			}
+			set
+			{
+				if ((this._UserId != value))
+				{
+					this._UserId = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WF_ID", DbType="Int")]
+		public System.Nullable<int> WF_ID
+		{
+			get
+			{
+				return this._WF_ID;
+			}
+			set
+			{
+				if ((this._WF_ID != value))
+				{
+					this._WF_ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_App_Id", DbType="Int")]
+		public System.Nullable<int> App_Id
+		{
+			get
+			{
+				return this._App_Id;
+			}
+			set
+			{
+				if ((this._App_Id != value))
+				{
+					this._App_Id = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Company_Id", DbType="Int")]
+		public System.Nullable<int> Company_Id
+		{
+			get
+			{
+				return this._Company_Id;
+			}
+			set
+			{
+				if ((this._Company_Id != value))
+				{
+					this._Company_Id = value;
 				}
 			}
 		}

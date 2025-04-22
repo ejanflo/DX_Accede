@@ -287,29 +287,86 @@ namespace DX_WebTemplate
                             .FirstOrDefault();
 
                         // Fetch data using the stored procedure
-                        DataTable rawf = GetWorkflowHeadersByExpenseAndDepartment(mainExp.ExpenseName.ToString(), Convert.ToInt32(mainExp.CompanyId), totalExp, depcode != null ? depcode.DepCode : "0", 1032);
+                        //DataTable rawf = GetWorkflowHeadersByExpenseAndDepartment("", Convert.ToInt32(mainExp.CompanyId), totalExp, depcode != null ? depcode.DepCode : "0", 1032);
 
-                        if (rawf != null && rawf.Rows.Count > 0)
+                        //if (rawf != null && rawf.Rows.Count > 0)
+                        //{
+                        //    // Get the first row's WF_Id value
+                        //    DataRow firstRow = rawf.Rows[0];
+                        //    int wfId = Convert.ToInt32(firstRow["WF_Id"]);
+
+                        //    // Set the dropdown to the first item (if applicable)
+                        //    drpdown_WF.SelectedIndex = 0;
+
+                        //    // Update the SQL data source parameters
+                        //    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
+                        //    SqlWF.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
+
+                        //}
+                        //else
+                        //{
+                        //    // Handle the case when no data is returned
+                        //    drpdown_WF.SelectedIndex = -1; // Optionally reset the dropdown
+                        //    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = string.Empty;
+                        //    SqlWF.SelectParameters["WF_Id"].DefaultValue = string.Empty;
+                        //}
+
+                        var wfMapCheck = _DataContext.vw_ACCEDE_I_WFMappings.Where(x => x.UserId == mainExp.ExpenseName)
+                            .Where(x => x.Company_Id == Convert.ToInt32(mainExp.CompanyId))
+                            .FirstOrDefault();
+
+                        if (wfMapCheck != null)
                         {
-                            // Get the first row's WF_Id value
-                            DataRow firstRow = rawf.Rows[0];
-                            int wfId = Convert.ToInt32(firstRow["WF_Id"]);
-
-                            // Set the dropdown to the first item (if applicable)
+                            SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = wfMapCheck.WF_ID.ToString();
+                            SqlWF.SelectParameters["WF_Id"].DefaultValue = wfMapCheck.WF_ID.ToString();
+                            drpdown_WF.DataSource = SqlWF;
                             drpdown_WF.SelectedIndex = 0;
+                            drpdown_WF.DataBind();
 
-                            // Update the SQL data source parameters
-                            SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
-                            SqlWF.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
-
+                            WFSequenceGrid.DataSourceID = null;
+                            WFSequenceGrid.DataSource = SqlWorkflowSequence;
+                            WFSequenceGrid.DataBind();
                         }
                         else
                         {
-                            // Handle the case when no data is returned
-                            drpdown_WF.SelectedIndex = -1; // Optionally reset the dropdown
-                            SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = string.Empty;
-                            SqlWF.SelectParameters["WF_Id"].DefaultValue = string.Empty;
+                            var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == mainExp.ExpenseName)
+                                .Where(x => x.CompanyId == Convert.ToInt32(mainExp.CompanyId))
+                                .Where(x => x.DepCode == depcode.DepCode)
+                                .Where(x => x.IsRA == true)
+                                .FirstOrDefault();
+
+                            if (rawf != null)
+                            {
+                                SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
+                                SqlWF.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
+                                drpdown_WF.DataSource = SqlWF;
+                                drpdown_WF.SelectedIndex = 0;
+                                drpdown_WF.DataBind();
+
+                                WFSequenceGrid.DataSourceID = null;
+                                WFSequenceGrid.DataSource = SqlWorkflowSequence;
+                                WFSequenceGrid.DataBind();
+                            }
+                            else
+                            {
+                                SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = "0";
+                                SqlWF.SelectParameters["WF_Id"].DefaultValue = "0";
+                                drpdown_WF.DataSourceID = null;
+                                drpdown_WF.DataSource = SqlWF;
+                                drpdown_WF.DataBind();
+
+                                WFSequenceGrid.DataSourceID = null;
+                                WFSequenceGrid.DataSource = SqlWorkflowSequence;
+                                WFSequenceGrid.DataBind();
+                                //var test = drpdown_WF.DataSource.ToString();
+                                //SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = "0";
+                                //SqlWF.SelectParameters["WF_Id"].DefaultValue = "0";
+                                //SqlWorkflowSequence.DataBind();
+                                //SqlWF.DataBind();
+                            }
                         }
+
+                            
                     }
 
                     
@@ -484,12 +541,53 @@ namespace DX_WebTemplate
 
         protected void WFSequenceGrid_CustomCallback(object sender, DevExpress.Web.ASPxGridViewCustomCallbackEventArgs e)
         {
-            SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = drpdown_WF.Value != null ? drpdown_WF.Value.ToString() : "";
-            SqlWorkflowSequence.DataBind();
+            var depcode = _DataContext.ITP_S_OrgDepartmentMasters
+                .Where(x => x.ID == Convert.ToInt32(e.Parameters))
+                .FirstOrDefault();
 
-            WFSequenceGrid.DataSourceID = null;
-            WFSequenceGrid.DataSource = SqlWorkflowSequence;
-            WFSequenceGrid.DataBind();
+            var expMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"])).FirstOrDefault();
+
+            var wfMapCheck = _DataContext.vw_ACCEDE_I_WFMappings.Where(x => x.UserId == expMain.ExpenseName)
+                            .Where(x => x.Company_Id == Convert.ToInt32(expMain.CompanyId))
+                            .FirstOrDefault();
+
+            if (wfMapCheck != null)
+            {
+                SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = wfMapCheck.WF_ID.ToString();
+
+                WFSequenceGrid.DataSourceID = null;
+                WFSequenceGrid.DataSource = SqlWorkflowSequence;
+                WFSequenceGrid.DataBind();
+            }
+            else
+            {
+                var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == expMain.ExpenseName)
+                                .Where(x => x.CompanyId == Convert.ToInt32(expMain.CompanyId))
+                                .Where(x => x.DepCode == depcode.DepCode)
+                                .Where(x => x.IsRA == true)
+                                .FirstOrDefault();
+
+                if (rawf != null)
+                {
+                    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
+                    SqlWorkflowSequence.DataBind();
+
+                    WFSequenceGrid.DataSourceID = null;
+                    WFSequenceGrid.DataSource = SqlWorkflowSequence;
+                    WFSequenceGrid.DataBind();
+                }
+                else
+                {
+                    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = "0";
+                    WFSequenceGrid.DataSourceID = null;
+                    WFSequenceGrid.DataSource = SqlWorkflowSequence;
+                    WFSequenceGrid.DataBind();
+
+                }
+            }
+
+                
+            
         }
 
         protected void FAPWFGrid_CustomCallback(object sender, DevExpress.Web.ASPxGridViewCustomCallbackEventArgs e)
@@ -1199,14 +1297,14 @@ namespace DX_WebTemplate
 
         [WebMethod]
         public static string UpdateExpenseAJAX(string dateFile, string repName, string comp_id, string expType, string expCat,
-            string purpose, bool trav, string wf, string fapwf, string currency, string department, string payType, string btn, string classification, string costCenter, string CTCompany_id, string CTDept_id, string AR)
+            string purpose, bool trav, string wf, string fapwf, string currency, string department, string payType, string btn, string classification, string costCenter, string CTCompany_id, string CTDept_id, string AR, string compLoc)
         {
             AccedeExpenseReportEdit1 exp = new AccedeExpenseReportEdit1();
-            return exp.UpdateExpense(dateFile, repName, comp_id, expType, expCat,purpose, trav, wf, fapwf, currency, department, payType, btn, classification, costCenter, CTCompany_id, CTDept_id, AR);
+            return exp.UpdateExpense(dateFile, repName, comp_id, expType, expCat,purpose, trav, wf, fapwf, currency, department, payType, btn, classification, costCenter, CTCompany_id, CTDept_id, AR, compLoc);
         }
 
         public string UpdateExpense(string dateFile, string repName, string comp_id, string expType, string expCat,
-            string purpose, bool trav, string wf, string fapwf, string currency, string department, string payType, string btn, string classification, string costCenter, string CTCompany_id, string CTDept_id, string AR)
+            string purpose, bool trav, string wf, string fapwf, string currency, string department, string payType, string btn, string classification, string costCenter, string CTCompany_id, string CTDept_id, string AR, string compLoc)
         {
             try
             {
@@ -1275,6 +1373,12 @@ namespace DX_WebTemplate
                 exp.ExpChargedTo_CompanyId = Convert.ToInt32(CTCompany_id);
                 exp.ExpChargedTo_DeptId = Convert.ToInt32(CTDept_id);
                 exp.PaymentType = Convert.ToInt32(payType);
+
+                if(compLoc != "")
+                {
+                    exp.ExpComp_Location_Id = Convert.ToInt32(compLoc);
+                }
+
                 if(payType != null)
                 {
                     exp.PaymentType = Convert.ToInt32(payType);
@@ -2311,34 +2415,78 @@ namespace DX_WebTemplate
             //    .FirstOrDefault();
 
             // Fetch data using the stored procedure
-            DataTable rawf = GetWorkflowHeadersByExpenseAndDepartment(exp_EmpId.Value.ToString(), Convert.ToInt32(exp_Company.Value), totalExp, depcode != null ? depcode.DepCode : "0", 1032);
+            //DataTable rawf = GetWorkflowHeadersByExpenseAndDepartment("", Convert.ToInt32(exp_Company.Value), totalExp, depcode != null ? depcode.DepCode : "0", 1032);
 
-            if (rawf != null && rawf.Rows.Count > 0)
+            //if (rawf != null && rawf.Rows.Count > 0)
+            //{
+            //    // Get the first row's WF_Id value
+            //    DataRow firstRow = rawf.Rows[0];
+            //    int wfId = Convert.ToInt32(firstRow["WF_Id"]);
+
+            //    // Update the SQL data source parameters
+            //    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
+            //    SqlWorkflowSequence.DataBind();
+
+            //    SqlWF.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
+            //    SqlWF.DataBind();
+
+            //    // Set the dropdown to the first item (if applicable)
+            //    drpdown_WF.DataSourceID = null;
+            //    drpdown_WF.DataSource = SqlWF;
+            //    drpdown_WF.DataBind();
+            //    drpdown_WF.SelectedIndex = 0;
+
+            //}
+            //else
+            //{
+            //    // Handle the case when no data is returned
+            //    drpdown_WF.SelectedIndex = -1; // Optionally reset the dropdown
+            //    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = string.Empty;
+            //    SqlWF.SelectParameters["WF_Id"].DefaultValue = string.Empty;
+            //}
+
+            var expMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x=>x.ID == Convert.ToInt32(Session["ExpenseId"])).FirstOrDefault();
+
+
+            var wfMapCheck = _DataContext.vw_ACCEDE_I_WFMappings.Where(x => x.UserId == expMain.ExpenseName)
+                            .Where(x => x.Company_Id == Convert.ToInt32(expMain.CompanyId))
+                            .FirstOrDefault();
+
+            if (wfMapCheck != null)
             {
-                // Get the first row's WF_Id value
-                DataRow firstRow = rawf.Rows[0];
-                int wfId = Convert.ToInt32(firstRow["WF_Id"]);
-
-                // Update the SQL data source parameters
-                SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
-                SqlWorkflowSequence.DataBind();
-
-                SqlWF.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
-                SqlWF.DataBind();
-
-                // Set the dropdown to the first item (if applicable)
-                drpdown_WF.DataSourceID = null;
+                SqlWF.SelectParameters["WF_Id"].DefaultValue = wfMapCheck.WF_ID.ToString();
                 drpdown_WF.DataSource = SqlWF;
-                drpdown_WF.DataBind();
                 drpdown_WF.SelectedIndex = 0;
-
+                drpdown_WF.DataBind();
             }
             else
             {
-                // Handle the case when no data is returned
-                drpdown_WF.SelectedIndex = -1; // Optionally reset the dropdown
-                SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = string.Empty;
-                SqlWF.SelectParameters["WF_Id"].DefaultValue = string.Empty;
+                var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == expMain.ExpenseName)
+                                .Where(x => x.CompanyId == Convert.ToInt32(expMain.CompanyId))
+                                .Where(x => x.DepCode == depcode.DepCode)
+                                .Where(x => x.IsRA == true)
+                                .FirstOrDefault();
+
+                if (rawf != null)
+                {
+                    SqlWF.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
+                    drpdown_WF.DataSource = SqlWF;
+                    drpdown_WF.SelectedIndex = 0;
+                    drpdown_WF.DataBind();
+                }
+                else
+                {
+                    SqlWF.SelectParameters["WF_Id"].DefaultValue = "0";
+                    drpdown_WF.DataSourceID = null;
+                    drpdown_WF.DataSource = SqlWF;
+                    drpdown_WF.DataBind();
+
+                    //var test = drpdown_WF.DataSource.ToString();
+                    //SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = "0";
+                    //SqlWF.SelectParameters["WF_Id"].DefaultValue = "0";
+                    //SqlWorkflowSequence.DataBind();
+                    //SqlWF.DataBind();
+                }
             }
         }
 
@@ -2358,36 +2506,36 @@ namespace DX_WebTemplate
             //}
         }
 
-        private DataTable GetWorkflowHeadersByExpenseAndDepartment(string userId, int companyId, decimal totalExp, string depCode, int app_id)
-        {
-            DataTable dataTable = new DataTable();
+        //private DataTable GetWorkflowHeadersByExpenseAndDepartment(string userId, int companyId, decimal totalExp, string depCode, int app_id)
+        //{
+        //    DataTable dataTable = new DataTable();
 
-            using (SqlConnection connection = new SqlConnection(ITPORTALcon))
-            {
-                using (SqlCommand command = new SqlCommand("sp_sel_ACCEDE_GetWorkflowHeadersByExpenseAndDepartment", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
+        //    using (SqlConnection connection = new SqlConnection(ITPORTALcon))
+        //    {
+        //        using (SqlCommand command = new SqlCommand("sp_sel_ACCEDE_GetWorkflowHeadersByExpenseAndDepartment", connection))
+        //        {
+        //            command.CommandType = CommandType.StoredProcedure;
 
-                    // Add parameters
-                    command.Parameters.AddWithValue("@UserId", userId);
-                    command.Parameters.AddWithValue("@CompanyId", companyId);
-                    command.Parameters.AddWithValue("@totalExp", totalExp);
-                    command.Parameters.AddWithValue("@DepCode", depCode);
-                    command.Parameters.AddWithValue("@AppId", app_id);
+        //            // Add parameters
+        //            command.Parameters.AddWithValue("@UserId", userId);
+        //            command.Parameters.AddWithValue("@CompanyId", companyId);
+        //            command.Parameters.AddWithValue("@totalExp", totalExp);
+        //            command.Parameters.AddWithValue("@DepCode", depCode);
+        //            command.Parameters.AddWithValue("@AppId", app_id);
 
-                    // Open the connection
-                    connection.Open();
+        //            // Open the connection
+        //            connection.Open();
 
-                    // Execute the query and load the results into the DataTable
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        dataTable.Load(reader);
-                    }
-                }
-            }
+        //            // Execute the query and load the results into the DataTable
+        //            using (SqlDataReader reader = command.ExecuteReader())
+        //            {
+        //                dataTable.Load(reader);
+        //            }
+        //        }
+        //    }
 
-            return dataTable;
-        }
+        //    return dataTable;
+        //}
 
         protected void exp_CTDepartment_Callback(object sender, CallbackEventArgsBase e)
         {
@@ -2485,13 +2633,13 @@ namespace DX_WebTemplate
         [WebMethod]
         public static string GenerateTempCostAllocAJAX()
         {
-            string filePath = HttpContext.Current.Server.MapPath("~/Temp/ExportedData.xlsx");
+            string filePath = HttpContext.Current.Server.MapPath("~/Temp/CostAllocation.xlsx");
 
             AccedeExpenseReportEdit1 exp = new AccedeExpenseReportEdit1();
             exp.GenerateTempCostAlloc(filePath);
 
             // Return a URL to be used by JS to trigger download
-            return "/accede/Temp/ExportedData.xlsx";
+            return "/accede/Temp/CostAllocation.xlsx";
         }
 
 

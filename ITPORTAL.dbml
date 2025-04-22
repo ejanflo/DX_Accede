@@ -1213,4 +1213,13 @@
       <Column Name="WF_Name" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
     </Type>
   </Table>
+  <Table Name="dbo.vw_ACCEDE_I_WFMapping" Member="vw_ACCEDE_I_WFMappings">
+    <Type Name="vw_ACCEDE_I_WFMapping">
+      <Column Name="WFM_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UserId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="WF_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="App_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Company_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
 </Database>
