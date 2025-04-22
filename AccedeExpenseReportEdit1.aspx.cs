@@ -1746,10 +1746,6 @@ namespace DX_WebTemplate
             dsExpAlloc = (DataSet)Session["DataSetExpAlloc"];
             dsExpAlloc.Tables[0].Rows.Remove(dsExpAlloc.Tables[0].Rows.Find(e.Keys[ExpAllocGrid.KeyFieldName]));
 
-        }
-
-        protected void ExpAllocGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
-        {
             decimal totalNetAmount = 0;
             for (int i = 0; i < ExpAllocGrid.VisibleRowCount; i++)
             {
@@ -1769,6 +1765,34 @@ namespace DX_WebTemplate
 
             ASPxGridView grid = (ASPxGridView)sender;
             grid.JSProperties["cpComputeUnalloc"] = totalNetAmount;
+        }
+
+        protected void ExpAllocGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            ASPxGridView grid = (ASPxGridView)sender;
+            decimal totalNetAmount = 0;
+            for (int i = 0; i < ExpAllocGrid.VisibleRowCount; i++)
+            {
+                // Get the value of NetAmount from each visible row
+                object netAmountObj = ExpAllocGrid.GetRowValues(i, "NetAmount");
+
+                if (netAmountObj != null && netAmountObj != DBNull.Value)
+                {
+                    decimal netAmount = Convert.ToDecimal(netAmountObj);
+                    totalNetAmount += netAmount;
+                }
+            }
+
+            if (totalNetAmount > Convert.ToDecimal(grossAmount.Value))
+            {
+                // Set a custom JS property to pass the alert message to the client side
+                grid.JSProperties["cpAllocationExceeded"] = true;
+                grid.JSProperties["cpComputeUnalloc"] = totalNetAmount;
+            }
+            else
+            {
+                grid.JSProperties["cpComputeUnalloc"] = totalNetAmount;
+            }
 
         }
 
@@ -2736,6 +2760,7 @@ namespace DX_WebTemplate
             ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
             using (var package = new ExcelPackage(new FileInfo(filePath)))
             {
+                decimal totalNetAmount = 0;
                 var worksheet = package.Workbook.Worksheets[0]; // Assuming the data is on the first worksheet
 
                 for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
@@ -2756,7 +2781,12 @@ namespace DX_WebTemplate
                     string remarks = worksheet.Cells[row, 3].Text?.Trim();
                     int id = GetNewId();
                     InsertDataIntoDataTable(id, cc, amnt, remarks);
+
+                    totalNetAmount += amnt;
                 }
+
+                ASPxGridView grid = (ASPxGridView)ExpAllocGrid;
+                grid.JSProperties["cpComputeUnalloc"] = totalNetAmount;
 
             }
         }
@@ -2800,8 +2830,7 @@ namespace DX_WebTemplate
             row["Remarks"] = remarks;
             dataTable.Rows.Add(row);
 
-            // Send updated value to client
-            grid.JSProperties["cpComputeUnalloc"] = totalNetAmount;
+            
         }
 
 

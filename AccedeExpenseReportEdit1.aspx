@@ -541,6 +541,7 @@
                 s.cpAllocationExceeded = null;  // Clear the custom property
             }
 
+
             if (s.cpComputeUnalloc) {
                 
                 var gross = grossAmount.GetValue();
@@ -549,7 +550,37 @@
                 var curr = exp_Currency.GetValue();
                 
                 var total_unalloc = (gross - alloc_amnt).toFixed(2);
+                
                 Unalloc_amnt.SetValue(curr + " " + total_unalloc);
+                if (total_unalloc < 0) {
+                    var layoutControl = window["Unalloc_amnt"];
+                    var labelElement = layoutControl.GetMainElement();
+                    if (labelElement) {
+                        console.log(labelElement.innerHTML);
+                        // Look for the label inside the layout item — this finds any <span> or <td> with the value
+                        var label = labelElement.querySelector("input"); // Adjust class if needed
+
+                        if (label) {
+                            label.style.setProperty("color", "red", "important");
+                        } else {
+                            console.log("Label not found inside layout item.");
+                        }
+                    }
+                } else {
+                    var layoutControl = window["Unalloc_amnt"];
+                    var labelElement = layoutControl.GetMainElement();
+                    if (labelElement) {
+                        console.log(labelElement.innerHTML);
+                        // Look for the label inside the layout item — this finds any <span> or <td> with the value
+                        var label = labelElement.querySelector("input"); // Adjust class if needed
+
+                        if (label) {
+                            label.style.setProperty("color", "black", "important");
+                        } else {
+                            console.log("Label not found inside layout item.");
+                        }
+                    }
+                }
                 
                 s.cpComputeUnalloc = null;  // Clear the custom property
             }
@@ -3014,6 +3045,7 @@ exp_EmpId.PerformCallback(s.GetValue());
                                                                     <dx:ASPxUploadControl ID="UploadControllerExpD0" runat="server" AutoStartUpload="True" ShowProgressPanel="True" UploadMode="Auto" Width="100%" OnFileUploadComplete="UploadControllerExpD0_FileUploadComplete">
                                                                         <ClientSideEvents FilesUploadComplete="function(s, e) {
 	ExpAllocGrid.Refresh();
+ExpAllocGrid.PerformCallback();
 }
 " />
                                                                         <AdvancedModeSettings EnableFileList="True" EnableMultiSelect="True">
