@@ -70,7 +70,7 @@ namespace DX_WebTemplate
                         var depwfd0 = context.ITP_S_WorkflowDetails.Where(x => x.WF_Id == depwf && x.Sequence == 1).Select(x => x.WFD_Id).FirstOrDefault();
                         var depapprid0 = context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WFD_Id == depwfd0 && x.WF_Id == depwf && x.AppId == 1032).Select(x => x.ActedBy_User_Id).FirstOrDefault();
                         var depapprdate0 = context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WFD_Id == depwfd0 && x.WF_Id == depwf && x.AppId == 1032).Select(x => x.DateAction).FirstOrDefault();
-                        var depapprname0 = context.ITP_S_UserMasters.Where(x => x.EmpCode == depapprid0).Select(x => x.FullName).FirstOrDefault().ToUpper() ?? string.Empty;
+                        var depapprname0 = Convert.ToString(context.ITP_S_UserMasters.Where(x => x.EmpCode == depapprid0).Select(x => x.FullName).FirstOrDefault().ToUpper()) ?? string.Empty;
 
                         var depwfd = context.ITP_S_WorkflowDetails.Where(x => x.WF_Id == depwf && x.Sequence == 2).FirstOrDefault();
 
