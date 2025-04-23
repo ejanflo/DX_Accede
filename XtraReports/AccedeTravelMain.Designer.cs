@@ -1387,7 +1387,7 @@
             // 
             this.xrLabel33.Borders = DevExpress.XtraPrinting.BorderSide.None;
             this.xrLabel33.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
-            new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "?depapprdate0")});
+            new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "Iif(!IsNullOrEmpty(?depapprname0), ?depapprdate0, \'\')")});
             this.xrLabel33.Font = new DevExpress.Drawing.DXFont("courier New", 6.5F);
             this.xrLabel33.LocationFloat = new DevExpress.Utils.PointFloat(657.2159F, 38.94064F);
             this.xrLabel33.Multiline = true;
@@ -2181,7 +2181,7 @@
             // 
             this.xrLabel38.Borders = DevExpress.XtraPrinting.BorderSide.None;
             this.xrLabel38.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
-            new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "?depapprdate")});
+            new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "Iif(!IsNullOrEmpty(?depapprname), ?depapprdate, \'\')\n")});
             this.xrLabel38.Font = new DevExpress.Drawing.DXFont("courier New", 6.5F);
             this.xrLabel38.LocationFloat = new DevExpress.Utils.PointFloat(866.7218F, 38.9408F);
             this.xrLabel38.Multiline = true;
