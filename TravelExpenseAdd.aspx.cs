@@ -235,54 +235,25 @@ namespace DX_WebTemplate
 
                     var totExpCA = totalexp > totalca ? Convert.ToDecimal(totalexp - totalca) : Convert.ToDecimal(totalca - totalexp);
 
-                    //SqlWF.SelectParameters["UserId"].DefaultValue = mainExp.Employee_Id.ToString();
-                    //SqlWF.SelectParameters["CompanyId"].DefaultValue = mainExp.Company_Id.ToString();
-                    //SqlWF.DataBind();
-                    //drpdown_WF.Value = 2078; drpdown_WF.DataBind();
+                    //// - - Setting Line Manager Workflow - - ////
 
-                    //// - - Setting RA Workflow - - ////
-                    Session["mainwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.IsRA == true && totExpCA >= x.Minimum && totExpCA <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault());
+                    var wfmapping = _DataContext.vw_ACCEDE_I_WFMappings.Where(x => x.UserId == Convert.ToString(mainExp.Employee_Id) && x.Company_Id == Convert.ToInt32(mainExp.Company_Id)).FirstOrDefault();
 
-                    SqlWF.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
-                    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
+                    if (wfmapping != null)
+                    {
+                        Session["mainwfid"] = Convert.ToString(wfmapping.WF_ID);
 
-                    //var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(mainExp.Dep_Code)).FirstOrDefault();
+                        SqlWF.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
+                        SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
+                    }
+                    else
+                    {
+                        Session["mainwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.IsRA == true && totExpCA >= x.Minimum && totExpCA <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault());
 
-                    //// Fetch data using the stored procedure
-                    //DataTable rawf = GetWorkflowHeadersByExpenseAndDepartment(mainExp.Employee_Id.ToString(), Convert.ToInt32(mainExp.Company_Id), totalexp, depcode != null ? depcode.DepCode : "0", 1032);
+                        SqlWF.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
+                        SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
+                    }
 
-                    //if (rawf != null && rawf.Rows.Count > 0)
-                    //{
-                    //    // Get the first row's WF_Id value
-                    //    DataRow firstRow = rawf.Rows[0];
-                    //    int wfId = Convert.ToInt32(firstRow["WF_Id"]);
-
-                    //    // Set the dropdown to the first item (if applicable)
-                    //    drpdown_WF.SelectedIndex = 0;
-
-                    //    // Update the SQL data source parameters
-                    //    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
-                    //    SqlWF.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
-                    //}
-                    //else
-                    //{
-                    //    // Handle the case when no data is returned
-                    //    drpdown_WF.SelectedIndex = -1; // Optionally reset the dropdown
-                    //    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = string.Empty;
-                    //    SqlWF.SelectParameters["WF_Id"].DefaultValue = string.Empty;
-                    //}
-
-                    //Session["mainwfid"] = Convert.ToString(_DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == mainExp.Employee_Id.ToString() && x.CompanyId == mainExp.Company_Id).Select(x => x.WF_Id).FirstOrDefault()) ?? string.Empty;
-
-                    //SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
-                    //SqlWorkflowSequence.DataBind();
-
-                    //Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == mainExp.Company_Id && x.App_Id == 1032 && x.IsRA == null && totExpCA >= x.Minimum && totExpCA <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault()) ?? string.Empty;
-
-                    //SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
-                    //SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
-                    //SqlFAPWF2.DataBind();
-                    //SqlFAPWF.DataBind();
 
                     //// - - Setting FAP workflow - - ////
                     if (Convert.ToString(Session["ford"]) == "Foreign")
@@ -296,20 +267,6 @@ namespace DX_WebTemplate
                     
                     SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
                     SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
-
-                    //var fapwf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(mainExp.Company_Id))
-                    //    .Where(x => x.App_Id == 1032)
-                    //    .Where(x => x.Minimum <= Convert.ToDecimal(Math.Abs(totalexp)))
-                    //    .Where(x => x.Maximum >= Convert.ToDecimal(Math.Abs(totalexp)))
-                    //    .Where(x => x.IsRA == null || x.IsRA == false)
-                    //    .FirstOrDefault();
-
-                    //if (fapwf != null)
-                    //{
-                    //    drpdown_FAPWF.SelectedIndex = 0;
-                    //    SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = fapwf.WF_Id.ToString();
-                    //    SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = fapwf.WF_Id.ToString();
-                    //}
                 }
             }
             catch (Exception)
