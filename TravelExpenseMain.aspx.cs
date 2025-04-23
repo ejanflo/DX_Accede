@@ -41,11 +41,11 @@ namespace DX_WebTemplate
                 //    chargedCB.Value = isdep;
                 sqlCompany.SelectParameters["UserId"].DefaultValue = Session["userID"].ToString();
 
-
                 SqlDepartmentEdit.SelectParameters["UserId"].DefaultValue = Convert.ToString(Session["userID"]);
                 SqlCompanyEdit.SelectParameters["UserId"].DefaultValue = Convert.ToString(Session["userID"]);
 
                 SqlDepartmentEdit.SelectParameters["CompanyId"].DefaultValue = Convert.ToString(compCB.Value);
+                SqlCompanyEdit.DataBind();
                 SqlDepartmentEdit.DataBind();
 
                 sqlName.SelectParameters["EmpCode"].DefaultValue = Session["userID"].ToString();
@@ -265,13 +265,15 @@ namespace DX_WebTemplate
         {
             if (e.Parameter != null && e.Parameter != "")
             {
-                SqlDepartmentEdit.SelectParameters["CompanyId"].DefaultValue = e.Parameter.ToString();
-                SqlDepartmentEdit.SelectParameters["UserId"].DefaultValue = employeeCB.Value.ToString();
-                SqlDepartmentEdit.DataBind();
+                SqlDepartmentEdit.SelectParameters["CompanyId"].DefaultValue = e.Parameter.Split('|').First();
+                SqlDepartmentEdit.SelectParameters["UserId"].DefaultValue = e.Parameter.Split('|').Last();
+
+                Debug.WriteLine("Company ID: " + e.Parameter.Split('|').First());
+                Debug.WriteLine("User ID: " + e.Parameter.Split('|').Last());
 
                 depCB.DataSourceID = null;
                 depCB.DataSource = SqlDepartmentEdit;
-                depCB.DataBind();
+                depCB.DataBindItems();
 
                 depCB.SelectedIndex = 0;
             }
@@ -299,6 +301,30 @@ namespace DX_WebTemplate
                 locBranch.DataSource = SqlLocBranch;
                 locBranch.DataBind();
             }
+        }
+
+        protected void compCB_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var empcode = e.Parameter as string;
+            Debug.WriteLine("User ID: " + empcode);
+
+            SqlCompanyEdit.SelectParameters["UserId"].DefaultValue = Convert.ToString(empcode);
+
+            compCB.DataSourceID = null;
+            compCB.DataSource = SqlCompanyEdit;
+            compCB.DataBind();
+        }
+
+        protected void chargedCB_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var empcode = e.Parameter as string;
+            Debug.WriteLine("User ID: " + empcode);
+
+            sqlCompany.SelectParameters["UserId"].DefaultValue = Convert.ToString(empcode);
+
+            chargedCB.DataSourceID = null;
+            chargedCB.DataSource = sqlCompany;
+            chargedCB.DataBind();
         }
     }
 }

@@ -33,6 +33,14 @@
         }
     </style>
     <script>
+        function onEmpSelected(s, e) {
+            compCB.PerformCallback(s.GetValue());
+            chargedCB.PerformCallback(s.GetValue());
+            depCB.SetSelectedIndex(-1);
+            chargedCB0.SetSelectedIndex(-1);
+            locBranch.SetSelectedIndex(-1);
+        }
+
         function onKeyPress(s, e) {
             var input = s.GetInputElement();  // Get the textbox input element
             var query = input.value.trim();
@@ -94,7 +102,7 @@
         }
 
         function OnCompanyChanged(s, e) {
-            depCB.PerformCallback(s.GetValue());
+            depCB.PerformCallback(s.GetValue() + "|" + employeeCB.GetValue());
         }
 
         function onToolbarItemClick(s, e) { 
@@ -546,6 +554,8 @@
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
                                 <dx:ASPxComboBox ID="employeeCB" runat="server" TextField="FullName" ValueField="EmpCode" Width="100%" ClientInstanceName="employeeCB" Font-Bold="True">
+                                    <ClientSideEvents SelectedIndexChanged="onEmpSelected
+" />
                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="CreateForm">
                                         <RequiredField ErrorText="*Required field" IsRequired="True" />
                                     </ValidationSettings>
@@ -573,7 +583,7 @@
                     <dx:LayoutItem Caption="Charged to Company:" ColSpan="1" Width="25%">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
-                                <dx:ASPxComboBox ID="chargedCB" runat="server" TextField="CompanyShortName" ValueField="CompanyId" Width="100%" DataSourceID="sqlCompany" Font-Bold="True" ClientInstanceName="chargedCB">
+                                <dx:ASPxComboBox ID="chargedCB" runat="server" TextField="CompanyShortName" ValueField="CompanyId" Width="100%" DataSourceID="sqlCompany" Font-Bold="True" ClientInstanceName="chargedCB" OnCallback="chargedCB_Callback">
                                     <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	chargedCB0.PerformCallback(s.GetValue());
                locBranch.PerformCallback(s.GetValue());
@@ -738,7 +748,7 @@
                     <dx:LayoutItem Caption="Workflow Company" ColSpan="2" VerticalAlign="Top" Width="50%" ColumnSpan="2">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
-                                <dx:ASPxComboBox ID="compCB" runat="server" ClientInstanceName="compCB" TextField="CompanyShortName" ValueField="CompanyId" Width="100%" DataSourceID="SqlCompanyEdit" Font-Bold="True" EnableCallbackMode="True">
+                                <dx:ASPxComboBox ID="compCB" runat="server" ClientInstanceName="compCB" TextField="CompanyShortName" ValueField="CompanyId" Width="100%" DataSourceID="SqlCompanyEdit" Font-Bold="True" EnableCallbackMode="True" OnCallback="compCB_Callback">
                                     <ClientSideEvents SelectedIndexChanged="OnCompanyChanged" ValueChanged="OnCompanyChanged" />
                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="CreateForm">
                                         <RequiredField ErrorText="*Required field" IsRequired="True" />
@@ -752,7 +762,7 @@
                     <dx:LayoutItem Caption="Workflow Department" ColSpan="2" VerticalAlign="Top" Width="100%" ColumnSpan="2">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
-                                <dx:ASPxComboBox ID="depCB" runat="server" ClientInstanceName="depCB" DataSourceID="SqlDepartmentEdit" Font-Bold="True" TextField="DepCode" ValueField="ID" Width="100%" OnCallback="depCB_Callback" EnableCallbackMode="True">
+                                <dx:ASPxComboBox ID="depCB" runat="server" ClientInstanceName="depCB" DataSourceID="SqlDepartmentEdit" Font-Bold="True" TextField="DepDesc" ValueField="ID" Width="100%" OnCallback="depCB_Callback" EnableCallbackMode="True">
                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="CreateForm">
                                         <RequiredField ErrorText="*Required field" IsRequired="True" />
                                     </ValidationSettings>
