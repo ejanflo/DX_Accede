@@ -1,8 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Main.master" AutoEventWireup="true" CodeBehind="AccedeExpenseReportEdit1.aspx.cs" Inherits="DX_WebTemplate.AccedeExpenseReportEdit1" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-   
-    
-    <style>
+   <style>
         .radio-buttons-container {
             display: flex;
             align-items: center; /* Vertically centers the radio buttons */
@@ -42,10 +40,10 @@
         }
 
         .fin-edit-btn div.dxb{
-            
+    
             padding: 5px 10px;
         }
-    </style>
+   </style>
     <script>
        function onToolbarItemClick(s, e) {
            if (e.item.name === "addCA") {
@@ -508,7 +506,6 @@
                 }),
                 success: function (response) {
                     console.log("ok");
-                    ExpAllocGrid_edit.PerformCallback();
 
                     particulars_edit.SetValue(response.d.particulars);
                     supplier_edit.SetValue(response.d.supplier);
@@ -527,6 +524,9 @@
                     expensePopup_edit.Show();
                     ExpAllocGrid_edit.Refresh();
                     DocuGrid_edit.Refresh();
+
+                    var curr = exp_Currency.GetValue();
+                    Unalloc_amnt_edit.SetValue(curr + " " + response.d.totalAllocAmnt.toFixed(2));
                 },
                 error: function (xhr, status, error) {
                     console.log("Error:", error);
@@ -600,7 +600,7 @@
                 var total_unalloc = (gross - alloc_amnt).toFixed(2);
                 Unalloc_amnt_edit.SetValue(curr + " " + total_unalloc);
 
-                s.cpComputeUnalloc = null;  // Clear the custom property
+                s.cpComputeUnalloc_edit = null;  // Clear the custom property
             }
 
             if (s.cpComputeUnalloc_edit == 0) {
@@ -3076,11 +3076,11 @@ ExpAllocGrid.PerformCallback();
                                                 <dx:LayoutItem ColSpan="1" Width="100%" ShowCaption="False">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxGridView ID="ExpAllocGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="ExpAllocGrid" KeyFieldName="ID" OnCustomCallback="ExpAllocGrid_CustomCallback" OnRowDeleting="ExpAllocGrid_RowDeleting" OnRowInserting="ExpAllocGrid_RowInserting" Width="100%">
+                                                            <dx:ASPxGridView ID="ExpAllocGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="ExpAllocGrid" KeyFieldName="ID" OnCustomCallback="ExpAllocGrid_CustomCallback" OnRowDeleting="ExpAllocGrid_RowDeleting" OnRowInserting="ExpAllocGrid_RowInserting" Width="100%" OnRowUpdating="ExpAllocGrid_RowUpdating">
                                                                 <ClientSideEvents EndCallback="onEndCallback" />
                                                                 <SettingsPager Mode="EndlessPaging">
                                                                 </SettingsPager>
-                                                                <SettingsEditing Mode="Inline">
+                                                                <SettingsEditing Mode="Batch">
                                                                 </SettingsEditing>
                                                                 <Settings GridLines="None" ShowFooter="True" />
                                                                 <SettingsPopup>
@@ -3089,7 +3089,7 @@ ExpAllocGrid.PerformCallback();
                                                                 </SettingsPopup>
                                                                 <SettingsText CommandDelete="Remove" />
                                                                 <Columns>
-                                                                    <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="160px">
+                                                                    <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="160px" ShowEditButton="True">
                                                                     </dx:GridViewCommandColumn>
                                                                     <dx:GridViewDataComboBoxColumn Caption="Cost Center" FieldName="CostCenter" ShowInCustomizationForm="True" VisibleIndex="5">
                                                                         <PropertiesComboBox DataSourceID="SqlCostCenterAll" TextField="SAP_CostCenter" TextFormatString="{0}" ValueField="SAP_CostCenter">
@@ -3493,11 +3493,11 @@ computeNetAmount(&quot;edit&quot;);
                                         <dx:LayoutItem Caption="" ClientVisible="False" ColSpan="2" ColumnSpan="2" Name="EditAllocGrid" ShowCaption="False" Width="100%">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxGridView ID="ExpAllocGrid_edit" runat="server" AutoGenerateColumns="False" ClientInstanceName="ExpAllocGrid_edit" DataSourceID="SqlExpMap" KeyFieldName="ExpenseDetailMap_ID" OnCustomCallback="ExpAllocGrid_edit_CustomCallback" OnRowDeleting="ExpAllocGrid_edit_RowDeleting" OnRowInserting="ExpAllocGrid_edit_RowInserting" Width="100%">
+                                                    <dx:ASPxGridView ID="ExpAllocGrid_edit" runat="server" AutoGenerateColumns="False" ClientInstanceName="ExpAllocGrid_edit" DataSourceID="SqlExpMap" KeyFieldName="ExpenseDetailMap_ID" OnCustomCallback="ExpAllocGrid_edit_CustomCallback" OnRowDeleting="ExpAllocGrid_edit_RowDeleting" OnRowInserting="ExpAllocGrid_edit_RowInserting" Width="100%" OnRowUpdating="ExpAllocGrid_edit_RowUpdating">
                                                         <ClientSideEvents EndCallback="onEndCallback" />
                                                         <SettingsPager Mode="EndlessPaging">
                                                         </SettingsPager>
-                                                        <SettingsEditing Mode="Inline">
+                                                        <SettingsEditing Mode="Batch">
                                                         </SettingsEditing>
                                                         <Settings GridLines="None" ShowFooter="True" ShowTitlePanel="True" />
                                                         <SettingsPopup>
@@ -3506,7 +3506,7 @@ computeNetAmount(&quot;edit&quot;);
                                                         </SettingsPopup>
                                                         <SettingsText CommandDelete="Remove" />
                                                         <Columns>
-                                                            <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="160px">
+                                                            <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="160px" ShowEditButton="True">
                                                             </dx:GridViewCommandColumn>
                                                             <dx:GridViewDataComboBoxColumn Caption="Cost Center" FieldName="CostCenterIOWBS" ShowInCustomizationForm="True" VisibleIndex="1">
                                                                 <PropertiesComboBox DataSourceID="SqlCostCenterAll" TextField="SAP_CostCenter" ValueField="SAP_CostCenter" TextFormatString="{0}">

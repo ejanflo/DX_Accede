@@ -1810,6 +1810,16 @@ namespace DX_WebTemplate
                 .Where(x=>x.ExpenseReportDetail_ID == expDetailID)
                 .FirstOrDefault();
 
+            var exp_detailsMap = _DataContext.ACCEDE_T_ExpenseDetailsMaps.Where(x => x.ExpenseReportDetail_ID == expDetailID);
+            decimal totalAmnt = 0;
+
+            foreach(var item in exp_detailsMap)
+            {
+                totalAmnt += Convert.ToDecimal(item.NetAmount);
+            }
+
+            totalAmnt = Convert.ToDecimal(exp_details.GrossAmount) - totalAmnt;
+
             ExpDetails exp_det_class = new ExpDetails();
 
             if (exp_details != null)
@@ -1867,6 +1877,7 @@ namespace DX_WebTemplate
                 {
                     exp_det_class.io = exp_details.ExpDtl_IO;
                 }
+                exp_det_class.totalAllocAmnt = totalAmnt;
 
                 Session["ExpDetailsID"] = expDetailID.ToString();
 
@@ -1914,18 +1925,40 @@ namespace DX_WebTemplate
 
         protected void ExpAllocGrid_edit_RowDeleting(object sender, DevExpress.Web.Data.ASPxDataDeletingEventArgs e)
         {
+
+            //decimal totalAmnt = new decimal(0.00);
+            int deletedRowIndex = Convert.ToInt32(e.Keys[ExpAllocGrid_edit.KeyFieldName].ToString());
             var expAllocs = _DataContext.ACCEDE_T_ExpenseDetailsMaps
-                .Where(x => x.ExpenseReportDetail_ID == Convert.ToInt32(Session["ExpDetailsID"]));
-
-            decimal totalAmnt = new decimal(0.00);
-
-            ASPxGridView grid = (ASPxGridView)sender;
-
-            foreach (var item in expAllocs)
+                .Where(x => x.ExpenseDetailMap_ID == Convert.ToInt32(deletedRowIndex))
+                .FirstOrDefault();
+            //ASPxGridView grid = (ASPxGridView)sender;
+            //foreach (var item in expAllocs)
+            //{
+            //    totalAmnt += Convert.ToDecimal(item.NetAmount);
+            //}
+            //grid.JSProperties["cpComputeUnalloc_edit"] = totalAmnt;
+            
+            decimal totalNetAmount = 0;
+            decimal finalTotalAmnt = 0;
+            for (int i = 0; i < ExpAllocGrid_edit.VisibleRowCount; i++)
             {
-                totalAmnt += Convert.ToDecimal(item.NetAmount);
+                // Get the value of NetAmount from each visible row
+                object netAmountObj = ExpAllocGrid_edit.GetRowValues(i, "NetAmount");
+
+                if (netAmountObj != null && netAmountObj != DBNull.Value)
+                {
+                    decimal netAmount = Convert.ToDecimal(netAmountObj);
+                    totalNetAmount += netAmount;
+                }
             }
-            grid.JSProperties["cpComputeUnalloc_edit"] = totalAmnt;
+            //if (totalNetAmount > Convert.ToDecimal(grossAmount.Value))
+            //{
+            //    ExpAllocGrid.Styles.Footer.ForeColor = System.Drawing.Color.Red;
+            //}
+
+            finalTotalAmnt = totalNetAmount - Convert.ToDecimal(expAllocs.NetAmount);
+            ASPxGridView grid = (ASPxGridView)sender;
+            grid.JSProperties["cpComputeUnalloc_edit"] = finalTotalAmnt;
         }
 
         [WebMethod]
@@ -2194,6 +2227,7 @@ namespace DX_WebTemplate
             public int expMainId { get; set; }
             public string preparerId { get; set; }
             public string io { get; set; }
+            public decimal totalAllocAmnt { get; set; }
         }
 
         protected void exp_Department_Callback(object sender, CallbackEventArgsBase e)
@@ -2833,7 +2867,69 @@ namespace DX_WebTemplate
             
         }
 
+        protected void ExpAllocGrid_RowUpdating(object sender, DevExpress.Web.Data.ASPxDataUpdatingEventArgs e)
+        {
+            dsExpAlloc = (DataSet)Session["DataSetExpAlloc"];
+            ASPxGridView gridView = (ASPxGridView)sender;
+            DataTable dataTable = gridView.GetMasterRowKeyValue() != null ? dsExpAlloc.Tables[1] : dsExpAlloc.Tables[0];
+            DataRow row = dataTable.Rows.Find(e.Keys[0]);
+            IDictionaryEnumerator enumerator = e.NewValues.GetEnumerator();
+            enumerator.Reset();
+            while (enumerator.MoveNext())
+                row[enumerator.Key.ToString()] = enumerator.Value;
+            gridView.CancelEdit();
+            e.Cancel = true;
 
+            decimal totalNetAmount = 0;
+            for (int i = 0; i < ExpAllocGrid.VisibleRowCount; i++)
+            {
+                // Get the value of NetAmount from each visible row
+                object netAmountObj = ExpAllocGrid.GetRowValues(i, "NetAmount");
 
+                if (netAmountObj != null && netAmountObj != DBNull.Value)
+                {
+                    decimal netAmount = Convert.ToDecimal(netAmountObj);
+                    totalNetAmount += netAmount;
+                }
+            }
+            //if (totalNetAmount > Convert.ToDecimal(grossAmount.Value))
+            //{
+            //    ExpAllocGrid.Styles.Footer.ForeColor = System.Drawing.Color.Red;
+            //}
+
+            ASPxGridView grid = (ASPxGridView)sender;
+            grid.JSProperties["cpComputeUnalloc"] = totalNetAmount;
+        }
+
+        protected void ExpAllocGrid_edit_RowUpdating(object sender, DevExpress.Web.Data.ASPxDataUpdatingEventArgs e)
+        {
+            decimal totalNetAmount = 0;
+            var RowIndex = e.NewValues["ExpenseDetailMap_ID"].ToString();
+            var newAmnt = e.NewValues["NetAmount"].ToString();
+            // Check if the grid is bound to a DataTable, List, or other collection
+            for (int i = 0; i < ExpAllocGrid_edit.VisibleRowCount; i++)
+            {
+                // Get the value of NetAmount from each visible row
+                object netAmountObj = ExpAllocGrid_edit.GetRowValues(i, "NetAmount");
+                object ID_Obj = ExpAllocGrid_edit.GetRowValues(i, "ExpenseDetailMap_ID");
+
+                if (netAmountObj != null && netAmountObj != DBNull.Value)
+                {
+                    decimal netAmount = Convert.ToDecimal(netAmountObj);
+                    if(RowIndex.ToString() == ID_Obj.ToString())
+                    {
+                        netAmount = Convert.ToDecimal(newAmnt);
+                    }
+                    totalNetAmount += netAmount;
+                }
+            }
+            //if (totalNetAmount > Convert.ToDecimal(grossAmount_edit.Value))
+            //{
+            //    ExpAllocGrid_edit.Styles.Footer.ForeColor = System.Drawing.Color.Red;
+            //}
+            ASPxGridView grid = (ASPxGridView)sender;
+
+            grid.JSProperties["cpComputeUnalloc_edit"] = totalNetAmount;
+        }
     }
 }
