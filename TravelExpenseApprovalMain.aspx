@@ -26,7 +26,6 @@
                 window.open("TravelExpenseApprovalHistory.aspx", "_self");
             }
         }
-
     </script>
     <dx:ASPxFormLayout ID="ASPxFormLayout1" runat="server" Font-Bold="False" Height="144px" Width="100%">
         <Items>
