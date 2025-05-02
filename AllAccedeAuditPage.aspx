@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Main.master" AutoEventWireup="true" CodeBehind="AllAccedeApprovalPage.aspx.cs" Inherits="DX_WebTemplate.AllAccedeApprovalPage" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Main.master" AutoEventWireup="true" CodeBehind="AllAccedeAuditPage.aspx.cs" Inherits="DX_WebTemplate.AllAccedeAuditPage" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <style>
         .radio-buttons-container {
@@ -28,7 +28,7 @@
     </script>
     <dx:ASPxFormLayout ID="ASPxFormLayout1" runat="server" Font-Bold="False" Height="144px" Width="100%">
         <Items>
-            <dx:LayoutGroup Caption="ACCEDE Approval Page" ColSpan="1" GroupBoxDecoration="HeadingLine" Width="100%">
+            <dx:LayoutGroup Caption="ACCEDE Audit Page" ColSpan="1" GroupBoxDecoration="HeadingLine" Width="100%">
                 <CellStyle Font-Bold="False">
                 </CellStyle>
                 <Items>
@@ -135,9 +135,9 @@
                                                             </Image>
                                                             <Styles>
                                                                 <Style BackColor="#0D6943" Font-Bold="True" Font-Size="Smaller" ForeColor="White">
-                                                                
+                                                            
                                                                     <Paddings PaddingBottom="4px" PaddingLeft="8px" PaddingRight="8px" PaddingTop="4px" />
-                                                                
+                                                            
                                                                 </Style>
                                                             </Styles>
                                                         </dx:GridViewCommandColumnCustomButton>
@@ -353,16 +353,16 @@
             </dx:LayoutGroup>
         </Items>
     </dx:ASPxFormLayout>
+
     <dx:ASPxLoadingPanel ID="loadPanel" ClientInstanceName="loadPanel" Modal="true" runat="server" Theme="MaterialCompact" Text=""></dx:ASPxLoadingPanel>
 
     <asp:SqlDataSource ID="sqlName" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT [FullName], [EmpCode] FROM [ITP_S_UserMaster]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="sqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [CompanyMaster] WHERE ([WASSId] IS NOT NULL)"></asp:SqlDataSource>
     <asp:SqlDataSource ID="sqlStatus" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_Status]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="sqlAllApproval" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT Document_Id, Status, STS_Description, DateAssigned, DateAction, AppDocTypeId, AppId, Remarks, UserId, CompanyId, TranType, WF_Id, WFD_Id, WFA_Id, Travel_Id, NoTravel_Id, RFP_Id
-FROM     vw_ACCEDE_I_AllAccedeForApproval
+FROM     vw_ACCEDE_I_AllAccedeAudit
 WHERE  (UserId = @UserId) AND (TranType = 1 OR
-                  TranType IS NULL) AND (Document_Id = Travel_Id OR Document_Id = NoTravel_Id OR
-Document_Id = RFP_Id)
+                  TranType IS NULL) AND (Document_Id = Travel_Id OR Document_Id = NoTravel_Id OR                     Document_Id = RFP_Id)
 ORDER BY DateAssigned">
         <SelectParameters>
             <asp:SessionParameter Name="UserId" SessionField="userID" Type="String" />

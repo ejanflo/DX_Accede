@@ -175,6 +175,9 @@
     <Content Include="AccedeSetupPage.aspx" />
     <Content Include="AccedeUtilities.aspx" />
     <Content Include="AllAccedeApprovalPage.aspx" />
+    <Content Include="AllAccedeAuditPage.aspx" />
+    <Content Include="AllAccedeCashierPage.aspx" />
+    <Content Include="AllAccedeP2PPage.aspx" />
     <Content Include="App_Data\NWind.mdf" />
     <Content Include="App_Data\NWind_log.ldf">
       <DependentUpon>NWind.mdf</DependentUpon>
@@ -485,6 +488,27 @@
     </Compile>
     <Compile Include="AllAccedeApprovalPage.aspx.designer.cs">
       <DependentUpon>AllAccedeApprovalPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AllAccedeAuditPage.aspx.cs">
+      <DependentUpon>AllAccedeAuditPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AllAccedeAuditPage.aspx.designer.cs">
+      <DependentUpon>AllAccedeAuditPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AllAccedeCashierPage.aspx.cs">
+      <DependentUpon>AllAccedeCashierPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AllAccedeCashierPage.aspx.designer.cs">
+      <DependentUpon>AllAccedeCashierPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AllAccedeP2PPage.aspx.cs">
+      <DependentUpon>AllAccedeP2PPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AllAccedeP2PPage.aspx.designer.cs">
+      <DependentUpon>AllAccedeP2PPage.aspx</DependentUpon>
     </Compile>
     <Compile Include="ANFLO.cs" />
     <Compile Include="AnfloSession.cs" />

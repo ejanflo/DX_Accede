@@ -19,8 +19,6 @@
                 console.log(rowKey);
                 gridMain.PerformCallback(rowKey + "|" + value);
             });
-
-            
         }
 
         function OnToolbarItemClick(s, e) {

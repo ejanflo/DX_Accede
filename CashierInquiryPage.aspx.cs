@@ -1,4 +1,5 @@
-﻿using DevExpress.Web;
+﻿using DevExpress.DataProcessing.InMemoryDataProcessor.GraphGenerator;
+using DevExpress.Web;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -21,6 +22,19 @@ namespace DX_WebTemplate
                 if (AnfloSession.Current.ValidCookieUser())
                 {
                     AnfloSession.Current.CreateSession(HttpContext.Current.User.ToString());
+
+                    if (!IsPostBack)
+                    {
+                        var pcTabs = ASPxFormLayout1.FindItemOrGroupByName("layoutTab") as TabbedLayoutGroup;
+                        string tabName = Request.QueryString["tab"];
+                        if (!string.IsNullOrEmpty(tabName))
+                        {
+                            if (tabName == "rfpDisbursedTab")
+                                pcTabs.ActiveTabIndex = 1;
+                            else if (tabName == "expenseDisbursedTab")
+                                pcTabs.ActiveTabIndex = 2;
+                        }
+                    }
 
                     //Start ------------------ Page Security
                     string empCode = Session["userID"].ToString();

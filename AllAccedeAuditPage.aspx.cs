@@ -3,16 +3,15 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using static DevExpress.XtraEditors.Mask.MaskSettings;
 
 namespace DX_WebTemplate
 {
-    public partial class AllAccedeApprovalPage : System.Web.UI.Page
+    public partial class AllAccedeAuditPage : System.Web.UI.Page
     {
         ITPORTALDataContext context = new ITPORTALDataContext(ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString);
 
@@ -185,6 +184,7 @@ namespace DX_WebTemplate
 
             string actID = Convert.ToString(Session["wfa"]);
             string encryptedID = Encrypt(actID);
+            Session["ExpenseId"] = Convert.ToString(e.Parameters.Split('|').First());
 
 
             Debug.WriteLine("Main ID: " + Session["TravelExp_Id"]);
@@ -194,21 +194,17 @@ namespace DX_WebTemplate
 
             if (e.Parameters.Split('|').Last() == "btnEdit")
             {
-                ASPxWebControl.RedirectOnCallback("TravelExpenseAdd.aspx");
+                //ASPxWebControl.RedirectOnCallback("TravelExpenseAdd.aspx");
             }
             if (e.Parameters.Split('|').Last() == "btnView")
             {
                 if (app == "ACDE RFP")
                 {
                     //ASPxWebControl.RedirectOnCallback("RFPApprovalView.aspx");
-                    string redirectUrl = $"RFPApprovalView.aspx?secureToken={encryptedID}";
-                    ASPxWebControl.RedirectOnCallback(redirectUrl);
                 }
                 else if (app == "ACDE Expense")
                 {
-                    //ASPxWebControl.RedirectOnCallback("ExpenseApprovalView.aspx");
-                    string redirectUrl = $"ExpenseApprovalView.aspx?secureToken={encryptedID}";
-                    ASPxWebControl.RedirectOnCallback(redirectUrl);
+                    ASPxWebControl.RedirectOnCallback("~/AccedeExpenseViewPage.aspx");
                 }
                 else if (app == "ACDE Expense Travel")
                 {
@@ -216,6 +212,7 @@ namespace DX_WebTemplate
                     Session["empid"] = context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).Select(x => x.Employee_Id).FirstOrDefault();
                     ASPxWebControl.RedirectOnCallback("TravelExpenseReview.aspx");
                 }
+
             }
         }
 
