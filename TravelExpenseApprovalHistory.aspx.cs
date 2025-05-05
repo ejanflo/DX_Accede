@@ -28,32 +28,161 @@ namespace DX_WebTemplate
 
         protected void expenseGrid_CustomColumnDisplayText(object sender, DevExpress.Web.ASPxGridViewColumnDisplayTextEventArgs e)
         {
-            if (e.Column.FieldName == "Time_Arrived" && e.Column.Caption == "Time Arrived")
+            object value = e.GetFieldValue("AppDocTypeId");
+            int app = (value != DBNull.Value) ? Convert.ToInt32(value) : 0;
+            var id = Convert.ToInt32(e.GetFieldValue("Document_Id"));
+
+            if (e.Column.Caption == "Document No.")
             {
-                TimeSpan time = (TimeSpan)e.Value;
-                DateTime time1 = new DateTime(time.Ticks);
-                e.DisplayText = time1.ToString("hh:mm tt", new CultureInfo("en-us"));
+                string docno = "";
+
+                if (app != 0)
+                {
+                    var appname = context.ITP_S_DocumentTypes.Where(x => x.DCT_Id == app).Select(x => x.DCT_Name).FirstOrDefault();
+                    if (appname == "ACDE RFP")
+                        docno = Convert.ToString(context.ACCEDE_T_RFPMains.Where(x => x.ID == id).Select(x => x.RFP_DocNum).FirstOrDefault() ?? string.Empty);
+                    else if (appname == "ACDE Expense")
+                        docno = Convert.ToString(context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.DocNo).FirstOrDefault() ?? string.Empty);
+                    else if (appname == "ACDE Expense Travel")
+                        docno = Convert.ToString(context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.Doc_No).FirstOrDefault() ?? string.Empty);
+                }
+
+                e.DisplayText = docno;
             }
 
-            if (e.Column.FieldName == "Time_Departed" && e.Column.Caption == "Time Departed")
+            if (e.Column.Caption == "Employee Name")
             {
-                TimeSpan time = (TimeSpan)e.Value;
-                DateTime time1 = new DateTime(time.Ticks);
-                e.DisplayText = time1.ToString("hh:mm tt", new CultureInfo("en-us"));
+                string empname = "";
+
+                if (app != 0)
+                {
+                    var appname = context.ITP_S_DocumentTypes.Where(x => x.DCT_Id == app).Select(x => x.DCT_Name).FirstOrDefault();
+                    if (appname == "ACDE RFP")
+                    {
+                        string useridRaw = context.ACCEDE_T_RFPMains.Where(x => x.ID == id).Select(x => x.Payee).FirstOrDefault();
+                        string userid = new string(useridRaw?.Where(char.IsDigit).ToArray());
+                        if (!string.IsNullOrEmpty(userid))
+                        {
+                            empname = context.ITP_S_UserMasters.Where(x => x.EmpCode == userid).Select(x => x.FullName).FirstOrDefault()?.ToUpper() ?? string.Empty;
+                        }
+                    }
+                    else if (appname == "ACDE Expense")
+                    {
+                        string useridRaw = context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.ExpenseName).FirstOrDefault();
+                        string userid = new string(useridRaw?.Where(char.IsDigit).ToArray());
+                        if (!string.IsNullOrEmpty(userid))
+                        {
+                            empname = context.ITP_S_UserMasters.Where(x => x.EmpCode == userid).Select(x => x.FullName).FirstOrDefault()?.ToUpper() ?? string.Empty;
+                        }
+                    }
+                    else if (appname == "ACDE Expense Travel")
+                    {
+                        string useridRaw = Convert.ToString(context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.Employee_Id).FirstOrDefault());
+                        string userid = new string(useridRaw?.Where(char.IsDigit).ToArray());
+                        if (!string.IsNullOrEmpty(userid))
+                        {
+                            empname = context.ITP_S_UserMasters.Where(x => x.EmpCode == userid).Select(x => x.FullName).FirstOrDefault()?.ToUpper() ?? string.Empty;
+                        }
+                    }
+                }
+
+                e.DisplayText = empname;
             }
 
-            if (e.Column.FieldName == "Employee_Id" && e.Column.Caption == "Employee Name")
+            if (e.Column.Caption == "Department")
             {
-                var name = context.ITP_S_UserMasters.Where(x => x.EmpCode == Convert.ToString(e.Value)).Select(x => x.FullName).FirstOrDefault();
-                e.DisplayText = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLower());
+                string department = "";
 
+                if (app != 0)
+                {
+                    var appname = context.ITP_S_DocumentTypes.Where(x => x.DCT_Id == app).Select(x => x.DCT_Name).FirstOrDefault();
+                    if (appname == "ACDE RFP")
+                    {
+                        int depid = Convert.ToInt32(context.ACCEDE_T_RFPMains.Where(x => x.ID == id).Select(x => x.Department_ID).FirstOrDefault());
+                        if (depid != 0)
+                            department = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == depid).Select(x => x.DepDesc).FirstOrDefault().ToUpper();
+                    }
+                    else if (appname == "ACDE Expense")
+                    {
+                        int depid = Convert.ToInt32(context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.Dept_Id).FirstOrDefault());
+                        if (depid != 0)
+                            department = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == depid).Select(x => x.DepDesc).FirstOrDefault().ToUpper();
+                    }
+                    else if (appname == "ACDE Expense Travel")
+                    {
+                        string depid = Convert.ToString(context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.Dep_Code).FirstOrDefault());
+                        if (!string.IsNullOrEmpty(depid))
+                            department = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(depid)).Select(x => x.DepDesc).FirstOrDefault().ToUpper();
+                    }
+                }
+
+                e.DisplayText = department;
             }
 
-            if (e.Column.FieldName == "Preparer_Id" && e.Column.Caption == "Prepared By")
+            if (e.Column.Caption == "Remarks")
             {
-                var name = context.ITP_S_UserMasters.Where(x => x.EmpCode == Convert.ToString(e.Value)).Select(x => x.FullName).FirstOrDefault();
-                e.DisplayText = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLower());
+                string remarks = "";
 
+                if (app != 0)
+                {
+                    var appname = context.ITP_S_DocumentTypes.Where(x => x.DCT_Id == app).Select(x => x.DCT_Name).FirstOrDefault();
+                    if (appname == "ACDE RFP")
+                        remarks = Convert.ToString(context.ACCEDE_T_RFPMains.Where(x => x.ID == id).Select(x => x.Remarks).FirstOrDefault() ?? string.Empty);
+                    else if (appname == "ACDE Expense")
+                        remarks = Convert.ToString(context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.remarks).FirstOrDefault() ?? string.Empty);
+                    else if (appname == "ACDE Expense Travel")
+                        remarks = Convert.ToString(context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.Remarks).FirstOrDefault() ?? string.Empty);
+                }
+
+                e.DisplayText = remarks;
+            }
+
+            if (e.Column.Caption == "Purpose")
+            {
+                string purpose = "";
+
+                if (app != 0)
+                {
+                    var appname = context.ITP_S_DocumentTypes.Where(x => x.DCT_Id == app).Select(x => x.DCT_Name).FirstOrDefault();
+                    if (appname == "ACDE RFP")
+                        purpose = Convert.ToString(context.ACCEDE_T_RFPMains.Where(x => x.ID == id).Select(x => x.Purpose).FirstOrDefault() ?? string.Empty);
+                    else if (appname == "ACDE Expense")
+                        purpose = Convert.ToString(context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.Purpose).FirstOrDefault() ?? string.Empty);
+                    else if (appname == "ACDE Expense Travel")
+                        purpose = Convert.ToString(context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.Purpose).FirstOrDefault() ?? string.Empty);
+                }
+
+                e.DisplayText = purpose;
+            }
+
+            if (e.Column.Caption == "Preparer")
+            {
+                string preparer = "";
+
+                if (app != 0)
+                {
+                    var appname = context.ITP_S_DocumentTypes.Where(x => x.DCT_Id == app).Select(x => x.DCT_Name).FirstOrDefault();
+                    if (appname == "ACDE RFP")
+                    {
+                        string userid = context.ACCEDE_T_RFPMains.Where(x => x.ID == id).Select(x => x.User_ID).FirstOrDefault();
+                        if (!string.IsNullOrEmpty(userid))
+                            preparer = context.ITP_S_UserMasters.Where(x => x.EmpCode == userid).Select(x => x.FullName).FirstOrDefault().ToUpper();
+                    }
+                    else if (appname == "ACDE Expense")
+                    {
+                        string userid = context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.UserId).FirstOrDefault();
+                        if (!string.IsNullOrEmpty(userid))
+                            preparer = context.ITP_S_UserMasters.Where(x => x.EmpCode == userid).Select(x => x.FullName).FirstOrDefault().ToUpper();
+                    }
+                    else if (appname == "ACDE Expense Travel")
+                    {
+                        string userid = Convert.ToString(context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.Preparer_Id).FirstOrDefault());
+                        if (!string.IsNullOrEmpty(userid))
+                            preparer = context.ITP_S_UserMasters.Where(x => x.EmpCode == userid).Select(x => x.FullName).FirstOrDefault().ToUpper();
+                    }
+                }
+
+                e.DisplayText = preparer;
             }
         }
 
@@ -62,27 +191,58 @@ namespace DX_WebTemplate
             string[] args = e.Parameters.Split('|');
             string rowKey = args[0];
 
-            Session["TravelExp_Id"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "ID");
-            Session["prep"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "Preparer_Id");
-            Session["comp"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "Company_Id");
+            Session["TravelExp_Id"] = e.Parameters.Split('|').First();
+            Session["comp"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "CompanyId");
+            Session["PassActID"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "WFA_Id");
             Session["wfa"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "WFA_Id");
             Session["wf"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "WF_Id");
             Session["wfd"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "WFD_Id");
-            Session["empid"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "Employee_Id");
             Session["doc_stat"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "Status");
+            var app = context.ITP_S_DocumentTypes.Where(x => x.DCT_Id == Convert.ToInt32(expenseGrid.GetRowValuesByKeyValue(rowKey, "AppDocTypeId"))).Select(x => x.DCT_Name).FirstOrDefault();
 
+            string actID = Convert.ToString(Session["PassActID"]);
+            string encryptedID = Encrypt(actID); 
+            Session["ExpenseId"] = Convert.ToString(e.Parameters.Split('|').First());
+            Session["passRFPID"] = Convert.ToString(e.Parameters.Split('|').First());
+
+
+            Debug.WriteLine("Main ID: " + Session["TravelExp_Id"]);
             Debug.WriteLine("WFA :" + Session["wfa"]);
             Debug.WriteLine("WF :" + Session["wf"]);
             Debug.WriteLine("WFD :" + Session["wfd"]);
 
             if (e.Parameters.Split('|').Last() == "btnEdit")
             {
-                ASPxWebControl.RedirectOnCallback("TravelExpenseAdd.aspx");
+                ASPxWebControl.RedirectOnCallback("~/TravelExpenseAdd.aspx");
             }
             if (e.Parameters.Split('|').Last() == "btnView")
             {
-                ASPxWebControl.RedirectOnCallback("TravelExpenseView.aspx");
+                if (app == "ACDE RFP")
+                {
+                    //ASPxWebControl.RedirectOnCallback("RFPApprovalView.aspx");
+                    string redirectUrl = $"~/RFPViewPage.aspx";
+                    ASPxWebControl.RedirectOnCallback(redirectUrl);
+                }
+                else if (app == "ACDE Expense")
+                {
+                    //ASPxWebControl.RedirectOnCallback("ExpenseApprovalView.aspx");
+                    string redirectUrl = $"~/AccedeExpenseViewPage.aspx";
+                    ASPxWebControl.RedirectOnCallback(redirectUrl);
+                }
+                else if (app == "ACDE Expense Travel")
+                {
+                    Session["prep"] = context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).Select(x => x.Preparer_Id).FirstOrDefault();
+                    Session["empid"] = context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).Select(x => x.Employee_Id).FirstOrDefault();
+                    ASPxWebControl.RedirectOnCallback("~/TravelExpenseView.aspx");
+                }
             }
+        }
+
+        private string Encrypt(string plainText)
+        {
+            // Example: Use a proper encryption library like AES or RSA for actual implementations
+            // This is just a placeholder for encryption logic
+            return Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(plainText));
         }
     }
 }

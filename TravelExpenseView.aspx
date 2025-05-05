@@ -167,7 +167,7 @@
                                             <dx:ASPxButton ID="cancelBtn" runat="server" BackColor="White" Font-Bold="True" Font-Size="Small" ForeColor="#878787" HorizontalAlign="Right" Text="Cancel" AutoPostBack="False" ClientInstanceName="cancelBtn" UseSubmitBehavior="False">
                                                 <ClientSideEvents Click="function(s, e) {
                         LoadingPanel.Show();
-                        window.location.href = &quot;TravelExpenseMain.aspx&quot;;
+                        history.back();
         }" />
                                             </dx:ASPxButton>
                                         </dx:LayoutItemNestedControlContainer>

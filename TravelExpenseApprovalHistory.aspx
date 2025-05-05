@@ -15,9 +15,7 @@
     <script>
         function OnCustomButtonClick(s, e) {
             expenseGrid.PerformCallback(s.GetRowKey(e.visibleIndex) + "|" + e.buttonID);
-            if (e.buttonID != "btnPrint") {
-                loadPanel.Show();
-            }
+            loadPanel.Show();
         }
 
         function onToolbarItemClick(s, e) {
@@ -26,7 +24,7 @@
     </script>
     <dx:ASPxFormLayout ID="ASPxFormLayout1" runat="server" Font-Bold="False" Height="144px" Width="100%">
         <Items>
-            <dx:LayoutGroup Caption="My Travel Expense Approval History" ColSpan="1" GroupBoxDecoration="HeadingLine" Width="100%">
+            <dx:LayoutGroup Caption="My Accede Approval History" ColSpan="1" GroupBoxDecoration="HeadingLine" Width="100%">
                 <CellStyle Font-Bold="False">
                 </CellStyle>
                 <Items>
@@ -36,7 +34,7 @@
                             <dx:LayoutItem Caption="" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxGridView ID="expenseGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="expenseGrid" Width="100%" DataSourceID="sqlTravelExp" KeyFieldName="ID" OnCustomCallback="expenseGrid_CustomCallback" OnCustomColumnDisplayText="expenseGrid_CustomColumnDisplayText">
+                                        <dx:ASPxGridView ID="expenseGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="expenseGrid" DataSourceID="sqlTravelExp" KeyFieldName="Document_Id" OnCustomCallback="expenseGrid_CustomCallback" OnCustomColumnDisplayText="expenseGrid_CustomColumnDisplayText" Width="100%">
                                             <ClientSideEvents CustomButtonClick="OnCustomButtonClick" ToolbarItemClick="onToolbarItemClick" />
                                             <SettingsDetail AllowOnlyOneMasterRowExpanded="True" />
                                             <SettingsContextMenu Enabled="True">
@@ -111,7 +109,7 @@
                                                 </DetailRow>
                                             </Templates>
                                             <SettingsPager AlwaysShowPager="True">
-                                                <PageSizeItemSettings Visible="True" Items="5, 10, 20, 50, 100, 200">
+                                                <PageSizeItemSettings Items="5, 10, 20, 50, 100, 200" Visible="True">
                                                 </PageSizeItemSettings>
                                             </SettingsPager>
                                             <Settings ShowHeaderFilterButton="True" />
@@ -133,9 +131,7 @@
                                                             </Image>
                                                             <Styles>
                                                                 <Style BackColor="#0D6943" Font-Bold="True" Font-Size="Smaller" ForeColor="White">
-                                                                    
                                                                     <Paddings PaddingBottom="4px" PaddingLeft="8px" PaddingRight="8px" PaddingTop="4px" />
-                                                                    
                                                                 </Style>
                                                             </Styles>
                                                         </dx:GridViewCommandColumnCustomButton>
@@ -149,61 +145,74 @@
                                                             </Styles>
                                                         </dx:GridViewCommandColumnCustomButton>
                                                     </CustomButtons>
-                                                    <CellStyle HorizontalAlign="Left">
+                                                    <CellStyle HorizontalAlign="Center">
                                                     </CellStyle>
                                                 </dx:GridViewCommandColumn>
-                                                <dx:GridViewDataDateColumn FieldName="DateAction" ShowInCustomizationForm="True" VisibleIndex="4">
-                                                    <PropertiesDateEdit DisplayFormatString="MMM. dd, yyyy  hh:mm tt">
+                                                <dx:GridViewDataTextColumn FieldName="Document_Id" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
+                                                    <EditFormSettings Visible="False" />
+                                                </dx:GridViewDataTextColumn>
+                                                <dx:GridViewDataTextColumn Caption="Document No." ShowInCustomizationForm="True" VisibleIndex="2">
+                                                    <CellStyle Font-Bold="False" HorizontalAlign="Left">
+                                                    </CellStyle>
+                                                    <Columns>
+                                                        <dx:GridViewDataTextColumn Caption="Employee Name" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                            <CellStyle Font-Bold="True" HorizontalAlign="Left">
+                                                            </CellStyle>
+                                                        </dx:GridViewDataTextColumn>
+                                                    </Columns>
+                                                </dx:GridViewDataTextColumn>
+                                                <dx:GridViewDataComboBoxColumn Caption="Company" FieldName="CompanyId" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                    <PropertiesComboBox DataSourceID="sqlCompany" TextField="CompanyShortName" ValueField="WASSId">
+                                                    </PropertiesComboBox>
+                                                    <Columns>
+                                                        <dx:GridViewDataTextColumn Caption="Department" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                            <CellStyle HorizontalAlign="Left">
+                                                            </CellStyle>
+                                                        </dx:GridViewDataTextColumn>
+                                                    </Columns>
+                                                </dx:GridViewDataComboBoxColumn>
+                                                <dx:GridViewDataComboBoxColumn FieldName="Status" ShowInCustomizationForm="True" VisibleIndex="8">
+                                                    <PropertiesComboBox DataSourceID="sqlStatus" TextField="STS_Description" ValueField="STS_Id">
+                                                    </PropertiesComboBox>
+                                                    <CellStyle HorizontalAlign="Center">
+                                                    </CellStyle>
+                                                    <Columns>
+                                                        <dx:GridViewDataTextColumn Caption="Remarks" FieldName="Remarks" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                            <PropertiesTextEdit NullDisplayText=" ">
+                                                            </PropertiesTextEdit>
+                                                            <CellStyle HorizontalAlign="Left">
+                                                            </CellStyle>
+                                                        </dx:GridViewDataTextColumn>
+                                                    </Columns>
+                                                </dx:GridViewDataComboBoxColumn>
+                                                <dx:GridViewDataComboBoxColumn Caption="App" FieldName="AppDocTypeId" ShowInCustomizationForm="True" VisibleIndex="9">
+                                                    <PropertiesComboBox DataSourceID="SqlAppDocType" TextField="DCT_Description" ValueField="DCT_Id">
+                                                    </PropertiesComboBox>
+                                                </dx:GridViewDataComboBoxColumn>
+                                                <dx:GridViewDataTextColumn Caption="Purpose" ShowInCustomizationForm="True" VisibleIndex="6">
+                                                    <Columns>
+                                                        <dx:GridViewDataTextColumn Caption="Preparer" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                        </dx:GridViewDataTextColumn>
+                                                    </Columns>
+                                                </dx:GridViewDataTextColumn>
+                                                <dx:GridViewDataDateColumn FieldName="DateAssigned" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                    <PropertiesDateEdit DisplayFormatString="MMMM dd, yyyy">
                                                     </PropertiesDateEdit>
                                                     <Columns>
-                                                        <dx:GridViewDataDateColumn FieldName="DateAssigned" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                            <PropertiesDateEdit DisplayFormatString="MMM. dd, yyyy  hh:mm tt">
+                                                        <dx:GridViewDataDateColumn FieldName="DateAction" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                            <PropertiesDateEdit DisplayFormatString="MMMM dd, yyyy">
                                                             </PropertiesDateEdit>
                                                         </dx:GridViewDataDateColumn>
                                                     </Columns>
                                                 </dx:GridViewDataDateColumn>
-                                                <dx:GridViewDataTextColumn FieldName="Doc_No" ShowInCustomizationForm="True" VisibleIndex="1" Caption="Document No.">
-                                                    <Columns>
-                                                        <dx:GridViewDataComboBoxColumn Caption="Employee Name" FieldName="Employee_Id" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                            <PropertiesComboBox DataSourceID="sqlName" TextField="FullName" ValueField="EmpCode">
-                                                            </PropertiesComboBox>
-                                                            <CellStyle Font-Bold="True">
-                                                            </CellStyle>
-                                                        </dx:GridViewDataComboBoxColumn>
-                                                    </Columns>
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn FieldName="Trip_To" ShowInCustomizationForm="True" VisibleIndex="3" Caption="Trip To">
-                                                    <Columns>
-                                                        <dx:GridViewDataTextColumn FieldName="Purpose" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                        </dx:GridViewDataTextColumn>
-                                                    </Columns>
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataComboBoxColumn Caption="Workflow" FieldName="WF_Id" ShowInCustomizationForm="True" VisibleIndex="7" Visible="False">
-                                                    <PropertiesComboBox DataSourceID="SqlWF" TextField="Description" ValueField="WF_Id">
+                                                <dx:GridViewDataComboBoxColumn Caption="Workflow" FieldName="WF_Id" ShowInCustomizationForm="True" VisibleIndex="4">
+                                                    <PropertiesComboBox DataSourceID="SqlWF" TextField="Name" ValueField="WF_Id">
                                                     </PropertiesComboBox>
                                                     <Columns>
-                                                        <dx:GridViewDataComboBoxColumn Caption="Workflow Details" FieldName="WFD_Id" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                        <dx:GridViewDataComboBoxColumn Caption="Description" FieldName="WFD_Id" ShowInCustomizationForm="True" VisibleIndex="0">
                                                             <PropertiesComboBox DataSourceID="SqlWFD" TextField="Description" ValueField="WFD_Id">
                                                             </PropertiesComboBox>
                                                         </dx:GridViewDataComboBoxColumn>
-                                                    </Columns>
-                                                </dx:GridViewDataComboBoxColumn>
-                                                <dx:GridViewDataComboBoxColumn Caption="Company" FieldName="Company_Id" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                    <PropertiesComboBox DataSourceID="sqlCompany" TextField="CompanyShortName" ValueField="WASSId">
-                                                    </PropertiesComboBox>
-                                                    <Columns>
-                                                        <dx:GridViewDataComboBoxColumn Caption="Preparer" FieldName="Preparer_Id" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                            <PropertiesComboBox DataSourceID="sqlName" TextField="FullName" ValueField="EmpCode">
-                                                            </PropertiesComboBox>
-                                                        </dx:GridViewDataComboBoxColumn>
-                                                    </Columns>
-                                                </dx:GridViewDataComboBoxColumn>
-                                                <dx:GridViewDataComboBoxColumn FieldName="Status" ShowInCustomizationForm="True" VisibleIndex="11">
-                                                    <PropertiesComboBox DataSourceID="sqlStatus" TextField="STS_Description" ValueField="STS_Id">
-                                                    </PropertiesComboBox>
-                                                    <Columns>
-                                                        <dx:GridViewDataTextColumn FieldName="Remarks" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                        </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:GridViewDataComboBoxColumn>
                                             </Columns>
@@ -216,7 +225,7 @@
                                                             <Image IconID="iconbuilder_actions_addcircled_svg_dark_16x16">
                                                             </Image>
                                                         </dx:GridViewToolbarItem>
-                                                        <dx:GridViewToolbarItem Alignment="Left" BeginGroup="True" Text="">
+                                                        <dx:GridViewToolbarItem Alignment="Right" BeginGroup="True" Text="">
                                                             <Template>
                                                                 <dx:ASPxButtonEdit ID="tbToolbarSearch" runat="server" Height="100%" NullText="Search..." ShowClearButton="True" Theme="iOS" Width="400px">
                                                                     <Buttons>
@@ -226,13 +235,13 @@
                                                                 </dx:ASPxButtonEdit>
                                                             </Template>
                                                         </dx:GridViewToolbarItem>
-                                                        <dx:GridViewToolbarItem Alignment="Right" BeginGroup="True" Text="View Approval History" Visible="False">
+                                                        <dx:GridViewToolbarItem Alignment="Right" BeginGroup="True" Name="approvalHistoryButton" Text="View Approval History" Visible="False">
                                                             <Image IconID="businessobjects_bo_audit_changehistory_svg_dark_16x16">
                                                             </Image>
                                                         </dx:GridViewToolbarItem>
-                                                        <dx:GridViewToolbarItem Alignment="Right" Command="Refresh" BeginGroup="True">
+                                                        <dx:GridViewToolbarItem Alignment="Right" BeginGroup="True" Command="Refresh">
                                                         </dx:GridViewToolbarItem>
-                                                        <dx:GridViewToolbarItem Alignment="Right" Text="Export" BeginGroup="True">
+                                                        <dx:GridViewToolbarItem Alignment="Right" BeginGroup="True" Text="Export" Visible="False">
                                                             <Items>
                                                                 <dx:GridViewToolbarItem Command="ExportToPdf">
                                                                 </dx:GridViewToolbarItem>
@@ -242,7 +251,7 @@
                                                             <Image IconID="diagramicons_exportas_svg_16x16">
                                                             </Image>
                                                         </dx:GridViewToolbarItem>
-                                                        <dx:GridViewToolbarItem Name="print" Target="_blank" Text="Print" Alignment="Right" BeginGroup="True" Visible="False">
+                                                        <dx:GridViewToolbarItem Alignment="Right" BeginGroup="True" Name="print" Target="_blank" Text="Print" Visible="False">
                                                             <Image IconID="print_print_svg_16x16">
                                                             </Image>
                                                         </dx:GridViewToolbarItem>
@@ -320,9 +329,13 @@
                                                     <CellStyle Font-Bold="True" ForeColor="#006838">
                                                     </CellStyle>
                                                 </dx:GridViewFormatConditionHighlight>
+                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 41" FieldName="Status" Format="Custom">
+                                                    <CellStyle Font-Bold="True" ForeColor="#878787">
+                                                    </CellStyle>
+                                                </dx:GridViewFormatConditionHighlight>
                                             </FormatConditions>
                                             <Styles>
-                                                <Header Font-Bold="True" HorizontalAlign="Center" BackColor="#E9ECEF">
+                                                <Header BackColor="#E9ECEF" Font-Bold="True" HorizontalAlign="Center">
                                                 </Header>
                                                 <AlternatingRow BackColor="#F5F3F4">
                                                 </AlternatingRow>
@@ -357,5 +370,7 @@
     <asp:SqlDataSource ID="SqlWF" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_WorkflowHeader]">
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlWFD" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_WorkflowDetails]">
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlAppDocType" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_DocumentType]">
     </asp:SqlDataSource>
 </asp:Content>
