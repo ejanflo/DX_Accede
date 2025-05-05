@@ -126,7 +126,7 @@
                                             <SettingsSearchPanel CustomEditorID="tbToolbarSearch" ShowClearButton="True" Visible="True" />
                                             <SettingsExport EnableClientSideExportAPI="True" ExcelExportMode="WYSIWYG" FileName="MyData">
                                             </SettingsExport>
-                                            <SettingsLoadingPanel Text="Loading..." Mode="ShowOnStatusBar" />
+                                            <SettingsLoadingPanel Text="Loading..." />
                                             <Columns>
                                                 <dx:GridViewCommandColumn Caption="Action" ShowInCustomizationForm="True" VisibleIndex="0">
                                                     <CustomButtons>
@@ -237,7 +237,7 @@
                                                                 </dx:ASPxButtonEdit>
                                                             </Template>
                                                         </dx:GridViewToolbarItem>
-                                                        <dx:GridViewToolbarItem Alignment="Right" BeginGroup="True" Text="View Approval History" Name="approvalHistoryButton">
+                                                        <dx:GridViewToolbarItem Alignment="Right" BeginGroup="True" Text="View Approval History" Name="approvalHistoryButton" Target="_blank">
                                                             <Image IconID="businessobjects_bo_audit_changehistory_svg_dark_16x16">
                                                             </Image>
                                                         </dx:GridViewToolbarItem>

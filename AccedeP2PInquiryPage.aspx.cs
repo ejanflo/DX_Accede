@@ -22,6 +22,19 @@ namespace DX_WebTemplate
                 {
                     AnfloSession.Current.CreateSession(HttpContext.Current.User.ToString());
 
+                    if (!IsPostBack)
+                    {
+                        var pcTabs = ASPxFormLayout1.FindItemOrGroupByName("layoutTab") as TabbedLayoutGroup;
+                        string tabName = Request.QueryString["tab"];
+                        if (!string.IsNullOrEmpty(tabName))
+                        {
+                            if (tabName == "rfpDisbursedTab")
+                                pcTabs.ActiveTabIndex = 1;
+                            else if (tabName == "expenseDisbursedTab")
+                                pcTabs.ActiveTabIndex = 2;
+                        }
+                    }
+
                     //Start ------------------ Page Security
                     string empCode = Session["userID"].ToString();
                     int appID = 26; //22-ITPORTAL; 13-CAR; 26-RS; 1027-RFP; 1028-UAR

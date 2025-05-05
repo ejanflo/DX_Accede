@@ -126,7 +126,7 @@
                                             <SettingsSearchPanel CustomEditorID="tbToolbarSearch" ShowClearButton="True" Visible="True" />
                                             <SettingsExport EnableClientSideExportAPI="True" ExcelExportMode="WYSIWYG" FileName="MyData">
                                             </SettingsExport>
-                                            <SettingsLoadingPanel Text="Loading..." Mode="ShowOnStatusBar" />
+                                            <SettingsLoadingPanel Text="Loading..." />
                                             <Columns>
                                                 <dx:GridViewCommandColumn Caption="Action" ShowInCustomizationForm="True" VisibleIndex="0">
                                                     <CustomButtons>
