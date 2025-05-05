@@ -206,6 +206,8 @@
                                                     </PropertiesComboBox>
                                                     <Columns>
                                                         <dx:GridViewDataDateColumn FieldName="DateAssigned" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                            <PropertiesDateEdit DisplayFormatString="MMMM dd, yyyy">
+                                                            </PropertiesDateEdit>
                                                         </dx:GridViewDataDateColumn>
                                                     </Columns>
                                                 </dx:GridViewDataComboBoxColumn>
