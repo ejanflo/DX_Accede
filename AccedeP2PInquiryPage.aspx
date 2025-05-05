@@ -241,7 +241,7 @@
                                     </dx:LayoutItem>
                                 </Items>
                             </dx:LayoutGroup>
-                            <dx:LayoutGroup Caption="Disbursed RFP" ColSpan="1">
+                            <dx:LayoutGroup Caption="Disbursed RFP" ColSpan="1" Name="rfpDisbursedTab">
                                 <Items>
                                     <dx:LayoutItem Caption="" ColSpan="1">
                                         <LayoutItemNestedControlCollection>
@@ -401,7 +401,7 @@
                                     </dx:LayoutItem>
                                 </Items>
                             </dx:LayoutGroup>
-                            <dx:LayoutGroup Caption="Disbursed Expense" ColSpan="1">
+                            <dx:LayoutGroup Caption="Disbursed Expense" ColSpan="1" Name="expenseDisbursedTab">
                                 <Items>
                                     <dx:LayoutItem Caption="" ColSpan="1">
                                         <LayoutItemNestedControlCollection>

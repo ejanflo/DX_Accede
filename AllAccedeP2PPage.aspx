@@ -233,9 +233,9 @@
                                                 </dx:GridViewToolbar>
                                                 <dx:GridViewToolbar>
                                                     <Items>
-                                                        <dx:GridViewToolbarItem Alignment="Left" BeginGroup="True" Text="View Disbursed RFPs" Name="rfpDisbursedBtn" Target="_blank" NavigateUrl="CashierInquiryPage.aspx?tab=rfpDisbursedTab">
+                                                        <dx:GridViewToolbarItem Alignment="Left" BeginGroup="True" Text="View Disbursed RFPs" Name="rfpDisbursedBtn" Target="_blank" NavigateUrl="AccedeP2PInquiryPage.aspx?tab=rfpDisbursedTab">
                                                         </dx:GridViewToolbarItem>
-                                                        <dx:GridViewToolbarItem Alignment="Left" Name="expenseDisbursedBtn" Text="View Disbursed Expenses" BeginGroup="True" Target="_blank" NavigateUrl="CashierInquiryPage.aspx?tab=expenseDisbursedTab">
+                                                        <dx:GridViewToolbarItem Alignment="Left" Name="expenseDisbursedBtn" Text="View Disbursed Expenses" BeginGroup="True" Target="_blank" NavigateUrl="AccedeP2PInquiryPage.aspx?tab=expenseDisbursedTab">
                                                         </dx:GridViewToolbarItem>
                                                         <dx:GridViewToolbarItem Alignment="Right" BeginGroup="True" Text="View Approval History" Name="approvalHistoryButton" Target="_blank">
                                                             <Image IconID="businessobjects_bo_audit_changehistory_svg_dark_16x16">
