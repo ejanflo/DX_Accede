@@ -219,13 +219,13 @@ namespace DX_WebTemplate
                 if (app == "ACDE RFP")
                 {
                     //ASPxWebControl.RedirectOnCallback("RFPApprovalView.aspx");
-                    string redirectUrl = $"RFPApprovalView.aspx?secureToken={encryptedID}";
+                    string redirectUrl = $"~/RFPApprovalView.aspx?secureToken={encryptedID}";
                     ASPxWebControl.RedirectOnCallback(redirectUrl);
                 }
                 else if (app == "ACDE Expense")
                 {
                     //ASPxWebControl.RedirectOnCallback("ExpenseApprovalView.aspx");
-                    string redirectUrl = $"ExpenseApprovalView.aspx?secureToken={encryptedID}";
+                    string redirectUrl = $"~/ExpenseApprovalView.aspx?secureToken={encryptedID}";
                     ASPxWebControl.RedirectOnCallback(redirectUrl);
                 }
                 else if (app == "ACDE Expense Travel")
