@@ -21,8 +21,7 @@
 
         function onToolbarItemClick(s, e) {
             if (e.item.name === "approvalHistoryButton") {
-                loadPanel.Show();
-                window.open("TravelExpenseApprovalHistory.aspx", "_self");
+                window.open("TravelExpenseApprovalHistory.aspx", "_blank");
             }
         }
     </script>
@@ -201,7 +200,7 @@
                                                 </dx:GridViewDataTextColumn>
                                                 <dx:GridViewDataTextColumn FieldName="CompanyId" ShowInCustomizationForm="True" Visible="False" VisibleIndex="15">
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataComboBoxColumn Caption="App" FieldName="AppDocTypeId" ShowInCustomizationForm="True" VisibleIndex="7">
+                                                <dx:GridViewDataComboBoxColumn Caption="Document Type" FieldName="AppDocTypeId" ShowInCustomizationForm="True" VisibleIndex="7">
                                                     <PropertiesComboBox DataSourceID="SqlAppDocType" TextField="DCT_Description" ValueField="DCT_Id">
                                                     </PropertiesComboBox>
                                                     <Columns>
@@ -239,6 +238,10 @@
                                                         </dx:GridViewToolbarItem>
                                                         <dx:GridViewToolbarItem Alignment="Right" BeginGroup="True" Text="View Approval History" Name="approvalHistoryButton" Target="_blank">
                                                         </dx:GridViewToolbarItem>
+                                                        <dx:GridViewToolbarItem Text="Refresh" Alignment="Right" BeginGroup="True" Command="Refresh">
+                                                            <Image IconID="print_print_svg_16x16">
+                                                            </Image>
+                                                        </dx:GridViewToolbarItem>
                                                         <dx:GridViewToolbarItem Alignment="Right" Text="Export" BeginGroup="True">
                                                             <Items>
                                                                 <dx:GridViewToolbarItem Command="ExportToPdf">
@@ -247,10 +250,6 @@
                                                                 </dx:GridViewToolbarItem>
                                                             </Items>
                                                             <Image IconID="diagramicons_exportas_svg_16x16">
-                                                            </Image>
-                                                        </dx:GridViewToolbarItem>
-                                                        <dx:GridViewToolbarItem Name="print" Target="_blank" Text="Print" Alignment="Right" BeginGroup="True">
-                                                            <Image IconID="print_print_svg_16x16">
                                                             </Image>
                                                         </dx:GridViewToolbarItem>
                                                     </Items>

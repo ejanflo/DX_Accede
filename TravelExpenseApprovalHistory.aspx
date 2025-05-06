@@ -185,10 +185,6 @@
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:GridViewDataComboBoxColumn>
-                                                <dx:GridViewDataComboBoxColumn Caption="App" FieldName="AppDocTypeId" ShowInCustomizationForm="True" VisibleIndex="9">
-                                                    <PropertiesComboBox DataSourceID="SqlAppDocType" TextField="DCT_Description" ValueField="DCT_Id">
-                                                    </PropertiesComboBox>
-                                                </dx:GridViewDataComboBoxColumn>
                                                 <dx:GridViewDataTextColumn Caption="Purpose" ShowInCustomizationForm="True" VisibleIndex="6">
                                                     <Columns>
                                                         <dx:GridViewDataTextColumn Caption="Preparer" ShowInCustomizationForm="True" VisibleIndex="0">
@@ -209,8 +205,12 @@
                                                     <PropertiesComboBox DataSourceID="SqlWF" TextField="Name" ValueField="WF_Id">
                                                     </PropertiesComboBox>
                                                     <Columns>
-                                                        <dx:GridViewDataComboBoxColumn Caption="Description" FieldName="WFD_Id" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                        <dx:GridViewDataComboBoxColumn Caption="Description" FieldName="WFD_Id" ShowInCustomizationForm="True" VisibleIndex="0" Visible="False">
                                                             <PropertiesComboBox DataSourceID="SqlWFD" TextField="Description" ValueField="WFD_Id">
+                                                            </PropertiesComboBox>
+                                                        </dx:GridViewDataComboBoxColumn>
+                                                        <dx:GridViewDataComboBoxColumn Caption="Doc. Type" FieldName="AppDocTypeId" ShowInCustomizationForm="True" VisibleIndex="1">
+                                                            <PropertiesComboBox DataSourceID="SqlAppDocType" TextField="DCT_Description" ValueField="DCT_Id">
                                                             </PropertiesComboBox>
                                                         </dx:GridViewDataComboBoxColumn>
                                                     </Columns>

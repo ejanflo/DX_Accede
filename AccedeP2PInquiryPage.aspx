@@ -81,7 +81,7 @@
                 <Items>
                     <dx:EmptyLayoutItem ColSpan="1">
                     </dx:EmptyLayoutItem>
-                    <dx:TabbedLayoutGroup ColSpan="1">
+                    <dx:TabbedLayoutGroup ColSpan="1" Name="layoutTab">
                         <Items>
                             <dx:LayoutGroup Caption="For Disbursement" ColSpan="1">
                                 <Items>

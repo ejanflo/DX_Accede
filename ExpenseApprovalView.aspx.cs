@@ -184,100 +184,103 @@ namespace DX_WebTemplate
                                 .Where(x => x.WFD_Id == actDetails.WFD_Id)
                                 .FirstOrDefault();
 
-                            var nxWFDetails = _DataContext.ITP_S_WorkflowDetails
+                            if (wfDetails != null)
+                            {
+                                var nxWFDetails = _DataContext.ITP_S_WorkflowDetails
                                 .Where(x => x.WF_Id == actDetails.WF_Id)
                                 .Where(x => x.Sequence == (Convert.ToInt32(wfDetails.Sequence) + 1))
                                 .FirstOrDefault();
 
-                            var if_WF_isRA = _DataContext.ITP_S_WorkflowHeaders
-                                .Where(x => x.WF_Id == wfDetails.WF_Id)
-                                .FirstOrDefault();
+
+                                var if_WF_isRA = _DataContext.ITP_S_WorkflowHeaders
+                                    .Where(x => x.WF_Id == wfDetails.WF_Id)
+                                    .FirstOrDefault();
 
 
-                            var aaf = FormExpApprovalView.FindItemOrGroupByName("AAF") as LayoutItem;
+                                var aaf = FormExpApprovalView.FindItemOrGroupByName("AAF") as LayoutItem;
 
-                            if (nxWFDetails == null && if_WF_isRA.IsRA != true)
-                            {
-                                aaf.ClientVisible = true;
-                            }
-
-                            var FinExecVerify = _DataContext.vw_ACCEDE_FinApproverVerifies
-                                .Where(x => x.UserId == empCode)
-                                .Where(x => x.Role_Name == "Accede Finance Executive")
-                                .FirstOrDefault();
-
-                            var FinCFOVerify = _DataContext.vw_ACCEDE_FinApproverVerifies
-                                .Where(x => x.UserId == empCode)
-                                .Where(x => x.Role_Name == "Accede CFO")
-                                .FirstOrDefault();
-
-                            if (FinExecVerify != null)
-                            {
-                                var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
-                                    .Where(x => x.Name.Contains("forward cfo"))
-                                    .Where(x => x.App_Id == 1032)
-                                    .ToList();
-
-                                if (forwardWFList.Any()) // Ensure there's data before binding
+                                if (nxWFDetails == null && if_WF_isRA.IsRA != true)
                                 {
-                                    drpdown_ForwardWF.DataSource = forwardWFList;
-                                    drpdown_ForwardWF.ValueField = "WF_Id";
-                                    drpdown_ForwardWF.TextField = "Name";
-                                    drpdown_ForwardWF.DataBind();
+                                    aaf.ClientVisible = true;
+                                }
 
-                                    if (drpdown_ForwardWF.Items.Count == 1)
+                                var FinExecVerify = _DataContext.vw_ACCEDE_FinApproverVerifies
+                                    .Where(x => x.UserId == empCode)
+                                    .Where(x => x.Role_Name == "Accede Finance Executive")
+                                    .FirstOrDefault();
+
+                                var FinCFOVerify = _DataContext.vw_ACCEDE_FinApproverVerifies
+                                    .Where(x => x.UserId == empCode)
+                                    .Where(x => x.Role_Name == "Accede CFO")
+                                    .FirstOrDefault();
+
+                                if (FinExecVerify != null)
+                                {
+                                    var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
+                                        .Where(x => x.Name.Contains("forward cfo"))
+                                        .Where(x => x.App_Id == 1032)
+                                        .ToList();
+
+                                    if (forwardWFList.Any()) // Ensure there's data before binding
                                     {
-                                        drpdown_ForwardWF.SelectedIndex = 0;
-                                        SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
+                                        drpdown_ForwardWF.DataSource = forwardWFList;
+                                        drpdown_ForwardWF.ValueField = "WF_Id";
+                                        drpdown_ForwardWF.TextField = "Name";
+                                        drpdown_ForwardWF.DataBind();
 
+                                        if (drpdown_ForwardWF.Items.Count == 1)
+                                        {
+                                            drpdown_ForwardWF.SelectedIndex = 0;
+                                            SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
+
+                                        }
+                                    }
+                                }
+                                else if (FinCFOVerify != null)
+                                {
+                                    var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
+                                        .Where(x => x.Name.Contains("forward pres"))
+                                        .Where(x => x.App_Id == 1032)
+                                        .ToList();
+
+                                    if (forwardWFList.Any()) // Ensure there's data before binding
+                                    {
+                                        drpdown_ForwardWF.DataSource = forwardWFList;
+                                        drpdown_ForwardWF.ValueField = "WF_Id";
+                                        drpdown_ForwardWF.TextField = "Name";
+                                        drpdown_ForwardWF.DataBind();
+
+                                        if (drpdown_ForwardWF.Items.Count == 1)
+                                        {
+                                            drpdown_ForwardWF.SelectedIndex = 0;
+                                            SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
+
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
+                                        .Where(x => x.Name.Contains("forward exec"))
+                                        .Where(x => x.App_Id == 1032)
+                                        .ToList();
+
+                                    if (forwardWFList.Any()) // Ensure there's data before binding
+                                    {
+                                        drpdown_ForwardWF.DataSource = forwardWFList;
+                                        drpdown_ForwardWF.ValueField = "WF_Id";
+                                        drpdown_ForwardWF.TextField = "Name";
+                                        drpdown_ForwardWF.DataBind();
+
+                                        if (drpdown_ForwardWF.Items.Count == 1)
+                                        {
+                                            drpdown_ForwardWF.SelectedIndex = 0;
+                                            SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
+
+                                        }
                                     }
                                 }
                             }
-                            else if (FinCFOVerify != null)
-                            {
-                                var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
-                                    .Where(x => x.Name.Contains("forward pres"))
-                                    .Where(x => x.App_Id == 1032)
-                                    .ToList();
-
-                                if (forwardWFList.Any()) // Ensure there's data before binding
-                                {
-                                    drpdown_ForwardWF.DataSource = forwardWFList;
-                                    drpdown_ForwardWF.ValueField = "WF_Id";
-                                    drpdown_ForwardWF.TextField = "Name";
-                                    drpdown_ForwardWF.DataBind();
-
-                                    if (drpdown_ForwardWF.Items.Count == 1)
-                                    {
-                                        drpdown_ForwardWF.SelectedIndex = 0;
-                                        SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
-
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
-                                    .Where(x => x.Name.Contains("forward exec"))
-                                    .Where(x => x.App_Id == 1032)
-                                    .ToList();
-
-                                if (forwardWFList.Any()) // Ensure there's data before binding
-                                {
-                                    drpdown_ForwardWF.DataSource = forwardWFList;
-                                    drpdown_ForwardWF.ValueField = "WF_Id";
-                                    drpdown_ForwardWF.TextField = "Name";
-                                    drpdown_ForwardWF.DataBind();
-
-                                    if (drpdown_ForwardWF.Items.Count == 1)
-                                    {
-                                        drpdown_ForwardWF.SelectedIndex = 0;
-                                        SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
-
-                                    }
-                                }
-                            }
-
 
                             dueTotal.Text = "PHP " + FormatDecimal(dueComp) + "  " + exp.Exp_Currency + " ";
 

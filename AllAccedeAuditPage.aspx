@@ -21,8 +21,7 @@
 
         function onToolbarItemClick(s, e) {
             if (e.item.name === "approvalHistoryButton") {
-                loadPanel.Show();
-                window.open("TravelExpenseApprovalHistory.aspx", "_self");
+                window.open("TravelExpenseApprovalHistory.aspx", "_blank");
             }
         }
     </script>
@@ -201,7 +200,7 @@
                                                 </dx:GridViewDataTextColumn>
                                                 <dx:GridViewDataTextColumn FieldName="CompanyId" ShowInCustomizationForm="True" Visible="False" VisibleIndex="15">
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataComboBoxColumn Caption="App" FieldName="AppDocTypeId" ShowInCustomizationForm="True" VisibleIndex="7">
+                                                <dx:GridViewDataComboBoxColumn Caption="Document Type" FieldName="AppDocTypeId" ShowInCustomizationForm="True" VisibleIndex="7">
                                                     <PropertiesComboBox DataSourceID="SqlAppDocType" TextField="DCT_Description" ValueField="DCT_Id">
                                                     </PropertiesComboBox>
                                                     <Columns>

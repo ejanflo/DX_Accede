@@ -21,8 +21,7 @@
 
         function onToolbarItemClick(s, e) {
             if (e.item.name === "approvalHistoryButton") {
-                loadPanel.Show();
-                window.open("TravelExpenseApprovalHistory.aspx", "_self");
+                window.open("TravelExpenseApprovalHistory.aspx", "_blank");
             }
         }
     </script>
@@ -177,7 +176,7 @@
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:GridViewDataComboBoxColumn>
-                                                <dx:GridViewDataComboBoxColumn FieldName="Status" ShowInCustomizationForm="True" VisibleIndex="9">
+                                                <dx:GridViewDataComboBoxColumn FieldName="Status" ShowInCustomizationForm="True" VisibleIndex="8">
                                                     <PropertiesComboBox DataSourceID="sqlStatus" TextField="STS_Description" ValueField="STS_Id">
                                                     </PropertiesComboBox>
                                                     <CellStyle HorizontalAlign="Center">
@@ -191,17 +190,17 @@
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:GridViewDataComboBoxColumn>
-                                                <dx:GridViewDataDateColumn FieldName="DateAction" ShowInCustomizationForm="True" VisibleIndex="11" Visible="False">
+                                                <dx:GridViewDataDateColumn FieldName="DateAction" ShowInCustomizationForm="True" VisibleIndex="10" Visible="False">
                                                 </dx:GridViewDataDateColumn>
-                                                <dx:GridViewDataTextColumn FieldName="AppId" ShowInCustomizationForm="True" VisibleIndex="12" Visible="False">
+                                                <dx:GridViewDataTextColumn FieldName="AppId" ShowInCustomizationForm="True" VisibleIndex="11" Visible="False">
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn ShowInCustomizationForm="True" VisibleIndex="13" FieldName="Remarks" Visible="False">
+                                                <dx:GridViewDataTextColumn ShowInCustomizationForm="True" VisibleIndex="12" FieldName="Remarks" Visible="False">
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn FieldName="UserId" ShowInCustomizationForm="True" Visible="False" VisibleIndex="14">
+                                                <dx:GridViewDataTextColumn FieldName="UserId" ShowInCustomizationForm="True" Visible="False" VisibleIndex="13">
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn FieldName="CompanyId" ShowInCustomizationForm="True" Visible="False" VisibleIndex="15">
+                                                <dx:GridViewDataTextColumn FieldName="CompanyId" ShowInCustomizationForm="True" Visible="False" VisibleIndex="14">
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataComboBoxColumn Caption="App" FieldName="AppDocTypeId" ShowInCustomizationForm="True" VisibleIndex="7">
+                                                <dx:GridViewDataComboBoxColumn Caption="Document Type" FieldName="AppDocTypeId" ShowInCustomizationForm="True" VisibleIndex="6">
                                                     <PropertiesComboBox DataSourceID="SqlAppDocType" TextField="DCT_Description" ValueField="DCT_Id">
                                                     </PropertiesComboBox>
                                                     <Columns>
@@ -211,11 +210,13 @@
                                                         </dx:GridViewDataDateColumn>
                                                     </Columns>
                                                 </dx:GridViewDataComboBoxColumn>
-                                                <dx:GridViewDataTextColumn Caption="Purpose" ShowInCustomizationForm="True" VisibleIndex="8">
+                                                <dx:GridViewDataTextColumn Caption="Purpose" ShowInCustomizationForm="True" VisibleIndex="7">
                                                     <Columns>
                                                         <dx:GridViewDataTextColumn Caption="Preparer" ShowInCustomizationForm="True" VisibleIndex="0">
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
+                                                </dx:GridViewDataTextColumn>
+                                                <dx:GridViewDataTextColumn FieldName="WFA_Id" ShowInCustomizationForm="True" Visible="False" VisibleIndex="15">
                                                 </dx:GridViewDataTextColumn>
                                             </Columns>
                                             <Toolbars>
