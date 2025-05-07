@@ -1490,7 +1490,10 @@
                                             </Items>
                                         </dx:LayoutGroup>
                                         <dx:LayoutGroup Caption="" ColCount="3" ColSpan="1" ColumnCount="3" GroupBoxDecoration="Box" Width="100%" VerticalAlign="Middle">
-                                            <Paddings PaddingBottom="0px" PaddingLeft="0px" PaddingRight="0px" PaddingTop="20px" />
+                                            <Paddings PaddingLeft="0px" PaddingRight="0px" />
+                                            <GroupBoxStyle>
+                                                <Border BorderColor="#006838" BorderStyle="Solid" BorderWidth="1px" />
+                                            </GroupBoxStyle>
                                             <Items>
                                                 <dx:LayoutItem Caption="Date" ColSpan="1" VerticalAlign="Middle" Width="20%">
                                                     <LayoutItemNestedControlCollection>
@@ -1537,7 +1540,7 @@
                                         <dx:TabbedLayoutGroup ColSpan="1" Width="100%">
                                             <Items>
                                                 <dx:LayoutGroup Caption="Expense Items" ColCount="5" ColSpan="1" ColumnCount="5" GroupBoxDecoration="None" HorizontalAlign="Center" Width="100%">
-                                                    <Paddings PaddingLeft="0px" PaddingRight="0px" PaddingTop="20px" />
+                                                    <Paddings PaddingLeft="0px" PaddingRight="0px" />
                                                     <Items>
                                                         <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="None" RowSpan="2" VerticalAlign="Top" Visible="False">
                                                             <Items>
@@ -2453,8 +2456,6 @@
                                                                     </dx:ASPxGridView>
                                                                 </dx:LayoutItemNestedControlContainer>
                                                             </LayoutItemNestedControlCollection>
-                                                            <CaptionSettings Location="Top" />
-                                                            <Paddings PaddingBottom="20px" PaddingTop="20px" />
                                                         </dx:LayoutItem>
                                                         <dx:LayoutItem Caption="" ColSpan="2" ColumnSpan="2" Visible="False">
                                                             <LayoutItemNestedControlCollection>
@@ -2784,11 +2785,11 @@
                                             </Items>
                                         </dx:TabbedLayoutGroup>
                                         <dx:TabbedLayoutGroup ColSpan="1" Width="100%">
-                                            <Paddings PaddingBottom="20px" PaddingTop="20px" />
+                                            <Paddings PaddingTop="20px" />
                                             <Items>
                                                 <dx:LayoutGroup Caption="Supporting Documents" ColSpan="1" Width="100%">
                                                     <Items>
-                                                        <dx:LayoutItem Caption="" ColSpan="1" RowSpan="2" VerticalAlign="Top">
+                                                        <dx:LayoutItem Caption="" ColSpan="1" VerticalAlign="Top">
                                                             <LayoutItemNestedControlCollection>
                                                                 <dx:LayoutItemNestedControlContainer runat="server">
                                                                     <dx:ASPxUploadControl ID="TraUploadController" runat="server" AutoStartUpload="True" ClientInstanceName="TraUploadController" Font-Size="Small" ShowProgressPanel="True" UploadMode="Auto" Visible="False" Width="100%">
@@ -2869,8 +2870,6 @@
                                                                     </dx:ASPxGridView>
                                                                 </dx:LayoutItemNestedControlContainer>
                                                             </LayoutItemNestedControlCollection>
-                                                            <CaptionSettings Location="Top" />
-                                                            <Paddings PaddingBottom="20px" PaddingTop="20px" />
                                                             <CaptionStyle Font-Bold="True">
                                                             </CaptionStyle>
                                                         </dx:LayoutItem>

@@ -2765,13 +2765,16 @@
                                                 </dx:LayoutItem>
                                             </Items>
                                         </dx:LayoutGroup>
-                                        <dx:LayoutGroup Caption="" ColCount="3" ColSpan="1" ColumnCount="3" GroupBoxDecoration="None" Width="100%">
+                                        <dx:LayoutGroup Caption="" ColCount="3" ColSpan="1" ColumnCount="3" GroupBoxDecoration="Box" Width="100%" VerticalAlign="Middle">
                                             <Paddings PaddingLeft="0px" PaddingRight="0px" PaddingTop="20px" />
+                                            <GroupBoxStyle>
+                                                <Border BorderColor="#006838" BorderStyle="Solid" BorderWidth="1px" />
+                                            </GroupBoxStyle>
                                             <Items>
-                                                <dx:LayoutItem Caption="Date" ColSpan="1" VerticalAlign="Top" Width="20%">
+                                                <dx:LayoutItem Caption="Date" ColSpan="1" VerticalAlign="Middle" Width="20%">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxDateEdit ID="travelDateCalendar" runat="server" ClientInstanceName="travelDateCalendar" Font-Bold="True" Height="40px" Theme="MaterialCompact" Width="100%">
+                                                            <dx:ASPxDateEdit ID="travelDateCalendar" runat="server" ClientInstanceName="travelDateCalendar" Font-Bold="True" Height="40px" Theme="MaterialCompact" Width="260px">
                                                                 <CalendarProperties ShowWeekNumbers="False">
                                                                     <DaySelectedStyle BackColor="#0D6943">
                                                                     </DaySelectedStyle>
@@ -2791,14 +2794,14 @@
                                                             </dx:ASPxDateEdit>
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
-                                                    <CaptionSettings Location="Top" />
+                                                    <CaptionSettings Location="Left" />
                                                     <CaptionStyle Font-Bold="True">
                                                     </CaptionStyle>
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Location/Particulars" ColSpan="1" VerticalAlign="Top" Width="20%">
+                                                <dx:LayoutItem Caption="Location/Particulars" ColSpan="1" VerticalAlign="Middle" Width="20%">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxMemo ID="locParticularsMemo" runat="server" ClientInstanceName="locParticularsMemo" Font-Bold="True" Theme="MaterialCompact" Width="100%">
+                                                            <dx:ASPxMemo ID="locParticularsMemo" runat="server" ClientInstanceName="locParticularsMemo" Font-Bold="True" Theme="MaterialCompact" Width="400px">
                                                                 <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="expAdd">
                                                                     <ErrorImage IconID="outlookinspired_highimportance_svg_16x16">
                                                                     </ErrorImage>
@@ -2807,20 +2810,18 @@
                                                             </dx:ASPxMemo>
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
-                                                    <CaptionSettings Location="Top" />
-                                                    <Paddings PaddingBottom="20px" />
+                                                    <CaptionSettings Location="Left" />
                                                     <CaptionStyle Font-Bold="True">
                                                     </CaptionStyle>
                                                 </dx:LayoutItem>
                                             </Items>
                                         </dx:LayoutGroup>
                                         <dx:TabbedLayoutGroup ColSpan="1" Width="100%">
-                                            <Paddings PaddingTop="15px" />
                                             <Items>
                                                 <dx:LayoutGroup Caption="Expense Items" ColSpan="1" Width="100%">
                                                     <Paddings Padding="0px" />
                                                     <Items>
-                                                        <dx:LayoutItem Caption="" ColSpan="1" VerticalAlign="Top" Width="80%">
+                                                        <dx:LayoutItem Caption="" ColSpan="1" VerticalAlign="Middle" Width="80%">
                                                             <LayoutItemNestedControlCollection>
                                                                 <dx:LayoutItemNestedControlContainer runat="server">
                                                                     <dx:ASPxGridView ID="ASPxGridView22" runat="server" AutoGenerateColumns="False" ClientInstanceName="ASPxGridView22" EnableTheming="True" Font-Size="Small" KeyFieldName="TravelExpenseDetailMap_ID" OnCustomColumnDisplayText="ASPxGridView22_CustomColumnDisplayText" OnRowDeleting="ASPxGridView22_RowDeleting" OnRowInserting="ASPxGridView22_RowInserting" OnRowUpdating="ASPxGridView22_RowUpdating" Theme="MaterialCompact" Width="100%">
@@ -3197,14 +3198,13 @@
                                                                     </dx:ASPxGridView>
                                                                 </dx:LayoutItemNestedControlContainer>
                                                             </LayoutItemNestedControlCollection>
-                                                            <CaptionSettings Location="Top" />
                                                         </dx:LayoutItem>
                                                     </Items>
                                                 </dx:LayoutGroup>
                                             </Items>
                                         </dx:TabbedLayoutGroup>
                                         <dx:TabbedLayoutGroup ColSpan="1" Width="100%">
-                                            <Paddings PaddingTop="15px" />
+                                            <Paddings PaddingTop="20px" />
                                             <Items>
                                                 <dx:LayoutGroup Caption="Supporting Documents" ColCount="5" ColSpan="1" ColumnCount="5" GroupBoxDecoration="None" HorizontalAlign="Center" Width="100%">
                                                     <Paddings Padding="0px" />
@@ -3769,7 +3769,7 @@
                                                                 </dx:LayoutItem>
                                                             </Items>
                                                         </dx:LayoutGroup>
-                                                        <dx:LayoutItem Caption="" ColSpan="5" ColumnSpan="5" RowSpan="2" VerticalAlign="Top">
+                                                        <dx:LayoutItem Caption="" ColSpan="5" ColumnSpan="5" RowSpan="2" VerticalAlign="Middle">
                                                             <LayoutItemNestedControlCollection>
                                                                 <dx:LayoutItemNestedControlContainer runat="server">
                                                                     <dx:ASPxUploadControl ID="TraUploadController" runat="server" AutoStartUpload="True" ClientInstanceName="TraUploadController" Font-Size="Small" OnFilesUploadComplete="TraUploadController_FilesUploadComplete" ShowProgressPanel="True" UploadMode="Auto" Width="100%">
@@ -3843,7 +3843,7 @@
                                                                     </dx:ASPxGridView>
                                                                 </dx:LayoutItemNestedControlContainer>
                                                             </LayoutItemNestedControlCollection>
-                                                            <CaptionSettings Location="Top" />
+                                                            <Paddings PaddingTop="15px" />
                                                             <CaptionStyle Font-Bold="True">
                                                             </CaptionStyle>
                                                         </dx:LayoutItem>

@@ -2284,9 +2284,12 @@ onTravelClick();
                                                 </dx:LayoutItem>
                                             </Items>
                                         </dx:LayoutGroup>
-                                        <dx:LayoutGroup Caption="" ColCount="3" ColSpan="1" ColumnCount="3" GroupBoxDecoration="None" Width="100%">
+                                        <dx:LayoutGroup Caption="" ColCount="3" ColSpan="1" ColumnCount="3" GroupBoxDecoration="Box" Width="100%" VerticalAlign="Middle">
+                                            <GroupBoxStyle>
+                                                <Border BorderColor="#006838" BorderStyle="Solid" BorderWidth="1px" />
+                                            </GroupBoxStyle>
                                             <Items>
-                                                <dx:LayoutItem Caption="Date" ColSpan="1" VerticalAlign="Bottom" Width="20%" HorizontalAlign="Left">
+                                                <dx:LayoutItem Caption="Date" ColSpan="1" Width="20%" HorizontalAlign="Left">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxDateEdit ID="travelDateCalendar" runat="server" ClientInstanceName="travelDateCalendar" Theme="MaterialCompact" Width="300px" ClientEnabled="False">
@@ -2296,11 +2299,10 @@ onTravelClick();
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings Location="Left" />
-                                                    <Paddings PaddingBottom="20px" />
                                                     <CaptionStyle Font-Bold="True">
                                                     </CaptionStyle>
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Location/Particulars" ColSpan="1" VerticalAlign="Bottom" Width="20%" HorizontalAlign="Left">
+                                                <dx:LayoutItem Caption="Location/Particulars" ColSpan="1" Width="20%" HorizontalAlign="Left">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxMemo ID="locParticularsMemo" runat="server" ClientInstanceName="locParticularsMemo" Theme="MaterialCompact" Width="500px" ClientEnabled="False">
@@ -2315,7 +2317,6 @@ onTravelClick();
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings Location="Left" />
-                                                    <Paddings PaddingBottom="20px" />
                                                     <CaptionStyle Font-Bold="True">
                                                     </CaptionStyle>
                                                 </dx:LayoutItem>
@@ -2679,13 +2680,13 @@ onTravelClick();
                                                                     </dx:ASPxGridView>
                                                                 </dx:LayoutItemNestedControlContainer>
                                                             </LayoutItemNestedControlCollection>
-                                                            <CaptionSettings Location="Top" />
                                                         </dx:LayoutItem>
                                                     </Items>
                                                 </dx:LayoutGroup>
                                             </Items>
                                         </dx:TabbedLayoutGroup>
                                         <dx:TabbedLayoutGroup ColSpan="1" Width="100%">
+                                            <Paddings PaddingTop="20px" />
                                             <Items>
                                                 <dx:LayoutGroup Caption="Supporting Documents" ColSpan="1" Width="100%">
                                                     <Items>
@@ -2770,7 +2771,6 @@ onTravelClick();
                                                                     </dx:ASPxGridView>
                                                                 </dx:LayoutItemNestedControlContainer>
                                                             </LayoutItemNestedControlCollection>
-                                                            <CaptionSettings Location="Top" />
                                                             <CaptionStyle Font-Bold="True">
                                                             </CaptionStyle>
                                                         </dx:LayoutItem>
