@@ -204,12 +204,6 @@ namespace DX_WebTemplate
             string actID = Convert.ToString(Session["PassActID"]);
             string encryptedID = Encrypt(actID);
 
-
-            Debug.WriteLine("Main ID: " + Session["TravelExp_Id"]);
-            Debug.WriteLine("WFA :" + Session["wfa"]);
-            Debug.WriteLine("WF :" + Session["wf"]);
-            Debug.WriteLine("WFD :" + Session["wfd"]);
-
             if (e.Parameters.Split('|').Last() == "btnEdit")
             {
                 ASPxWebControl.RedirectOnCallback("~/TravelExpenseAdd.aspx");

@@ -978,10 +978,10 @@
                         </dx:LayoutGroup>
                         <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2">
                         </dx:EmptyLayoutItem>
-                        <dx:LayoutGroup Caption="" ColSpan="2" GroupBoxDecoration="None" ColCount="5" ColumnCount="5" ColumnSpan="2">
+                        <dx:LayoutGroup Caption="" ColSpan="2" GroupBoxDecoration="None" ColCount="5" ColumnCount="5" ColumnSpan="2" Width="100%">
                             <Paddings PaddingBottom="25px" PaddingTop="25px" />
                             <Items>
-                                <dx:TabbedLayoutGroup ColSpan="3" VerticalAlign="Top" ColumnSpan="3">
+                                <dx:TabbedLayoutGroup ColSpan="3" VerticalAlign="Top" ColumnSpan="3" Width="70%">
                                     <Items>
                                         <dx:LayoutGroup Caption="REPORT HEADER DETAILS" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="None" RowSpan="2" Width="100%">
                                             <GroupBoxStyle>
@@ -1297,8 +1297,11 @@
                                             </ParentContainerStyle>
                                         </dx:LayoutGroup>
                                     </Items>
+                                    <SpanRules>
+                                        <dx:SpanRule ColumnSpan="1" RowSpan="1" />
+                                    </SpanRules>
                                 </dx:TabbedLayoutGroup>
-                                <dx:TabbedLayoutGroup ColSpan="2" VerticalAlign="Top" ColumnSpan="2">
+                                <dx:TabbedLayoutGroup ColSpan="2" VerticalAlign="Top" ColumnSpan="2" Width="30%">
                                     <Items>
                                         <dx:LayoutGroup Caption="CASH ADVANCE DETAILS" ColSpan="1" GroupBoxDecoration="None" Width="100%">
                                             <GroupBoxStyle>
@@ -2762,13 +2765,13 @@
                                                 </dx:LayoutItem>
                                             </Items>
                                         </dx:LayoutGroup>
-                                        <dx:LayoutGroup Caption="" ColCount="5" ColSpan="1" ColumnCount="5" GroupBoxDecoration="None" HorizontalAlign="Center" Width="100%">
-                                            <Paddings PaddingTop="20px" PaddingLeft="0px" PaddingRight="0px" />
+                                        <dx:LayoutGroup Caption="" ColCount="3" ColSpan="1" ColumnCount="3" GroupBoxDecoration="None" Width="100%">
+                                            <Paddings PaddingLeft="0px" PaddingRight="0px" PaddingTop="20px" />
                                             <Items>
                                                 <dx:LayoutItem Caption="Date" ColSpan="1" VerticalAlign="Top" Width="20%">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxDateEdit ID="travelDateCalendar" runat="server" ClientInstanceName="travelDateCalendar" Width="100%" Font-Bold="True" Height="40px" Theme="MaterialCompact">
+                                                            <dx:ASPxDateEdit ID="travelDateCalendar" runat="server" ClientInstanceName="travelDateCalendar" Font-Bold="True" Height="40px" Theme="MaterialCompact" Width="100%">
                                                                 <CalendarProperties ShowWeekNumbers="False">
                                                                     <DaySelectedStyle BackColor="#0D6943">
                                                                     </DaySelectedStyle>
@@ -2789,14 +2792,13 @@
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings Location="Top" />
-                                                    <Paddings PaddingBottom="20px" />
                                                     <CaptionStyle Font-Bold="True">
                                                     </CaptionStyle>
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Location/Particulars" ColSpan="2" VerticalAlign="Top" Width="20%" ColumnSpan="2">
+                                                <dx:LayoutItem Caption="Location/Particulars" ColSpan="1" VerticalAlign="Top" Width="20%">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxMemo ID="locParticularsMemo" runat="server" ClientInstanceName="locParticularsMemo" Width="100%" Font-Bold="True" Theme="MaterialCompact">
+                                                            <dx:ASPxMemo ID="locParticularsMemo" runat="server" ClientInstanceName="locParticularsMemo" Font-Bold="True" Theme="MaterialCompact" Width="100%">
                                                                 <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="expAdd">
                                                                     <ErrorImage IconID="outlookinspired_highimportance_svg_16x16">
                                                                     </ErrorImage>
@@ -2810,126 +2812,50 @@
                                                     <CaptionStyle Font-Bold="True">
                                                     </CaptionStyle>
                                                 </dx:LayoutItem>
-                                                <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="None" RowSpan="2" VerticalAlign="Top" Visible="False">
+                                            </Items>
+                                        </dx:LayoutGroup>
+                                        <dx:TabbedLayoutGroup ColSpan="1" Width="100%">
+                                            <Paddings PaddingTop="15px" />
+                                            <Items>
+                                                <dx:LayoutGroup Caption="Expense Items" ColSpan="1" Width="100%">
+                                                    <Paddings Padding="0px" />
                                                     <Items>
-                                                        <dx:LayoutItem Caption="" ColSpan="1" VerticalAlign="Top">
+                                                        <dx:LayoutItem Caption="" ColSpan="1" VerticalAlign="Top" Width="80%">
                                                             <LayoutItemNestedControlCollection>
                                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                                    <dx:ASPxGridView ID="reimTranGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="reimTranGrid" CssClass="shadow-sm" Font-Italic="False" KeyFieldName="ReimTranspo_ID" OnRowDeleting="reimTranGrid_RowDeleting" OnRowInserting="reimTranGrid_RowInserting">
-                                                                        <ClientSideEvents EndCallback="calcExpenses" />
-                                                                        <SettingsPager Visible="False">
-                                                                        </SettingsPager>
-                                                                        <SettingsEditing Mode="Inline">
-                                                                            <BatchEditSettings EnableMultipleCellSelection="True" StartEditAction="Click" />
-                                                                        </SettingsEditing>
-                                                                        <SettingsCommandButton>
-                                                                            <NewButton>
-                                                                                <Image IconID="iconbuilder_actions_add_svg_16x16">
-                                                                                </Image>
-                                                                                <Styles>
-                                                                                    <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#006838">
-                                                                                    </Style>
-                                                                                </Styles>
-                                                                            </NewButton>
-                                                                            <UpdateButton Text="Save">
-                                                                            </UpdateButton>
-                                                                            <DeleteButton Text="Remove">
-                                                                                <Image IconID="iconbuilder_actions_removecircled_svg_16x16">
-                                                                                </Image>
-                                                                                <Styles>
-                                                                                    <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#CC2A17">
-                                                                                    </Style>
-                                                                                </Styles>
-                                                                            </DeleteButton>
-                                                                        </SettingsCommandButton>
-                                                                        <SettingsDataSecurity AllowReadUnlistedFieldsFromClientApi="True" />
-                                                                        <SettingsPopup>
-                                                                            <FilterControl AutoUpdatePosition="False">
-                                                                            </FilterControl>
-                                                                        </SettingsPopup>
-                                                                        <Columns>
-                                                                            <dx:GridViewBandColumn Caption="REIMBURSABLE TRANSPORTATION" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                                                <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
-                                                                                <Columns>
-                                                                                    <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="150px">
-                                                                                    </dx:GridViewCommandColumn>
-                                                                                    <dx:GridViewDataComboBoxColumn Caption="Type" FieldName="ReimTranspo_Type" Name="ReimTranspo_Type" ShowInCustomizationForm="True" VisibleIndex="3" Width="230px">
-                                                                                        <PropertiesComboBox DataSourceID="SqlReimTranspo" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
-                                                                                            <Columns>
-                                                                                                <dx:ListBoxColumn Caption="Type" FieldName="Type" Name="Type" Width="50px">
-                                                                                                </dx:ListBoxColumn>
-                                                                                                <dx:ListBoxColumn Caption="Description" FieldName="Description" Name="Description" Width="180px">
-                                                                                                </dx:ListBoxColumn>
-                                                                                            </Columns>
-                                                                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
-                                                                                                <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                                                            </ValidationSettings>
-                                                                                        </PropertiesComboBox>
-                                                                                        <HeaderStyle HorizontalAlign="Center" />
-                                                                                        <CellStyle HorizontalAlign="Center">
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataComboBoxColumn>
-                                                                                    <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="ReimTranspo_Amount" Name="ReimTranspo_Amount" ShowInCustomizationForm="True" VisibleIndex="4" Width="350px">
-                                                                                        <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
-                                                                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
-                                                                                                <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                                                            </ValidationSettings>
-                                                                                        </PropertiesSpinEdit>
-                                                                                        <HeaderStyle HorizontalAlign="Center" />
-                                                                                        <CellStyle HorizontalAlign="Right">
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataSpinEditColumn>
-                                                                                    <dx:GridViewDataTextColumn FieldName="ReimTranspo_ID" ShowInCustomizationForm="True" VisibleIndex="2" Visible="False">
-                                                                                    </dx:GridViewDataTextColumn>
-                                                                                </Columns>
-                                                                            </dx:GridViewBandColumn>
-                                                                        </Columns>
-                                                                        <TotalSummary>
-                                                                            <dx:ASPxSummaryItem FieldName="ReimTranspo_Amount" SummaryType="Sum" />
-                                                                        </TotalSummary>
-                                                                        <Styles>
-                                                                            <Table>
-                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                            </Table>
-                                                                            <Header>
-                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                            </Header>
-                                                                            <Cell>
-                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                            </Cell>
-                                                                        </Styles>
-                                                                        <Border BorderColor="#006838" />
-                                                                    </dx:ASPxGridView>
-                                                                </dx:LayoutItemNestedControlContainer>
-                                                            </LayoutItemNestedControlCollection>
-                                                            <Paddings PaddingBottom="20px" />
-                                                        </dx:LayoutItem>
-                                                        <dx:LayoutItem Caption="" ColSpan="1" VerticalAlign="Top">
-                                                            <LayoutItemNestedControlCollection>
-                                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                                    <dx:ASPxGridView ID="fixedAllowGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="fixedAllowGrid" CssClass="shadow-sm" KeyFieldName="FixedAllow_ID" OnRowDeleting="fixedAllowGrid_RowDeleting" OnRowInserting="fixedAllowGrid_RowInserting">
-                                                                        <ClientSideEvents EndCallback="calcExpenses" />
-                                                                        <SettingsPager Visible="False">
-                                                                        </SettingsPager>
-                                                                        <SettingsEditing Mode="Inline">
+                                                                    <dx:ASPxGridView ID="ASPxGridView22" runat="server" AutoGenerateColumns="False" ClientInstanceName="ASPxGridView22" EnableTheming="True" Font-Size="Small" KeyFieldName="TravelExpenseDetailMap_ID" OnCustomColumnDisplayText="ASPxGridView22_CustomColumnDisplayText" OnRowDeleting="ASPxGridView22_RowDeleting" OnRowInserting="ASPxGridView22_RowInserting" OnRowUpdating="ASPxGridView22_RowUpdating" Theme="MaterialCompact" Width="100%">
+                                                                        <ClientSideEvents BatchEditChangesSaving="calcExpenses
+" BatchEditEndEditing="calcExpenses" BatchEditRowInserting="calcExpenses
+" BatchEditRowValidating="calcExpenses" BatchEditStartEditing="calcExpenses" EndCallback="calcExpenses
+
+" KeyPress="calcExpenses" />
+                                                                        <SettingsAdaptivity AdaptivityMode="HideDataCells">
+                                                                        </SettingsAdaptivity>
+                                                                        <SettingsEditing Mode="Batch" NewItemRowPosition="Bottom">
                                                                             <BatchEditSettings StartEditAction="Click" />
                                                                         </SettingsEditing>
+                                                                        <Settings ShowStatusBar="Hidden" />
+                                                                        <SettingsBehavior AllowDragDrop="False" />
                                                                         <SettingsCommandButton>
-                                                                            <NewButton>
+                                                                            <NewButton Text=" ">
                                                                                 <Image IconID="iconbuilder_actions_add_svg_16x16">
                                                                                 </Image>
                                                                                 <Styles>
-                                                                                    <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#006838">
+                                                                                    <Style Font-Bold="False" ForeColor="#006838">
                                                                                     </Style>
                                                                                 </Styles>
                                                                             </NewButton>
-                                                                            <UpdateButton Text="Save">
-                                                                            </UpdateButton>
-                                                                            <DeleteButton Text="Remove">
-                                                                                <Image IconID="iconbuilder_actions_removecircled_svg_16x16">
+                                                                            <EditButton>
+                                                                                <Styles>
+                                                                                    <Style Font-Bold="True" ForeColor="#E67C0E">
+                                                                                    </Style>
+                                                                                </Styles>
+                                                                            </EditButton>
+                                                                            <DeleteButton Text=" ">
+                                                                                <Image IconID="iconbuilder_actions_removecircled_svg_16x16" ToolTip="Remove">
                                                                                 </Image>
                                                                                 <Styles>
-                                                                                    <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#CC2A17">
+                                                                                    <Style Font-Bold="False" ForeColor="#CC2A17">
                                                                                     </Style>
                                                                                 </Styles>
                                                                             </DeleteButton>
@@ -2939,754 +2865,272 @@
                                                                             </FilterControl>
                                                                         </SettingsPopup>
                                                                         <Columns>
-                                                                            <dx:GridViewBandColumn Caption="FIXED ALLOWANCE/S" ShowInCustomizationForm="True" VisibleIndex="1">
+                                                                            <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="35px">
+                                                                                <HeaderStyle HorizontalAlign="Center" />
+                                                                                <CellStyle HorizontalAlign="Center">
+                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                    <BorderRight BorderColor="Black" BorderStyle="Solid" />
+                                                                                </CellStyle>
+                                                                                <FooterCellStyle HorizontalAlign="Center">
+                                                                                </FooterCellStyle>
+                                                                            </dx:GridViewCommandColumn>
+                                                                            <dx:GridViewBandColumn Caption="REIMBURSABLE TRANSPORTATION" ShowInCustomizationForm="True" VisibleIndex="1">
                                                                                 <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
                                                                                 <Columns>
-                                                                                    <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="150px">
-                                                                                    </dx:GridViewCommandColumn>
-                                                                                    <dx:GridViewDataComboBoxColumn Caption="F or P" FieldName="FixedAllow_ForP" ShowInCustomizationForm="True" VisibleIndex="3" Width="230px">
-                                                                                        <PropertiesComboBox>
+                                                                                    <dx:GridViewDataComboBoxColumn Caption=" Type" CellRowSpan="3" FieldName="ReimTranspo_Type1" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
+                                                                                        <PropertiesComboBox AllowNull="True" DataSourceID="SqlReimTranspo" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
+                                                                                            <Columns>
+                                                                                                <dx:ListBoxColumn Caption="Type" FieldName="Type" Width="50px">
+                                                                                                </dx:ListBoxColumn>
+                                                                                                <dx:ListBoxColumn Caption="Description" FieldName="Description" Width="180px">
+                                                                                                </dx:ListBoxColumn>
+                                                                                            </Columns>
+                                                                                            <ClearButton DisplayMode="Always">
+                                                                                            </ClearButton>
+                                                                                        </PropertiesComboBox>
+                                                                                        <EditFormCaptionStyle HorizontalAlign="Center">
+                                                                                        </EditFormCaptionStyle>
+                                                                                        <HeaderStyle HorizontalAlign="Center">
+                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </HeaderStyle>
+                                                                                        <CellStyle>
+                                                                                            <BorderLeft BorderColor="Black" BorderStyle="Solid" />
+                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </CellStyle>
+                                                                                    </dx:GridViewDataComboBoxColumn>
+                                                                                    <dx:GridViewDataSpinEditColumn Caption=" Amount" CellRowSpan="3" FieldName="ReimTranspo_Amount1" ShowInCustomizationForm="True" VisibleIndex="1" Width="90px">
+                                                                                        <PropertiesSpinEdit ClientInstanceName="ReimTranspo_Amount1" DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
+                                                                                        </PropertiesSpinEdit>
+                                                                                        <EditFormCaptionStyle HorizontalAlign="Center">
+                                                                                        </EditFormCaptionStyle>
+                                                                                        <HeaderStyle HorizontalAlign="Center">
+                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </HeaderStyle>
+                                                                                        <CellStyle>
+                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                            <BorderRight BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </CellStyle>
+                                                                                    </dx:GridViewDataSpinEditColumn>
+                                                                                    <dx:GridViewDataComboBoxColumn Caption="  Type" FieldName="ReimTranspo_Type2" ShowInCustomizationForm="True" Visible="False" VisibleIndex="2" Width="140px">
+                                                                                        <PropertiesComboBox AllowNull="True" DataSourceID="SqlReimTranspo" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
+                                                                                            <Columns>
+                                                                                                <dx:ListBoxColumn Caption="Type" FieldName="Type" Width="50px">
+                                                                                                </dx:ListBoxColumn>
+                                                                                                <dx:ListBoxColumn Caption="Description" FieldName="Description" Width="180px">
+                                                                                                </dx:ListBoxColumn>
+                                                                                            </Columns>
+                                                                                            <ClearButton DisplayMode="Always">
+                                                                                            </ClearButton>
+                                                                                        </PropertiesComboBox>
+                                                                                        <EditFormCaptionStyle HorizontalAlign="Center">
+                                                                                        </EditFormCaptionStyle>
+                                                                                        <HeaderStyle HorizontalAlign="Center">
+                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </HeaderStyle>
+                                                                                        <CellStyle>
+                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </CellStyle>
+                                                                                    </dx:GridViewDataComboBoxColumn>
+                                                                                    <dx:GridViewDataSpinEditColumn Caption=" Amount" FieldName="ReimTranspo_Amount2" ShowInCustomizationForm="True" Visible="False" VisibleIndex="3" Width="90px">
+                                                                                        <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
+                                                                                        </PropertiesSpinEdit>
+                                                                                        <EditFormCaptionStyle HorizontalAlign="Center">
+                                                                                        </EditFormCaptionStyle>
+                                                                                        <HeaderStyle HorizontalAlign="Center">
+                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </HeaderStyle>
+                                                                                        <CellStyle>
+                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                            <BorderRight BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </CellStyle>
+                                                                                    </dx:GridViewDataSpinEditColumn>
+                                                                                    <dx:GridViewDataComboBoxColumn Caption=" Type" CellRowSpan="2" FieldName="ReimTranspo_Type3" ShowInCustomizationForm="True" Visible="False" VisibleIndex="4" Width="140px">
+                                                                                        <PropertiesComboBox AllowNull="True" DataSourceID="SqlReimTranspo" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
+                                                                                            <Columns>
+                                                                                                <dx:ListBoxColumn Caption="Type" FieldName="Type" Width="50px">
+                                                                                                </dx:ListBoxColumn>
+                                                                                                <dx:ListBoxColumn Caption="Description" FieldName="Description" Width="180px">
+                                                                                                </dx:ListBoxColumn>
+                                                                                            </Columns>
+                                                                                            <ClearButton DisplayMode="Always">
+                                                                                            </ClearButton>
+                                                                                        </PropertiesComboBox>
+                                                                                        <EditFormCaptionStyle HorizontalAlign="Center">
+                                                                                        </EditFormCaptionStyle>
+                                                                                        <HeaderStyle HorizontalAlign="Center">
+                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </HeaderStyle>
+                                                                                        <CellStyle>
+                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </CellStyle>
+                                                                                    </dx:GridViewDataComboBoxColumn>
+                                                                                    <dx:GridViewDataSpinEditColumn Caption="Amount" CellRowSpan="2" FieldName="ReimTranspo_Amount3" ShowInCustomizationForm="True" Visible="False" VisibleIndex="5" Width="90px">
+                                                                                        <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
+                                                                                        </PropertiesSpinEdit>
+                                                                                        <EditFormCaptionStyle HorizontalAlign="Center">
+                                                                                        </EditFormCaptionStyle>
+                                                                                        <HeaderStyle HorizontalAlign="Center">
+                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </HeaderStyle>
+                                                                                        <CellStyle>
+                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                            <BorderRight BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </CellStyle>
+                                                                                    </dx:GridViewDataSpinEditColumn>
+                                                                                </Columns>
+                                                                            </dx:GridViewBandColumn>
+                                                                            <dx:GridViewBandColumn Caption="FIXED ALLOWANCES" ShowInCustomizationForm="True" VisibleIndex="2">
+                                                                                <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
+                                                                                <Columns>
+                                                                                    <dx:GridViewDataComboBoxColumn Caption="F or P" FieldName="FixedAllow_ForP" ShowInCustomizationForm="True" VisibleIndex="0" Width="110px">
+                                                                                        <PropertiesComboBox AllowNull="True">
                                                                                             <Items>
                                                                                                 <dx:ListEditItem Text="Full" Value="F" />
                                                                                                 <dx:ListEditItem Text="Partial" Value="P" />
                                                                                             </Items>
-                                                                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
-                                                                                                <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                                                            </ValidationSettings>
+                                                                                            <ClearButton DisplayMode="Always">
+                                                                                            </ClearButton>
                                                                                         </PropertiesComboBox>
-                                                                                        <HeaderStyle HorizontalAlign="Center" />
-                                                                                        <CellStyle HorizontalAlign="Center">
+                                                                                        <HeaderStyle HorizontalAlign="Center">
+                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </HeaderStyle>
+                                                                                        <CellStyle>
+                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
                                                                                         </CellStyle>
                                                                                     </dx:GridViewDataComboBoxColumn>
-                                                                                    <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="FixedAllow_Amount" ShowInCustomizationForm="True" VisibleIndex="4" Width="350px">
+                                                                                    <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="FixedAllow_Amount" ShowInCustomizationForm="True" VisibleIndex="1" Width="90px">
                                                                                         <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
-                                                                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
-                                                                                                <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                                                            </ValidationSettings>
                                                                                         </PropertiesSpinEdit>
-                                                                                        <HeaderStyle HorizontalAlign="Center" />
-                                                                                        <CellStyle HorizontalAlign="Right">
+                                                                                        <HeaderStyle HorizontalAlign="Center">
+                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </HeaderStyle>
+                                                                                        <CellStyle>
+                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                            <BorderRight BorderColor="Black" BorderStyle="Solid" />
                                                                                         </CellStyle>
                                                                                     </dx:GridViewDataSpinEditColumn>
-                                                                                    <dx:GridViewDataTextColumn FieldName="FixedAllow_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="2">
-                                                                                    </dx:GridViewDataTextColumn>
                                                                                 </Columns>
                                                                             </dx:GridViewBandColumn>
-                                                                        </Columns>
-                                                                        <TotalSummary>
-                                                                            <dx:ASPxSummaryItem FieldName="FixedAllow_Amount" SummaryType="Sum" />
-                                                                        </TotalSummary>
-                                                                        <Styles>
-                                                                            <Header>
-                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                            </Header>
-                                                                            <Cell>
-                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                            </Cell>
-                                                                        </Styles>
-                                                                        <Border BorderColor="#006838" />
-                                                                    </dx:ASPxGridView>
-                                                                </dx:LayoutItemNestedControlContainer>
-                                                            </LayoutItemNestedControlCollection>
-                                                            <Paddings PaddingBottom="20px" />
-                                                        </dx:LayoutItem>
-                                                        <dx:LayoutItem Caption="" ColSpan="1" VerticalAlign="Top">
-                                                            <LayoutItemNestedControlCollection>
-                                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                                    <dx:ASPxGridView ID="miscTravelGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="miscTravelGrid" CssClass="shadow-sm" KeyFieldName="MiscTravelExp_ID" OnRowDeleting="miscTravelGrid_RowDeleting" OnRowInserting="miscTravelGrid_RowInserting">
-                                                                        <ClientSideEvents EndCallback="calcExpenses" />
-                                                                        <SettingsPager Visible="False">
-                                                                        </SettingsPager>
-                                                                        <SettingsEditing Mode="Inline">
-                                                                            <BatchEditSettings StartEditAction="Click" />
-                                                                        </SettingsEditing>
-                                                                        <SettingsCommandButton>
-                                                                            <NewButton>
-                                                                                <Image IconID="iconbuilder_actions_add_svg_16x16">
-                                                                                </Image>
-                                                                                <Styles>
-                                                                                    <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#006838">
-                                                                                    </Style>
-                                                                                </Styles>
-                                                                            </NewButton>
-                                                                            <UpdateButton Text="Save">
-                                                                            </UpdateButton>
-                                                                            <DeleteButton Text="Remove">
-                                                                                <Image IconID="iconbuilder_actions_removecircled_svg_16x16">
-                                                                                </Image>
-                                                                                <Styles>
-                                                                                    <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#CC2A17">
-                                                                                    </Style>
-                                                                                </Styles>
-                                                                            </DeleteButton>
-                                                                        </SettingsCommandButton>
-                                                                        <SettingsPopup>
-                                                                            <FilterControl AutoUpdatePosition="False">
-                                                                            </FilterControl>
-                                                                        </SettingsPopup>
-                                                                        <Columns>
-                                                                            <dx:GridViewBandColumn Caption="MISCELLANEOUS TRAVEL EXPENSE/S" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                                                <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
+                                                                            <dx:GridViewBandColumn Caption="ENTERTAINMENT" MaxWidth="50" ShowInCustomizationForm="True" VisibleIndex="4">
+                                                                                <HeaderStyle Font-Bold="True" HorizontalAlign="Center" Wrap="True" />
                                                                                 <Columns>
-                                                                                    <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="150px">
-                                                                                    </dx:GridViewCommandColumn>
-                                                                                    <dx:GridViewDataComboBoxColumn Caption="Type" FieldName="MiscTravelExp_Type" ShowInCustomizationForm="True" VisibleIndex="2" Width="350px">
-                                                                                        <PropertiesComboBox ClientInstanceName="miscTravelType" DataSourceID="SqlMiscTravelExp" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
-                                                                                            <Columns>
-                                                                                                <dx:ListBoxColumn Caption="Type" FieldName="Type" Name="Type" Width="50px">
-                                                                                                </dx:ListBoxColumn>
-                                                                                                <dx:ListBoxColumn Caption="Description" FieldName="Description" Name="Description" Width="270px">
-                                                                                                </dx:ListBoxColumn>
-                                                                                            </Columns>
-                                                                                            <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	var selectedValue = s.GetValue(); // Get the selected value from ComboBox 
-               if (selectedValue == 5) { 
-                      MiscTravelExpSpecify.SetVisible(true);  
-                      //miscTravelExpPopup.Show();
-               }else{
-                      MiscTravelExpSpecify.SetVisible(false);  
-               }
-}" />
-                                                                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
-                                                                                                <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                                                            </ValidationSettings>
-                                                                                        </PropertiesComboBox>
-                                                                                        <HeaderStyle HorizontalAlign="Center" />
-                                                                                        <CellStyle HorizontalAlign="Center">
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataComboBoxColumn>
-                                                                                    <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="MiscTravelExp_Amount" ShowInCustomizationForm="True" VisibleIndex="4" Width="230px">
-                                                                                        <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
-                                                                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
-                                                                                                <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                                                            </ValidationSettings>
-                                                                                        </PropertiesSpinEdit>
-                                                                                        <HeaderStyle HorizontalAlign="Center" />
-                                                                                        <CellStyle HorizontalAlign="Right">
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataSpinEditColumn>
-                                                                                    <dx:GridViewDataTextColumn FieldName="MiscTravelExp_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
-                                                                                    </dx:GridViewDataTextColumn>
-                                                                                    <dx:GridViewDataTextColumn Caption="If Others, specify:" FieldName="MiscTravelExp_Specify" ShowInCustomizationForm="True" VisibleIndex="3" Width="350px">
-                                                                                        <PropertiesTextEdit ClientInstanceName="MiscTravelExpSpecify">
-                                                                                            <ClientSideEvents Init="function(s, e) {
-	MiscTravelExpSpecify.SetVisible(false);
-}" />
-                                                                                        </PropertiesTextEdit>
-                                                                                        <HeaderStyle HorizontalAlign="Center" />
-                                                                                        <CellStyle HorizontalAlign="Left">
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataTextColumn>
-                                                                                </Columns>
-                                                                            </dx:GridViewBandColumn>
-                                                                        </Columns>
-                                                                        <TotalSummary>
-                                                                            <dx:ASPxSummaryItem FieldName="MiscTravelExp_Amount" SummaryType="Sum" />
-                                                                        </TotalSummary>
-                                                                        <Styles>
-                                                                            <Header>
-                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                            </Header>
-                                                                            <Cell>
-                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                            </Cell>
-                                                                        </Styles>
-                                                                        <Border BorderColor="#006838" />
-                                                                    </dx:ASPxGridView>
-                                                                </dx:LayoutItemNestedControlContainer>
-                                                            </LayoutItemNestedControlCollection>
-                                                            <Paddings PaddingBottom="20px" />
-                                                        </dx:LayoutItem>
-                                                        <dx:LayoutItem Caption="" ColSpan="1" VerticalAlign="Top">
-                                                            <LayoutItemNestedControlCollection>
-                                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                                    <dx:ASPxGridView ID="otherBusGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="otherBusGrid" CssClass="shadow-sm" KeyFieldName="OtherBusinessExp_ID" OnRowDeleting="otherBusGrid_RowDeleting" OnRowInserting="otherBusGrid_RowInserting">
-                                                                        <ClientSideEvents EndCallback="calcExpenses" />
-                                                                        <SettingsPager Visible="False">
-                                                                        </SettingsPager>
-                                                                        <SettingsEditing Mode="Inline">
-                                                                            <BatchEditSettings StartEditAction="Click" />
-                                                                        </SettingsEditing>
-                                                                        <SettingsCommandButton>
-                                                                            <NewButton>
-                                                                                <Image IconID="iconbuilder_actions_add_svg_16x16">
-                                                                                </Image>
-                                                                                <Styles>
-                                                                                    <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#006838">
-                                                                                    </Style>
-                                                                                </Styles>
-                                                                            </NewButton>
-                                                                            <UpdateButton Text="Save">
-                                                                            </UpdateButton>
-                                                                            <DeleteButton Text="Remove">
-                                                                                <Image IconID="iconbuilder_actions_removecircled_svg_16x16">
-                                                                                </Image>
-                                                                                <Styles>
-                                                                                    <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#CC2A17">
-                                                                                    </Style>
-                                                                                </Styles>
-                                                                            </DeleteButton>
-                                                                        </SettingsCommandButton>
-                                                                        <SettingsPopup>
-                                                                            <FilterControl AutoUpdatePosition="False">
-                                                                            </FilterControl>
-                                                                        </SettingsPopup>
-                                                                        <Columns>
-                                                                            <dx:GridViewBandColumn Caption="OTHER BUSINESS EXPENSE/S" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                                                <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
-                                                                                <Columns>
-                                                                                    <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="150px">
-                                                                                    </dx:GridViewCommandColumn>
-                                                                                    <dx:GridViewDataComboBoxColumn Caption="Type" FieldName="OtherBusinessExp_Type" ShowInCustomizationForm="True" VisibleIndex="2" Width="350px">
-                                                                                        <PropertiesComboBox ClientInstanceName="otherBusType" DataSourceID="SqlOtherBusExp" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
-                                                                                            <Columns>
-                                                                                                <dx:ListBoxColumn Caption="Type" FieldName="Type" Name="Type" Width="50px">
-                                                                                                </dx:ListBoxColumn>
-                                                                                                <dx:ListBoxColumn Caption="Description" FieldName="Description" Name="Description" Width="180px">
-                                                                                                </dx:ListBoxColumn>
-                                                                                            </Columns>
-                                                                                            <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	var selectedValue = s.GetValue(); // Get the selected value from ComboBox 
-               if (selectedValue == 5) { 
-                        OtherBusinessExpSpecify.SetVisible(true);
-                        //otherBusExpPopup.Show();
-               }else{
-                        OtherBusinessExpSpecify.SetVisible(false);
-               }
-}" />
-                                                                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
-                                                                                                <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                                                            </ValidationSettings>
-                                                                                        </PropertiesComboBox>
-                                                                                        <HeaderStyle HorizontalAlign="Center" />
-                                                                                        <CellStyle HorizontalAlign="Center">
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataComboBoxColumn>
-                                                                                    <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="OtherBusinessExp_Amount" ShowInCustomizationForm="True" VisibleIndex="4" Width="230px">
-                                                                                        <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
-                                                                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
-                                                                                                <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                                                            </ValidationSettings>
-                                                                                        </PropertiesSpinEdit>
-                                                                                        <HeaderStyle HorizontalAlign="Center" />
-                                                                                        <CellStyle HorizontalAlign="Right">
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataSpinEditColumn>
-                                                                                    <dx:GridViewDataTextColumn FieldName="OtherBusinessExp_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
-                                                                                    </dx:GridViewDataTextColumn>
-                                                                                    <dx:GridViewDataTextColumn Caption="If Others, specify:" FieldName="OtherBusinessExp_Specify" ShowInCustomizationForm="True" VisibleIndex="3" Width="350px">
-                                                                                        <PropertiesTextEdit ClientInstanceName="OtherBusinessExpSpecify">
-                                                                                            <ClientSideEvents Init="function(s, e) {
-	OtherBusinessExpSpecify.SetVisible(false);
-}" />
-                                                                                        </PropertiesTextEdit>
-                                                                                        <HeaderStyle HorizontalAlign="Center" />
-                                                                                        <CellStyle HorizontalAlign="Left">
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataTextColumn>
-                                                                                </Columns>
-                                                                            </dx:GridViewBandColumn>
-                                                                        </Columns>
-                                                                        <TotalSummary>
-                                                                            <dx:ASPxSummaryItem FieldName="OtherBusinessExp_Amount" SummaryType="Sum" />
-                                                                        </TotalSummary>
-                                                                        <Styles>
-                                                                            <Header>
-                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                            </Header>
-                                                                            <Cell>
-                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                            </Cell>
-                                                                        </Styles>
-                                                                        <Border BorderColor="#006838" />
-                                                                    </dx:ASPxGridView>
-                                                                </dx:LayoutItemNestedControlContainer>
-                                                            </LayoutItemNestedControlCollection>
-                                                            <Paddings PaddingBottom="20px" />
-                                                        </dx:LayoutItem>
-                                                        <dx:LayoutItem Caption="" ColSpan="1" VerticalAlign="Top">
-                                                            <LayoutItemNestedControlCollection>
-                                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                                    <dx:ASPxGridView ID="entertainmentGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="entertainmentGrid" CssClass="shadow-sm" KeyFieldName="Entertainment_ID" OnRowDeleting="entertainmentGrid_RowDeleting" OnRowInserting="entertainmentGrid_RowInserting">
-                                                                        <ClientSideEvents EndCallback="calcExpenses" />
-                                                                        <SettingsPager Visible="False">
-                                                                        </SettingsPager>
-                                                                        <SettingsEditing Mode="Inline">
-                                                                            <BatchEditSettings StartEditAction="Click" />
-                                                                        </SettingsEditing>
-                                                                        <SettingsCommandButton>
-                                                                            <NewButton>
-                                                                                <Image IconID="iconbuilder_actions_add_svg_16x16">
-                                                                                </Image>
-                                                                                <Styles>
-                                                                                    <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#006838">
-                                                                                    </Style>
-                                                                                </Styles>
-                                                                            </NewButton>
-                                                                            <UpdateButton Text="Save">
-                                                                            </UpdateButton>
-                                                                            <DeleteButton Text="Remove">
-                                                                                <Image IconID="iconbuilder_actions_removecircled_svg_16x16">
-                                                                                </Image>
-                                                                                <Styles>
-                                                                                    <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#CC2A17">
-                                                                                    </Style>
-                                                                                </Styles>
-                                                                            </DeleteButton>
-                                                                        </SettingsCommandButton>
-                                                                        <SettingsPopup>
-                                                                            <FilterControl AutoUpdatePosition="False">
-                                                                            </FilterControl>
-                                                                        </SettingsPopup>
-                                                                        <Columns>
-                                                                            <dx:GridViewBandColumn Caption="ENTERTAINMENT/S" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                                                <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
-                                                                                <Columns>
-                                                                                    <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="150px">
-                                                                                    </dx:GridViewCommandColumn>
-                                                                                    <dx:GridViewDataMemoColumn Caption="Explanation" FieldName="Entertainment_Explain" ShowInCustomizationForm="True" VisibleIndex="2" Width="350px">
-                                                                                        <PropertiesMemoEdit>
-                                                                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
-                                                                                                <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                                                            </ValidationSettings>
-                                                                                        </PropertiesMemoEdit>
-                                                                                        <HeaderStyle HorizontalAlign="Center" />
-                                                                                        <CellStyle HorizontalAlign="Justify">
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataMemoColumn>
-                                                                                    <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="Entertainment_Amount" ShowInCustomizationForm="True" VisibleIndex="3" Width="230px">
-                                                                                        <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
-                                                                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
-                                                                                                <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                                                            </ValidationSettings>
-                                                                                        </PropertiesSpinEdit>
-                                                                                        <HeaderStyle HorizontalAlign="Center" />
-                                                                                        <CellStyle HorizontalAlign="Right">
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataSpinEditColumn>
-                                                                                    <dx:GridViewDataTextColumn FieldName="Entertainment_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
-                                                                                    </dx:GridViewDataTextColumn>
-                                                                                </Columns>
-                                                                            </dx:GridViewBandColumn>
-                                                                        </Columns>
-                                                                        <TotalSummary>
-                                                                            <dx:ASPxSummaryItem FieldName="Entertainment_Amount" SummaryType="Sum" />
-                                                                        </TotalSummary>
-                                                                        <Styles>
-                                                                            <Header>
-                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                            </Header>
-                                                                            <Cell>
-                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                            </Cell>
-                                                                        </Styles>
-                                                                        <Border BorderColor="#006838" />
-                                                                    </dx:ASPxGridView>
-                                                                </dx:LayoutItemNestedControlContainer>
-                                                            </LayoutItemNestedControlCollection>
-                                                            <Paddings PaddingBottom="10px" />
-                                                        </dx:LayoutItem>
-                                                        <dx:LayoutItem Caption="" ColSpan="1" VerticalAlign="Top">
-                                                            <LayoutItemNestedControlCollection>
-                                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                                    <dx:ASPxGridView ID="busMealsGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="busMealsGrid" CssClass="shadow-sm" KeyFieldName="BusinessMeal_ID" OnRowDeleting="busMealsGrid_RowDeleting" OnRowInserting="busMealsGrid_RowInserting">
-                                                                        <ClientSideEvents EndCallback="calcExpenses" />
-                                                                        <SettingsPager Visible="False">
-                                                                        </SettingsPager>
-                                                                        <SettingsEditing Mode="Inline">
-                                                                            <BatchEditSettings StartEditAction="Click" />
-                                                                        </SettingsEditing>
-                                                                        <SettingsCommandButton>
-                                                                            <NewButton>
-                                                                                <Image IconID="iconbuilder_actions_add_svg_16x16">
-                                                                                </Image>
-                                                                                <Styles>
-                                                                                    <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#006838">
-                                                                                    </Style>
-                                                                                </Styles>
-                                                                            </NewButton>
-                                                                            <UpdateButton Text="Save">
-                                                                            </UpdateButton>
-                                                                            <DeleteButton Text="Remove">
-                                                                                <Image IconID="iconbuilder_actions_removecircled_svg_16x16">
-                                                                                </Image>
-                                                                                <Styles>
-                                                                                    <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#CC2A17">
-                                                                                    </Style>
-                                                                                </Styles>
-                                                                            </DeleteButton>
-                                                                        </SettingsCommandButton>
-                                                                        <SettingsPopup>
-                                                                            <FilterControl AutoUpdatePosition="False">
-                                                                            </FilterControl>
-                                                                        </SettingsPopup>
-                                                                        <Columns>
-                                                                            <dx:GridViewBandColumn Caption="BUSINESS MEAL/S" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                                                <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
-                                                                                <Columns>
-                                                                                    <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="150px">
-                                                                                    </dx:GridViewCommandColumn>
-                                                                                    <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="BusinessMeal_Amount" ShowInCustomizationForm="True" VisibleIndex="3" Width="230px">
-                                                                                        <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
-                                                                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
-                                                                                                <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                                                            </ValidationSettings>
-                                                                                        </PropertiesSpinEdit>
-                                                                                        <HeaderStyle HorizontalAlign="Center" />
-                                                                                        <CellStyle HorizontalAlign="Right">
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataSpinEditColumn>
-                                                                                    <dx:GridViewDataMemoColumn Caption="Explanation" FieldName="BusinessMeal_Explain" ShowInCustomizationForm="True" VisibleIndex="2" Width="350px">
-                                                                                        <PropertiesMemoEdit>
-                                                                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
-                                                                                                <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                                                            </ValidationSettings>
-                                                                                        </PropertiesMemoEdit>
-                                                                                        <HeaderStyle HorizontalAlign="Center" />
-                                                                                        <CellStyle HorizontalAlign="Justify">
-                                                                                        </CellStyle>
-                                                                                    </dx:GridViewDataMemoColumn>
-                                                                                    <dx:GridViewDataTextColumn FieldName="BusinessMeal_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
-                                                                                    </dx:GridViewDataTextColumn>
-                                                                                </Columns>
-                                                                            </dx:GridViewBandColumn>
-                                                                        </Columns>
-                                                                        <TotalSummary>
-                                                                            <dx:ASPxSummaryItem FieldName="BusinessMeal_Amount" SummaryType="Sum" />
-                                                                        </TotalSummary>
-                                                                        <Styles>
-                                                                            <Header>
-                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                            </Header>
-                                                                            <Cell>
-                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                            </Cell>
-                                                                        </Styles>
-                                                                        <Border BorderColor="#006838" />
-                                                                    </dx:ASPxGridView>
-                                                                </dx:LayoutItemNestedControlContainer>
-                                                            </LayoutItemNestedControlCollection>
-                                                            <Paddings PaddingBottom="10px" />
-                                                        </dx:LayoutItem>
-                                                    </Items>
-                                                </dx:LayoutGroup>
-                                                <dx:EmptyLayoutItem ColSpan="1">
-                                                </dx:EmptyLayoutItem>
-                                                <dx:EmptyLayoutItem ColSpan="1">
-                                                </dx:EmptyLayoutItem>
-                                                <dx:LayoutItem Caption="" ColSpan="5" VerticalAlign="Top" Width="80%" ColumnSpan="5">
-                                                    <LayoutItemNestedControlCollection>
-                                                        <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxGridView ID="ASPxGridView22" runat="server" AutoGenerateColumns="False" EnableTheming="True" Font-Size="Small" OnRowDeleting="ASPxGridView22_RowDeleting" OnRowInserting="ASPxGridView22_RowInserting" Theme="MaterialCompact" Width="100%" KeyFieldName="TravelExpenseDetailMap_ID" OnRowUpdating="ASPxGridView22_RowUpdating" ClientInstanceName="ASPxGridView22" OnCustomColumnDisplayText="ASPxGridView22_CustomColumnDisplayText">
-                                                                <ClientSideEvents BatchEditEndEditing="calcExpenses" BatchEditRowValidating="calcExpenses" BatchEditStartEditing="calcExpenses" KeyPress="calcExpenses" BatchEditChangesSaving="calcExpenses
-"
-                                                                    BatchEditRowInserting="calcExpenses
-"
-                                                                    EndCallback="calcExpenses
-
-" />
-                                                                <SettingsAdaptivity AdaptivityMode="HideDataCells">
-                                                                </SettingsAdaptivity>
-                                                                <SettingsEditing Mode="Batch" NewItemRowPosition="Bottom">
-                                                                    <BatchEditSettings StartEditAction="Click" />
-                                                                </SettingsEditing>
-                                                                <Settings ShowStatusBar="Hidden" />
-                                                                <SettingsBehavior AllowDragDrop="False" />
-                                                                <SettingsCommandButton>
-                                                                    <NewButton Text=" ">
-                                                                        <Image IconID="iconbuilder_actions_add_svg_16x16">
-                                                                        </Image>
-                                                                        <Styles>
-                                                                            <Style Font-Bold="False" ForeColor="#006838">
-                                                                            </Style>
-                                                                        </Styles>
-                                                                    </NewButton>
-                                                                    <EditButton>
-                                                                        <Styles>
-                                                                            <Style Font-Bold="True" ForeColor="#E67C0E">
-                                                                            </Style>
-                                                                        </Styles>
-                                                                    </EditButton>
-                                                                    <DeleteButton Text=" ">
-                                                                        <Image IconID="iconbuilder_actions_removecircled_svg_16x16" ToolTip="Remove">
-                                                                        </Image>
-                                                                        <Styles>
-                                                                            <Style Font-Bold="False" ForeColor="#CC2A17">
-                                                                            </Style>
-                                                                        </Styles>
-                                                                    </DeleteButton>
-                                                                </SettingsCommandButton>
-                                                                <SettingsPopup>
-                                                                    <FilterControl AutoUpdatePosition="False">
-                                                                    </FilterControl>
-                                                                </SettingsPopup>
-                                                                <Columns>
-                                                                    <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="35px">
-                                                                        <HeaderStyle HorizontalAlign="Center" />
-                                                                        <CellStyle HorizontalAlign="Center">
-                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                            <BorderRight BorderColor="Black" BorderStyle="Solid" />
-                                                                        </CellStyle>
-                                                                        <FooterCellStyle HorizontalAlign="Center">
-                                                                        </FooterCellStyle>
-                                                                    </dx:GridViewCommandColumn>
-                                                                    <dx:GridViewBandColumn Caption="REIMBURSABLE TRANSPORTATION" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
-                                                                        <Columns>
-                                                                            <dx:GridViewDataComboBoxColumn Caption=" Type" CellRowSpan="3" FieldName="ReimTranspo_Type1" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
-                                                                                <PropertiesComboBox DataSourceID="SqlReimTranspo" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID" AllowNull="True">
-                                                                                    <Columns>
-                                                                                        <dx:ListBoxColumn Caption="Type" FieldName="Type" Width="50px">
-                                                                                        </dx:ListBoxColumn>
-                                                                                        <dx:ListBoxColumn Caption="Description" FieldName="Description" Width="180px">
-                                                                                        </dx:ListBoxColumn>
-                                                                                    </Columns>
-                                                                                    <ClearButton DisplayMode="Always">
-                                                                                    </ClearButton>
-                                                                                </PropertiesComboBox>
-                                                                                <EditFormCaptionStyle HorizontalAlign="Center">
-                                                                                </EditFormCaptionStyle>
-                                                                                <HeaderStyle HorizontalAlign="Center">
-                                                                                    <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                </HeaderStyle>
-                                                                                <CellStyle>
-                                                                                    <BorderLeft BorderColor="Black" BorderStyle="Solid" />
-                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                </CellStyle>
-                                                                            </dx:GridViewDataComboBoxColumn>
-                                                                            <dx:GridViewDataSpinEditColumn Caption=" Amount" CellRowSpan="3" FieldName="ReimTranspo_Amount1" ShowInCustomizationForm="True" VisibleIndex="1" Width="90px">
-                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom" ClientInstanceName="ReimTranspo_Amount1">
-                                                                                </PropertiesSpinEdit>
-                                                                                <EditFormCaptionStyle HorizontalAlign="Center">
-                                                                                </EditFormCaptionStyle>
-                                                                                <HeaderStyle HorizontalAlign="Center">
-                                                                                    <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                </HeaderStyle>
-                                                                                <CellStyle>
-                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                    <BorderRight BorderColor="Black" BorderStyle="Solid" />
-                                                                                </CellStyle>
-                                                                            </dx:GridViewDataSpinEditColumn>
-                                                                            <dx:GridViewDataComboBoxColumn Caption="  Type" FieldName="ReimTranspo_Type2" ShowInCustomizationForm="True" Visible="False" VisibleIndex="2" Width="140px">
-                                                                                <PropertiesComboBox DataSourceID="SqlReimTranspo" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID" AllowNull="True">
-                                                                                    <Columns>
-                                                                                        <dx:ListBoxColumn Caption="Type" FieldName="Type" Width="50px">
-                                                                                        </dx:ListBoxColumn>
-                                                                                        <dx:ListBoxColumn Caption="Description" FieldName="Description" Width="180px">
-                                                                                        </dx:ListBoxColumn>
-                                                                                    </Columns>
-                                                                                    <ClearButton DisplayMode="Always">
-                                                                                    </ClearButton>
-                                                                                </PropertiesComboBox>
-                                                                                <EditFormCaptionStyle HorizontalAlign="Center">
-                                                                                </EditFormCaptionStyle>
-                                                                                <HeaderStyle HorizontalAlign="Center">
-                                                                                    <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                </HeaderStyle>
-                                                                                <CellStyle>
-                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                </CellStyle>
-                                                                            </dx:GridViewDataComboBoxColumn>
-                                                                            <dx:GridViewDataSpinEditColumn Caption=" Amount" FieldName="ReimTranspo_Amount2" ShowInCustomizationForm="True" Visible="False" VisibleIndex="3" Width="90px">
-                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
-                                                                                </PropertiesSpinEdit>
-                                                                                <EditFormCaptionStyle HorizontalAlign="Center">
-                                                                                </EditFormCaptionStyle>
-                                                                                <HeaderStyle HorizontalAlign="Center">
-                                                                                    <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                </HeaderStyle>
-                                                                                <CellStyle>
-                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                    <BorderRight BorderColor="Black" BorderStyle="Solid" />
-                                                                                </CellStyle>
-                                                                            </dx:GridViewDataSpinEditColumn>
-                                                                            <dx:GridViewDataComboBoxColumn Caption=" Type" CellRowSpan="2" FieldName="ReimTranspo_Type3" ShowInCustomizationForm="True" Visible="False" VisibleIndex="4" Width="140px">
-                                                                                <PropertiesComboBox DataSourceID="SqlReimTranspo" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID" AllowNull="True">
-                                                                                    <Columns>
-                                                                                        <dx:ListBoxColumn Caption="Type" FieldName="Type" Width="50px">
-                                                                                        </dx:ListBoxColumn>
-                                                                                        <dx:ListBoxColumn Caption="Description" FieldName="Description" Width="180px">
-                                                                                        </dx:ListBoxColumn>
-                                                                                    </Columns>
-                                                                                    <ClearButton DisplayMode="Always">
-                                                                                    </ClearButton>
-                                                                                </PropertiesComboBox>
-                                                                                <EditFormCaptionStyle HorizontalAlign="Center">
-                                                                                </EditFormCaptionStyle>
-                                                                                <HeaderStyle HorizontalAlign="Center">
-                                                                                    <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                </HeaderStyle>
-                                                                                <CellStyle>
-                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                </CellStyle>
-                                                                            </dx:GridViewDataComboBoxColumn>
-                                                                            <dx:GridViewDataSpinEditColumn Caption="Amount" CellRowSpan="2" FieldName="ReimTranspo_Amount3" ShowInCustomizationForm="True" Visible="False" VisibleIndex="5" Width="90px">
-                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
-                                                                                </PropertiesSpinEdit>
-                                                                                <EditFormCaptionStyle HorizontalAlign="Center">
-                                                                                </EditFormCaptionStyle>
-                                                                                <HeaderStyle HorizontalAlign="Center">
-                                                                                    <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                </HeaderStyle>
-                                                                                <CellStyle>
-                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                    <BorderRight BorderColor="Black" BorderStyle="Solid" />
-                                                                                </CellStyle>
-                                                                            </dx:GridViewDataSpinEditColumn>
-                                                                        </Columns>
-                                                                    </dx:GridViewBandColumn>
-                                                                    <dx:GridViewBandColumn Caption="FIXED ALLOWANCES" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
-                                                                        <Columns>
-                                                                            <dx:GridViewDataComboBoxColumn Caption="F or P" FieldName="FixedAllow_ForP" ShowInCustomizationForm="True" VisibleIndex="0" Width="110px">
-                                                                                <PropertiesComboBox AllowNull="True">
-                                                                                    <Items>
-                                                                                        <dx:ListEditItem Text="Full" Value="F" />
-                                                                                        <dx:ListEditItem Text="Partial" Value="P" />
-                                                                                    </Items>
-                                                                                    <ClearButton DisplayMode="Always">
-                                                                                    </ClearButton>
-                                                                                </PropertiesComboBox>
-                                                                                <HeaderStyle HorizontalAlign="Center">
-                                                                                    <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                </HeaderStyle>
-                                                                                <CellStyle>
-                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                </CellStyle>
-                                                                            </dx:GridViewDataComboBoxColumn>
-                                                                            <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="FixedAllow_Amount" ShowInCustomizationForm="True" VisibleIndex="1" Width="90px">
-                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
-                                                                                </PropertiesSpinEdit>
-                                                                                <HeaderStyle HorizontalAlign="Center">
-                                                                                    <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                </HeaderStyle>
-                                                                                <CellStyle>
-                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                    <BorderRight BorderColor="Black" BorderStyle="Solid" />
-                                                                                </CellStyle>
-                                                                            </dx:GridViewDataSpinEditColumn>
-                                                                        </Columns>
-                                                                    </dx:GridViewBandColumn>
-                                                                    <dx:GridViewBandColumn Caption="ENTERTAINMENT" MaxWidth="50" ShowInCustomizationForm="True" VisibleIndex="4">
-                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" Wrap="True" />
-                                                                        <Columns>
-                                                                            <dx:GridViewDataMemoColumn Caption="Explanation" FieldName="Entertainment_Explain" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
-                                                                                <HeaderStyle HorizontalAlign="Center">
-                                                                                    <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                </HeaderStyle>
-                                                                                <CellStyle>
-                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                </CellStyle>
-                                                                            </dx:GridViewDataMemoColumn>
-                                                                            <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="Entertainment_Amount" ShowInCustomizationForm="True" VisibleIndex="1" Width="90px">
-                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
-                                                                                </PropertiesSpinEdit>
-                                                                                <HeaderStyle HorizontalAlign="Center">
-                                                                                    <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                </HeaderStyle>
-                                                                                <CellStyle>
-                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                    <BorderRight BorderColor="Black" BorderStyle="Solid" />
-                                                                                </CellStyle>
-                                                                            </dx:GridViewDataSpinEditColumn>
-                                                                        </Columns>
-                                                                    </dx:GridViewBandColumn>
-                                                                    <dx:GridViewBandColumn Caption="BUSINESS MEALS" MaxWidth="50" ShowInCustomizationForm="True" VisibleIndex="5">
-                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" Wrap="True" />
-                                                                        <Columns>
-                                                                            <dx:GridViewDataMemoColumn Caption="Explanation" FieldName="BusMeals_Explain" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
-                                                                                <HeaderStyle HorizontalAlign="Center">
-                                                                                    <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                </HeaderStyle>
-                                                                                <CellStyle>
-                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                </CellStyle>
-                                                                            </dx:GridViewDataMemoColumn>
-                                                                            <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="BusMeals_Amount" ShowInCustomizationForm="True" VisibleIndex="1" Width="90px">
-                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
-                                                                                </PropertiesSpinEdit>
-                                                                                <HeaderStyle HorizontalAlign="Center">
-                                                                                    <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                </HeaderStyle>
-                                                                                <CellStyle>
-                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                    <BorderRight BorderColor="Black" BorderStyle="Solid" />
-                                                                                </CellStyle>
-                                                                            </dx:GridViewDataSpinEditColumn>
-                                                                        </Columns>
-                                                                    </dx:GridViewBandColumn>
-                                                                    <dx:GridViewBandColumn Caption="OTHER BUS. EXPENSES" ShowInCustomizationForm="True" VisibleIndex="6" Visible="False">
-                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
-                                                                        <Columns>
-                                                                            <dx:GridViewDataComboBoxColumn Caption="Type" FieldName="OtherBus_Type" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
-                                                                                <PropertiesComboBox ClientInstanceName="otherBusType" DataSourceID="SqlOtherBusExp" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID" AllowNull="True">
-                                                                                    <Columns>
-                                                                                        <dx:ListBoxColumn Caption="Type" FieldName="Type" Width="50px">
-                                                                                        </dx:ListBoxColumn>
-                                                                                        <dx:ListBoxColumn Caption="Description" FieldName="Description" Width="180px">
-                                                                                        </dx:ListBoxColumn>
-                                                                                    </Columns>
-                                                                                    <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	var selectedValue = s.GetValue(); // Get the selected value from ComboBox 
-               if (selectedValue == 5) { 
-                        OtherBusinessExpSpecify.SetVisible(true);
-                        //otherBusExpPopup.Show();
-               }else{
-                        OtherBusinessExpSpecify.SetVisible(false);
-               }
-}
-" />
-                                                                                    <ClearButton DisplayMode="Always">
-                                                                                    </ClearButton>
-                                                                                </PropertiesComboBox>
-                                                                                <HeaderStyle HorizontalAlign="Center">
-                                                                                    <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                </HeaderStyle>
-                                                                                <CellStyle>
-                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                </CellStyle>
-                                                                                <Columns>
-                                                                                    <dx:GridViewDataMemoColumn Caption="if Others, specify:" FieldName="OtherBus_Specify" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
-                                                                                        <PropertiesMemoEdit ClientInstanceName="OtherBusinessExpSpecify">
-                                                                                            <ClientSideEvents Init="function(s, e) {
-	OtherBusinessExpSpecify.SetVisible(false);
-}
-" />
-                                                                                        </PropertiesMemoEdit>
-                                                                                        <HeaderStyle>
-                                                                                            <Border BorderColor="Black" BorderStyle="Solid" />
+                                                                                    <dx:GridViewDataMemoColumn Caption="Explanation" FieldName="Entertainment_Explain" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
+                                                                                        <HeaderStyle HorizontalAlign="Center">
+                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
                                                                                         </HeaderStyle>
                                                                                         <CellStyle>
                                                                                             <BorderTop BorderColor="Black" BorderStyle="Solid" />
                                                                                         </CellStyle>
                                                                                     </dx:GridViewDataMemoColumn>
+                                                                                    <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="Entertainment_Amount" ShowInCustomizationForm="True" VisibleIndex="1" Width="90px">
+                                                                                        <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
+                                                                                        </PropertiesSpinEdit>
+                                                                                        <HeaderStyle HorizontalAlign="Center">
+                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </HeaderStyle>
+                                                                                        <CellStyle>
+                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                            <BorderRight BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </CellStyle>
+                                                                                    </dx:GridViewDataSpinEditColumn>
                                                                                 </Columns>
-                                                                            </dx:GridViewDataComboBoxColumn>
-                                                                            <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="OtherBus_Amount" ShowInCustomizationForm="True" VisibleIndex="1" Width="90px">
-                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
-                                                                                </PropertiesSpinEdit>
-                                                                                <HeaderStyle HorizontalAlign="Center">
-                                                                                    <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                </HeaderStyle>
-                                                                                <CellStyle>
-                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
-                                                                                    <BorderRight BorderColor="Black" BorderStyle="Solid" />
-                                                                                </CellStyle>
-                                                                            </dx:GridViewDataSpinEditColumn>
-                                                                        </Columns>
-                                                                    </dx:GridViewBandColumn>
-                                                                    <dx:GridViewBandColumn Caption="MISC. TRAVEL EXPENSES" ShowInCustomizationForm="True" VisibleIndex="3">
-                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
-                                                                        <Columns>
-                                                                            <dx:GridViewDataComboBoxColumn Caption="Type" FieldName="MiscTravel_Type" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
-                                                                                <PropertiesComboBox ClientInstanceName="miscTravelType" DataSourceID="SqlMiscTravelExp" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID" AllowNull="True" DropDownRows="9">
-                                                                                    <Columns>
-                                                                                        <dx:ListBoxColumn Caption="Type" FieldName="Type" Width="50px">
-                                                                                        </dx:ListBoxColumn>
-                                                                                        <dx:ListBoxColumn Caption="Description" FieldName="Description" Width="240px">
-                                                                                        </dx:ListBoxColumn>
-                                                                                    </Columns>
-                                                                                    <ClientSideEvents SelectedIndexChanged="function(s, e) {
+                                                                            </dx:GridViewBandColumn>
+                                                                            <dx:GridViewBandColumn Caption="BUSINESS MEALS" MaxWidth="50" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                                                <HeaderStyle Font-Bold="True" HorizontalAlign="Center" Wrap="True" />
+                                                                                <Columns>
+                                                                                    <dx:GridViewDataMemoColumn Caption="Explanation" FieldName="BusMeals_Explain" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
+                                                                                        <HeaderStyle HorizontalAlign="Center">
+                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </HeaderStyle>
+                                                                                        <CellStyle>
+                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </CellStyle>
+                                                                                    </dx:GridViewDataMemoColumn>
+                                                                                    <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="BusMeals_Amount" ShowInCustomizationForm="True" VisibleIndex="1" Width="90px">
+                                                                                        <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
+                                                                                        </PropertiesSpinEdit>
+                                                                                        <HeaderStyle HorizontalAlign="Center">
+                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </HeaderStyle>
+                                                                                        <CellStyle>
+                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                            <BorderRight BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </CellStyle>
+                                                                                    </dx:GridViewDataSpinEditColumn>
+                                                                                </Columns>
+                                                                            </dx:GridViewBandColumn>
+                                                                            <dx:GridViewBandColumn Caption="OTHER BUS. EXPENSES" ShowInCustomizationForm="True" Visible="False" VisibleIndex="6">
+                                                                                <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
+                                                                                <Columns>
+                                                                                    <dx:GridViewDataComboBoxColumn Caption="Type" FieldName="OtherBus_Type" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
+                                                                                        <PropertiesComboBox AllowNull="True" ClientInstanceName="otherBusType" DataSourceID="SqlOtherBusExp" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
+                                                                                            <Columns>
+                                                                                                <dx:ListBoxColumn Caption="Type" FieldName="Type" Width="50px">
+                                                                                                </dx:ListBoxColumn>
+                                                                                                <dx:ListBoxColumn Caption="Description" FieldName="Description" Width="180px">
+                                                                                                </dx:ListBoxColumn>
+                                                                                            </Columns>
+                                                                                            <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	var selectedValue = s.GetValue(); // Get the selected value from ComboBox 
+               if (selectedValue == 5) { 
+                        OtherBusinessExpSpecify.SetVisible(true);
+                        //otherBusExpPopup.Show();
+               }else{
+                        OtherBusinessExpSpecify.SetVisible(false);
+               }
+}
+" />
+                                                                                            <ClearButton DisplayMode="Always">
+                                                                                            </ClearButton>
+                                                                                        </PropertiesComboBox>
+                                                                                        <HeaderStyle HorizontalAlign="Center">
+                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </HeaderStyle>
+                                                                                        <CellStyle>
+                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </CellStyle>
+                                                                                        <Columns>
+                                                                                            <dx:GridViewDataMemoColumn Caption="if Others, specify:" FieldName="OtherBus_Specify" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
+                                                                                                <PropertiesMemoEdit ClientInstanceName="OtherBusinessExpSpecify">
+                                                                                                    <ClientSideEvents Init="function(s, e) {
+	OtherBusinessExpSpecify.SetVisible(false);
+}
+" />
+                                                                                                </PropertiesMemoEdit>
+                                                                                                <HeaderStyle>
+                                                                                                <Border BorderColor="Black" BorderStyle="Solid" />
+                                                                                                </HeaderStyle>
+                                                                                                <CellStyle>
+                                                                                                    <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                                </CellStyle>
+                                                                                            </dx:GridViewDataMemoColumn>
+                                                                                        </Columns>
+                                                                                    </dx:GridViewDataComboBoxColumn>
+                                                                                    <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="OtherBus_Amount" ShowInCustomizationForm="True" VisibleIndex="1" Width="90px">
+                                                                                        <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
+                                                                                        </PropertiesSpinEdit>
+                                                                                        <HeaderStyle HorizontalAlign="Center">
+                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </HeaderStyle>
+                                                                                        <CellStyle>
+                                                                                            <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                                            <BorderRight BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </CellStyle>
+                                                                                    </dx:GridViewDataSpinEditColumn>
+                                                                                </Columns>
+                                                                            </dx:GridViewBandColumn>
+                                                                            <dx:GridViewBandColumn Caption="MISC. TRAVEL EXPENSES" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                                                <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
+                                                                                <Columns>
+                                                                                    <dx:GridViewDataComboBoxColumn Caption="Type" FieldName="MiscTravel_Type" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
+                                                                                        <PropertiesComboBox AllowNull="True" ClientInstanceName="miscTravelType" DataSourceID="SqlMiscTravelExp" DropDownRows="9" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
+                                                                                            <Columns>
+                                                                                                <dx:ListBoxColumn Caption="Type" FieldName="Type" Width="50px">
+                                                                                                </dx:ListBoxColumn>
+                                                                                                <dx:ListBoxColumn Caption="Description" FieldName="Description" Width="240px">
+                                                                                                </dx:ListBoxColumn>
+                                                                                            </Columns>
+                                                                                            <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	var selectedValue = s.GetText(); // Get the selected value from ComboBox 
               
                if (selectedValue.includes(&quot;Others&quot;)) { 
@@ -3699,436 +3143,1017 @@
                }
 }
 " />
-                                                                                    <ClearButton DisplayMode="Always">
-                                                                                    </ClearButton>
-                                                                                </PropertiesComboBox>
-                                                                                <HeaderStyle HorizontalAlign="Center">
-                                                                                    <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                </HeaderStyle>
-                                                                                <Columns>
-                                                                                    <dx:GridViewDataMemoColumn Caption="if Others, specify:" FieldName="MiscTravel_Specify" Name="miscTrav" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
-                                                                                        <PropertiesMemoEdit ClientInstanceName="MiscTravelExpSpecify">
-                                                                                            <ClientSideEvents Init="function(s, e) {
+                                                                                            <ClearButton DisplayMode="Always">
+                                                                                            </ClearButton>
+                                                                                        </PropertiesComboBox>
+                                                                                        <HeaderStyle HorizontalAlign="Center">
+                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </HeaderStyle>
+                                                                                        <Columns>
+                                                                                            <dx:GridViewDataMemoColumn Caption="if Others, specify:" FieldName="MiscTravel_Specify" Name="miscTrav" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
+                                                                                                <PropertiesMemoEdit ClientInstanceName="MiscTravelExpSpecify">
+                                                                                                    <ClientSideEvents Init="function(s, e) {
 	MiscTravelExpSpecify.SetVisible(false);
 }
 " />
-                                                                                        </PropertiesMemoEdit>
-                                                                                        <HeaderStyle>
-                                                                                            <Border BorderColor="Black" BorderStyle="Solid" />
+                                                                                                </PropertiesMemoEdit>
+                                                                                                <HeaderStyle>
+                                                                                                <Border BorderColor="Black" BorderStyle="Solid" />
+                                                                                                </HeaderStyle>
+                                                                                            </dx:GridViewDataMemoColumn>
+                                                                                        </Columns>
+                                                                                    </dx:GridViewDataComboBoxColumn>
+                                                                                    <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="MiscTravel_Amount" ShowInCustomizationForm="True" VisibleIndex="1" Width="90px">
+                                                                                        <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
+                                                                                        </PropertiesSpinEdit>
+                                                                                        <HeaderStyle HorizontalAlign="Center">
+                                                                                        <Border BorderColor="Black" BorderStyle="Solid" />
                                                                                         </HeaderStyle>
-                                                                                    </dx:GridViewDataMemoColumn>
+                                                                                        <CellStyle>
+                                                                                            <BorderRight BorderColor="Black" BorderStyle="Solid" />
+                                                                                        </CellStyle>
+                                                                                    </dx:GridViewDataSpinEditColumn>
                                                                                 </Columns>
-                                                                            </dx:GridViewDataComboBoxColumn>
-                                                                            <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="MiscTravel_Amount" ShowInCustomizationForm="True" VisibleIndex="1" Width="90px">
-                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
-                                                                                </PropertiesSpinEdit>
-                                                                                <HeaderStyle HorizontalAlign="Center">
-                                                                                    <Border BorderColor="Black" BorderStyle="Solid" />
-                                                                                </HeaderStyle>
-                                                                                <CellStyle>
-                                                                                    <BorderRight BorderColor="Black" BorderStyle="Solid" />
-                                                                                </CellStyle>
-                                                                            </dx:GridViewDataSpinEditColumn>
+                                                                            </dx:GridViewBandColumn>
                                                                         </Columns>
-                                                                    </dx:GridViewBandColumn>
-                                                                </Columns>
-                                                                <TotalSummary>
-                                                                    <dx:ASPxSummaryItem FieldName="ReimTranspo_Amount1" SummaryType="Sum" />
-                                                                    <dx:ASPxSummaryItem FieldName="ReimTranspo_Amount2" SummaryType="Sum" />
-                                                                    <dx:ASPxSummaryItem FieldName="ReimTranspo_Amount3" SummaryType="Sum" />
-                                                                    <dx:ASPxSummaryItem FieldName="FixedAllow_Amount" SummaryType="Sum" />
-                                                                    <dx:ASPxSummaryItem FieldName="MiscTravel_Amount" SummaryType="Sum" />
-                                                                    <dx:ASPxSummaryItem FieldName="Entertainment_Amount" SummaryType="Sum" />
-                                                                    <dx:ASPxSummaryItem FieldName="BusMeals_Amount" SummaryType="Sum" />
-                                                                    <dx:ASPxSummaryItem FieldName="OtherBus_Amount" SummaryType="Sum" />
-                                                                </TotalSummary>
-                                                                <Styles>
-                                                                    <Header>
-                                                                        <Paddings PaddingBottom="2px" PaddingTop="2px" />
-                                                                    </Header>
-                                                                    <AlternatingRow BackColor="#ECECEC">
-                                                                    </AlternatingRow>
-                                                                </Styles>
-                                                                <Paddings PaddingBottom="25px" />
-                                                            </dx:ASPxGridView>
-                                                        </dx:LayoutItemNestedControlContainer>
-                                                    </LayoutItemNestedControlCollection>
-                                                    <CaptionSettings Location="Top" />
-                                                </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Supporting Documents" ColSpan="5" ColumnSpan="5" RowSpan="2" VerticalAlign="Top">
-                                                    <LayoutItemNestedControlCollection>
-                                                        <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxUploadControl ID="TraUploadController" runat="server" AutoStartUpload="True" ClientInstanceName="TraUploadController" Font-Size="Small" OnFilesUploadComplete="TraUploadController_FilesUploadComplete" ShowProgressPanel="True" UploadMode="Auto" Width="100%">
-                                                                <ClientSideEvents FilesUploadComplete="function(s, e) {
+                                                                        <TotalSummary>
+                                                                            <dx:ASPxSummaryItem FieldName="ReimTranspo_Amount1" SummaryType="Sum" />
+                                                                            <dx:ASPxSummaryItem FieldName="ReimTranspo_Amount2" SummaryType="Sum" />
+                                                                            <dx:ASPxSummaryItem FieldName="ReimTranspo_Amount3" SummaryType="Sum" />
+                                                                            <dx:ASPxSummaryItem FieldName="FixedAllow_Amount" SummaryType="Sum" />
+                                                                            <dx:ASPxSummaryItem FieldName="MiscTravel_Amount" SummaryType="Sum" />
+                                                                            <dx:ASPxSummaryItem FieldName="Entertainment_Amount" SummaryType="Sum" />
+                                                                            <dx:ASPxSummaryItem FieldName="BusMeals_Amount" SummaryType="Sum" />
+                                                                            <dx:ASPxSummaryItem FieldName="OtherBus_Amount" SummaryType="Sum" />
+                                                                        </TotalSummary>
+                                                                        <Styles>
+                                                                            <Header>
+                                                                                <Paddings PaddingBottom="2px" PaddingTop="2px" />
+                                                                            </Header>
+                                                                            <AlternatingRow BackColor="#ECECEC">
+                                                                            </AlternatingRow>
+                                                                        </Styles>
+                                                                        <Paddings PaddingBottom="20px" PaddingTop="20px" />
+                                                                    </dx:ASPxGridView>
+                                                                </dx:LayoutItemNestedControlContainer>
+                                                            </LayoutItemNestedControlCollection>
+                                                            <CaptionSettings Location="Top" />
+                                                        </dx:LayoutItem>
+                                                    </Items>
+                                                </dx:LayoutGroup>
+                                            </Items>
+                                        </dx:TabbedLayoutGroup>
+                                        <dx:TabbedLayoutGroup ColSpan="1" Width="100%">
+                                            <Paddings PaddingTop="15px" />
+                                            <Items>
+                                                <dx:LayoutGroup Caption="Supporting Documents" ColCount="5" ColSpan="1" ColumnCount="5" GroupBoxDecoration="None" HorizontalAlign="Center" Width="100%">
+                                                    <Paddings Padding="0px" />
+                                                    <Items>
+                                                        <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="None" RowSpan="2" VerticalAlign="Top" Visible="False">
+                                                            <Items>
+                                                                <dx:LayoutItem Caption="" ColSpan="1" VerticalAlign="Top">
+                                                                    <LayoutItemNestedControlCollection>
+                                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                                            <dx:ASPxGridView ID="reimTranGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="reimTranGrid" CssClass="shadow-sm" Font-Italic="False" KeyFieldName="ReimTranspo_ID" OnRowDeleting="reimTranGrid_RowDeleting" OnRowInserting="reimTranGrid_RowInserting">
+                                                                                <ClientSideEvents EndCallback="calcExpenses" />
+                                                                                <SettingsPager Visible="False">
+                                                                                </SettingsPager>
+                                                                                <SettingsEditing Mode="Inline">
+                                                                                    <BatchEditSettings EnableMultipleCellSelection="True" StartEditAction="Click" />
+                                                                                </SettingsEditing>
+                                                                                <SettingsCommandButton>
+                                                                                    <NewButton>
+                                                                                        <Image IconID="iconbuilder_actions_add_svg_16x16">
+                                                                                        </Image>
+                                                                                        <Styles>
+                                                                                            <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#006838">
+                                                                                            </Style>
+                                                                                        </Styles>
+                                                                                    </NewButton>
+                                                                                    <UpdateButton Text="Save">
+                                                                                    </UpdateButton>
+                                                                                    <DeleteButton Text="Remove">
+                                                                                        <Image IconID="iconbuilder_actions_removecircled_svg_16x16">
+                                                                                        </Image>
+                                                                                        <Styles>
+                                                                                            <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#CC2A17">
+                                                                                            </Style>
+                                                                                        </Styles>
+                                                                                    </DeleteButton>
+                                                                                </SettingsCommandButton>
+                                                                                <SettingsDataSecurity AllowReadUnlistedFieldsFromClientApi="True" />
+                                                                                <SettingsPopup>
+                                                                                    <FilterControl AutoUpdatePosition="False">
+                                                                                    </FilterControl>
+                                                                                </SettingsPopup>
+                                                                                <Columns>
+                                                                                    <dx:GridViewBandColumn Caption="REIMBURSABLE TRANSPORTATION" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
+                                                                                        <Columns>
+                                                                                            <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="150px">
+                                                                                            </dx:GridViewCommandColumn>
+                                                                                            <dx:GridViewDataComboBoxColumn Caption="Type" FieldName="ReimTranspo_Type" Name="ReimTranspo_Type" ShowInCustomizationForm="True" VisibleIndex="3" Width="230px">
+                                                                                                <PropertiesComboBox DataSourceID="SqlReimTranspo" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
+                                                                                                    <Columns>
+                                                                                                        <dx:ListBoxColumn Caption="Type" FieldName="Type" Name="Type" Width="50px">
+                                                                                                        </dx:ListBoxColumn>
+                                                                                                        <dx:ListBoxColumn Caption="Description" FieldName="Description" Name="Description" Width="180px">
+                                                                                                        </dx:ListBoxColumn>
+                                                                                                    </Columns>
+                                                                                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
+                                                                                                        <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                                                    </ValidationSettings>
+                                                                                                </PropertiesComboBox>
+                                                                                                <HeaderStyle HorizontalAlign="Center" />
+                                                                                                <CellStyle HorizontalAlign="Center">
+                                                                                                </CellStyle>
+                                                                                            </dx:GridViewDataComboBoxColumn>
+                                                                                            <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="ReimTranspo_Amount" Name="ReimTranspo_Amount" ShowInCustomizationForm="True" VisibleIndex="4" Width="350px">
+                                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
+                                                                                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
+                                                                                                        <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                                                    </ValidationSettings>
+                                                                                                </PropertiesSpinEdit>
+                                                                                                <HeaderStyle HorizontalAlign="Center" />
+                                                                                                <CellStyle HorizontalAlign="Right">
+                                                                                                </CellStyle>
+                                                                                            </dx:GridViewDataSpinEditColumn>
+                                                                                            <dx:GridViewDataTextColumn FieldName="ReimTranspo_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="2">
+                                                                                            </dx:GridViewDataTextColumn>
+                                                                                        </Columns>
+                                                                                    </dx:GridViewBandColumn>
+                                                                                </Columns>
+                                                                                <TotalSummary>
+                                                                                    <dx:ASPxSummaryItem FieldName="ReimTranspo_Amount" SummaryType="Sum" />
+                                                                                </TotalSummary>
+                                                                                <Styles>
+                                                                                    <Table>
+                                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                    </Table>
+                                                                                    <Header>
+                                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                    </Header>
+                                                                                    <Cell>
+                                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                    </Cell>
+                                                                                </Styles>
+                                                                                <Border BorderColor="#006838" />
+                                                                            </dx:ASPxGridView>
+                                                                        </dx:LayoutItemNestedControlContainer>
+                                                                    </LayoutItemNestedControlCollection>
+                                                                    <Paddings PaddingBottom="20px" />
+                                                                </dx:LayoutItem>
+                                                                <dx:LayoutItem Caption="" ColSpan="1" VerticalAlign="Top">
+                                                                    <LayoutItemNestedControlCollection>
+                                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                                            <dx:ASPxGridView ID="fixedAllowGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="fixedAllowGrid" CssClass="shadow-sm" KeyFieldName="FixedAllow_ID" OnRowDeleting="fixedAllowGrid_RowDeleting" OnRowInserting="fixedAllowGrid_RowInserting">
+                                                                                <ClientSideEvents EndCallback="calcExpenses" />
+                                                                                <SettingsPager Visible="False">
+                                                                                </SettingsPager>
+                                                                                <SettingsEditing Mode="Inline">
+                                                                                    <BatchEditSettings StartEditAction="Click" />
+                                                                                </SettingsEditing>
+                                                                                <SettingsCommandButton>
+                                                                                    <NewButton>
+                                                                                        <Image IconID="iconbuilder_actions_add_svg_16x16">
+                                                                                        </Image>
+                                                                                        <Styles>
+                                                                                            <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#006838">
+                                                                                            </Style>
+                                                                                        </Styles>
+                                                                                    </NewButton>
+                                                                                    <UpdateButton Text="Save">
+                                                                                    </UpdateButton>
+                                                                                    <DeleteButton Text="Remove">
+                                                                                        <Image IconID="iconbuilder_actions_removecircled_svg_16x16">
+                                                                                        </Image>
+                                                                                        <Styles>
+                                                                                            <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#CC2A17">
+                                                                                            </Style>
+                                                                                        </Styles>
+                                                                                    </DeleteButton>
+                                                                                </SettingsCommandButton>
+                                                                                <SettingsPopup>
+                                                                                    <FilterControl AutoUpdatePosition="False">
+                                                                                    </FilterControl>
+                                                                                </SettingsPopup>
+                                                                                <Columns>
+                                                                                    <dx:GridViewBandColumn Caption="FIXED ALLOWANCE/S" ShowInCustomizationForm="True" VisibleIndex="1">
+                                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
+                                                                                        <Columns>
+                                                                                            <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="150px">
+                                                                                            </dx:GridViewCommandColumn>
+                                                                                            <dx:GridViewDataComboBoxColumn Caption="F or P" FieldName="FixedAllow_ForP" ShowInCustomizationForm="True" VisibleIndex="3" Width="230px">
+                                                                                                <PropertiesComboBox>
+                                                                                                    <Items>
+                                                                                                        <dx:ListEditItem Text="Full" Value="F" />
+                                                                                                        <dx:ListEditItem Text="Partial" Value="P" />
+                                                                                                    </Items>
+                                                                                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
+                                                                                                        <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                                                    </ValidationSettings>
+                                                                                                </PropertiesComboBox>
+                                                                                                <HeaderStyle HorizontalAlign="Center" />
+                                                                                                <CellStyle HorizontalAlign="Center">
+                                                                                                </CellStyle>
+                                                                                            </dx:GridViewDataComboBoxColumn>
+                                                                                            <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="FixedAllow_Amount" ShowInCustomizationForm="True" VisibleIndex="4" Width="350px">
+                                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
+                                                                                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
+                                                                                                        <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                                                    </ValidationSettings>
+                                                                                                </PropertiesSpinEdit>
+                                                                                                <HeaderStyle HorizontalAlign="Center" />
+                                                                                                <CellStyle HorizontalAlign="Right">
+                                                                                                </CellStyle>
+                                                                                            </dx:GridViewDataSpinEditColumn>
+                                                                                            <dx:GridViewDataTextColumn FieldName="FixedAllow_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="2">
+                                                                                            </dx:GridViewDataTextColumn>
+                                                                                        </Columns>
+                                                                                    </dx:GridViewBandColumn>
+                                                                                </Columns>
+                                                                                <TotalSummary>
+                                                                                    <dx:ASPxSummaryItem FieldName="FixedAllow_Amount" SummaryType="Sum" />
+                                                                                </TotalSummary>
+                                                                                <Styles>
+                                                                                    <Header>
+                                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                    </Header>
+                                                                                    <Cell>
+                                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                    </Cell>
+                                                                                </Styles>
+                                                                                <Border BorderColor="#006838" />
+                                                                            </dx:ASPxGridView>
+                                                                        </dx:LayoutItemNestedControlContainer>
+                                                                    </LayoutItemNestedControlCollection>
+                                                                    <Paddings PaddingBottom="20px" />
+                                                                </dx:LayoutItem>
+                                                                <dx:LayoutItem Caption="" ColSpan="1" VerticalAlign="Top">
+                                                                    <LayoutItemNestedControlCollection>
+                                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                                            <dx:ASPxGridView ID="miscTravelGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="miscTravelGrid" CssClass="shadow-sm" KeyFieldName="MiscTravelExp_ID" OnRowDeleting="miscTravelGrid_RowDeleting" OnRowInserting="miscTravelGrid_RowInserting">
+                                                                                <ClientSideEvents EndCallback="calcExpenses" />
+                                                                                <SettingsPager Visible="False">
+                                                                                </SettingsPager>
+                                                                                <SettingsEditing Mode="Inline">
+                                                                                    <BatchEditSettings StartEditAction="Click" />
+                                                                                </SettingsEditing>
+                                                                                <SettingsCommandButton>
+                                                                                    <NewButton>
+                                                                                        <Image IconID="iconbuilder_actions_add_svg_16x16">
+                                                                                        </Image>
+                                                                                        <Styles>
+                                                                                            <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#006838">
+                                                                                            </Style>
+                                                                                        </Styles>
+                                                                                    </NewButton>
+                                                                                    <UpdateButton Text="Save">
+                                                                                    </UpdateButton>
+                                                                                    <DeleteButton Text="Remove">
+                                                                                        <Image IconID="iconbuilder_actions_removecircled_svg_16x16">
+                                                                                        </Image>
+                                                                                        <Styles>
+                                                                                            <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#CC2A17">
+                                                                                            </Style>
+                                                                                        </Styles>
+                                                                                    </DeleteButton>
+                                                                                </SettingsCommandButton>
+                                                                                <SettingsPopup>
+                                                                                    <FilterControl AutoUpdatePosition="False">
+                                                                                    </FilterControl>
+                                                                                </SettingsPopup>
+                                                                                <Columns>
+                                                                                    <dx:GridViewBandColumn Caption="MISCELLANEOUS TRAVEL EXPENSE/S" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
+                                                                                        <Columns>
+                                                                                            <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="150px">
+                                                                                            </dx:GridViewCommandColumn>
+                                                                                            <dx:GridViewDataComboBoxColumn Caption="Type" FieldName="MiscTravelExp_Type" ShowInCustomizationForm="True" VisibleIndex="2" Width="350px">
+                                                                                                <PropertiesComboBox ClientInstanceName="miscTravelType" DataSourceID="SqlMiscTravelExp" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
+                                                                                                    <Columns>
+                                                                                                        <dx:ListBoxColumn Caption="Type" FieldName="Type" Name="Type" Width="50px">
+                                                                                                        </dx:ListBoxColumn>
+                                                                                                        <dx:ListBoxColumn Caption="Description" FieldName="Description" Name="Description" Width="270px">
+                                                                                                        </dx:ListBoxColumn>
+                                                                                                    </Columns>
+                                                                                                    <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	var selectedValue = s.GetValue(); // Get the selected value from ComboBox 
+               if (selectedValue == 5) { 
+                      MiscTravelExpSpecify.SetVisible(true);  
+                      //miscTravelExpPopup.Show();
+               }else{
+                      MiscTravelExpSpecify.SetVisible(false);  
+               }
+}" />
+                                                                                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
+                                                                                                        <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                                                    </ValidationSettings>
+                                                                                                </PropertiesComboBox>
+                                                                                                <HeaderStyle HorizontalAlign="Center" />
+                                                                                                <CellStyle HorizontalAlign="Center">
+                                                                                                </CellStyle>
+                                                                                            </dx:GridViewDataComboBoxColumn>
+                                                                                            <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="MiscTravelExp_Amount" ShowInCustomizationForm="True" VisibleIndex="4" Width="230px">
+                                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
+                                                                                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
+                                                                                                        <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                                                    </ValidationSettings>
+                                                                                                </PropertiesSpinEdit>
+                                                                                                <HeaderStyle HorizontalAlign="Center" />
+                                                                                                <CellStyle HorizontalAlign="Right">
+                                                                                                </CellStyle>
+                                                                                            </dx:GridViewDataSpinEditColumn>
+                                                                                            <dx:GridViewDataTextColumn FieldName="MiscTravelExp_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
+                                                                                            </dx:GridViewDataTextColumn>
+                                                                                            <dx:GridViewDataTextColumn Caption="If Others, specify:" FieldName="MiscTravelExp_Specify" ShowInCustomizationForm="True" VisibleIndex="3" Width="350px">
+                                                                                                <PropertiesTextEdit ClientInstanceName="MiscTravelExpSpecify">
+                                                                                                    <ClientSideEvents Init="function(s, e) {
+	MiscTravelExpSpecify.SetVisible(false);
+}" />
+                                                                                                </PropertiesTextEdit>
+                                                                                                <HeaderStyle HorizontalAlign="Center" />
+                                                                                                <CellStyle HorizontalAlign="Left">
+                                                                                                </CellStyle>
+                                                                                            </dx:GridViewDataTextColumn>
+                                                                                        </Columns>
+                                                                                    </dx:GridViewBandColumn>
+                                                                                </Columns>
+                                                                                <TotalSummary>
+                                                                                    <dx:ASPxSummaryItem FieldName="MiscTravelExp_Amount" SummaryType="Sum" />
+                                                                                </TotalSummary>
+                                                                                <Styles>
+                                                                                    <Header>
+                                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                    </Header>
+                                                                                    <Cell>
+                                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                    </Cell>
+                                                                                </Styles>
+                                                                                <Border BorderColor="#006838" />
+                                                                            </dx:ASPxGridView>
+                                                                        </dx:LayoutItemNestedControlContainer>
+                                                                    </LayoutItemNestedControlCollection>
+                                                                    <Paddings PaddingBottom="20px" />
+                                                                </dx:LayoutItem>
+                                                                <dx:LayoutItem Caption="" ColSpan="1" VerticalAlign="Top">
+                                                                    <LayoutItemNestedControlCollection>
+                                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                                            <dx:ASPxGridView ID="otherBusGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="otherBusGrid" CssClass="shadow-sm" KeyFieldName="OtherBusinessExp_ID" OnRowDeleting="otherBusGrid_RowDeleting" OnRowInserting="otherBusGrid_RowInserting">
+                                                                                <ClientSideEvents EndCallback="calcExpenses" />
+                                                                                <SettingsPager Visible="False">
+                                                                                </SettingsPager>
+                                                                                <SettingsEditing Mode="Inline">
+                                                                                    <BatchEditSettings StartEditAction="Click" />
+                                                                                </SettingsEditing>
+                                                                                <SettingsCommandButton>
+                                                                                    <NewButton>
+                                                                                        <Image IconID="iconbuilder_actions_add_svg_16x16">
+                                                                                        </Image>
+                                                                                        <Styles>
+                                                                                            <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#006838">
+                                                                                            </Style>
+                                                                                        </Styles>
+                                                                                    </NewButton>
+                                                                                    <UpdateButton Text="Save">
+                                                                                    </UpdateButton>
+                                                                                    <DeleteButton Text="Remove">
+                                                                                        <Image IconID="iconbuilder_actions_removecircled_svg_16x16">
+                                                                                        </Image>
+                                                                                        <Styles>
+                                                                                            <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#CC2A17">
+                                                                                            </Style>
+                                                                                        </Styles>
+                                                                                    </DeleteButton>
+                                                                                </SettingsCommandButton>
+                                                                                <SettingsPopup>
+                                                                                    <FilterControl AutoUpdatePosition="False">
+                                                                                    </FilterControl>
+                                                                                </SettingsPopup>
+                                                                                <Columns>
+                                                                                    <dx:GridViewBandColumn Caption="OTHER BUSINESS EXPENSE/S" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
+                                                                                        <Columns>
+                                                                                            <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="150px">
+                                                                                            </dx:GridViewCommandColumn>
+                                                                                            <dx:GridViewDataComboBoxColumn Caption="Type" FieldName="OtherBusinessExp_Type" ShowInCustomizationForm="True" VisibleIndex="2" Width="350px">
+                                                                                                <PropertiesComboBox ClientInstanceName="otherBusType" DataSourceID="SqlOtherBusExp" TextField="Description" TextFormatString="{0}. {1}" ValueField="ID">
+                                                                                                    <Columns>
+                                                                                                        <dx:ListBoxColumn Caption="Type" FieldName="Type" Name="Type" Width="50px">
+                                                                                                        </dx:ListBoxColumn>
+                                                                                                        <dx:ListBoxColumn Caption="Description" FieldName="Description" Name="Description" Width="180px">
+                                                                                                        </dx:ListBoxColumn>
+                                                                                                    </Columns>
+                                                                                                    <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	var selectedValue = s.GetValue(); // Get the selected value from ComboBox 
+               if (selectedValue == 5) { 
+                        OtherBusinessExpSpecify.SetVisible(true);
+                        //otherBusExpPopup.Show();
+               }else{
+                        OtherBusinessExpSpecify.SetVisible(false);
+               }
+}" />
+                                                                                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
+                                                                                                        <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                                                    </ValidationSettings>
+                                                                                                </PropertiesComboBox>
+                                                                                                <HeaderStyle HorizontalAlign="Center" />
+                                                                                                <CellStyle HorizontalAlign="Center">
+                                                                                                </CellStyle>
+                                                                                            </dx:GridViewDataComboBoxColumn>
+                                                                                            <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="OtherBusinessExp_Amount" ShowInCustomizationForm="True" VisibleIndex="4" Width="230px">
+                                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
+                                                                                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
+                                                                                                        <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                                                    </ValidationSettings>
+                                                                                                </PropertiesSpinEdit>
+                                                                                                <HeaderStyle HorizontalAlign="Center" />
+                                                                                                <CellStyle HorizontalAlign="Right">
+                                                                                                </CellStyle>
+                                                                                            </dx:GridViewDataSpinEditColumn>
+                                                                                            <dx:GridViewDataTextColumn FieldName="OtherBusinessExp_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
+                                                                                            </dx:GridViewDataTextColumn>
+                                                                                            <dx:GridViewDataTextColumn Caption="If Others, specify:" FieldName="OtherBusinessExp_Specify" ShowInCustomizationForm="True" VisibleIndex="3" Width="350px">
+                                                                                                <PropertiesTextEdit ClientInstanceName="OtherBusinessExpSpecify">
+                                                                                                    <ClientSideEvents Init="function(s, e) {
+	OtherBusinessExpSpecify.SetVisible(false);
+}" />
+                                                                                                </PropertiesTextEdit>
+                                                                                                <HeaderStyle HorizontalAlign="Center" />
+                                                                                                <CellStyle HorizontalAlign="Left">
+                                                                                                </CellStyle>
+                                                                                            </dx:GridViewDataTextColumn>
+                                                                                        </Columns>
+                                                                                    </dx:GridViewBandColumn>
+                                                                                </Columns>
+                                                                                <TotalSummary>
+                                                                                    <dx:ASPxSummaryItem FieldName="OtherBusinessExp_Amount" SummaryType="Sum" />
+                                                                                </TotalSummary>
+                                                                                <Styles>
+                                                                                    <Header>
+                                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                    </Header>
+                                                                                    <Cell>
+                                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                    </Cell>
+                                                                                </Styles>
+                                                                                <Border BorderColor="#006838" />
+                                                                            </dx:ASPxGridView>
+                                                                        </dx:LayoutItemNestedControlContainer>
+                                                                    </LayoutItemNestedControlCollection>
+                                                                    <Paddings PaddingBottom="20px" />
+                                                                </dx:LayoutItem>
+                                                                <dx:LayoutItem Caption="" ColSpan="1" VerticalAlign="Top">
+                                                                    <LayoutItemNestedControlCollection>
+                                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                                            <dx:ASPxGridView ID="entertainmentGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="entertainmentGrid" CssClass="shadow-sm" KeyFieldName="Entertainment_ID" OnRowDeleting="entertainmentGrid_RowDeleting" OnRowInserting="entertainmentGrid_RowInserting">
+                                                                                <ClientSideEvents EndCallback="calcExpenses" />
+                                                                                <SettingsPager Visible="False">
+                                                                                </SettingsPager>
+                                                                                <SettingsEditing Mode="Inline">
+                                                                                    <BatchEditSettings StartEditAction="Click" />
+                                                                                </SettingsEditing>
+                                                                                <SettingsCommandButton>
+                                                                                    <NewButton>
+                                                                                        <Image IconID="iconbuilder_actions_add_svg_16x16">
+                                                                                        </Image>
+                                                                                        <Styles>
+                                                                                            <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#006838">
+                                                                                            </Style>
+                                                                                        </Styles>
+                                                                                    </NewButton>
+                                                                                    <UpdateButton Text="Save">
+                                                                                    </UpdateButton>
+                                                                                    <DeleteButton Text="Remove">
+                                                                                        <Image IconID="iconbuilder_actions_removecircled_svg_16x16">
+                                                                                        </Image>
+                                                                                        <Styles>
+                                                                                            <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#CC2A17">
+                                                                                            </Style>
+                                                                                        </Styles>
+                                                                                    </DeleteButton>
+                                                                                </SettingsCommandButton>
+                                                                                <SettingsPopup>
+                                                                                    <FilterControl AutoUpdatePosition="False">
+                                                                                    </FilterControl>
+                                                                                </SettingsPopup>
+                                                                                <Columns>
+                                                                                    <dx:GridViewBandColumn Caption="ENTERTAINMENT/S" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
+                                                                                        <Columns>
+                                                                                            <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="150px">
+                                                                                            </dx:GridViewCommandColumn>
+                                                                                            <dx:GridViewDataMemoColumn Caption="Explanation" FieldName="Entertainment_Explain" ShowInCustomizationForm="True" VisibleIndex="2" Width="350px">
+                                                                                                <PropertiesMemoEdit>
+                                                                                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
+                                                                                                        <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                                                    </ValidationSettings>
+                                                                                                </PropertiesMemoEdit>
+                                                                                                <HeaderStyle HorizontalAlign="Center" />
+                                                                                                <CellStyle HorizontalAlign="Justify">
+                                                                                                </CellStyle>
+                                                                                            </dx:GridViewDataMemoColumn>
+                                                                                            <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="Entertainment_Amount" ShowInCustomizationForm="True" VisibleIndex="3" Width="230px">
+                                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
+                                                                                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
+                                                                                                        <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                                                    </ValidationSettings>
+                                                                                                </PropertiesSpinEdit>
+                                                                                                <HeaderStyle HorizontalAlign="Center" />
+                                                                                                <CellStyle HorizontalAlign="Right">
+                                                                                                </CellStyle>
+                                                                                            </dx:GridViewDataSpinEditColumn>
+                                                                                            <dx:GridViewDataTextColumn FieldName="Entertainment_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
+                                                                                            </dx:GridViewDataTextColumn>
+                                                                                        </Columns>
+                                                                                    </dx:GridViewBandColumn>
+                                                                                </Columns>
+                                                                                <TotalSummary>
+                                                                                    <dx:ASPxSummaryItem FieldName="Entertainment_Amount" SummaryType="Sum" />
+                                                                                </TotalSummary>
+                                                                                <Styles>
+                                                                                    <Header>
+                                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                    </Header>
+                                                                                    <Cell>
+                                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                    </Cell>
+                                                                                </Styles>
+                                                                                <Border BorderColor="#006838" />
+                                                                            </dx:ASPxGridView>
+                                                                        </dx:LayoutItemNestedControlContainer>
+                                                                    </LayoutItemNestedControlCollection>
+                                                                    <Paddings PaddingBottom="10px" />
+                                                                </dx:LayoutItem>
+                                                                <dx:LayoutItem Caption="" ColSpan="1" VerticalAlign="Top">
+                                                                    <LayoutItemNestedControlCollection>
+                                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                                            <dx:ASPxGridView ID="busMealsGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="busMealsGrid" CssClass="shadow-sm" KeyFieldName="BusinessMeal_ID" OnRowDeleting="busMealsGrid_RowDeleting" OnRowInserting="busMealsGrid_RowInserting">
+                                                                                <ClientSideEvents EndCallback="calcExpenses" />
+                                                                                <SettingsPager Visible="False">
+                                                                                </SettingsPager>
+                                                                                <SettingsEditing Mode="Inline">
+                                                                                    <BatchEditSettings StartEditAction="Click" />
+                                                                                </SettingsEditing>
+                                                                                <SettingsCommandButton>
+                                                                                    <NewButton>
+                                                                                        <Image IconID="iconbuilder_actions_add_svg_16x16">
+                                                                                        </Image>
+                                                                                        <Styles>
+                                                                                            <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#006838">
+                                                                                            </Style>
+                                                                                        </Styles>
+                                                                                    </NewButton>
+                                                                                    <UpdateButton Text="Save">
+                                                                                    </UpdateButton>
+                                                                                    <DeleteButton Text="Remove">
+                                                                                        <Image IconID="iconbuilder_actions_removecircled_svg_16x16">
+                                                                                        </Image>
+                                                                                        <Styles>
+                                                                                            <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#CC2A17">
+                                                                                            </Style>
+                                                                                        </Styles>
+                                                                                    </DeleteButton>
+                                                                                </SettingsCommandButton>
+                                                                                <SettingsPopup>
+                                                                                    <FilterControl AutoUpdatePosition="False">
+                                                                                    </FilterControl>
+                                                                                </SettingsPopup>
+                                                                                <Columns>
+                                                                                    <dx:GridViewBandColumn Caption="BUSINESS MEAL/S" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                                                        <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
+                                                                                        <Columns>
+                                                                                            <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="150px">
+                                                                                            </dx:GridViewCommandColumn>
+                                                                                            <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="BusinessMeal_Amount" ShowInCustomizationForm="True" VisibleIndex="3" Width="230px">
+                                                                                                <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatInEditMode="True" DisplayFormatString="N" NumberFormat="Custom">
+                                                                                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
+                                                                                                        <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                                                    </ValidationSettings>
+                                                                                                </PropertiesSpinEdit>
+                                                                                                <HeaderStyle HorizontalAlign="Center" />
+                                                                                                <CellStyle HorizontalAlign="Right">
+                                                                                                </CellStyle>
+                                                                                            </dx:GridViewDataSpinEditColumn>
+                                                                                            <dx:GridViewDataMemoColumn Caption="Explanation" FieldName="BusinessMeal_Explain" ShowInCustomizationForm="True" VisibleIndex="2" Width="350px">
+                                                                                                <PropertiesMemoEdit>
+                                                                                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="expAdd">
+                                                                                                        <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                                                    </ValidationSettings>
+                                                                                                </PropertiesMemoEdit>
+                                                                                                <HeaderStyle HorizontalAlign="Center" />
+                                                                                                <CellStyle HorizontalAlign="Justify">
+                                                                                                </CellStyle>
+                                                                                            </dx:GridViewDataMemoColumn>
+                                                                                            <dx:GridViewDataTextColumn FieldName="BusinessMeal_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
+                                                                                            </dx:GridViewDataTextColumn>
+                                                                                        </Columns>
+                                                                                    </dx:GridViewBandColumn>
+                                                                                </Columns>
+                                                                                <TotalSummary>
+                                                                                    <dx:ASPxSummaryItem FieldName="BusinessMeal_Amount" SummaryType="Sum" />
+                                                                                </TotalSummary>
+                                                                                <Styles>
+                                                                                    <Header>
+                                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                    </Header>
+                                                                                    <Cell>
+                                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                    </Cell>
+                                                                                </Styles>
+                                                                                <Border BorderColor="#006838" />
+                                                                            </dx:ASPxGridView>
+                                                                        </dx:LayoutItemNestedControlContainer>
+                                                                    </LayoutItemNestedControlCollection>
+                                                                    <Paddings PaddingBottom="10px" />
+                                                                </dx:LayoutItem>
+                                                            </Items>
+                                                        </dx:LayoutGroup>
+                                                        <dx:LayoutItem Caption="" ColSpan="5" ColumnSpan="5" RowSpan="2" VerticalAlign="Top">
+                                                            <LayoutItemNestedControlCollection>
+                                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                                    <dx:ASPxUploadControl ID="TraUploadController" runat="server" AutoStartUpload="True" ClientInstanceName="TraUploadController" Font-Size="Small" OnFilesUploadComplete="TraUploadController_FilesUploadComplete" ShowProgressPanel="True" UploadMode="Auto" Width="100%">
+                                                                        <ClientSideEvents FilesUploadComplete="function(s, e) {
 	TraDocuGrid.Refresh();
 }
 " />
-                                                                <AdvancedModeSettings EnableDragAndDrop="True" EnableFileList="True" EnableMultiSelect="True">
-                                                                </AdvancedModeSettings>
-                                                                <Paddings PaddingBottom="10px" />
-                                                                <TextBoxStyle Font-Size="Small" />
-                                                            </dx:ASPxUploadControl>
-                                                            <dx:ASPxGridView ID="TraDocuGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="TraDocuGrid" Font-Size="Small" KeyFieldName="ID" OnRowDeleting="TraDocuGrid_RowDeleting" OnRowUpdating="TraDocuGrid_RowUpdating" Width="100%" Theme="MaterialCompact" OnCellEditorInitialize="TraDocuGrid_CellEditorInitialize">
-                                                                <ClientSideEvents CustomButtonClick="onCustomButtonClick" />
-                                                                <SettingsEditing Mode="Inline">
-                                                                </SettingsEditing>
-                                                                <SettingsCommandButton>
-                                                                    <EditButton>
-                                                                        <Image IconID="richedit_trackingchanges_trackchanges_svg_16x16">
-                                                                        </Image>
-                                                                        <Styles>
-                                                                            <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#006DD6">
-                                                                                <Paddings PaddingBottom="4px" PaddingTop="4px" />
-                                                                            </Style>
-                                                                        </Styles>
-                                                                    </EditButton>
-                                                                    <DeleteButton Text="Remove">
-                                                                        <Image IconID="iconbuilder_actions_removecircled_svg_16x16">
-                                                                        </Image>
-                                                                        <Styles>
-                                                                            <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#CC2A17">
-                                                                                <Paddings PaddingBottom="4px" PaddingTop="4px" />
-                                                                            </Style>
-                                                                        </Styles>
-                                                                    </DeleteButton>
-                                                                </SettingsCommandButton>
-                                                                <SettingsPopup>
-                                                                    <FilterControl AutoUpdatePosition="False">
-                                                                    </FilterControl>
-                                                                </SettingsPopup>
-                                                                <Columns>
-                                                                    <dx:GridViewCommandColumn Caption="Action" ShowDeleteButton="True" ShowEditButton="True" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                                    </dx:GridViewCommandColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
-                                                                        <EditFormSettings Visible="False" />
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="FileName" ShowInCustomizationForm="True" VisibleIndex="3">
-                                                                        <EditFormSettings Visible="True" />
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="FileExtension" ShowInCustomizationForm="True" VisibleIndex="5" ReadOnly="True">
-                                                                        <EditFormSettings Visible="False" />
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn Caption="File Size" FieldName="FileSize" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="13">
-                                                                        <EditFormSettings Visible="False" />
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="FileAttachment" ShowInCustomizationForm="True" Visible="False" VisibleIndex="2">
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataComboBoxColumn FieldName="Description" ShowInCustomizationForm="True" VisibleIndex="4">
-                                                                        <EditFormSettings Visible="True" />
-                                                                    </dx:GridViewDataComboBoxColumn>
-                                                                </Columns>
-                                                                <Styles>
-                                                                    <Header>
-                                                                        <Paddings PaddingBottom="5px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="5px" />
-                                                                    </Header>
-                                                                    <Cell>
-                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                    </Cell>
-                                                                </Styles>
-                                                            </dx:ASPxGridView>
-                                                        </dx:LayoutItemNestedControlContainer>
-                                                    </LayoutItemNestedControlCollection>
-                                                    <CaptionSettings Location="Top" />
-                                                    <CaptionStyle Font-Bold="True">
-                                                    </CaptionStyle>
-                                                </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="" ColSpan="2" ColumnSpan="2" Visible="False">
-                                                    <LayoutItemNestedControlCollection>
-                                                        <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxPageControl ID="ASPxPageControl1" runat="server" ActiveTabIndex="2">
-                                                                <TabPages>
-                                                                    <dx:TabPage Text="REIMBURSABLE TRANSPORTATION">
-                                                                        <ContentCollection>
-                                                                            <dx:ContentControl runat="server">
-                                                                                <dx:ASPxGridView ID="ASPxGridView1" runat="server" AutoGenerateColumns="False" Width="100%">
-                                                                                    <SettingsPager Visible="False">
-                                                                                    </SettingsPager>
-                                                                                    <SettingsEditing Mode="Batch">
-                                                                                        <BatchEditSettings StartEditAction="Click" />
-                                                                                    </SettingsEditing>
-                                                                                    <SettingsPopup>
-                                                                                        <FilterControl AutoUpdatePosition="False">
-                                                                                        </FilterControl>
-                                                                                    </SettingsPopup>
-                                                                                    <Columns>
-                                                                                        <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0">
-                                                                                        </dx:GridViewCommandColumn>
-                                                                                        <dx:GridViewDataTextColumn Caption="Amount" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                                                        </dx:GridViewDataTextColumn>
-                                                                                        <dx:GridViewDataComboBoxColumn Caption="Type" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                                                        </dx:GridViewDataComboBoxColumn>
-                                                                                    </Columns>
-                                                                                    <Styles>
-                                                                                        <Header>
-                                                                                            <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                                        </Header>
-                                                                                        <Cell>
-                                                                                            <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                                        </Cell>
-                                                                                    </Styles>
-                                                                                </dx:ASPxGridView>
-                                                                            </dx:ContentControl>
-                                                                        </ContentCollection>
-                                                                    </dx:TabPage>
-                                                                    <dx:TabPage Text="FIXED ALLOW. &amp; MISC. TRAVEL EXPENSES">
-                                                                        <ContentCollection>
-                                                                            <dx:ContentControl runat="server">
-                                                                                <dx:ASPxFormLayout ID="ASPxFormLayout9" runat="server" ColCount="2" ColumnCount="2" Width="100%">
-                                                                                    <Items>
-                                                                                        <dx:LayoutGroup Caption="Fixed Allowance" ColSpan="1" GroupBoxDecoration="HeadingLine">
-                                                                                            <Items>
-                                                                                                <dx:LayoutItem Caption="" ColSpan="1">
-                                                                                                    <LayoutItemNestedControlCollection>
-                                                                                                        <dx:LayoutItemNestedControlContainer runat="server">
-                                                                                                            <dx:ASPxGridView ID="ASPxGridView8" runat="server" AutoGenerateColumns="False" Width="100%">
-                                                                                                                <SettingsPager Visible="False">
-                                                                                                                </SettingsPager>
-                                                                                                                <SettingsEditing Mode="Batch">
-                                                                                                                    <BatchEditSettings StartEditAction="Click" />
-                                                                                                                </SettingsEditing>
-                                                                                                                <SettingsPopup>
-                                                                                                                    <FilterControl AutoUpdatePosition="False">
-                                                                                                                    </FilterControl>
-                                                                                                                </SettingsPopup>
-                                                                                                                <Columns>
-                                                                                                                    <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0">
-                                                                                                                    </dx:GridViewCommandColumn>
-                                                                                                                    <dx:GridViewDataTextColumn Caption="Amount" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                                                                                    </dx:GridViewDataTextColumn>
-                                                                                                                    <dx:GridViewDataComboBoxColumn Caption="Type" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                                                                                    </dx:GridViewDataComboBoxColumn>
-                                                                                                                </Columns>
-                                                                                                                <Styles>
-                                                                                                                    <Header>
-                                                                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                                                                    </Header>
-                                                                                                                    <Cell>
-                                                                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                                                                    </Cell>
-                                                                                                                </Styles>
-                                                                                                            </dx:ASPxGridView>
-                                                                                                        </dx:LayoutItemNestedControlContainer>
-                                                                                                    </LayoutItemNestedControlCollection>
-                                                                                                </dx:LayoutItem>
-                                                                                            </Items>
-                                                                                        </dx:LayoutGroup>
-                                                                                        <dx:LayoutGroup Caption="Misc. Travel Expense" ColSpan="1" GroupBoxDecoration="HeadingLine">
-                                                                                            <Items>
-                                                                                                <dx:LayoutItem Caption="" ColSpan="1">
-                                                                                                    <LayoutItemNestedControlCollection>
-                                                                                                        <dx:LayoutItemNestedControlContainer runat="server">
-                                                                                                            <dx:ASPxGridView ID="ASPxGridView13" runat="server" AutoGenerateColumns="False" Width="100%">
-                                                                                                                <SettingsPager Visible="False">
-                                                                                                                </SettingsPager>
-                                                                                                                <SettingsEditing Mode="Batch">
-                                                                                                                    <BatchEditSettings StartEditAction="Click" />
-                                                                                                                </SettingsEditing>
-                                                                                                                <SettingsPopup>
-                                                                                                                    <FilterControl AutoUpdatePosition="False">
-                                                                                                                    </FilterControl>
-                                                                                                                </SettingsPopup>
-                                                                                                                <Columns>
-                                                                                                                    <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0">
-                                                                                                                    </dx:GridViewCommandColumn>
-                                                                                                                    <dx:GridViewDataTextColumn Caption="Amount" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                                                                                    </dx:GridViewDataTextColumn>
-                                                                                                                    <dx:GridViewDataComboBoxColumn Caption="Type" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                                                                                    </dx:GridViewDataComboBoxColumn>
-                                                                                                                </Columns>
-                                                                                                                <Styles>
-                                                                                                                    <Header>
-                                                                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                                                                    </Header>
-                                                                                                                    <Cell>
-                                                                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                                                                    </Cell>
-                                                                                                                </Styles>
-                                                                                                            </dx:ASPxGridView>
-                                                                                                        </dx:LayoutItemNestedControlContainer>
-                                                                                                    </LayoutItemNestedControlCollection>
-                                                                                                </dx:LayoutItem>
-                                                                                            </Items>
-                                                                                        </dx:LayoutGroup>
-                                                                                    </Items>
-                                                                                </dx:ASPxFormLayout>
-                                                                            </dx:ContentControl>
-                                                                        </ContentCollection>
-                                                                    </dx:TabPage>
-                                                                    <dx:TabPage Text="OTHER BUSINESS EXPENSES">
-                                                                        <ContentCollection>
-                                                                            <dx:ContentControl runat="server">
-                                                                                <dx:ASPxFormLayout ID="ASPxFormLayout10" runat="server" ColCount="2" ColumnCount="2" Width="100%">
-                                                                                    <Items>
-                                                                                        <dx:LayoutGroup Caption="Entertainment" ColSpan="1">
-                                                                                            <Items>
-                                                                                                <dx:LayoutItem Caption="" ColSpan="1">
-                                                                                                    <LayoutItemNestedControlCollection>
-                                                                                                        <dx:LayoutItemNestedControlContainer runat="server">
-                                                                                                            <dx:ASPxGridView ID="ASPxGridView14" runat="server" AutoGenerateColumns="False" Width="100%">
-                                                                                                                <SettingsPager Visible="False">
-                                                                                                                </SettingsPager>
-                                                                                                                <SettingsEditing Mode="Batch">
-                                                                                                                    <BatchEditSettings StartEditAction="Click" />
-                                                                                                                </SettingsEditing>
-                                                                                                                <SettingsPopup>
-                                                                                                                    <FilterControl AutoUpdatePosition="False">
-                                                                                                                    </FilterControl>
-                                                                                                                </SettingsPopup>
-                                                                                                                <Columns>
-                                                                                                                    <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0">
-                                                                                                                    </dx:GridViewCommandColumn>
-                                                                                                                    <dx:GridViewDataTextColumn Caption="Amount" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                                                                                    </dx:GridViewDataTextColumn>
-                                                                                                                    <dx:GridViewDataComboBoxColumn Caption="Explanation" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                                                                                    </dx:GridViewDataComboBoxColumn>
-                                                                                                                </Columns>
-                                                                                                                <Styles>
-                                                                                                                    <Header>
-                                                                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                                                                    </Header>
-                                                                                                                    <Cell>
-                                                                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                                                                    </Cell>
-                                                                                                                </Styles>
-                                                                                                            </dx:ASPxGridView>
-                                                                                                        </dx:LayoutItemNestedControlContainer>
-                                                                                                    </LayoutItemNestedControlCollection>
-                                                                                                </dx:LayoutItem>
-                                                                                            </Items>
-                                                                                        </dx:LayoutGroup>
-                                                                                        <dx:LayoutGroup Caption="Business Meals" ColSpan="1">
-                                                                                            <Items>
-                                                                                                <dx:LayoutItem Caption="" ColSpan="1">
-                                                                                                    <LayoutItemNestedControlCollection>
-                                                                                                        <dx:LayoutItemNestedControlContainer runat="server">
-                                                                                                            <dx:ASPxGridView ID="ASPxGridView15" runat="server" AutoGenerateColumns="False" Width="100%">
-                                                                                                                <SettingsPager Visible="False">
-                                                                                                                </SettingsPager>
-                                                                                                                <SettingsEditing Mode="Batch">
-                                                                                                                    <BatchEditSettings StartEditAction="Click" />
-                                                                                                                </SettingsEditing>
-                                                                                                                <SettingsPopup>
-                                                                                                                    <FilterControl AutoUpdatePosition="False">
-                                                                                                                    </FilterControl>
-                                                                                                                </SettingsPopup>
-                                                                                                                <Columns>
-                                                                                                                    <dx:GridViewCommandColumn Caption="Explanation" ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0">
-                                                                                                                    </dx:GridViewCommandColumn>
-                                                                                                                    <dx:GridViewDataTextColumn Caption="Amount" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                                                                                    </dx:GridViewDataTextColumn>
-                                                                                                                    <dx:GridViewDataComboBoxColumn Caption="Type" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                                                                                    </dx:GridViewDataComboBoxColumn>
-                                                                                                                </Columns>
-                                                                                                                <Styles>
-                                                                                                                    <Header>
-                                                                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                                                                    </Header>
-                                                                                                                    <Cell>
-                                                                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                                                                    </Cell>
-                                                                                                                </Styles>
-                                                                                                            </dx:ASPxGridView>
-                                                                                                        </dx:LayoutItemNestedControlContainer>
-                                                                                                    </LayoutItemNestedControlCollection>
-                                                                                                </dx:LayoutItem>
-                                                                                            </Items>
-                                                                                        </dx:LayoutGroup>
-                                                                                        <dx:LayoutGroup Caption="Other Business Expense" ColSpan="2" ColumnSpan="2">
-                                                                                            <Items>
-                                                                                                <dx:LayoutItem Caption="" ColSpan="1">
-                                                                                                    <LayoutItemNestedControlCollection>
-                                                                                                        <dx:LayoutItemNestedControlContainer runat="server">
-                                                                                                            <dx:ASPxGridView ID="ASPxGridView16" runat="server" AutoGenerateColumns="False" Width="100%">
-                                                                                                                <SettingsPager Visible="False">
-                                                                                                                </SettingsPager>
-                                                                                                                <SettingsEditing Mode="Batch">
-                                                                                                                    <BatchEditSettings StartEditAction="Click" />
-                                                                                                                </SettingsEditing>
-                                                                                                                <SettingsPopup>
-                                                                                                                    <FilterControl AutoUpdatePosition="False">
-                                                                                                                    </FilterControl>
-                                                                                                                </SettingsPopup>
-                                                                                                                <Columns>
-                                                                                                                    <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0">
-                                                                                                                    </dx:GridViewCommandColumn>
-                                                                                                                    <dx:GridViewDataTextColumn Caption="Amount" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                                                                                    </dx:GridViewDataTextColumn>
-                                                                                                                    <dx:GridViewDataComboBoxColumn Caption="Type" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                                                                                    </dx:GridViewDataComboBoxColumn>
-                                                                                                                </Columns>
-                                                                                                                <Styles>
-                                                                                                                    <Header>
-                                                                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                                                                    </Header>
-                                                                                                                    <Cell>
-                                                                                                                        <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
-                                                                                                                    </Cell>
-                                                                                                                </Styles>
-                                                                                                            </dx:ASPxGridView>
-                                                                                                        </dx:LayoutItemNestedControlContainer>
-                                                                                                    </LayoutItemNestedControlCollection>
-                                                                                                </dx:LayoutItem>
-                                                                                            </Items>
-                                                                                        </dx:LayoutGroup>
-                                                                                    </Items>
-                                                                                </dx:ASPxFormLayout>
-                                                                            </dx:ContentControl>
-                                                                        </ContentCollection>
-                                                                    </dx:TabPage>
-                                                                </TabPages>
-                                                            </dx:ASPxPageControl>
-                                                        </dx:LayoutItemNestedControlContainer>
-                                                    </LayoutItemNestedControlCollection>
-                                                </dx:LayoutItem>
-                                                <dx:LayoutGroup Caption="" ColSpan="2" ColumnSpan="2" GroupBoxDecoration="None" Visible="False">
-                                                    <Items>
-                                                        <dx:LayoutItem Caption="" ColSpan="1">
-                                                            <LayoutItemNestedControlCollection>
-                                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                                    <dx:ASPxGridView ID="ASPxGridView7" runat="server" AutoGenerateColumns="False" Width="100%">
-                                                                        <SettingsEditing Mode="Batch">
-                                                                            <BatchEditSettings StartEditAction="Click" />
+                                                                        <AdvancedModeSettings EnableDragAndDrop="True" EnableFileList="True" EnableMultiSelect="True">
+                                                                        </AdvancedModeSettings>
+                                                                        <Paddings PaddingBottom="10px" />
+                                                                        <TextBoxStyle Font-Size="Small" />
+                                                                    </dx:ASPxUploadControl>
+                                                                    <dx:ASPxGridView ID="TraDocuGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="TraDocuGrid" Font-Size="Small" KeyFieldName="ID" OnCellEditorInitialize="TraDocuGrid_CellEditorInitialize" OnRowDeleting="TraDocuGrid_RowDeleting" OnRowUpdating="TraDocuGrid_RowUpdating" Theme="MaterialCompact" Width="100%">
+                                                                        <ClientSideEvents CustomButtonClick="onCustomButtonClick" />
+                                                                        <SettingsEditing Mode="Inline">
                                                                         </SettingsEditing>
+                                                                        <SettingsCommandButton>
+                                                                            <EditButton>
+                                                                                <Image IconID="richedit_trackingchanges_trackchanges_svg_16x16">
+                                                                                </Image>
+                                                                                <Styles>
+                                                                                    <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#006DD6">
+                                                                                        <Paddings PaddingBottom="4px" PaddingTop="4px" />
+                                                                                    </Style>
+                                                                                </Styles>
+                                                                            </EditButton>
+                                                                            <DeleteButton Text="Remove">
+                                                                                <Image IconID="iconbuilder_actions_removecircled_svg_16x16">
+                                                                                </Image>
+                                                                                <Styles>
+                                                                                    <Style Font-Bold="True" Font-Size="Smaller" ForeColor="#CC2A17">
+                                                                                        <Paddings PaddingBottom="4px" PaddingTop="4px" />
+                                                                                    </Style>
+                                                                                </Styles>
+                                                                            </DeleteButton>
+                                                                        </SettingsCommandButton>
                                                                         <SettingsPopup>
                                                                             <FilterControl AutoUpdatePosition="False">
                                                                             </FilterControl>
                                                                         </SettingsPopup>
                                                                         <Columns>
-                                                                            <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0">
+                                                                            <dx:GridViewCommandColumn Caption="Action" ShowDeleteButton="True" ShowEditButton="True" ShowInCustomizationForm="True" VisibleIndex="0">
                                                                             </dx:GridViewCommandColumn>
-                                                                            <dx:GridViewDataTextColumn Caption="Date" ShowInCustomizationForm="True" VisibleIndex="1">
+                                                                            <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
+                                                                                <EditFormSettings Visible="False" />
                                                                             </dx:GridViewDataTextColumn>
-                                                                            <dx:GridViewDataTextColumn Caption="ENTERTAINMENT" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                                            <dx:GridViewDataTextColumn FieldName="FileName" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                                                <EditFormSettings Visible="True" />
                                                                             </dx:GridViewDataTextColumn>
-                                                                            <dx:GridViewDataTextColumn Caption="BUSINESS MEALS" ShowInCustomizationForm="True" VisibleIndex="6">
+                                                                            <dx:GridViewDataTextColumn FieldName="FileExtension" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                                                <EditFormSettings Visible="False" />
                                                                             </dx:GridViewDataTextColumn>
-                                                                            <dx:GridViewBandColumn Caption="REIMBURSABLE TRANSPORTATION" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                                            <dx:GridViewDataTextColumn Caption="File Size" FieldName="FileSize" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="13">
+                                                                                <EditFormSettings Visible="False" />
+                                                                            </dx:GridViewDataTextColumn>
+                                                                            <dx:GridViewDataTextColumn FieldName="FileAttachment" ShowInCustomizationForm="True" Visible="False" VisibleIndex="2">
+                                                                            </dx:GridViewDataTextColumn>
+                                                                            <dx:GridViewDataComboBoxColumn FieldName="Description" ShowInCustomizationForm="True" VisibleIndex="4">
+                                                                                <EditFormSettings Visible="True" />
+                                                                            </dx:GridViewDataComboBoxColumn>
+                                                                        </Columns>
+                                                                        <Styles>
+                                                                            <Header>
+                                                                                <Paddings PaddingBottom="5px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="5px" />
+                                                                            </Header>
+                                                                            <Cell>
+                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                            </Cell>
+                                                                        </Styles>
+                                                                        <Paddings PaddingBottom="20px" />
+                                                                    </dx:ASPxGridView>
+                                                                </dx:LayoutItemNestedControlContainer>
+                                                            </LayoutItemNestedControlCollection>
+                                                            <CaptionSettings Location="Top" />
+                                                            <CaptionStyle Font-Bold="True">
+                                                            </CaptionStyle>
+                                                        </dx:LayoutItem>
+                                                        <dx:LayoutItem Caption="" ColSpan="2" ColumnSpan="2" Visible="False">
+                                                            <LayoutItemNestedControlCollection>
+                                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                                    <dx:ASPxPageControl ID="ASPxPageControl1" runat="server" ActiveTabIndex="2">
+                                                                        <TabPages>
+                                                                            <dx:TabPage Text="REIMBURSABLE TRANSPORTATION">
+                                                                                <ContentCollection>
+                                                                                    <dx:ContentControl runat="server">
+                                                                                        <dx:ASPxGridView ID="ASPxGridView1" runat="server" AutoGenerateColumns="False" Width="100%">
+                                                                                            <SettingsPager Visible="False">
+                                                                                            </SettingsPager>
+                                                                                            <SettingsEditing Mode="Batch">
+                                                                                                <BatchEditSettings StartEditAction="Click" />
+                                                                                            </SettingsEditing>
+                                                                                            <SettingsPopup>
+                                                                                                <FilterControl AutoUpdatePosition="False">
+                                                                                                </FilterControl>
+                                                                                            </SettingsPopup>
+                                                                                            <Columns>
+                                                                                                <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0">
+                                                                                                </dx:GridViewCommandColumn>
+                                                                                                <dx:GridViewDataTextColumn Caption="Amount" ShowInCustomizationForm="True" VisibleIndex="2">
+                                                                                                </dx:GridViewDataTextColumn>
+                                                                                                <dx:GridViewDataComboBoxColumn Caption="Type" ShowInCustomizationForm="True" VisibleIndex="1">
+                                                                                                </dx:GridViewDataComboBoxColumn>
+                                                                                            </Columns>
+                                                                                            <Styles>
+                                                                                                <Header>
+                                                                                                    <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                                </Header>
+                                                                                                <Cell>
+                                                                                                    <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                                </Cell>
+                                                                                            </Styles>
+                                                                                        </dx:ASPxGridView>
+                                                                                    </dx:ContentControl>
+                                                                                </ContentCollection>
+                                                                            </dx:TabPage>
+                                                                            <dx:TabPage Text="FIXED ALLOW. &amp; MISC. TRAVEL EXPENSES">
+                                                                                <ContentCollection>
+                                                                                    <dx:ContentControl runat="server">
+                                                                                        <dx:ASPxFormLayout ID="ASPxFormLayout9" runat="server" ColCount="2" ColumnCount="2" Width="100%">
+                                                                                            <Items>
+                                                                                                <dx:LayoutGroup Caption="Fixed Allowance" ColSpan="1" GroupBoxDecoration="HeadingLine">
+                                                                                                    <Items>
+                                                                                                        <dx:LayoutItem Caption="" ColSpan="1">
+                                                                                                            <LayoutItemNestedControlCollection>
+                                                                                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                                                                                    <dx:ASPxGridView ID="ASPxGridView8" runat="server" AutoGenerateColumns="False" Width="100%">
+                                                                                                                        <SettingsPager Visible="False">
+                                                                                                                        </SettingsPager>
+                                                                                                                        <SettingsEditing Mode="Batch">
+                                                                                                                            <BatchEditSettings StartEditAction="Click" />
+                                                                                                                        </SettingsEditing>
+                                                                                                                        <SettingsPopup>
+                                                                                                                            <FilterControl AutoUpdatePosition="False">
+                                                                                                                            </FilterControl>
+                                                                                                                        </SettingsPopup>
+                                                                                                                        <Columns>
+                                                                                                                            <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0">
+                                                                                                                            </dx:GridViewCommandColumn>
+                                                                                                                            <dx:GridViewDataTextColumn Caption="Amount" ShowInCustomizationForm="True" VisibleIndex="2">
+                                                                                                                            </dx:GridViewDataTextColumn>
+                                                                                                                            <dx:GridViewDataComboBoxColumn Caption="Type" ShowInCustomizationForm="True" VisibleIndex="1">
+                                                                                                                            </dx:GridViewDataComboBoxColumn>
+                                                                                                                        </Columns>
+                                                                                                                        <Styles>
+                                                                                                                            <Header>
+                                                                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                                                            </Header>
+                                                                                                                            <Cell>
+                                                                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                                                            </Cell>
+                                                                                                                        </Styles>
+                                                                                                                    </dx:ASPxGridView>
+                                                                                                                </dx:LayoutItemNestedControlContainer>
+                                                                                                            </LayoutItemNestedControlCollection>
+                                                                                                        </dx:LayoutItem>
+                                                                                                    </Items>
+                                                                                                </dx:LayoutGroup>
+                                                                                                <dx:LayoutGroup Caption="Misc. Travel Expense" ColSpan="1" GroupBoxDecoration="HeadingLine">
+                                                                                                    <Items>
+                                                                                                        <dx:LayoutItem Caption="" ColSpan="1">
+                                                                                                            <LayoutItemNestedControlCollection>
+                                                                                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                                                                                    <dx:ASPxGridView ID="ASPxGridView13" runat="server" AutoGenerateColumns="False" Width="100%">
+                                                                                                                        <SettingsPager Visible="False">
+                                                                                                                        </SettingsPager>
+                                                                                                                        <SettingsEditing Mode="Batch">
+                                                                                                                            <BatchEditSettings StartEditAction="Click" />
+                                                                                                                        </SettingsEditing>
+                                                                                                                        <SettingsPopup>
+                                                                                                                            <FilterControl AutoUpdatePosition="False">
+                                                                                                                            </FilterControl>
+                                                                                                                        </SettingsPopup>
+                                                                                                                        <Columns>
+                                                                                                                            <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0">
+                                                                                                                            </dx:GridViewCommandColumn>
+                                                                                                                            <dx:GridViewDataTextColumn Caption="Amount" ShowInCustomizationForm="True" VisibleIndex="2">
+                                                                                                                            </dx:GridViewDataTextColumn>
+                                                                                                                            <dx:GridViewDataComboBoxColumn Caption="Type" ShowInCustomizationForm="True" VisibleIndex="1">
+                                                                                                                            </dx:GridViewDataComboBoxColumn>
+                                                                                                                        </Columns>
+                                                                                                                        <Styles>
+                                                                                                                            <Header>
+                                                                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                                                            </Header>
+                                                                                                                            <Cell>
+                                                                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                                                            </Cell>
+                                                                                                                        </Styles>
+                                                                                                                    </dx:ASPxGridView>
+                                                                                                                </dx:LayoutItemNestedControlContainer>
+                                                                                                            </LayoutItemNestedControlCollection>
+                                                                                                        </dx:LayoutItem>
+                                                                                                    </Items>
+                                                                                                </dx:LayoutGroup>
+                                                                                            </Items>
+                                                                                        </dx:ASPxFormLayout>
+                                                                                    </dx:ContentControl>
+                                                                                </ContentCollection>
+                                                                            </dx:TabPage>
+                                                                            <dx:TabPage Text="OTHER BUSINESS EXPENSES">
+                                                                                <ContentCollection>
+                                                                                    <dx:ContentControl runat="server">
+                                                                                        <dx:ASPxFormLayout ID="ASPxFormLayout10" runat="server" ColCount="2" ColumnCount="2" Width="100%">
+                                                                                            <Items>
+                                                                                                <dx:LayoutGroup Caption="Entertainment" ColSpan="1">
+                                                                                                    <Items>
+                                                                                                        <dx:LayoutItem Caption="" ColSpan="1">
+                                                                                                            <LayoutItemNestedControlCollection>
+                                                                                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                                                                                    <dx:ASPxGridView ID="ASPxGridView14" runat="server" AutoGenerateColumns="False" Width="100%">
+                                                                                                                        <SettingsPager Visible="False">
+                                                                                                                        </SettingsPager>
+                                                                                                                        <SettingsEditing Mode="Batch">
+                                                                                                                            <BatchEditSettings StartEditAction="Click" />
+                                                                                                                        </SettingsEditing>
+                                                                                                                        <SettingsPopup>
+                                                                                                                            <FilterControl AutoUpdatePosition="False">
+                                                                                                                            </FilterControl>
+                                                                                                                        </SettingsPopup>
+                                                                                                                        <Columns>
+                                                                                                                            <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0">
+                                                                                                                            </dx:GridViewCommandColumn>
+                                                                                                                            <dx:GridViewDataTextColumn Caption="Amount" ShowInCustomizationForm="True" VisibleIndex="2">
+                                                                                                                            </dx:GridViewDataTextColumn>
+                                                                                                                            <dx:GridViewDataComboBoxColumn Caption="Explanation" ShowInCustomizationForm="True" VisibleIndex="1">
+                                                                                                                            </dx:GridViewDataComboBoxColumn>
+                                                                                                                        </Columns>
+                                                                                                                        <Styles>
+                                                                                                                            <Header>
+                                                                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                                                            </Header>
+                                                                                                                            <Cell>
+                                                                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                                                            </Cell>
+                                                                                                                        </Styles>
+                                                                                                                    </dx:ASPxGridView>
+                                                                                                                </dx:LayoutItemNestedControlContainer>
+                                                                                                            </LayoutItemNestedControlCollection>
+                                                                                                        </dx:LayoutItem>
+                                                                                                    </Items>
+                                                                                                </dx:LayoutGroup>
+                                                                                                <dx:LayoutGroup Caption="Business Meals" ColSpan="1">
+                                                                                                    <Items>
+                                                                                                        <dx:LayoutItem Caption="" ColSpan="1">
+                                                                                                            <LayoutItemNestedControlCollection>
+                                                                                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                                                                                    <dx:ASPxGridView ID="ASPxGridView15" runat="server" AutoGenerateColumns="False" Width="100%">
+                                                                                                                        <SettingsPager Visible="False">
+                                                                                                                        </SettingsPager>
+                                                                                                                        <SettingsEditing Mode="Batch">
+                                                                                                                            <BatchEditSettings StartEditAction="Click" />
+                                                                                                                        </SettingsEditing>
+                                                                                                                        <SettingsPopup>
+                                                                                                                            <FilterControl AutoUpdatePosition="False">
+                                                                                                                            </FilterControl>
+                                                                                                                        </SettingsPopup>
+                                                                                                                        <Columns>
+                                                                                                                            <dx:GridViewCommandColumn Caption="Explanation" ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0">
+                                                                                                                            </dx:GridViewCommandColumn>
+                                                                                                                            <dx:GridViewDataTextColumn Caption="Amount" ShowInCustomizationForm="True" VisibleIndex="2">
+                                                                                                                            </dx:GridViewDataTextColumn>
+                                                                                                                            <dx:GridViewDataComboBoxColumn Caption="Type" ShowInCustomizationForm="True" VisibleIndex="1">
+                                                                                                                            </dx:GridViewDataComboBoxColumn>
+                                                                                                                        </Columns>
+                                                                                                                        <Styles>
+                                                                                                                            <Header>
+                                                                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                                                            </Header>
+                                                                                                                            <Cell>
+                                                                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                                                            </Cell>
+                                                                                                                        </Styles>
+                                                                                                                    </dx:ASPxGridView>
+                                                                                                                </dx:LayoutItemNestedControlContainer>
+                                                                                                            </LayoutItemNestedControlCollection>
+                                                                                                        </dx:LayoutItem>
+                                                                                                    </Items>
+                                                                                                </dx:LayoutGroup>
+                                                                                                <dx:LayoutGroup Caption="Other Business Expense" ColSpan="2" ColumnSpan="2">
+                                                                                                    <Items>
+                                                                                                        <dx:LayoutItem Caption="" ColSpan="1">
+                                                                                                            <LayoutItemNestedControlCollection>
+                                                                                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                                                                                    <dx:ASPxGridView ID="ASPxGridView16" runat="server" AutoGenerateColumns="False" Width="100%">
+                                                                                                                        <SettingsPager Visible="False">
+                                                                                                                        </SettingsPager>
+                                                                                                                        <SettingsEditing Mode="Batch">
+                                                                                                                            <BatchEditSettings StartEditAction="Click" />
+                                                                                                                        </SettingsEditing>
+                                                                                                                        <SettingsPopup>
+                                                                                                                            <FilterControl AutoUpdatePosition="False">
+                                                                                                                            </FilterControl>
+                                                                                                                        </SettingsPopup>
+                                                                                                                        <Columns>
+                                                                                                                            <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0">
+                                                                                                                            </dx:GridViewCommandColumn>
+                                                                                                                            <dx:GridViewDataTextColumn Caption="Amount" ShowInCustomizationForm="True" VisibleIndex="2">
+                                                                                                                            </dx:GridViewDataTextColumn>
+                                                                                                                            <dx:GridViewDataComboBoxColumn Caption="Type" ShowInCustomizationForm="True" VisibleIndex="1">
+                                                                                                                            </dx:GridViewDataComboBoxColumn>
+                                                                                                                        </Columns>
+                                                                                                                        <Styles>
+                                                                                                                            <Header>
+                                                                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                                                            </Header>
+                                                                                                                            <Cell>
+                                                                                                                                <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                                                                            </Cell>
+                                                                                                                        </Styles>
+                                                                                                                    </dx:ASPxGridView>
+                                                                                                                </dx:LayoutItemNestedControlContainer>
+                                                                                                            </LayoutItemNestedControlCollection>
+                                                                                                        </dx:LayoutItem>
+                                                                                                    </Items>
+                                                                                                </dx:LayoutGroup>
+                                                                                            </Items>
+                                                                                        </dx:ASPxFormLayout>
+                                                                                    </dx:ContentControl>
+                                                                                </ContentCollection>
+                                                                            </dx:TabPage>
+                                                                        </TabPages>
+                                                                    </dx:ASPxPageControl>
+                                                                </dx:LayoutItemNestedControlContainer>
+                                                            </LayoutItemNestedControlCollection>
+                                                        </dx:LayoutItem>
+                                                        <dx:LayoutGroup Caption="" ColSpan="2" ColumnSpan="2" GroupBoxDecoration="None" Visible="False">
+                                                            <Items>
+                                                                <dx:LayoutItem Caption="" ColSpan="1">
+                                                                    <LayoutItemNestedControlCollection>
+                                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                                            <dx:ASPxGridView ID="ASPxGridView7" runat="server" AutoGenerateColumns="False" Width="100%">
+                                                                                <SettingsEditing Mode="Batch">
+                                                                                    <BatchEditSettings StartEditAction="Click" />
+                                                                                </SettingsEditing>
+                                                                                <SettingsPopup>
+                                                                                    <FilterControl AutoUpdatePosition="False">
+                                                                                    </FilterControl>
+                                                                                </SettingsPopup>
                                                                                 <Columns>
-                                                                                    <dx:GridViewDataTextColumn Caption="Type" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                                                    <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0">
+                                                                                    </dx:GridViewCommandColumn>
+                                                                                    <dx:GridViewDataTextColumn Caption="Date" ShowInCustomizationForm="True" VisibleIndex="1">
                                                                                     </dx:GridViewDataTextColumn>
-                                                                                    <dx:GridViewDataTextColumn Caption="Amount" ShowInCustomizationForm="True" VisibleIndex="1">
+                                                                                    <dx:GridViewDataTextColumn Caption="ENTERTAINMENT" ShowInCustomizationForm="True" VisibleIndex="5">
                                                                                     </dx:GridViewDataTextColumn>
-                                                                                    <dx:GridViewDataTextColumn Caption="Type" ShowInCustomizationForm="True" VisibleIndex="2">
+                                                                                    <dx:GridViewDataTextColumn Caption="BUSINESS MEALS" ShowInCustomizationForm="True" VisibleIndex="6">
                                                                                     </dx:GridViewDataTextColumn>
-                                                                                    <dx:GridViewDataTextColumn Caption="Amount" ShowInCustomizationForm="True" VisibleIndex="3">
-                                                                                    </dx:GridViewDataTextColumn>
-                                                                                    <dx:GridViewDataTextColumn Caption="Type" ShowInCustomizationForm="True" VisibleIndex="4">
-                                                                                    </dx:GridViewDataTextColumn>
-                                                                                    <dx:GridViewDataTextColumn Caption="Amount" ShowInCustomizationForm="True" VisibleIndex="5">
-                                                                                    </dx:GridViewDataTextColumn>
-                                                                                </Columns>
-                                                                            </dx:GridViewBandColumn>
-                                                                            <dx:GridViewBandColumn Caption="FIXED ALLOW. &amp; MISC. TRAVEL EXPENSES" ShowInCustomizationForm="True" VisibleIndex="4">
-                                                                                <Columns>
-                                                                                    <dx:GridViewBandColumn Caption="Fixed Allowance" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                                                    <dx:GridViewBandColumn Caption="REIMBURSABLE TRANSPORTATION" ShowInCustomizationForm="True" VisibleIndex="3">
                                                                                         <Columns>
-                                                                                            <dx:GridViewDataTextColumn Caption="F or P" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                                                            <dx:GridViewDataTextColumn Caption="Type" ShowInCustomizationForm="True" VisibleIndex="0">
                                                                                             </dx:GridViewDataTextColumn>
                                                                                             <dx:GridViewDataTextColumn Caption="Amount" ShowInCustomizationForm="True" VisibleIndex="1">
                                                                                             </dx:GridViewDataTextColumn>
+                                                                                            <dx:GridViewDataTextColumn Caption="Type" ShowInCustomizationForm="True" VisibleIndex="2">
+                                                                                            </dx:GridViewDataTextColumn>
+                                                                                            <dx:GridViewDataTextColumn Caption="Amount" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                                                            </dx:GridViewDataTextColumn>
+                                                                                            <dx:GridViewDataTextColumn Caption="Type" ShowInCustomizationForm="True" VisibleIndex="4">
+                                                                                            </dx:GridViewDataTextColumn>
+                                                                                            <dx:GridViewDataTextColumn Caption="Amount" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                                                            </dx:GridViewDataTextColumn>
                                                                                         </Columns>
                                                                                     </dx:GridViewBandColumn>
-                                                                                    <dx:GridViewBandColumn Caption="Misc. Travel Expense" ShowInCustomizationForm="True" VisibleIndex="1">
+                                                                                    <dx:GridViewBandColumn Caption="FIXED ALLOW. &amp; MISC. TRAVEL EXPENSES" ShowInCustomizationForm="True" VisibleIndex="4">
+                                                                                        <Columns>
+                                                                                            <dx:GridViewBandColumn Caption="Fixed Allowance" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                                                                <Columns>
+                                                                                                    <dx:GridViewDataTextColumn Caption="F or P" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                                                                    </dx:GridViewDataTextColumn>
+                                                                                                    <dx:GridViewDataTextColumn Caption="Amount" ShowInCustomizationForm="True" VisibleIndex="1">
+                                                                                                    </dx:GridViewDataTextColumn>
+                                                                                                </Columns>
+                                                                                            </dx:GridViewBandColumn>
+                                                                                            <dx:GridViewBandColumn Caption="Misc. Travel Expense" ShowInCustomizationForm="True" VisibleIndex="1">
+                                                                                                <Columns>
+                                                                                                    <dx:GridViewDataTextColumn Caption="Type" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                                                                    </dx:GridViewDataTextColumn>
+                                                                                                    <dx:GridViewDataTextColumn Caption="Amount" ShowInCustomizationForm="True" VisibleIndex="1">
+                                                                                                    </dx:GridViewDataTextColumn>
+                                                                                                </Columns>
+                                                                                            </dx:GridViewBandColumn>
+                                                                                        </Columns>
+                                                                                    </dx:GridViewBandColumn>
+                                                                                    <dx:GridViewBandColumn Caption="OTHER BUS. EXPENSES" ShowInCustomizationForm="True" VisibleIndex="7">
                                                                                         <Columns>
                                                                                             <dx:GridViewDataTextColumn Caption="Type" ShowInCustomizationForm="True" VisibleIndex="0">
                                                                                             </dx:GridViewDataTextColumn>
@@ -4136,27 +4161,19 @@
                                                                                             </dx:GridViewDataTextColumn>
                                                                                         </Columns>
                                                                                     </dx:GridViewBandColumn>
-                                                                                </Columns>
-                                                                            </dx:GridViewBandColumn>
-                                                                            <dx:GridViewBandColumn Caption="OTHER BUS. EXPENSES" ShowInCustomizationForm="True" VisibleIndex="7">
-                                                                                <Columns>
-                                                                                    <dx:GridViewDataTextColumn Caption="Type" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                                                    </dx:GridViewDataTextColumn>
-                                                                                    <dx:GridViewDataTextColumn Caption="Amount" ShowInCustomizationForm="True" VisibleIndex="1">
+                                                                                    <dx:GridViewDataTextColumn Caption="LOCATION/PARTICULARS" ShowInCustomizationForm="True" VisibleIndex="2">
                                                                                     </dx:GridViewDataTextColumn>
                                                                                 </Columns>
-                                                                            </dx:GridViewBandColumn>
-                                                                            <dx:GridViewDataTextColumn Caption="LOCATION/PARTICULARS" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                                            </dx:GridViewDataTextColumn>
-                                                                        </Columns>
-                                                                    </dx:ASPxGridView>
-                                                                </dx:LayoutItemNestedControlContainer>
-                                                            </LayoutItemNestedControlCollection>
-                                                        </dx:LayoutItem>
+                                                                            </dx:ASPxGridView>
+                                                                        </dx:LayoutItemNestedControlContainer>
+                                                                    </LayoutItemNestedControlCollection>
+                                                                </dx:LayoutItem>
+                                                            </Items>
+                                                        </dx:LayoutGroup>
                                                     </Items>
                                                 </dx:LayoutGroup>
                                             </Items>
-                                        </dx:LayoutGroup>
+                                        </dx:TabbedLayoutGroup>
                                         <dx:LayoutItem Caption="Total Expenses" ColSpan="1" HorizontalAlign="Right" Visible="False">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">

@@ -47,7 +47,7 @@ namespace DX_WebTemplate
                     ApplyStylesToGrid(DocumentGrid, colorCode);
                     ApplyStylesToGrid(WFSequenceGrid, colorCode);
                     ApplyStylesToGrid(FAPWFGrid, colorCode);
-                    ApplyStylesToGrid(TraDocuGrid, colorCode);
+                    ApplyStylesToGrid(ASPxGridView22, colorCode);
                     ApplyStylesToGrid(ASPxGridView22, colorCode);
 
                     var mainExp = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).FirstOrDefault();

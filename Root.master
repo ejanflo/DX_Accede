@@ -5,6 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
 
     <title>Anflo Group Apps (AGA)</title>
     <link rel="icon" type="image/x-icon" href="/Content/Images/favicon.ico" />

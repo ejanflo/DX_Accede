@@ -456,13 +456,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxMemo locParticularsMemo0;
 
         /// <summary>
-        /// reimTranGrid0 control.
+        /// ASPxTextBox7 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxGridView reimTranGrid0;
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox7;
 
         /// <summary>
         /// fixedAllowGrid0 control.
@@ -474,13 +474,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxGridView fixedAllowGrid0;
 
         /// <summary>
-        /// miscTravelGrid0 control.
+        /// reimTranGrid0 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxGridView miscTravelGrid0;
+        protected global::DevExpress.Web.ASPxGridView reimTranGrid0;
 
         /// <summary>
         /// otherBusGrid0 control.
@@ -492,13 +492,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxGridView otherBusGrid0;
 
         /// <summary>
-        /// entertainmentGrid0 control.
+        /// miscTravelGrid0 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxGridView entertainmentGrid0;
+        protected global::DevExpress.Web.ASPxGridView miscTravelGrid0;
 
         /// <summary>
         /// busMealsGrid0 control.
@@ -510,6 +510,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxGridView busMealsGrid0;
 
         /// <summary>
+        /// entertainmentGrid0 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxGridView entertainmentGrid0;
+
+        /// <summary>
         /// ASPxGridView22 control.
         /// </summary>
         /// <remarks>
@@ -517,33 +526,6 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxGridView ASPxGridView22;
-
-        /// <summary>
-        /// TraUploadController control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxUploadControl TraUploadController;
-
-        /// <summary>
-        /// TraDocuGrid control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxGridView TraDocuGrid;
-
-        /// <summary>
-        /// btnTraDownload control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.GridViewCommandColumnCustomButton btnTraDownload;
 
         /// <summary>
         /// ASPxPageControl3 control.
@@ -636,13 +618,31 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxGridView ASPxGridView29;
 
         /// <summary>
-        /// ASPxTextBox7 control.
+        /// TraUploadController control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox7;
+        protected global::DevExpress.Web.ASPxUploadControl TraUploadController;
+
+        /// <summary>
+        /// TraDocuGrid control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxGridView TraDocuGrid;
+
+        /// <summary>
+        /// btnTraDownload control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.GridViewCommandColumnCustomButton btnTraDownload;
 
         /// <summary>
         /// LoadingPanel control.

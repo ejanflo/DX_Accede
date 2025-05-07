@@ -834,6 +834,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxMemo locParticularsMemo;
 
         /// <summary>
+        /// ASPxGridView22 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxGridView ASPxGridView22;
+
+        /// <summary>
         /// reimTranGrid control.
         /// </summary>
         /// <remarks>
@@ -886,15 +895,6 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxGridView busMealsGrid;
-
-        /// <summary>
-        /// ASPxGridView22 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxGridView ASPxGridView22;
 
         /// <summary>
         /// TraUploadController control.
