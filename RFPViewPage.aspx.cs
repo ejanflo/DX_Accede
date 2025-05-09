@@ -45,7 +45,27 @@ namespace DX_WebTemplate
                     //sqlMain.SelectParameters["UserId"].DefaultValue = empCode;
                     var rfp_id = Convert.ToInt32(Session["passRFPID"]);
                     var rfp_details = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == rfp_id).FirstOrDefault();
-                    var exp_details = _DataContext.ACCEDE_T_ExpenseMains.Where(x=>x.ID == rfp_details.Exp_ID).FirstOrDefault();
+                    if (rfp_details.isTravel == true)
+                    {
+                        var travelExp = _DataContext.ACCEDE_T_TravelExpenseMains
+                                       .FirstOrDefault(x => x.ID == rfp_details.Exp_ID);
+                        // Do something with travelExp
+
+                        if(travelExp != null)
+                            lbl_expLink.Text = travelExp.Doc_No.ToString();
+                        else
+                            ExpBtn.Visible = false;
+                    }
+                    else
+                    {
+                        var regularExp = _DataContext.ACCEDE_T_ExpenseMains
+                                         .FirstOrDefault(x => x.ID == rfp_details.Exp_ID);
+                        // Do something with regularExp
+                        if (regularExp != null)
+                            lbl_expLink.Text = regularExp.DocNo.ToString();
+                        else
+                            ExpBtn.Visible = false;
+                    }
 
                     var btnSub = formRFP.FindItemOrGroupByName("btnSubmit") as LayoutItem;
                     var btnEdit = formRFP.FindItemOrGroupByName("btnEditRFP") as LayoutItem;
@@ -94,20 +114,6 @@ namespace DX_WebTemplate
                                 DateTime date = Convert.ToDateTime(rfp_details.PLDate.ToString());
                                 PLD_lbl.Text = date.ToString("MMMM dd, yyyy");
                             }
-                        }
-
-                        if(rfp_details.Company_ID == 5)
-                        {
-                            wbs.Visible = true;
-                        }
-
-                        if (exp_details != null)
-                        {
-                            lbl_expLink.Text = exp_details.DocNo.ToString();
-                        }
-                        else
-                        {
-                            ExpBtn.Visible = false;
                         }
 
                         if (rfp_details.isForeignTravel != null && rfp_details.isForeignTravel == true)

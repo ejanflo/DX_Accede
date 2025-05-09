@@ -297,7 +297,7 @@ namespace DX_WebTemplate
                         }
                         else
                         {
-                            Response.Redirect("~/AccedeApprovalPage.aspx");
+                            Response.Redirect("~/AllAccedeApprovalPage.aspx");
                         }
                     }
                     
@@ -305,7 +305,9 @@ namespace DX_WebTemplate
                 catch (Exception ex)
                 {
                     //Session["MyRequestPath"] = Request.Url.AbsoluteUri;
-                    Response.Redirect("~/AccedeApprovalPage.aspx");
+                    Response.Redirect("~/AllAccedeApprovalPage.aspx");
+                    //string message = ex.Message.Replace("'", "\\'").Replace(Environment.NewLine, " ");
+                    //ClientScript.RegisterStartupScript(this.GetType(), "errorMessage", $"alert('{message}');", true);
                 }
                 
             }
