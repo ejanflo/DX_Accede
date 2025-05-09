@@ -199,6 +199,9 @@ namespace DX_WebTemplate
             Session["wf"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "WF_Id");
             Session["wfd"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "WFD_Id");
             Session["doc_stat"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "Status");
+            Session["prep"] = context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).Select(x => x.Preparer_Id).FirstOrDefault();
+            Session["empid"] = context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).Select(x => x.Employee_Id).FirstOrDefault();
+
             var app = context.ITP_S_DocumentTypes.Where(x => x.DCT_Id == Convert.ToInt32(expenseGrid.GetRowValuesByKeyValue(rowKey, "AppDocTypeId"))).Select(x => x.DCT_Name).FirstOrDefault();
 
             string actID = Convert.ToString(Session["PassActID"]);
@@ -224,8 +227,6 @@ namespace DX_WebTemplate
                 }
                 else if (app == "ACDE Expense Travel")
                 {
-                    Session["prep"] = context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).Select(x => x.Preparer_Id).FirstOrDefault();
-                    Session["empid"] = context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).Select(x => x.Employee_Id).FirstOrDefault();
                     ASPxWebControl.RedirectOnCallback("~/TravelExpenseReview.aspx");
                 }
             }

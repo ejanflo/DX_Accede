@@ -1,6 +1,7 @@
 ﻿using DevExpress.ClipboardSource.SpreadsheetML;
 using DevExpress.CodeParser;
 using DevExpress.Pdf.Native.DocumentSigning;
+using DevExpress.Pdf.Xmp;
 using DevExpress.Utils;
 using DevExpress.Web;
 using System;
@@ -86,16 +87,6 @@ namespace DX_WebTemplate
                             chargedCB.DropDownButton.Visible = false;
                             chargedCB0.DropDownButton.Visible = false;
                         }
-
-                        //var chargedComp = Convert.ToString(_DataContext.CompanyMasters.Where(x => x.WASSId == mainExp.ChargedToComp).Select(x => x.CompanyShortName).FirstOrDefault());
-                        //var chargedDept = Convert.ToString(_DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == mainExp.ChargedToDept).Select(x => x.DepCode).FirstOrDefault());
-
-                        //if (!string.IsNullOrEmpty(chargedComp) && !string.IsNullOrEmpty(chargedDept))
-                        //    chargedCB.Text = chargedComp + " - " + chargedDept;
-                        //else if (!string.IsNullOrEmpty(chargedComp) && string.IsNullOrEmpty(chargedDept))
-                        //    chargedCB.Text = chargedComp;
-                        //else if (string.IsNullOrEmpty(chargedComp) && !string.IsNullOrEmpty(chargedDept))
-                        //    chargedCB.Text = chargedDept;
                         
                         SqlMain.SelectParameters["ID"].DefaultValue = mainExp.ID.ToString();
                         timedepartTE.DateTime = DateTime.Parse(mainExp.Time_Departed.ToString());
@@ -197,7 +188,6 @@ namespace DX_WebTemplate
                                     {
                                         drpdown_ForwardWF.SelectedIndex = 0;
                                         SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
-
                                     }
                                 }
                             }
@@ -223,7 +213,6 @@ namespace DX_WebTemplate
                                 {
                                     drpdown_ForwardWF.SelectedIndex = 0;
                                     SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
-
                                 }
                             }
                         }
@@ -359,7 +348,6 @@ namespace DX_WebTemplate
 
                 if (mainExp != null)
                 {
-                    //Session["mainwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.IsRA == true && totExpCA >= x.Minimum && totExpCA <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault());
                     Session["mainwfid"] = Convert.ToString(mainExp.WF_Id);
                     SqlWF.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
                     SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
@@ -367,18 +355,6 @@ namespace DX_WebTemplate
                     Session["fapwfid"] = Convert.ToString(mainExp.FAPWF_Id);
                     SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
                     SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
-
-                    //if (Convert.ToString(Session["ford"]) == "Foreign")
-                    //{
-                    //    Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.ChargedToComp && x.Description.Contains("Travel Foreign FAP>Manager>VP>CFO/PRES") && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
-                    //}
-                    //else
-                    //{
-                    //    Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.ChargedToComp && x.Description.Contains("Travel Domestic FAP>Manager>VP") && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
-                    //}
-
-                    //SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
-                    //SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
                 }
             }
             catch (Exception)
@@ -432,6 +408,80 @@ namespace DX_WebTemplate
             SqlDocs.DataBind();
         }
 
+
+        public void SendEmailComplete(int id, int status, int prepID, string remarks, int sender)
+        {
+            ///////---START EMAIL PROCESS-----////////
+            var main = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).FirstOrDefault();
+            var compname = _DataContext.CompanyMasters.Where(x => x.WASSId == main.Company_Id).Select(x => x.CompanyShortName).FirstOrDefault();
+            var docno = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.Doc_No).FirstOrDefault();
+            var stat = _DataContext.ITP_S_Status
+                .Where(x => x.STS_Id == status)
+                .FirstOrDefault();
+
+            //Start--   Get Text info
+            var queryText = from texts in _DataContext.ITP_S_Texts
+                            where texts.Type == "Email" && texts.Name == "Complete"
+                            select texts;
+
+            var emailMessage = "";
+            var emailSubMessage = "";
+            var emailColor = "";
+
+            foreach (var text in queryText)
+            {
+                emailMessage = text.Text1.ToString();
+                emailSubMessage = text.Text2.ToString();
+                emailColor = text.Color.ToString();
+            }
+            //End--     Get Text info
+
+            var requestor_fullname = _DataContext.ITP_S_UserMasters
+                .Where(um => um.EmpCode == Convert.ToString(prepID))
+                .Select(um => um.FullName)
+                .FirstOrDefault();
+            var requestor_email = _DataContext.ITP_S_UserMasters
+                .Where(um => um.EmpCode == Convert.ToString(prepID))
+                .Select(um => um.Email)
+                .FirstOrDefault();
+            string appName = "ACCEDE EXPENSE REPORT";
+            string recipientName = requestor_fullname;
+            string senderName = Convert.ToString(_DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Convert.ToString(sender)).Select(x => x.FullName).FirstOrDefault());
+            string emailSender = Convert.ToString(_DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Convert.ToString(sender)).Select(x => x.Email).FirstOrDefault());
+            string senderRemarks = remarks;
+            string emailSite = "https://devapps.anflocor.com/Accede/AllAccedeApprovalPage.aspx";
+            string sendEmailTo = requestor_email;
+            string emailSubject = "Document No. " + docno + " (" + stat.STS_Description + ")";
+
+            ANFLO anflo = new ANFLO();
+
+            //Body Details Sample
+            string emailDetails = "";
+            string currentDate = DateTime.Now.ToShortDateString();
+
+            var queryER = from er in _DataContext.ACCEDE_T_TravelExpenseDetails
+                          where er.TravelExpenseMain_ID == id
+                          select er;
+
+            emailDetails = "<table border='1' cellpadding='2' cellspacing='0' width='100%' class='main' style='border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;background:#fff;border-radius:3px;width:100%;'>";
+            emailDetails += "<tr><td>Company</td><td><strong>" + compname + "</strong></td></tr>";
+            emailDetails += "<tr><td>Document Date</td><td><strong>" + currentDate + "</strong></td></tr>";
+            emailDetails += "<tr><td>Document No.</td><td><strong>" + main.Doc_No + "</strong></td></tr>";
+            emailDetails += "<tr><td>Status</td><td><strong>" + stat.STS_Description + "</strong></td></tr>";
+            emailDetails += "<tr><td>Document Purpose</td><td><strong>" + "Expense Report" + "</strong></td></tr>";
+            emailDetails += "</table>";
+            emailDetails += "<br>";
+
+            //End of Body Details Sample
+            string emailTemplate = anflo
+                .Email_Content_Formatter(appName, recipientName, emailMessage, emailSubMessage, senderName, emailSender,
+                emailDetails, senderRemarks, emailSite, emailColor);
+
+            if (anflo.Send_Email(emailSubject, emailTemplate, sendEmailTo))
+            {
+            }
+        }
+
         public void SendEmailWithCC(int id, string userID, int compID, int status, int prepID, string cc, string remarks)
         {
             ///////---START EMAIL PROCESS-----////////
@@ -475,9 +525,9 @@ namespace DX_WebTemplate
             string senderName = user_email.FullName;
             string emailSender = user_email.Email;
             string senderRemarks = remarks;
-            string emailSite = "https://apps.anflocor.com/ecclear/WebClearView.aspx";
+            string emailSite = "https://devapps.anflocor.com/Accede/AllAccedeApprovalPage.aspx";
             string sendEmailTo = requestor_email;
-            string emailSubject = "Document No. " + id + " (" + status + ")";
+            string emailSubject = "Document No. " + id + " (" + stat.STS_Description + ")";
 
             ANFLO anflo = new ANFLO();
 
@@ -489,22 +539,13 @@ namespace DX_WebTemplate
                           where er.TravelExpenseMain_ID == id
                           select er;
 
-            emailDetails = "<table border='1' cellpadding='2' cellspacing='0' width='100%' class='main' style='border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;background:#fff;border-radius:3px;width:100%;'>";
-            emailDetails += "<tr><td>Company</td><td><strong>" + comp_name.CompanyShortName + "</strong></td></tr>";
-            emailDetails += "<tr><td>Document Date</td><td><strong>" + currentDate + "</strong></td></tr>";
-            emailDetails += "<tr><td>Document No.</td><td><strong>" + id + "</strong></td></tr>";
-            emailDetails += "<tr><td>Preparer</td><td><strong>" + recipientName + "</strong></td></tr>";
-            emailDetails += "<tr><td>Status</td><td><strong>" + stat.STS_Description + "</strong></td></tr>";
-            emailDetails += "<tr><td>Document Purpose</td><td><strong>" + "Clearance Certificate" + "</strong></td></tr>";
-            emailDetails += "</table>";
-            emailDetails += "<br>";
 
             emailDetails = "<table border='1' cellpadding='2' cellspacing='0' width='100%' class='main' style='border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;background:#fff;border-radius:3px;width:100%;'>";
             emailDetails += "<tr><td>Company</td><td><strong>" + comp_name.CompanyShortName + "</strong></td></tr>";
             emailDetails += "<tr><td>Document Date</td><td><strong>" + currentDate + "</strong></td></tr>";
             emailDetails += "<tr><td>Document No.</td><td><strong>" + id + "</strong></td></tr>";
             emailDetails += "<tr><td>Preparer</td><td><strong>" + senderName + "</strong></td></tr>";
-            emailDetails += "<tr><td>Status</td><td><strong>" + status + "</strong></td></tr>";
+            emailDetails += "<tr><td>Status</td><td><strong>" + stat.STS_Description + "</strong></td></tr>";
             emailDetails += "<tr><td>Document Purpose</td><td><strong>" + "Expense Report" + "</strong></td></tr>";
             emailDetails += "</table>";
             emailDetails += "<br>";
@@ -534,10 +575,10 @@ namespace DX_WebTemplate
 
             if (anflo.Send_Email(emailSubject, emailTemplate, sendEmailTo, cc))
             {
-            };
+            }
         }
 
-        public void SendEmailFromCashP2P(int id, int status, int prepID)
+        public void SendEmailFromCashP2P(int id, int status, int prepID, int sender)
         {
             string currentDate = DateTime.Now.ToShortDateString();
 
@@ -552,8 +593,8 @@ namespace DX_WebTemplate
 
             //Start--   Get Text info
 
-            var emailMessage = "Your request is now pending at cashier.";
-            var emailSubMessage = "";
+            var emailMessage = "Your request is now " + stat;
+            var emailSubMessage = "Please forward the necessary documents and indicate the Document Reference Number.";
             var emailColor = "#006DD6";
             //End--     Get Text info
 
@@ -568,10 +609,10 @@ namespace DX_WebTemplate
 
             string appName = "ACCEDE EXPENSE REPORT";
             string recipientName = requestor_fullname;
-            string senderName = "";
-            string emailSender = "";
+            string senderName = Convert.ToString(_DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Convert.ToString(sender)).Select(x => x.FullName).FirstOrDefault());
+            string emailSender = Convert.ToString(_DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Convert.ToString(sender)).Select(x => x.Email).FirstOrDefault());
             string senderRemarks = "";
-            string emailSite = "https://devapps.anflocor.com/AccedeExpenseReportApproval.aspx";
+            string emailSite = "https://devapps.anflocor.com/Accede/AllAccedeApprovalPage.aspx";
             string sendEmailTo = requestor_email;
             string emailSubject = "Document No. " + main.Doc_No + " (" + stat + ")";
 
@@ -601,12 +642,13 @@ namespace DX_WebTemplate
             if (anflo.Send_Email(emailSubject, emailTemplate, sendEmailTo))
             {
             }
-            ;
         }
 
-        public void SendEmailFromAudit(int id, int status, int prepID, string remarks)
+        public void SendEmailFromAudit(int id, int status, int prepID, string remarks, int sender)
         {
             ///////---START EMAIL PROCESS-----////////
+            var main = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).FirstOrDefault();
+            var compname = _DataContext.CompanyMasters.Where(x => x.WASSId == main.Company_Id).Select(x => x.CompanyShortName).FirstOrDefault();
             var docno = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.Doc_No).FirstOrDefault();
             var stat = _DataContext.ITP_S_Status
                 .Where(x => x.STS_Id == status)
@@ -639,12 +681,12 @@ namespace DX_WebTemplate
                 .FirstOrDefault();
             string appName = "ACCEDE EXPENSE REPORT";
             string recipientName = requestor_fullname;
-            //string senderName = user_email.FullName;
-            //string emailSender = user_email.Email;
+            string senderName = Convert.ToString(_DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Convert.ToString(sender)).Select(x => x.FullName).FirstOrDefault());
+            string emailSender = Convert.ToString(_DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Convert.ToString(sender)).Select(x => x.Email).FirstOrDefault());
             string senderRemarks = remarks;
-            string emailSite = "https://apps.anflocor.com/ecclear/WebClearView.aspx";
+            string emailSite = "https://devapps.anflocor.com/Accede/AllAccedeApprovalPage.aspx";
             string sendEmailTo = requestor_email;
-            string emailSubject = "Document No. " + docno + " (" + stat + ")";
+            string emailSubject = "Document No. " + docno + " (" + stat.STS_Description + ")";
 
             ANFLO anflo = new ANFLO();
 
@@ -652,15 +694,27 @@ namespace DX_WebTemplate
             string emailDetails = "";
             string currentDate = DateTime.Now.ToShortDateString();
 
+            var queryER = from er in _DataContext.ACCEDE_T_TravelExpenseDetails
+                          where er.TravelExpenseMain_ID == id
+                          select er;
+
+            emailDetails = "<table border='1' cellpadding='2' cellspacing='0' width='100%' class='main' style='border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;background:#fff;border-radius:3px;width:100%;'>";
+            emailDetails += "<tr><td>Company</td><td><strong>" + compname + "</strong></td></tr>";
+            emailDetails += "<tr><td>Document Date</td><td><strong>" + currentDate + "</strong></td></tr>";
+            emailDetails += "<tr><td>Document No.</td><td><strong>" + main.Doc_No + "</strong></td></tr>";
+            emailDetails += "<tr><td>Status</td><td><strong>" + stat.STS_Description + "</strong></td></tr>";
+            emailDetails += "<tr><td>Document Purpose</td><td><strong>" + "Expense Report" + "</strong></td></tr>";
+            emailDetails += "</table>";
+            emailDetails += "<br>";
+
             //End of Body Details Sample
             string emailTemplate = anflo
-                .Email_Content_Formatter(appName, recipientName, emailMessage, emailSubMessage, string.Empty, string.Empty,
+                .Email_Content_Formatter(appName, recipientName, emailMessage, emailSubMessage, senderName, emailSender,
                 emailDetails, senderRemarks, emailSite, emailColor);
 
             if (anflo.Send_Email(emailSubject, emailTemplate, sendEmailTo))
             {
             }
-            ;
         }
 
         public void SendEmail(int doc_id, int org_id, int comps_id, int statusID)
@@ -668,6 +722,8 @@ namespace DX_WebTemplate
             string currentDate = DateTime.Now.ToShortDateString();
 
             var docno = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == doc_id).Select(x => x.Doc_No).FirstOrDefault();
+            var main = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == doc_id).FirstOrDefault();
+            var preparer = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Convert.ToString(main.Preparer_Id)).Select(x => x.FullName).FirstOrDefault();
 
             var status = _DataContext.ITP_S_Status
                 .Where(x => x.STS_Id == statusID)
@@ -717,7 +773,7 @@ namespace DX_WebTemplate
             string senderName = requestor_fullname;
             string emailSender = requestor_email;
             string senderRemarks = "";
-            string emailSite = "https://devapps.anflocor.com/AccedeExpenseReportApproval.aspx";
+            string emailSite = "https://devapps.anflocor.com/Accede/AllAccedeApprovalPage.aspx";
             string sendEmailTo = user_email.Email;
             string emailSubject = "Document No. " + docno + " (" + status + ")";
 
@@ -734,7 +790,7 @@ namespace DX_WebTemplate
             emailDetails += "<tr><td>Company</td><td><strong>" + comp_name.CompanyShortName + "</strong></td></tr>";
             emailDetails += "<tr><td>Document Date</td><td><strong>" + currentDate + "</strong></td></tr>";
             emailDetails += "<tr><td>Document No.</td><td><strong>" + docno + "</strong></td></tr>";
-            emailDetails += "<tr><td>Preparer</td><td><strong>" + senderName + "</strong></td></tr>";
+            emailDetails += "<tr><td>Preparer</td><td><strong>" + preparer + "</strong></td></tr>";
             emailDetails += "<tr><td>Status</td><td><strong>" + status + "</strong></td></tr>";
             emailDetails += "<tr><td>Document Purpose</td><td><strong>" + "Expense Report" + "</strong></td></tr>";
             emailDetails += "</table>";
@@ -765,7 +821,7 @@ namespace DX_WebTemplate
 
             if (anflo.Send_Email(emailSubject, emailTemplate, sendEmailTo))
             {
-            };
+            }
         }
 
         public void updateWA(int docID, int wfID, int wfaID, int status, string amount, string remarks, string userID, DateTime date, int reim_docID)
@@ -809,7 +865,7 @@ namespace DX_WebTemplate
                 DateTime currentDate = DateTime.Now;
                 string stats = _DataContext.ITP_S_Status.Where(x => x.STS_Id == stat).Select(x => x.STS_Description).FirstOrDefault();
 
-                if (stats != "Pending at Audit" || stats != "Pending at P2P" || stats != "Pending at Cashier")
+                if (stats == "Pending" || stats == "Pending at Finance" || stats == "Forwarded")
                 {
                     SendEmail(doc_id, org_id, comps_id, stat);
                 }
@@ -1156,6 +1212,9 @@ namespace DX_WebTemplate
                                 r.Status = completeStat;
                             }
                             _DataContext.SubmitChanges();
+
+                            SendEmailComplete(docID, completeStat, Convert.ToInt32(Session["prep"]), remarks, Convert.ToInt32(Session["userID"]));
+                            //SendEmailWithCC(docID, Convert.ToString(userID), companyID, completeStat, Convert.ToInt32(Session["prep"]), string.Empty, remarks);
                         }
                     }
                     else if (Convert.ToString(Session["doc_stat2"]) == "Pending at P2P")
@@ -1168,7 +1227,7 @@ namespace DX_WebTemplate
                             var cashstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Cashier" || s.STS_Name == "Pending at Cashier").Select(s => s.STS_Id).FirstOrDefault();
 
                             insertWA(cashierwf, cashierwfd, (int)cashierorID, docID, companyID, cashstatus, reim_docID);
-                            SendEmailFromCashP2P(docID, cashstatus, preparerID);
+                            SendEmailFromCashP2P(docID, cashstatus, Convert.ToInt32(Session["prep"]), Convert.ToInt32(Session["userID"]));
                         }
                         else
                         {
@@ -1185,6 +1244,8 @@ namespace DX_WebTemplate
                                 r.Status = completeStat;
                             }
                             _DataContext.SubmitChanges();
+
+                            SendEmailComplete(docID, completeStat, Convert.ToInt32(Session["prep"]), remarks, Convert.ToInt32(Session["userID"]));
                         }
                     }
                     else
@@ -1202,7 +1263,7 @@ namespace DX_WebTemplate
                             var cashstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Cashier" || s.STS_Name == "Pending at Cashier").Select(s => s.STS_Id).FirstOrDefault();
 
                             insertWA(cashierwf, cashierwfd, (int)cashierorID, docID, companyID, cashstatus, reim_docID);
-                            SendEmail(docID, (int)cashierorID, companyID, cashstatus);
+                            SendEmailComplete(docID, completeStat, Convert.ToInt32(Session["prep"]), remarks, Convert.ToInt32(Session["userID"]));
                         }
                         else
                         {
@@ -1268,7 +1329,7 @@ namespace DX_WebTemplate
                                                 var p2pstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at P2P" || s.STS_Name == "Pending at P2P").Select(s => s.STS_Id).FirstOrDefault();
 
                                                 insertWA(p2pwf, p2pwfd, (int)p2porID, docID, companyID, p2pstatus, reim_docID);
-                                                SendEmailFromCashP2P(docID, p2pstatus, preparerID);
+                                                SendEmailFromCashP2P(docID, p2pstatus, Convert.ToInt32(Session["prep"]), Convert.ToInt32(Session["userID"]));
                                             }
                                             else
                                             {
@@ -1278,7 +1339,7 @@ namespace DX_WebTemplate
                                                 var cashstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Cashier" || s.STS_Name == "Pending at Cashier").Select(s => s.STS_Id).FirstOrDefault();
 
                                                 insertWA(cashierwf, cashierwfd, (int)cashierorID, docID, companyID, cashstatus, reim_docID);
-                                                SendEmailFromCashP2P(docID, cashstatus, preparerID);
+                                                SendEmailFromCashP2P(docID, cashstatus, Convert.ToInt32(Session["prep"]), Convert.ToInt32(Session["userID"]));
                                             }
                                         }
                                     }
@@ -1288,7 +1349,7 @@ namespace DX_WebTemplate
                                         var audstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Audit" || s.STS_Name == "Pending at Audit").Select(s => s.STS_Id).FirstOrDefault();
                                         insertWA(Convert.ToInt32(audwf), Convert.ToInt32(audwfd), Convert.ToInt32(audorID), docID, companyID, audstatus, reim_docID);
                                         
-                                        SendEmailFromAudit(docID, audstatus, preparerID, string.Empty);
+                                        SendEmailFromAudit(docID, audstatus, Convert.ToInt32(Session["prep"]), string.Empty, Convert.ToInt32(Session["userID"]));
                                     }
                                 }
                             }
@@ -1523,15 +1584,6 @@ namespace DX_WebTemplate
 
                 // Load data from SqlDataSources into DataTables and merge
                 ds.Tables[0].Merge(GetDataTableFromSqlDataSource(SqlExpDetailsMap));
-
-                //ds.Tables[0].Merge(GetDataTableFromSqlDataSource(SqlRTMap));
-                //ds.Tables[1].Merge(GetDataTableFromSqlDataSource(SqlFAMap));
-                //ds.Tables[2].Merge(GetDataTableFromSqlDataSource(SqlMTMap));
-                //ds.Tables[3].Merge(GetDataTableFromSqlDataSource(SqlOBMap));
-                //ds.Tables[4].Merge(GetDataTableFromSqlDataSource(SqlEMap));
-                //ds.Tables[5].Merge(GetDataTableFromSqlDataSource(SqlBMMap));
-
-                //dsDoc.Tables[0].Merge(GetDataTableFromSqlDataSource(SqlDocs2));
             }
 
             // Bind the tables to the grids
@@ -1540,30 +1592,6 @@ namespace DX_WebTemplate
 
             TraDocuGrid.DataSource = SqlDocs2;
             TraDocuGrid.DataBind();
-
-            //reimTranGrid.DataSource = ds.Tables[0];
-            //fixedAllowGrid.DataSource = ds.Tables[1];
-            //miscTravelGrid.DataSource = ds.Tables[2];
-            //otherBusGrid.DataSource = ds.Tables[3];
-            //entertainmentGrid.DataSource = ds.Tables[4];
-            //busMealsGrid.DataSource = ds.Tables[5];
-            //TraDocuGrid.DataSource = dsDoc.Tables[0];
-
-            //// Data bind to refresh the grids
-            //reimTranGrid.DataBind();
-            //fixedAllowGrid.DataBind();
-            //miscTravelGrid.DataBind();
-            //otherBusGrid.DataBind();
-            //entertainmentGrid.DataBind();
-            //busMealsGrid.DataBind();
-            //TraDocuGrid.DataBind();
-
-            //reimTranGrid.JSProperties["cpSummary"] = reimTranGrid.GetTotalSummaryValue(reimTranGrid.TotalSummary["ReimTranspo_Amount"]);
-            //fixedAllowGrid.JSProperties["cpSummary"] = fixedAllowGrid.GetTotalSummaryValue(fixedAllowGrid.TotalSummary["FixedAllow_Amount"]);
-            //miscTravelGrid.JSProperties["cpSummary"] = miscTravelGrid.GetTotalSummaryValue(miscTravelGrid.TotalSummary["MiscTravelExp_Amount"]);
-            //otherBusGrid.JSProperties["cpSummary"] = otherBusGrid.GetTotalSummaryValue(otherBusGrid.TotalSummary["OtherBusinessExp_Amount"]);
-            //entertainmentGrid.JSProperties["cpSummary"] = entertainmentGrid.GetTotalSummaryValue(entertainmentGrid.TotalSummary["Entertainment_Amount"]);
-            //busMealsGrid.JSProperties["cpSummary"] = busMealsGrid.GetTotalSummaryValue(busMealsGrid.TotalSummary["BusinessMeal_Amount"]);
         }
 
         protected void ExpenseGrid_CustomColumnDisplayText(object sender, ASPxGridViewColumnDisplayTextEventArgs e)
@@ -1597,24 +1625,6 @@ namespace DX_WebTemplate
 
                 e.DisplayText = total == 0 ? "0.00" : total.ToString("N");
             }
-
-            //if (e.Column.FieldName == "TravelExpenseDetail_ID" && e.Column.Caption == "Other Travel Expenses")
-            //{
-            //    var amount1 = Convert.ToDecimal(_DataContext.ACCEDE_T_TraExpMiscTravelMaps.Where(or => or.TravelExpenseDetail_ID == Convert.ToInt32(e.Value)).Sum(or => or.MiscTravelExp_Amount));
-            //    var amount2 = _DataContext.ACCEDE_T_TraExpReimTranspoMaps.Where(or => or.TravelExpenseDetail_ID == Convert.ToInt32(e.Value)).Sum(or => or.ReimTranspo_Amount) ?? 0;
-            //    var amount3 = Convert.ToDecimal(_DataContext.ACCEDE_T_TraExpOtherBusMaps.Where(or => or.TravelExpenseDetail_ID == Convert.ToInt32(e.Value)).Sum(or => or.OtherBusinessExp_Amount));
-            //    var amount4 = Convert.ToDecimal(_DataContext.ACCEDE_T_TraExpEntertainmentMaps.Where(or => or.TravelExpenseDetail_ID == Convert.ToInt32(e.Value)).Sum(or => or.Entertainment_Amount));
-            //    var amount5 = Convert.ToDecimal(_DataContext.ACCEDE_T_TraExpBusinessMealMaps.Where(or => or.TravelExpenseDetail_ID == Convert.ToInt32(e.Value)).Sum(or => or.BusinessMeal_Amount));
-
-            //    var total = Convert.ToDecimal(amount1 + amount2 + amount3 + amount4 + amount5);
-
-            //    if (total.ToString() == "0.00" || string.IsNullOrEmpty(total.ToString()))
-            //        e.DisplayText = "0.00";
-            //    else
-            //    {
-            //        e.DisplayText = total.ToString("N");
-            //    }
-            //}
         }
 
         protected void ASPxGridView22_CustomColumnDisplayText(object sender, ASPxGridViewColumnDisplayTextEventArgs e)

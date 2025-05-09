@@ -212,7 +212,7 @@
                 success: function (response) {
                     // Update the description text box with the response value
                     ForwardPopup.Hide();
-                    window.open('TravelExpenseApprovalMain.aspx', '_self');
+                    window.open('AllAccedeApprovalPage.aspx', '_self');
                 },
                 error: function (xhr, status, error) {
                     console.log("Error:", error);
@@ -240,7 +240,7 @@
                 }),
                 success: function (response) {
                     ApprovePopup.Hide();
-                    window.open('TravelExpenseApprovalMain.aspx', '_self');
+                    window.open('AllAccedeApprovalPage.aspx', '_self');
                 },
                 failure: function (response) {
                     alert(response);
@@ -271,7 +271,7 @@
                 success: function (response) {
                     ReturnPopup.Hide();
                     DisapprovePopup.Hide();
-                    window.open('TravelExpenseApprovalMain.aspx', '_self');
+                    window.open('AllAccedeApprovalPage.aspx', '_self');
                 },
                 failure: function (response) {
                     alert(response);
@@ -1760,7 +1760,7 @@
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxButton ID="btnCancel" runat="server" AutoPostBack="False" BackColor="White" ClientInstanceName="btnCancel" EnableTheming="True" Font-Bold="False" ForeColor="Gray" Text="Cancel" Theme="iOS" UseSubmitBehavior="False">
                                             <ClientSideEvents Click="function(s, e) {
-	history.back()
+	rfpPopup.Hide();
 }" />
                                             <Border BorderColor="Gray" />
                                         </dx:ASPxButton>
