@@ -33,20 +33,25 @@ namespace DX_WebTemplate
                     DateTime fwdapprdate = DateTime.Now;
                     DateTime p2papprdate = DateTime.Now;
                     DateTime cashapprdate = DateTime.Now;
+                    DateTime audapprdate = DateTime.Now;
                     var finapprname = string.Empty;
                     var depapprname = string.Empty;
                     var fwdapprname0 = string.Empty;
                     var fwdapprname = string.Empty;
                     var p2papprname = string.Empty;
                     var cashapprname = string.Empty;
+                    var audapprname = string.Empty;
 
                     if (travel != null)
                     {
                         // Audit Approvers
                         var audwf = context.ITP_S_WorkflowHeaders.Where(x => x.Name == "ACDE AUDIT" && x.Company_Id == travel.Company_Id && x.Description == "ACDE AUDIT" && x.App_Id == 1032).Select(x => x.WF_Id).FirstOrDefault();
                         var audapprid = context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WF_Id == audwf && x.AppId == 1032).FirstOrDefault();
-                        var audapprdate = context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WF_Id == audwf && x.AppId == 1032).Select(x => x.DateAction).FirstOrDefault();
-                        var audapprname = context.ITP_S_UserMasters.Where(x => x.EmpCode == audapprid.ActedBy_User_Id).Select(x => x.FullName).FirstOrDefault().ToUpper() ?? string.Empty;
+                        if (audapprid != null)
+                        {
+                            audapprdate = Convert.ToDateTime(context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WF_Id == audwf && x.AppId == 1032).Select(x => x.DateAction).FirstOrDefault());
+                            audapprname = context.ITP_S_UserMasters.Where(x => x.EmpCode == audapprid.ActedBy_User_Id).Select(x => x.FullName).FirstOrDefault().ToUpper() ?? string.Empty;
+                        }
 
                         // FAP Approvers
                         var finwf = travel.FAPWF_Id;
@@ -80,13 +85,16 @@ namespace DX_WebTemplate
                         if (depwfd != null)
                         {
                             var depapprid = context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WFD_Id == depwfd.WFD_Id && x.WF_Id == depwf && x.AppId == 1032).Select(x => x.ActedBy_User_Id).FirstOrDefault();
-                            depapprdate = (DateTime)context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WFD_Id == depwfd.WFD_Id && x.WF_Id == depwf && x.AppId == 1032).Select(x => x.DateAction).FirstOrDefault();
-                            depapprname = context.ITP_S_UserMasters.Where(x => x.EmpCode == depapprid).Select(x => x.FullName).FirstOrDefault().ToUpper() ?? string.Empty;
+                            if (depapprid != null)
+                            {
+                                depapprdate = (DateTime)context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WFD_Id == depwfd.WFD_Id && x.WF_Id == depwf && x.AppId == 1032).Select(x => x.DateAction).FirstOrDefault();
+                                depapprname = context.ITP_S_UserMasters.Where(x => x.EmpCode == depapprid).Select(x => x.FullName).FirstOrDefault().ToUpper() ?? string.Empty;
+                            }
                         }
 
                         // P2P Approvers
                         var p2pwf = context.ITP_S_WorkflowHeaders.Where(x => x.Name == "ACDE P2P" && x.Company_Id == travel.Company_Id && x.Description == "ACDE P2P" && x.App_Id == 1032).Select(x => x.WF_Id).FirstOrDefault();
-                        var p2papprid = context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WF_Id == p2pwf && x.AppId == 1032).FirstOrDefault();
+                        var p2papprid = context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WF_Id == p2pwf && x.AppId == 1032).FirstOrDefault() ?? null;
 
                         if (p2papprid != null)
                         {
@@ -96,7 +104,7 @@ namespace DX_WebTemplate
 
                         // Cashier Approvers
                         var cashpwf = context.ITP_S_WorkflowHeaders.Where(x => x.Name == "ACDE CASHIER" && x.Company_Id == travel.Company_Id && x.Description == "ACDE CASHIER" && x.App_Id == 1032).Select(x => x.WF_Id).FirstOrDefault();
-                        var cashapprid = context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WF_Id == cashpwf && x.AppId == 1032).FirstOrDefault();
+                        var cashapprid = context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WF_Id == cashpwf && x.AppId == 1032).FirstOrDefault() ?? null;
 
                         if (cashapprid != null)
                         {
@@ -220,7 +228,6 @@ namespace DX_WebTemplate
                 }
                 catch (Exception)
                 {
-
                     throw;
                 }
             }

@@ -1255,7 +1255,7 @@ namespace DX_WebTemplate
 
                         var hasRetStatus2 = _DataContext.ITP_T_WorkflowActivities.Any(w => w.AppId == 1032 && w.Document_Id == docID && w.AppDocTypeId == doctype_id && w.Status == 3);
 
-                        if ((Convert.ToDecimal(Session["totalCA"]) > Convert.ToDecimal(Session["totalEXP"])) && (countCashWF <= 0 && !hasRetStatus2 ))
+                        if ((Convert.ToDecimal(Session["totalCA"]) > Convert.ToDecimal(Session["totalEXP"])) && (countCashWF <= 0 && !hasRetStatus2))
                         {
                             var cashierwf = _DataContext.ITP_S_WorkflowHeaders.Where(w => w.Name == "ACDE CASHIER" && w.App_Id == 1032 && w.Company_Id == companyID).Select(x => x.WF_Id).FirstOrDefault();
                             var cashierwfd = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == cashierwf && w.Sequence == 1).Select(w => w.WFD_Id).FirstOrDefault();
@@ -1348,7 +1348,7 @@ namespace DX_WebTemplate
                                         Debug.WriteLine("No AUDWF");
                                         var audstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Audit" || s.STS_Name == "Pending at Audit").Select(s => s.STS_Id).FirstOrDefault();
                                         insertWA(Convert.ToInt32(audwf), Convert.ToInt32(audwfd), Convert.ToInt32(audorID), docID, companyID, audstatus, reim_docID);
-                                        
+
                                         SendEmailFromAudit(docID, audstatus, Convert.ToInt32(Session["prep"]), string.Empty, Convert.ToInt32(Session["userID"]));
                                     }
                                 }
@@ -1365,7 +1365,7 @@ namespace DX_WebTemplate
             }
             catch (Exception)
             {
-                
+
                 throw;
             }
         }
