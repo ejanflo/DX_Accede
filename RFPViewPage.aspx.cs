@@ -354,7 +354,7 @@ namespace DX_WebTemplate
                     result = new
                     {
                         status = "success",
-                        link = "AccedeExpenseViewPage.aspx"
+                        link = "TravelExpenseView.aspx"
                     };
                 }
                 else
