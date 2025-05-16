@@ -760,6 +760,9 @@ onTravelClick();
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxComboBox ID="drpdown_Payee" runat="server" ClientInstanceName="drpdown_Payee" OnCallback="drpdown_Payee_Callback" TextField="FullName" ValueField="DelegateFor_UserID" Width="100%">
+                                            <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	CAHistoryGrid2.PerformCallback(s.GetValue());
+}" />
                                             <ClearButton DisplayMode="Always">
                                             </ClearButton>
                                             <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="CreationForm">
@@ -867,7 +870,7 @@ onTravelClick();
                                     <dx:LayoutItem Caption="" ColSpan="1" Width="100%">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxGridView ID="ASPxGridView1" runat="server" Width="100%" AutoGenerateColumns="False" DataSourceID="SqlCAHistory" KeyFieldName="ID">
+                                                <dx:ASPxGridView ID="CAHistoryGrid" runat="server" Width="100%" AutoGenerateColumns="False" DataSourceID="SqlCAHistory" KeyFieldName="ID" ClientInstanceName="CAHistoryGrid" OnCustomCallback="CAHistoryGrid_CustomCallback">
                                                     <SettingsPager PageSize="5">
                                                     </SettingsPager>
                                                     <SettingsPopup>
@@ -1449,7 +1452,7 @@ SavePopup.Hide();
                                         <dx:LayoutItem Caption="" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxGridView ID="ASPxGridView2" runat="server" AutoGenerateColumns="False" DataSourceID="SqlCAHistory" KeyFieldName="ID" Width="100%">
+                                                    <dx:ASPxGridView ID="CAHistoryGrid2" runat="server" AutoGenerateColumns="False" DataSourceID="SqlCAHistory" KeyFieldName="ID" Width="100%" ClientInstanceName="CAHistoryGrid2" OnCustomCallback="CAHistoryGrid2_CustomCallback">
                                                         <SettingsPager PageSize="5">
                                                         </SettingsPager>
                                                         <SettingsPopup>
@@ -1471,8 +1474,6 @@ SavePopup.Hide();
                                                             <dx:GridViewDataTextColumn FieldName="SAPCostCenter" ShowInCustomizationForm="True" Visible="False" VisibleIndex="7">
                                                             </dx:GridViewDataTextColumn>
                                                             <dx:GridViewDataTextColumn FieldName="IO_Num" ShowInCustomizationForm="True" Visible="False" VisibleIndex="8">
-                                                            </dx:GridViewDataTextColumn>
-                                                            <dx:GridViewDataTextColumn FieldName="Payee" ShowInCustomizationForm="True" Visible="False" VisibleIndex="9">
                                                             </dx:GridViewDataTextColumn>
                                                             <dx:GridViewDataDateColumn FieldName="LastDayTransact" ShowInCustomizationForm="True" Visible="False" VisibleIndex="10">
                                                             </dx:GridViewDataDateColumn>
@@ -1512,6 +1513,10 @@ SavePopup.Hide();
                                                             </dx:GridViewDataComboBoxColumn>
                                                             <dx:GridViewDataComboBoxColumn FieldName="Status" ShowInCustomizationForm="True" VisibleIndex="15">
                                                                 <PropertiesComboBox DataSourceID="SqlStatus" TextField="STS_Name" ValueField="STS_Id">
+                                                                </PropertiesComboBox>
+                                                            </dx:GridViewDataComboBoxColumn>
+                                                            <dx:GridViewDataComboBoxColumn Caption="Payee" FieldName="Payee" ShowInCustomizationForm="True" VisibleIndex="9">
+                                                                <PropertiesComboBox DataSourceID="SqlUserAll" TextField="FullName" ValueField="EmpCode">
                                                                 </PropertiesComboBox>
                                                             </dx:GridViewDataComboBoxColumn>
                                                         </Columns>
@@ -1585,9 +1590,9 @@ SavePopup.Hide();
             <asp:Parameter DefaultValue="ExpCat" Name="Code" Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlCAHistory" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_RFPMain] WHERE (([User_ID] = @User_ID) AND ([IsExpenseCA] = @IsExpenseCA)) ORDER BY [DateCreated] DESC">
+    <asp:SqlDataSource ID="SqlCAHistory" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_RFPMain] WHERE (([Payee] = @Payee) AND ([IsExpenseCA] = @IsExpenseCA)) ORDER BY [DateCreated] DESC">
         <SelectParameters>
-            <asp:Parameter Name="User_ID" Type="String" />
+            <asp:Parameter Name="Payee" />
             <asp:Parameter DefaultValue="True" Name="IsExpenseCA" Type="Boolean" />
         </SelectParameters>
     </asp:SqlDataSource>
@@ -1636,4 +1641,5 @@ SavePopup.Hide();
             <asp:Parameter Name="Company_ID" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlUserAll" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_UserMaster]"></asp:SqlDataSource>
 </asp:Content>

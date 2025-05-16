@@ -71,7 +71,7 @@ namespace DX_WebTemplate
                     SqlDepartment.SelectParameters["UserId"].DefaultValue = empCode;
                     SqlWF.SelectParameters["UserId"].DefaultValue = empCode;
                     SqlExpense.SelectParameters["UserId"].DefaultValue = empCode;
-                    SqlCAHistory.SelectParameters["User_ID"].DefaultValue = empCode;
+                    SqlCAHistory.SelectParameters["Payee"].DefaultValue = empCode;
 
                     drpdown_currency.Value = "PHP";
                     drpdown_currency.DataBind();
@@ -990,7 +990,7 @@ namespace DX_WebTemplate
         public bool UnliqCACheck()
         {
             var disburse_stat = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Disbursed").FirstOrDefault();
-            var unliquidated_CA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.IsExpenseCA == true).Where(x => x.Status == Convert.ToInt32(disburse_stat.STS_Id)).Where(x=>x.User_ID == Session["userID"].ToString());
+            var unliquidated_CA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.IsExpenseCA == true).Where(x => x.Status == Convert.ToInt32(disburse_stat.STS_Id)).Where(x=>x.Payee == Session["userID"].ToString());
 
             if (unliquidated_CA.Count() > 0)
             {
@@ -1102,6 +1102,28 @@ namespace DX_WebTemplate
             drpdown_CompLocation.DataSourceID = null;
             drpdown_CompLocation.DataSource = SqlCompLocation;
             drpdown_CompLocation.DataBind();
+        }
+
+        protected void CAHistoryGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            var user = e.Parameters.ToString();
+
+            SqlCAHistory.SelectParameters["Payee"].DefaultValue = user;
+            CAHistoryGrid.DataSourceID = null;
+            CAHistoryGrid.DataSource = SqlCAHistory;
+            CAHistoryGrid.DataBind();
+        }
+
+        protected void CAHistoryGrid2_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            var user = e.Parameters.ToString();
+
+            SqlCAHistory.SelectParameters["Payee"].DefaultValue = user;
+            SqlCAHistory.DataBind();
+
+            CAHistoryGrid2.DataSourceID = null;
+            CAHistoryGrid2.DataSource = SqlCAHistory;
+            CAHistoryGrid2.DataBind();
         }
     }
 }

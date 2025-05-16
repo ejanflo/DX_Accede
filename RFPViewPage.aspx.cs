@@ -348,6 +348,7 @@ namespace DX_WebTemplate
                     throw new Exception("RFP details not found.");
 
                 Session["ExpenseId"] = rfpDetails.Exp_ID;
+                Session["TravelExp_Id"] = rfpDetails.Exp_ID;
 
                 if (rfpDetails.isTravel == true)
                 {

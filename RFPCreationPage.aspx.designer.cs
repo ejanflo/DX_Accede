@@ -249,13 +249,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxButton btnToggle;
 
         /// <summary>
-        /// ASPxGridView1 control.
+        /// CAHistoryGrid control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxGridView ASPxGridView1;
+        protected global::DevExpress.Web.ASPxGridView CAHistoryGrid;
 
         /// <summary>
         /// UploadController control.
@@ -582,13 +582,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxFormLayout ASPxFormLayout4;
 
         /// <summary>
-        /// ASPxGridView2 control.
+        /// CAHistoryGrid2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxGridView ASPxGridView2;
+        protected global::DevExpress.Web.ASPxGridView CAHistoryGrid2;
 
         /// <summary>
         /// SqlCompany control.
@@ -769,5 +769,14 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlCostCenterCT;
+
+        /// <summary>
+        /// SqlUserAll control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlUserAll;
     }
 }
