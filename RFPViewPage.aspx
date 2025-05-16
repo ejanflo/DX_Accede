@@ -125,9 +125,9 @@
                 }),
                 success: function (response) {
                     // Update the description text box with the response value
-                    if (response.d) {
+                    if (response.d.status == "success") {
                         LoadingPanel.SetText('Redirecting&hellip;');
-                        window.location.href = 'AccedeExpenseViewPage.aspx';
+                        window.location.href = response.d.link;
 
                     } else {
 
