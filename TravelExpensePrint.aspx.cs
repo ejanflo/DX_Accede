@@ -28,6 +28,7 @@ namespace DX_WebTemplate
                     var travel = context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).FirstOrDefault();
 
                     DateTime finapprdate = DateTime.Now;
+                    DateTime finapprdate1 = DateTime.Now;
                     DateTime depapprdate = DateTime.Now;
                     DateTime fwdapprdate0 = DateTime.Now;
                     DateTime fwdapprdate = DateTime.Now;
@@ -35,6 +36,7 @@ namespace DX_WebTemplate
                     DateTime cashapprdate = DateTime.Now;
                     DateTime audapprdate = DateTime.Now;
                     var finapprname = string.Empty;
+                    var finapprname1 = string.Empty;
                     var depapprname = string.Empty;
                     var fwdapprname0 = string.Empty;
                     var fwdapprname = string.Empty;
@@ -67,6 +69,15 @@ namespace DX_WebTemplate
                             var finapprid = context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WFD_Id == finwfd.WFD_Id && x.WF_Id == finwf && x.AppId == 1032).Select(x => x.ActedBy_User_Id).FirstOrDefault();
                             finapprdate = (DateTime)context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WFD_Id == finwfd.WFD_Id && x.WF_Id == finwf && x.AppId == 1032).Select(x => x.DateAction).FirstOrDefault();
                             finapprname = context.ITP_S_UserMasters.Where(x => x.EmpCode == finapprid).Select(x => x.FullName).FirstOrDefault().ToUpper() ?? string.Empty;
+                        }
+
+                        var finwfd1 = context.ITP_S_WorkflowDetails.Where(x => x.WF_Id == finwf && x.Sequence == 3).FirstOrDefault();
+
+                        if (finwfd1 != null)
+                        {
+                            var finapprid1 = context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WFD_Id == finwfd.WFD_Id && x.WF_Id == finwf && x.AppId == 1032).Select(x => x.ActedBy_User_Id).FirstOrDefault();
+                            finapprdate1 = (DateTime)context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WFD_Id == finwfd.WFD_Id && x.WF_Id == finwf && x.AppId == 1032).Select(x => x.DateAction).FirstOrDefault();
+                            finapprname1 = context.ITP_S_UserMasters.Where(x => x.EmpCode == finapprid1).Select(x => x.FullName).FirstOrDefault().ToUpper() ?? string.Empty;
                         }
 
                         // Line Manager Approvers
@@ -184,6 +195,8 @@ namespace DX_WebTemplate
                         report.Parameters["empdate"].Value = empdate;
                         report.Parameters["audapprname"].Value = audapprname;
                         report.Parameters["audapprdate"].Value = audapprdate;
+                        report.Parameters["finapprname1"].Value = finapprname1;
+                        report.Parameters["finapprdate1"].Value = finapprdate1;
                         report.Parameters["finapprname0"].Value = finapprname0;
                         report.Parameters["finapprdate0"].Value = finapprdate0;
                         report.Parameters["finapprname"].Value = finapprname;

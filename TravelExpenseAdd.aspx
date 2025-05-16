@@ -2766,7 +2766,7 @@
                                             </Items>
                                         </dx:LayoutGroup>
                                         <dx:LayoutGroup Caption="" ColCount="3" ColSpan="1" ColumnCount="3" GroupBoxDecoration="Box" Width="100%" VerticalAlign="Middle">
-                                            <Paddings PaddingLeft="0px" PaddingRight="0px" PaddingTop="20px" />
+                                            <Paddings PaddingLeft="0px" PaddingRight="0px" PaddingTop="0px" />
                                             <GroupBoxStyle>
                                                 <Border BorderColor="#006838" BorderStyle="Solid" BorderWidth="1px" />
                                             </GroupBoxStyle>

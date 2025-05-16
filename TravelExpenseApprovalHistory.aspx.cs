@@ -30,7 +30,8 @@ namespace DX_WebTemplate
         {
             object value = e.GetFieldValue("AppDocTypeId");
             int app = (value != DBNull.Value) ? Convert.ToInt32(value) : 0;
-            var id = Convert.ToInt32(e.GetFieldValue("Document_Id"));
+            var id = Convert.ToInt32(e.GetFieldValue("Document_Id")); 
+            var wfa = Convert.ToInt32(e.GetFieldValue("WFA_Id"));
 
             if (e.Column.Caption == "Document No.")
             {
@@ -125,13 +126,7 @@ namespace DX_WebTemplate
 
                 if (app != 0)
                 {
-                    var appname = context.ITP_S_DocumentTypes.Where(x => x.DCT_Id == app).Select(x => x.DCT_Name).FirstOrDefault();
-                    if (appname == "ACDE RFP")
-                        remarks = Convert.ToString(context.ACCEDE_T_RFPMains.Where(x => x.ID == id).Select(x => x.Remarks).FirstOrDefault() ?? string.Empty);
-                    else if (appname == "ACDE Expense")
-                        remarks = Convert.ToString(context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.remarks).FirstOrDefault() ?? string.Empty);
-                    else if (appname == "ACDE Expense Travel")
-                        remarks = Convert.ToString(context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.Remarks).FirstOrDefault() ?? string.Empty);
+                    remarks = Convert.ToString(context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == id && x.WFA_Id == wfa).Select(x => x.Remarks).FirstOrDefault() ?? string.Empty);
                 }
 
                 e.DisplayText = remarks;

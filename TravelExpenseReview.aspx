@@ -370,7 +370,7 @@
                                             <dx:ASPxButton ID="cancelBtn" runat="server" BackColor="White" Font-Bold="True" Font-Size="Small" ForeColor="#878787" HorizontalAlign="Right" Text="Cancel" AutoPostBack="False" ClientInstanceName="cancelBtn" UseSubmitBehavior="False">
                                                 <ClientSideEvents Click="function(s, e) {
                         LoadingPanel.Show();
-                        window.location.href = &quot;AllAccedeApprovalPage.aspx&quot;;
+                        history.back();
         }" />
                                             </dx:ASPxButton>
                                         </dx:LayoutItemNestedControlContainer>
@@ -788,9 +788,10 @@
                                                 <dx:EmptyLayoutItem ColSpan="1">
                                                     <BorderTop BorderColor="#878787" BorderStyle="Solid" BorderWidth="1px" />
                                                 </dx:EmptyLayoutItem>
-                                                <dx:LayoutGroup Caption="For Accounting Department Use Only" ColSpan="1" GroupBoxDecoration="HeadingLine" Name="forAccounting">
+                                                <dx:LayoutGroup Caption="For Accounting Department Use Only" ColSpan="1" GroupBoxDecoration="HeadingLine" Name="forAccounting" CssClass="p-0">
+                                                    <Paddings Padding="0px" />
                                                     <Items>
-                                                        <dx:LayoutItem Caption="" ColSpan="1" Width="100%">
+                                                        <dx:LayoutItem Caption="" ColSpan="1" Width="100%" CssClass="p-0">
                                                             <LayoutItemNestedControlCollection>
                                                                 <dx:LayoutItemNestedControlContainer runat="server">
                                                                     <dx:ASPxGridView ID="forAccountingGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="forAccountingGrid" CssClass="shadow-sm" DataSourceID="SqlTravelForAccounting" Font-Italic="False" KeyFieldName="ID" OnRowInserting="forAccountingGrid_RowInserting" Width="100%">
@@ -839,10 +840,15 @@
                                                                                 <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
                                                                             </Cell>
                                                                         </Styles>
+                                                                        <Paddings Padding="0px" />
                                                                         <Border BorderColor="#006838" />
                                                                     </dx:ASPxGridView>
                                                                 </dx:LayoutItemNestedControlContainer>
                                                             </LayoutItemNestedControlCollection>
+                                                            <Paddings Padding="0px" />
+                                                            <ParentContainerStyle>
+                                                                <Paddings Padding="0px" />
+                                                            </ParentContainerStyle>
                                                         </dx:LayoutItem>
                                                     </Items>
                                                     <ParentContainerStyle Font-Bold="True" Font-Size="Small">
@@ -1370,7 +1376,7 @@
                                                                                     </Style>
                                                                                 </Styles>
                                                                             </dx:GridViewCommandColumnCustomButton>
-                                                                            <dx:GridViewCommandColumnCustomButton ID="btnSupEdit" Text="Edit">
+                                                                            <dx:GridViewCommandColumnCustomButton ID="btnSupEdit" Text="Edit" Visibility="Invisible">
                                                                                 <Image IconID="iconbuilder_actions_edit_svg_16x16">
                                                                                 </Image>
                                                                                 <Styles>
@@ -1379,7 +1385,7 @@
                                                                                     </Style>
                                                                                 </Styles>
                                                                             </dx:GridViewCommandColumnCustomButton>
-                                                                            <dx:GridViewCommandColumnCustomButton ID="btnSupDelete" Text="Remove">
+                                                                            <dx:GridViewCommandColumnCustomButton ID="btnSupDelete" Text="Remove" Visibility="Invisible">
                                                                                 <Image IconID="iconbuilder_actions_deletecircled_svg_16x16">
                                                                                 </Image>
                                                                                 <Styles>

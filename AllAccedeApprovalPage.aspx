@@ -176,20 +176,6 @@
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:GridViewDataComboBoxColumn>
-                                                <dx:GridViewDataComboBoxColumn FieldName="Status" ShowInCustomizationForm="True" VisibleIndex="8">
-                                                    <PropertiesComboBox DataSourceID="sqlStatus" TextField="STS_Description" ValueField="STS_Id">
-                                                    </PropertiesComboBox>
-                                                    <CellStyle HorizontalAlign="Center">
-                                                    </CellStyle>
-                                                    <Columns>
-                                                        <dx:GridViewDataTextColumn ShowInCustomizationForm="True" VisibleIndex="0" Caption="Remarks">
-                                                            <PropertiesTextEdit NullDisplayText=" ">
-                                                            </PropertiesTextEdit>
-                                                            <CellStyle HorizontalAlign="Left">
-                                                            </CellStyle>
-                                                        </dx:GridViewDataTextColumn>
-                                                    </Columns>
-                                                </dx:GridViewDataComboBoxColumn>
                                                 <dx:GridViewDataDateColumn FieldName="DateAction" ShowInCustomizationForm="True" VisibleIndex="10" Visible="False">
                                                 </dx:GridViewDataDateColumn>
                                                 <dx:GridViewDataTextColumn FieldName="AppId" ShowInCustomizationForm="True" VisibleIndex="11" Visible="False">
@@ -200,7 +186,7 @@
                                                 </dx:GridViewDataTextColumn>
                                                 <dx:GridViewDataTextColumn FieldName="CompanyId" ShowInCustomizationForm="True" Visible="False" VisibleIndex="14">
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataComboBoxColumn Caption="Document Type" FieldName="AppDocTypeId" ShowInCustomizationForm="True" VisibleIndex="6">
+                                                <dx:GridViewDataComboBoxColumn Caption="Document Type" FieldName="AppDocTypeId" ShowInCustomizationForm="True" VisibleIndex="5">
                                                     <PropertiesComboBox DataSourceID="SqlAppDocType" TextField="DCT_Description" ValueField="DCT_Id">
                                                     </PropertiesComboBox>
                                                     <Columns>
@@ -210,13 +196,25 @@
                                                         </dx:GridViewDataDateColumn>
                                                     </Columns>
                                                 </dx:GridViewDataComboBoxColumn>
-                                                <dx:GridViewDataTextColumn Caption="Purpose" ShowInCustomizationForm="True" VisibleIndex="7">
+                                                <dx:GridViewDataTextColumn Caption="Purpose" ShowInCustomizationForm="True" VisibleIndex="6">
                                                     <Columns>
                                                         <dx:GridViewDataTextColumn Caption="Preparer" ShowInCustomizationForm="True" VisibleIndex="0">
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:GridViewDataTextColumn>
                                                 <dx:GridViewDataTextColumn FieldName="WFA_Id" ShowInCustomizationForm="True" Visible="False" VisibleIndex="15">
+                                                </dx:GridViewDataTextColumn>
+                                                <dx:GridViewDataTextColumn Caption="Status" FieldName="STS_Description" ShowInCustomizationForm="True" VisibleIndex="9">
+                                                    <CellStyle HorizontalAlign="Center">
+                                                    </CellStyle>
+                                                    <Columns>
+                                                        <dx:GridViewDataTextColumn Caption="Remarks" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                            <PropertiesTextEdit NullDisplayText=" ">
+                                                            </PropertiesTextEdit>
+                                                            <CellStyle HorizontalAlign="Left">
+                                                            </CellStyle>
+                                                        </dx:GridViewDataTextColumn>
+                                                    </Columns>
                                                 </dx:GridViewDataTextColumn>
                                             </Columns>
                                             <Toolbars>
@@ -262,77 +260,23 @@
                                                 </dx:GridViewToolbar>
                                             </Toolbars>
                                             <FormatConditions>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 1" FieldName="Status" Format="Custom">
+                                                <dx:GridViewFormatConditionHighlight Expression="[STS_Description] = 'Pending' Or [STS_Description] = 'Pending at Finance' Or [STS_Description] = 'Pending at Audit' Or [STS_Description] = 'Pending at P2P' Or [STS_Description] = 'Pending at Cashier'" FieldName="STS_Description" Format="Custom">
                                                     <CellStyle Font-Bold="True" ForeColor="#006DD6">
                                                     </CellStyle>
                                                 </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 3" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#E67C0E">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 7" FieldName="Status" Format="Custom">
+                                                <dx:GridViewFormatConditionHighlight Expression="[STS_Description] = 'Completed' Or [STS_Description] = 'Approved'" FieldName="STS_Description" Format="Custom">
                                                     <CellStyle Font-Bold="True" ForeColor="#006838">
                                                     </CellStyle>
                                                 </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 8" FieldName="Status" Format="Custom">
+                                                <dx:GridViewFormatConditionHighlight Expression="[STS_Description] = 'Returned' Or [STS_Description] = 'Rejected'" FieldName="STS_Description" Format="Custom">
+                                                    <CellStyle Font-Bold="True" ForeColor="#E67C0E">
+                                                    </CellStyle>
+                                                </dx:GridViewFormatConditionHighlight>
+                                                <dx:GridViewFormatConditionHighlight Expression="[STS_Description] = 'Disapproved'" FieldName="STS_Description" Format="Custom">
                                                     <CellStyle Font-Bold="True" ForeColor="#CC2A17">
                                                     </CellStyle>
                                                 </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 13" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#666666">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 20" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#006DD6">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 21" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#006DD6">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 22" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#006DD6">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Progress] &lt; 30" FieldName="Progress" Format="GreenText">
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 30" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#006DD6">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 38" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#006DD6">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 34" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#006DD6">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 36" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#006DD6">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 29" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#E67C0E">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 39" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#E67C0E">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 35" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#E67C0E">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 37" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#E67C0E">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 40" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#006838">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 41" FieldName="Status" Format="Custom">
+                                                <dx:GridViewFormatConditionHighlight Expression="[STS_Description] = 'Forwarded'" FieldName="STS_Description" Format="Custom">
                                                     <CellStyle Font-Bold="True" ForeColor="#878787">
                                                     </CellStyle>
                                                 </dx:GridViewFormatConditionHighlight>

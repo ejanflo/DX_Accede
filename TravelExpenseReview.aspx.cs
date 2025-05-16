@@ -4,6 +4,7 @@ using DevExpress.Pdf.Native.DocumentSigning;
 using DevExpress.Pdf.Xmp;
 using DevExpress.Utils;
 using DevExpress.Web;
+using DevExpress.XtraPrinting;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -20,6 +21,7 @@ using System.Web;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using static DevExpress.XtraEditors.Mask.MaskSettings;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace DX_WebTemplate
@@ -472,6 +474,25 @@ namespace DX_WebTemplate
             emailDetails += "</table>";
             emailDetails += "<br>";
 
+            emailDetails += "<table border='1' cellpadding='2' cellspacing='0' width='100%' class='main' style='border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;background:#fff;border-radius:3px;width:100%;'>";
+            emailDetails += "<tr><th colspan='6'> Document Details </th> </tr>";
+            emailDetails += "<tr><th>Expense Type</th><th>Location/Particulars</th><th>Date</th><th>Total Expenses</th></tr>";
+
+            foreach (var item in queryER)
+            {
+                var exp = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.ExpenseType_ID).FirstOrDefault();
+                var travel = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.ForeignDomestic).FirstOrDefault();
+                var expType = _DataContext.ACCEDE_S_ExpenseTypes.Where(x => x.ExpenseType_ID == exp).Select(x => x.Description).FirstOrDefault();
+                emailDetails +=
+                            "<tr>" +
+                            "<td style='text-align: center;'>" + expType + "</td>" +
+                            "<td style='text-align: center;'>" + item.LocParticulars + "</td>" +
+                            "<td style='text-align: center;'>" + item.TravelExpenseDetail_Date.Value.ToShortDateString() + "</td>" +
+                            "<td style='text-align: center;'>" + (travel == "Domestic" ? "₱" : "$") + Convert.ToDecimal(item.Total_Expenses).ToString("N2") + "</td>" +
+                            "</tr>";
+            }
+            emailDetails += "</table>";
+
             //End of Body Details Sample
             string emailTemplate = anflo
                 .Email_Content_Formatter(appName, recipientName, emailMessage, emailSubMessage, senderName, emailSender,
@@ -482,9 +503,11 @@ namespace DX_WebTemplate
             }
         }
 
-        public void SendEmailWithCC(int id, string userID, int compID, int status, int prepID, string cc, string remarks)
+        public void SendEmailWithCC(int id, string userID, int compID, int status, int prepID, string cc, string remarks, string statname)
         {
             ///////---START EMAIL PROCESS-----////////
+            
+            var main = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).FirstOrDefault();
             var user_email = _DataContext.ITP_S_UserMasters
                 .Where(x => x.EmpCode == userID)
                 .FirstOrDefault();
@@ -497,7 +520,7 @@ namespace DX_WebTemplate
 
             //Start--   Get Text info
             var queryText = from texts in _DataContext.ITP_S_Texts
-                            where texts.Type == "Email" && texts.Name == stat.STS_Name
+                            where texts.Type == "Email" && texts.Name == statname
                             select texts;
 
             var emailMessage = "";
@@ -527,7 +550,7 @@ namespace DX_WebTemplate
             string senderRemarks = remarks;
             string emailSite = "https://devapps.anflocor.com/Accede/AllAccedeApprovalPage.aspx";
             string sendEmailTo = requestor_email;
-            string emailSubject = "Document No. " + id + " (" + stat.STS_Description + ")";
+            string emailSubject = "Document No. " + main.Doc_No + " (" + stat.STS_Description + ")";
 
             ANFLO anflo = new ANFLO();
 
@@ -543,7 +566,7 @@ namespace DX_WebTemplate
             emailDetails = "<table border='1' cellpadding='2' cellspacing='0' width='100%' class='main' style='border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;background:#fff;border-radius:3px;width:100%;'>";
             emailDetails += "<tr><td>Company</td><td><strong>" + comp_name.CompanyShortName + "</strong></td></tr>";
             emailDetails += "<tr><td>Document Date</td><td><strong>" + currentDate + "</strong></td></tr>";
-            emailDetails += "<tr><td>Document No.</td><td><strong>" + id + "</strong></td></tr>";
+            emailDetails += "<tr><td>Document No.</td><td><strong>" + main.Doc_No + "</strong></td></tr>";
             emailDetails += "<tr><td>Preparer</td><td><strong>" + senderName + "</strong></td></tr>";
             emailDetails += "<tr><td>Status</td><td><strong>" + stat.STS_Description + "</strong></td></tr>";
             emailDetails += "<tr><td>Document Purpose</td><td><strong>" + "Expense Report" + "</strong></td></tr>";
@@ -557,13 +580,14 @@ namespace DX_WebTemplate
             foreach (var item in queryER)
             {
                 var exp = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.ExpenseType_ID).FirstOrDefault();
+                var travel = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.ForeignDomestic).FirstOrDefault();
                 var expType = _DataContext.ACCEDE_S_ExpenseTypes.Where(x => x.ExpenseType_ID == exp).Select(x => x.Description).FirstOrDefault();
                 emailDetails +=
                             "<tr>" +
                             "<td style='text-align: center;'>" + expType + "</td>" +
                             "<td style='text-align: center;'>" + item.LocParticulars + "</td>" +
                             "<td style='text-align: center;'>" + item.TravelExpenseDetail_Date.Value.ToShortDateString() + "</td>" +
-                            "<td style='text-align: center;'>" + item.Total_Expenses + "</td>" +
+                            "<td style='text-align: center;'>" + (travel == "Domestic" ? "₱" : "$") + Convert.ToDecimal(item.Total_Expenses).ToString("N2") + "</td>" +
                             "</tr>";
             }
             emailDetails += "</table>";
@@ -573,12 +597,12 @@ namespace DX_WebTemplate
                 .Email_Content_Formatter(appName, recipientName, emailMessage, emailSubMessage, senderName, emailSender,
                 emailDetails, senderRemarks, emailSite, emailColor);
 
-            if (anflo.Send_Email(emailSubject, emailTemplate, sendEmailTo, cc))
+            if (anflo.Send_Email(emailSubject, emailTemplate, sendEmailTo))
             {
             }
         }
 
-        public void SendEmailFromCashP2P(int id, int status, int prepID, int sender)
+        public void SendEmailFromCashP2P(int id, int status, int prepID, int sender, string remarks)
         {
             string currentDate = DateTime.Now.ToShortDateString();
 
@@ -611,7 +635,7 @@ namespace DX_WebTemplate
             string recipientName = requestor_fullname;
             string senderName = Convert.ToString(_DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Convert.ToString(sender)).Select(x => x.FullName).FirstOrDefault());
             string emailSender = Convert.ToString(_DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Convert.ToString(sender)).Select(x => x.Email).FirstOrDefault());
-            string senderRemarks = "";
+            string senderRemarks = remarks;
             string emailSite = "https://devapps.anflocor.com/Accede/AllAccedeApprovalPage.aspx";
             string sendEmailTo = requestor_email;
             string emailSubject = "Document No. " + main.Doc_No + " (" + stat + ")";
@@ -633,6 +657,25 @@ namespace DX_WebTemplate
             emailDetails += "<tr><td>Document Purpose</td><td><strong>" + "Expense Report" + "</strong></td></tr>";
             emailDetails += "</table>";
             emailDetails += "<br>";
+
+            emailDetails += "<table border='1' cellpadding='2' cellspacing='0' width='100%' class='main' style='border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;background:#fff;border-radius:3px;width:100%;'>";
+            emailDetails += "<tr><th colspan='6'> Document Details </th> </tr>";
+            emailDetails += "<tr><th>Expense Type</th><th>Location/Particulars</th><th>Date</th><th>Total Expenses</th></tr>";
+
+            foreach (var item in queryER)
+            {
+                var exp = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.ExpenseType_ID).FirstOrDefault();
+                var travel = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.ForeignDomestic).FirstOrDefault();
+                var expType = _DataContext.ACCEDE_S_ExpenseTypes.Where(x => x.ExpenseType_ID == exp).Select(x => x.Description).FirstOrDefault();
+                emailDetails +=
+                            "<tr>" +
+                            "<td style='text-align: center;'>" + expType + "</td>" +
+                            "<td style='text-align: center;'>" + item.LocParticulars + "</td>" +
+                            "<td style='text-align: center;'>" + item.TravelExpenseDetail_Date.Value.ToShortDateString() + "</td>" +
+                            "<td style='text-align: center;'>" + (travel == "Domestic" ? "₱" : "$") + Convert.ToDecimal(item.Total_Expenses).ToString("N2") + "</td>" +
+                            "</tr>";
+            }
+            emailDetails += "</table>";
 
             //End of Body Details Sample
             string emailTemplate = anflo
@@ -707,6 +750,25 @@ namespace DX_WebTemplate
             emailDetails += "</table>";
             emailDetails += "<br>";
 
+            emailDetails += "<table border='1' cellpadding='2' cellspacing='0' width='100%' class='main' style='border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;background:#fff;border-radius:3px;width:100%;'>";
+            emailDetails += "<tr><th colspan='6'> Document Details </th> </tr>";
+            emailDetails += "<tr><th>Expense Type</th><th>Location/Particulars</th><th>Date</th><th>Total Expenses</th></tr>";
+
+            foreach (var item in queryER)
+            {
+                var exp = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.ExpenseType_ID).FirstOrDefault();
+                var travel = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.ForeignDomestic).FirstOrDefault();
+                var expType = _DataContext.ACCEDE_S_ExpenseTypes.Where(x => x.ExpenseType_ID == exp).Select(x => x.Description).FirstOrDefault();
+                emailDetails +=
+                            "<tr>" +
+                            "<td style='text-align: center;'>" + expType + "</td>" +
+                            "<td style='text-align: center;'>" + item.LocParticulars + "</td>" +
+                            "<td style='text-align: center;'>" + item.TravelExpenseDetail_Date.Value.ToShortDateString() + "</td>" +
+                            "<td style='text-align: center;'>" + (travel == "Domestic" ? "₱" : "$") + Convert.ToDecimal(item.Total_Expenses).ToString("N2") + "</td>" +
+                            "</tr>";
+            }
+            emailDetails += "</table>";
+
             //End of Body Details Sample
             string emailTemplate = anflo
                 .Email_Content_Formatter(appName, recipientName, emailMessage, emailSubMessage, senderName, emailSender,
@@ -717,7 +779,7 @@ namespace DX_WebTemplate
             }
         }
 
-        public void SendEmail(int doc_id, int org_id, int comps_id, int statusID)
+        public void SendEmail(int doc_id, int org_id, int comps_id, int statusID, string remarks)
         {
             string currentDate = DateTime.Now.ToShortDateString();
 
@@ -772,7 +834,7 @@ namespace DX_WebTemplate
             string recipientName = user_email.FullName;
             string senderName = requestor_fullname;
             string emailSender = requestor_email;
-            string senderRemarks = "";
+            string senderRemarks = remarks;
             string emailSite = "https://devapps.anflocor.com/Accede/AllAccedeApprovalPage.aspx";
             string sendEmailTo = user_email.Email;
             string emailSubject = "Document No. " + docno + " (" + status + ")";
@@ -803,13 +865,14 @@ namespace DX_WebTemplate
             foreach (var item in queryER)
             {
                 var exp = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == doc_id).Select(x => x.ExpenseType_ID).FirstOrDefault();
+                var travel = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == doc_id).Select(x => x.ForeignDomestic).FirstOrDefault();
                 var expType = _DataContext.ACCEDE_S_ExpenseTypes.Where(x => x.ExpenseType_ID == exp).Select(x => x.Description).FirstOrDefault();
                 emailDetails +=
                             "<tr>" +
                             "<td style='text-align: center;'>" + expType + "</td>" +
                             "<td style='text-align: center;'>" + item.LocParticulars + "</td>" +
                             "<td style='text-align: center;'>" + item.TravelExpenseDetail_Date.Value.ToShortDateString() + "</td>" +
-                            "<td style='text-align: center;'>" + item.Total_Expenses + "</td>" +
+                            "<td style='text-align: center;'>" + (travel == "Domestic" ? "₱" : "$") + Convert.ToDecimal(item.Total_Expenses).ToString("N2") + "</td>" +
                             "</tr>";
             }
             emailDetails += "</table>";
@@ -858,7 +921,7 @@ namespace DX_WebTemplate
             }
         }
 
-        public void insertWA(int wf_id, int wfd_id, int org_id, int doc_id, int comps_id, int stat, int reim_docID, bool isforward = false)
+        public void insertWA(int wf_id, int wfd_id, int org_id, int doc_id, int comps_id, int stat, int reim_docID, string remarks, bool isforward = false)
         {
             try
             {
@@ -867,7 +930,7 @@ namespace DX_WebTemplate
 
                 if (stats == "Pending" || stats == "Pending at Finance" || stats == "Forwarded")
                 {
-                    SendEmail(doc_id, org_id, comps_id, stat);
+                    SendEmail(doc_id, org_id, comps_id, stat, remarks);
                 }
 
                 var wfa = new ITP_T_WorkflowActivity()
@@ -883,6 +946,7 @@ namespace DX_WebTemplate
                     CompanyId = comps_id,
                     IsActive = true,
                     IsDelete = isforward,
+                    Remarks = remarks,
                     AppDocTypeId = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel" || x.DCT_Description == "Accede Expense Travel").Select(x => x.DCT_Id).FirstOrDefault()
                 };
                 _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(wfa);
@@ -902,6 +966,7 @@ namespace DX_WebTemplate
                         CompanyId = comps_id,
                         IsActive = true,
                         IsDelete = isforward,
+                        Remarks = remarks,
                         AppDocTypeId = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP" || x.DCT_Description == "Accede Request For Payment").Select(x => x.DCT_Id).FirstOrDefault()
                     };
                     _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(reimwfa);
@@ -941,6 +1006,7 @@ namespace DX_WebTemplate
             var compID = Convert.ToInt32(Session["comp"]);
             var prepID = Convert.ToInt32(Session["prep"]);
             var status = 0;
+            var statname = "";
 
             try
             {
@@ -952,9 +1018,14 @@ namespace DX_WebTemplate
                         status = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Returned by Finance").Select(x => x.STS_Id).FirstOrDefault();
                     else
                         status = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Returned").Select(x => x.STS_Id).FirstOrDefault();
+
+                    statname = "Return";
                 }
                 else
+                {
                     status = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Disapproved").Select(x => x.STS_Id).FirstOrDefault();
+                    statname = "Disapproved";
+                }
 
                 var cc = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Convert.ToString(Session["empid"])).Select(x => x.Email).FirstOrDefault();
 
@@ -1016,11 +1087,11 @@ namespace DX_WebTemplate
                     var fapWF = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.FAPWF_Id).FirstOrDefault();
                     var fapWFD = _DataContext.ITP_S_WorkflowDetails.Where(x => x.WF_Id == fapWF && x.Sequence == 1).FirstOrDefault();
 
-                    insertWA(Convert.ToInt32(fapWFD.WF_Id), Convert.ToInt32(fapWFD.WFD_Id), Convert.ToInt32(fapWFD.OrgRole_Id), id, compID, status, rfpid);
+                    insertWA(Convert.ToInt32(fapWFD.WF_Id), Convert.ToInt32(fapWFD.WFD_Id), Convert.ToInt32(fapWFD.OrgRole_Id), id, compID, status, rfpid, remarks);
                 }
                 else
                 {
-                    SendEmailWithCC(id, userID, compID, status, prepID, cc, remarks);
+                    SendEmailWithCC(id, userID, compID, status, prepID, cc, remarks, statname);
                 }
 
             }
@@ -1097,7 +1168,7 @@ namespace DX_WebTemplate
                 var fstatus = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Forwarded").Select(x => x.STS_Id).FirstOrDefault();
 
                 updateWA(docID, wfID, wfaID, 7, "", aforwardRemarks, userID, DateTime.Now, reim_docID);
-                insertWA(Convert.ToInt32(fin_wfDetail_data.WF_Id), Convert.ToInt32(fin_wfDetail_data.WFD_Id), Convert.ToInt32(org_id), Convert.ToInt32(travelmain.ID), Convert.ToInt32(travelmain.Company_Id), Convert.ToInt32(fstatus), reim_docID, true);
+                insertWA(Convert.ToInt32(fin_wfDetail_data.WF_Id), Convert.ToInt32(fin_wfDetail_data.WFD_Id), Convert.ToInt32(org_id), Convert.ToInt32(travelmain.ID), Convert.ToInt32(travelmain.Company_Id), Convert.ToInt32(fstatus), reim_docID, aforwardRemarks, true);
 
                 return true;
             }
@@ -1117,107 +1188,204 @@ namespace DX_WebTemplate
             return true;
         }
 
+        public void updateTravelRFP(int docID, int reim_docID, string remarks, int chargedcomp, int chargeddept, string arNo)
+        {
+            // Update Travel Main
+            var updTraMain = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == docID);
+
+            foreach (var item in updTraMain)
+            {
+                item.ChargedToComp = Convert.ToInt32(chargedcomp);
+                item.ChargedToDept = Convert.ToInt32(chargeddept);
+                item.Remarks = remarks;
+                item.ARRefNo = arNo;
+            }
+            _DataContext.SubmitChanges();
+
+            // Update RFP Main
+            var updRfpMain = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == reim_docID);
+
+            foreach (var item in updRfpMain)
+            {
+                item.ChargedTo_CompanyId = Convert.ToInt32(chargedcomp);
+                item.ChargedTo_DeptId = Convert.ToInt32(chargeddept);
+                item.Remarks = remarks;
+            }
+            _DataContext.SubmitChanges();
+        }
+
+        public bool checkNextSequence(int docID, int companyID, string remarks, string userID, int reim_docID)
+        {
+            // GET WORKFLOW ID 
+            var wfID = Convert.ToInt32(Session["wf"]);
+            // GET WORKFLOWACTIVITY ID 
+            var wfaID = Convert.ToInt32(Session["wfa"]);
+            // GET WORKFLOWDETAILS ID
+            var wfdID = Convert.ToInt32(Session["wfd"]);
+            // GET SEQUENCE
+            var sequence = _DataContext.ITP_S_WorkflowDetails
+                .Where(e => e.WFD_Id == wfdID)
+                .Select(e => e.Sequence)
+                .FirstOrDefault() + 1;
+            // GET ORGROLE ID
+            var orgRoleID = _DataContext.ITP_S_WorkflowDetails
+                .Where(e => e.WF_Id == wfID && e.Sequence == sequence)
+                .Select(e => e.OrgRole_Id)
+                .FirstOrDefault();
+            // UPDATE WORKFLOWACTIVITY
+            updateWA(docID, wfID, wfaID, 7, "", remarks, userID, DateTime.Now, reim_docID);
+
+            // IF TRUE, INSERT TO WORKFLOWACTIVITY
+            if (orgRoleID != null)
+            {
+                var newwfdID = _DataContext.ITP_S_WorkflowDetails
+                    .Where(e => e.Sequence == sequence && e.WF_Id == wfID && e.OrgRole_Id == orgRoleID)
+                    .Select(e => e.WFD_Id)
+                    .FirstOrDefault();
+
+                insertWA(wfID, newwfdID, Convert.ToInt32(orgRoleID), docID, companyID, Convert.ToInt32(Session["doc_stat"]), reim_docID, remarks);
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public void updateRFPToLiquidated(int docID)
+        {
+            // Update RFP Main Status to Liquidated
+            var liqStatus = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Liquidated").Select(x => x.STS_Id).FirstOrDefault();
+            var updateCA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.TranType == 1 && x.isTravel == true && x.Exp_ID == docID);
+
+            if (updateCA != null)
+            {
+                foreach (ACCEDE_T_RFPMain r in updateCA)
+                {
+                    r.Status = liqStatus;
+                }
+                _DataContext.SubmitChanges();
+            }
+        }
+
         public void ApproveDocument(string remarks, int chargedcomp, int chargeddept, string arNo)
         {
             try
             {
+                // Travel Main ID
                 int docID = Convert.ToInt32(Session["TravelExp_Id"]);
 
-                var updTraMain = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == docID);
-
-                foreach (var item in updTraMain)
-                {
-                    item.ChargedToComp = Convert.ToInt32(chargedcomp);
-                    item.ChargedToDept = Convert.ToInt32(chargeddept);
-                    item.Remarks = remarks;
-                    item.ARRefNo = arNo;
-                }
-                _DataContext.SubmitChanges();
-
+                // RFP Main ID
                 int reim_docID = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == docID && x.IsExpenseReim == true).Where(x => x.isTravel == true).Select(x => x.ID).FirstOrDefault();
 
-                var updRfpMain = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == reim_docID);
-
-                foreach (var item in updRfpMain)
-                {
-                    item.ChargedTo_CompanyId = Convert.ToInt32(chargedcomp);
-                    item.ChargedTo_DeptId = Convert.ToInt32(chargeddept);
-                    item.Remarks = remarks;
-                }
-                _DataContext.SubmitChanges();
-
+                // App DocType ID
                 var doctype_id = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).Select(x => x.DCT_Id).FirstOrDefault();
+
+                // Payment Method
                 var pmid = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == docID && x.IsExpenseReim == true).Where(x => x.isTravel == true).Select(x => x.PayMethod).FirstOrDefault();
                 var reimPayMethod = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == pmid).Select(x => x.PMethod_name).FirstOrDefault();
+
+                // User ID and Comp ID
                 string userID = Convert.ToString(Session["userID"]);
-                int preparerID = Convert.ToInt32(Session["prep"]);
-                var cc = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Convert.ToString(Session["empid"])).Select(x => x.Email).FirstOrDefault();
                 int usercompanyID = Convert.ToInt32(Session["userCompanyID"]);
+
+                // Doc Preparer ID
+                int preparerID = Convert.ToInt32(Session["prep"]);
+
+                // Employee ID for Email CC
+                var cc = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Convert.ToString(Session["empid"])).Select(x => x.Email).FirstOrDefault();
+
+                // Employee Comp ID
                 int companyID = int.Parse(Session["comp"].ToString());
-                // GET WORKFLOW ID 
-                var wfID = Convert.ToInt32(Session["wf"]);
-                // GET WORKFLOWACTIVITY ID 
-                var wfaID = Convert.ToInt32(Session["wfa"]);
-                // GET WORKFLOWDETAILS ID
-                var wfdID = Convert.ToInt32(Session["wfd"]);
-                // GET SEQUENCE
-                var sequence = _DataContext.ITP_S_WorkflowDetails
-                    .Where(e => e.WFD_Id == wfdID)
-                    .Select(e => e.Sequence)
-                    .FirstOrDefault() + 1;
-                // GET ORGROLE ID
-                var orgRoleID = _DataContext.ITP_S_WorkflowDetails
-                    .Where(e => e.WF_Id == wfID && e.Sequence == sequence)
-                    .Select(e => e.OrgRole_Id)
-                    .FirstOrDefault();
-                // UPDATE WORKFLOWACTIVITY
-                updateWA(docID, wfID, wfaID, 7, "", remarks, userID, DateTime.Now, reim_docID);
 
-                // IF TRUE, INSERT TO WORKFLOWACTIVITY
-                if (orgRoleID != null)
-                {
-                    var newwfdID = _DataContext.ITP_S_WorkflowDetails
-                        .Where(e => e.Sequence == sequence && e.WF_Id == wfID && e.OrgRole_Id == orgRoleID)
-                        .Select(e => e.WFD_Id)
-                        .FirstOrDefault();
+                updateTravelRFP(docID, reim_docID, remarks, chargedcomp, chargeddept, arNo);
 
-                    insertWA(wfID, newwfdID, Convert.ToInt32(orgRoleID), docID, companyID, Convert.ToInt32(Session["doc_stat"]), reim_docID);
-                }
-                else
+                // Approval logic for Line Manager Workflow
+                if (Convert.ToString(Session["doc_stat2"]) == "Pending")
                 {
-                    var completeStat = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Completed").Select(x => x.STS_Id).FirstOrDefault();
-                    if (Convert.ToString(Session["doc_stat2"]) == "Pending at Cashier")
+                    bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID);
+
+                    if (!hasNextSequence)
                     {
-                        if (Convert.ToDecimal(Session["totalCA"]) > Convert.ToDecimal(Session["totalEXP"]))
+                        if ((Convert.ToDecimal(Session["totalCA"]) > Convert.ToDecimal(Session["totalEXP"])))
                         {
-                            var FAPwflow = _DataContext.ACCEDE_T_TravelExpenseMains.Where(w => w.ID == docID).Select(x => x.FAPWF_Id).FirstOrDefault();
-                            var FAPwfd = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == FAPwflow && w.Sequence == 1).Select(w => w.WFD_Id).FirstOrDefault();
-                            var FAPorID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == FAPwflow && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault() ?? 0;
-                            var FAPstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Finance").Select(s => s.STS_Id).FirstOrDefault();
+                            var cashierwf = _DataContext.ITP_S_WorkflowHeaders.Where(w => w.Name == "ACDE CASHIER" && w.App_Id == 1032 && w.Company_Id == companyID).Select(x => x.WF_Id).FirstOrDefault();
+                            var cashierwfd = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == cashierwf && w.Sequence == 1).Select(w => w.WFD_Id).FirstOrDefault();
+                            var cashierorID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == cashierwf && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault();
+                            var cashstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Cashier" || s.STS_Name == "Pending at Cashier").Select(s => s.STS_Id).FirstOrDefault();
 
-                            insertWA((int)FAPwflow, FAPwfd, (int)FAPorID, docID, companyID, FAPstatus, reim_docID);
+                            insertWA(cashierwf, cashierwfd, (int)cashierorID, docID, companyID, cashstatus, reim_docID, remarks);
+                            SendEmail(docID, (int)cashierorID, companyID, cashstatus, remarks);
                         }
                         else
                         {
-                            var travel = _DataContext.ACCEDE_T_TravelExpenseMains.Where(w => w.ID == docID);
-                            foreach (ACCEDE_T_TravelExpenseMain t in travel)
-                            {
-                                t.Status = completeStat;
-                            }
-                            _DataContext.SubmitChanges();
+                            var fapwf = _DataContext.ACCEDE_T_TravelExpenseMains.Where(w => w.ID == docID).Select(x => x.FAPWF_Id).FirstOrDefault() ?? 0;
+                            var fapwfd = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == fapwf && w.Sequence == 1).Select(w => w.WFD_Id).FirstOrDefault();
+                            var orID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == fapwf && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault() ?? 0;
+                            var fapstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Finance" || s.STS_Name == "Pending at Finance").Select(s => s.STS_Id).FirstOrDefault();
 
-                            var updateReim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == reim_docID);
-                            foreach (ACCEDE_T_RFPMain r in updateReim)
-                            {
-                                r.Status = completeStat;
-                            }
-                            _DataContext.SubmitChanges();
-
-                            SendEmailComplete(docID, completeStat, Convert.ToInt32(Session["prep"]), remarks, Convert.ToInt32(Session["userID"]));
-                            //SendEmailWithCC(docID, Convert.ToString(userID), companyID, completeStat, Convert.ToInt32(Session["prep"]), string.Empty, remarks);
+                            insertWA(fapwf, fapwfd, orID, docID, companyID, fapstatus, reim_docID, remarks);
                         }
                     }
-                    else if (Convert.ToString(Session["doc_stat2"]) == "Pending at P2P")
+                }
+
+                // Approval logic for FAP Workflow
+                else if (Convert.ToString(Session["doc_stat2"]) == "Pending at Finance")
+                {
+                    bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID);
+
+                    if (!hasNextSequence)
+                    {
+                        var audwf = _DataContext.ITP_S_WorkflowHeaders.Where(w => (w.Name == "ACDE AUDIT" || w.Name == "ACCEDE AUDIT") && w.App_Id == 1032 && w.Company_Id == companyID).Select(x => x.WF_Id).FirstOrDefault();
+                        var audwfd = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == audwf && w.Sequence == 1).Select(w => w.WFD_Id).FirstOrDefault();
+                        var audorID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == audwf && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault();
+                        var audstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Audit" || s.STS_Name == "Pending at Audit").Select(s => s.STS_Id).FirstOrDefault();
+
+                        insertWA(Convert.ToInt32(audwf), Convert.ToInt32(audwfd), Convert.ToInt32(audorID), docID, companyID, audstatus, reim_docID, remarks);
+                        SendEmailFromAudit(docID, audstatus, Convert.ToInt32(Session["prep"]), remarks, Convert.ToInt32(Session["userID"]));
+                    }
+                }
+
+                // Approval logic for Audit Workflow
+                else if (Convert.ToString(Session["doc_stat2"]) == "Pending at Audit")
+                {
+                    bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID);
+
+                    updateRFPToLiquidated(docID);
+
+                    if (!hasNextSequence)
+                    {
+                        if (Convert.ToDecimal(Session["totalCA"]) == Convert.ToDecimal(Session["totalEXP"]) || Convert.ToDecimal(Session["totalCA"]) > Convert.ToDecimal(Session["totalEXP"]) || (Convert.ToDecimal(Session["totalCA"]) < Convert.ToDecimal(Session["totalEXP"]) && reimPayMethod == "Check"))
+                        {
+                            var p2pwf = _DataContext.ITP_S_WorkflowHeaders.Where(w => w.Name == "ACDE P2P" && w.App_Id == 1032 && w.Company_Id == companyID).Select(x => x.WF_Id).FirstOrDefault();
+                            var p2pwfd = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == p2pwf && w.Sequence == 1).Select(w => w.WFD_Id).FirstOrDefault();
+                            var p2porID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == p2pwf && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault();
+                            var p2pstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at P2P" || s.STS_Name == "Pending at P2P").Select(s => s.STS_Id).FirstOrDefault();
+
+                            insertWA(p2pwf, p2pwfd, (int)p2porID, docID, companyID, p2pstatus, reim_docID, remarks);
+                            SendEmailFromCashP2P(docID, p2pstatus, Convert.ToInt32(Session["prep"]), Convert.ToInt32(Session["userID"]), remarks);
+                        }
+                        else
+                        {
+                            var cashierwf = _DataContext.ITP_S_WorkflowHeaders.Where(w => w.Name == "ACDE CASHIER" && w.App_Id == 1032 && w.Company_Id == companyID).Select(x => x.WF_Id).FirstOrDefault();
+                            var cashierwfd = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == cashierwf && w.Sequence == 1).Select(w => w.WFD_Id).FirstOrDefault();
+                            var cashierorID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == cashierwf && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault();
+                            var cashstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Cashier" || s.STS_Name == "Pending at Cashier").Select(s => s.STS_Id).FirstOrDefault();
+
+                            insertWA(cashierwf, cashierwfd, (int)cashierorID, docID, companyID, cashstatus, reim_docID, remarks);
+                            SendEmailFromCashP2P(docID, cashstatus, Convert.ToInt32(Session["prep"]), Convert.ToInt32(Session["userID"]), remarks);
+                        }
+                    }
+                }
+
+                // Approval logic for P2P Workflow
+                else if (Convert.ToString(Session["doc_stat2"]) == "Pending at P2P")
+                {
+                    bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID);
+                    var completeStat = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Completed").Select(x => x.STS_Id).FirstOrDefault();
+
+                    if (!hasNextSequence)
                     {
                         if (Convert.ToDecimal(Session["totalCA"]) < Convert.ToDecimal(Session["totalEXP"]) && reimPayMethod == "Check")
                         {
@@ -1226,8 +1394,8 @@ namespace DX_WebTemplate
                             var cashierorID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == cashierwf && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault();
                             var cashstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Cashier" || s.STS_Name == "Pending at Cashier").Select(s => s.STS_Id).FirstOrDefault();
 
-                            insertWA(cashierwf, cashierwfd, (int)cashierorID, docID, companyID, cashstatus, reim_docID);
-                            SendEmailFromCashP2P(docID, cashstatus, Convert.ToInt32(Session["prep"]), Convert.ToInt32(Session["userID"]));
+                            insertWA(cashierwf, cashierwfd, (int)cashierorID, docID, companyID, cashstatus, reim_docID, remarks);
+                            SendEmailFromCashP2P(docID, cashstatus, Convert.ToInt32(Session["prep"]), Convert.ToInt32(Session["userID"]), remarks);
                         }
                         else
                         {
@@ -1248,124 +1416,66 @@ namespace DX_WebTemplate
                             SendEmailComplete(docID, completeStat, Convert.ToInt32(Session["prep"]), remarks, Convert.ToInt32(Session["userID"]));
                         }
                     }
-                    else
+                }
+
+                // Approval logic for P2P Workflow
+                else if (Convert.ToString(Session["doc_stat2"]) == "Pending at Cashier")
+                {
+                    bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID);
+                    var completeStat = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Completed").Select(x => x.STS_Id).FirstOrDefault();
+                    var disburseStat = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Disbursed").Select(x => x.STS_Id).FirstOrDefault();
+
+                    if (!hasNextSequence)
                     {
-                        var cashWF = _DataContext.ITP_S_WorkflowHeaders.Where(w => w.Name == "ACDE CASHIER" && w.App_Id == 1032 && w.Company_Id == companyID).Select(x => x.WF_Id).FirstOrDefault();
-                        var countCashWF = _DataContext.ITP_T_WorkflowActivities.Count(w => w.WF_Id == cashWF && w.AppId == 1032 && w.Document_Id == docID && w.AppDocTypeId == doctype_id);
-
-                        var hasRetStatus2 = _DataContext.ITP_T_WorkflowActivities.Any(w => w.AppId == 1032 && w.Document_Id == docID && w.AppDocTypeId == doctype_id && w.Status == 3);
-
-                        if ((Convert.ToDecimal(Session["totalCA"]) > Convert.ToDecimal(Session["totalEXP"])) && (countCashWF <= 0 && !hasRetStatus2))
+                        if (Convert.ToDecimal(Session["totalCA"]) > Convert.ToDecimal(Session["totalEXP"]))
                         {
-                            var cashierwf = _DataContext.ITP_S_WorkflowHeaders.Where(w => w.Name == "ACDE CASHIER" && w.App_Id == 1032 && w.Company_Id == companyID).Select(x => x.WF_Id).FirstOrDefault();
-                            var cashierwfd = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == cashierwf && w.Sequence == 1).Select(w => w.WFD_Id).FirstOrDefault();
-                            var cashierorID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == cashierwf && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault();
-                            var cashstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Cashier" || s.STS_Name == "Pending at Cashier").Select(s => s.STS_Id).FirstOrDefault();
+                            var FAPwflow = _DataContext.ACCEDE_T_TravelExpenseMains.Where(w => w.ID == docID).Select(x => x.FAPWF_Id).FirstOrDefault();
+                            var FAPwfd = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == FAPwflow && w.Sequence == 1).Select(w => w.WFD_Id).FirstOrDefault();
+                            var FAPorID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == FAPwflow && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault() ?? 0;
+                            var FAPstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Finance").Select(s => s.STS_Id).FirstOrDefault();
 
-                            insertWA(cashierwf, cashierwfd, (int)cashierorID, docID, companyID, cashstatus, reim_docID);
-                            SendEmailComplete(docID, completeStat, Convert.ToInt32(Session["prep"]), remarks, Convert.ToInt32(Session["userID"]));
+                            insertWA((int)FAPwflow, FAPwfd, (int)FAPorID, docID, companyID, FAPstatus, reim_docID, remarks);
                         }
                         else
                         {
-                            var fapwf = _DataContext.ACCEDE_T_TravelExpenseMains.Where(w => w.ID == docID).Select(x => x.FAPWF_Id).FirstOrDefault() ?? 0;
-                            var fapwfd = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == fapwf && w.Sequence == 1).Select(w => w.WFD_Id).FirstOrDefault();
-                            var orID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == fapwf && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault() ?? 0;
-
-                            var countFAPWF = _DataContext.ITP_T_WorkflowActivities.Count(w => w.WF_Id == fapwf && w.AppId == 1032 && w.Document_Id == docID && w.AppDocTypeId == doctype_id);
-
-                            var hasRetStatus = _DataContext.ITP_T_WorkflowActivities.Any(w => w.AppId == 1032 && w.Document_Id == docID && w.AppDocTypeId == doctype_id && w.Status == 3);
-
-                            if (countFAPWF > 0 && (!hasRetStatus || Convert.ToString(Session["doc_stat2"]) == "Forwarded" || Convert.ToString(Session["doc_stat2"]) == "Pending at Audit" || Convert.ToString(Session["doc_stat2"]) == "Pending at Finance"))
+                            var travel = _DataContext.ACCEDE_T_TravelExpenseMains.Where(w => w.ID == docID);
+                            foreach (ACCEDE_T_TravelExpenseMain t in travel)
                             {
-                                Debug.WriteLine("There's FAPWF");
-                                var fapRetStatus = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Returned by Finance").Select(x => x.STS_Id).FirstOrDefault();
-                                var countApprovedFAPWF = _DataContext.ITP_T_WorkflowActivities.Count(w => w.WF_Id == fapwf && w.AppId == 1032 && w.Document_Id == docID && w.AppDocTypeId == doctype_id && (w.Status != 7 && w.Status != 8 && w.Status != fapRetStatus));
-
-                                if (countApprovedFAPWF <= 0)
-                                {
-                                    Debug.WriteLine("All FAPWF approved");
-
-                                    var audwf = _DataContext.ITP_S_WorkflowHeaders.Where(w => (w.Name == "ACDE AUDIT" || w.Name == "ACCEDE AUDIT") && w.App_Id == 1032 && w.Company_Id == companyID).Select(x => x.WF_Id).FirstOrDefault();
-                                    var audwfd = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == audwf && w.Sequence == 1).Select(w => w.WFD_Id).FirstOrDefault();
-                                    var audorID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == audwf && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault();
-
-                                    var countAUDWF = _DataContext.ITP_T_WorkflowActivities.Count(w => w.WF_Id == audwf && w.AppId == 1032 && w.Document_Id == docID && w.AppDocTypeId == doctype_id);
-
-                                    var audRetStat = _DataContext.ITP_S_Status.Where(w => w.STS_Description == "Returned by Audit").Select(w => w.STS_Id).FirstOrDefault();
-                                    var hasReturnStatus = _DataContext.ITP_T_WorkflowActivities.Any(w => w.WF_Id == audwf && w.AppId == 1032 && w.Document_Id == docID && w.AppDocTypeId == doctype_id && w.Status == audRetStat);
-
-                                    if (countAUDWF > 0 && (!hasReturnStatus || Convert.ToString(Session["doc_stat2"]) == "Pending at Audit"))
-                                    {
-                                        Debug.WriteLine("There's AUDWF");
-                                        var audRetStatus = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Returned by Audit").Select(x => x.STS_Id).FirstOrDefault();
-                                        var countApprovedAUDWF = _DataContext.ITP_T_WorkflowActivities.Count(w => w.WF_Id == audwf && w.AppId == 1032 && w.Document_Id == docID && w.AppDocTypeId == doctype_id && w.Status != 7 && w.Status != 8 && w.Status != audRetStatus);
-
-                                        if (countApprovedAUDWF <= 0)
-                                        {
-                                            Debug.WriteLine("All AUDWF approved");
-                                            var updateWFA = _DataContext.ITP_T_WorkflowActivities.Where(a => a.Document_Id == docID && a.AppDocTypeId == doctype_id && a.WF_Id == wfID && a.WFA_Id == wfaID);
-
-                                            foreach (var ex in updateWFA)
-                                            {
-                                                ex.Remarks = remarks;
-                                                ex.DateAction = DateTime.Now;
-                                                ex.Status = 7;
-                                                ex.ActedBy_User_Id = userID;
-                                            }
-
-                                            var liqStatus = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Liquidated").Select(x => x.STS_Id).FirstOrDefault();
-                                            var updateCA = _DataContext.ACCEDE_T_RFPMains.Where(x => x.TranType == 1 && x.isTravel == true && x.Exp_ID == docID);
-                                            foreach (ACCEDE_T_RFPMain r in updateCA)
-                                            {
-                                                r.Status = liqStatus;
-                                            }
-                                            _DataContext.SubmitChanges();
-
-                                            if (Convert.ToDecimal(Session["totalCA"]) == Convert.ToDecimal(Session["totalEXP"]) || Convert.ToDecimal(Session["totalCA"]) > Convert.ToDecimal(Session["totalEXP"]) || (Convert.ToDecimal(Session["totalCA"]) < Convert.ToDecimal(Session["totalEXP"]) && reimPayMethod == "Check"))
-                                            {
-                                                var p2pwf = _DataContext.ITP_S_WorkflowHeaders.Where(w => w.Name == "ACDE P2P" && w.App_Id == 1032 && w.Company_Id == companyID).Select(x => x.WF_Id).FirstOrDefault();
-                                                var p2pwfd = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == p2pwf && w.Sequence == 1).Select(w => w.WFD_Id).FirstOrDefault();
-                                                var p2porID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == p2pwf && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault();
-                                                var p2pstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at P2P" || s.STS_Name == "Pending at P2P").Select(s => s.STS_Id).FirstOrDefault();
-
-                                                insertWA(p2pwf, p2pwfd, (int)p2porID, docID, companyID, p2pstatus, reim_docID);
-                                                SendEmailFromCashP2P(docID, p2pstatus, Convert.ToInt32(Session["prep"]), Convert.ToInt32(Session["userID"]));
-                                            }
-                                            else
-                                            {
-                                                var cashierwf = _DataContext.ITP_S_WorkflowHeaders.Where(w => w.Name == "ACDE CASHIER" && w.App_Id == 1032 && w.Company_Id == companyID).Select(x => x.WF_Id).FirstOrDefault();
-                                                var cashierwfd = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == cashierwf && w.Sequence == 1).Select(w => w.WFD_Id).FirstOrDefault();
-                                                var cashierorID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == cashierwf && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault();
-                                                var cashstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Cashier" || s.STS_Name == "Pending at Cashier").Select(s => s.STS_Id).FirstOrDefault();
-
-                                                insertWA(cashierwf, cashierwfd, (int)cashierorID, docID, companyID, cashstatus, reim_docID);
-                                                SendEmailFromCashP2P(docID, cashstatus, Convert.ToInt32(Session["prep"]), Convert.ToInt32(Session["userID"]));
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        Debug.WriteLine("No AUDWF");
-                                        var audstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Audit" || s.STS_Name == "Pending at Audit").Select(s => s.STS_Id).FirstOrDefault();
-                                        insertWA(Convert.ToInt32(audwf), Convert.ToInt32(audwfd), Convert.ToInt32(audorID), docID, companyID, audstatus, reim_docID);
-
-                                        SendEmailFromAudit(docID, audstatus, Convert.ToInt32(Session["prep"]), string.Empty, Convert.ToInt32(Session["userID"]));
-                                    }
-                                }
+                                t.Status = completeStat;
                             }
-                            else
+                            _DataContext.SubmitChanges();
+
+                            var updateReim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == reim_docID);
+                            foreach (ACCEDE_T_RFPMain r in updateReim)
                             {
-                                Debug.WriteLine("No FAPWF");
-                                var fapstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Finance" || s.STS_Name == "Pending at Finance").Select(s => s.STS_Id).FirstOrDefault();
-                                insertWA(fapwf, fapwfd, orID, docID, companyID, fapstatus, reim_docID);
+                                r.Status = disburseStat;
                             }
+                            _DataContext.SubmitChanges();
+
+                            SendEmailComplete(docID, completeStat, Convert.ToInt32(Session["prep"]), remarks, Convert.ToInt32(Session["userID"]));
                         }
+                    }
+                }
+
+                // Approval logic for Forwarded Docs
+                else if (Convert.ToString(Session["doc_stat2"]) == "Forwarded")
+                {
+                    bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID);
+
+                    if (!hasNextSequence)
+                    {
+                        var audwf = _DataContext.ITP_S_WorkflowHeaders.Where(w => (w.Name == "ACDE AUDIT" || w.Name == "ACCEDE AUDIT") && w.App_Id == 1032 && w.Company_Id == companyID).Select(x => x.WF_Id).FirstOrDefault();
+                        var audwfd = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == audwf && w.Sequence == 1).Select(w => w.WFD_Id).FirstOrDefault();
+                        var audorID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == audwf && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault();
+                        var audstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Audit" || s.STS_Name == "Pending at Audit").Select(s => s.STS_Id).FirstOrDefault();
+
+                        insertWA(Convert.ToInt32(audwf), Convert.ToInt32(audwfd), Convert.ToInt32(audorID), docID, companyID, audstatus, reim_docID, remarks);
+                        SendEmailFromAudit(docID, audstatus, Convert.ToInt32(Session["prep"]), remarks, Convert.ToInt32(Session["userID"]));
                     }
                 }
             }
             catch (Exception)
             {
-
                 throw;
             }
         }

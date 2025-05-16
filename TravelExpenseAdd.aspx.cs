@@ -1041,13 +1041,14 @@ namespace DX_WebTemplate
             foreach (var item in queryER)
             {
                 var exp = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == doc_id).Select(x => x.ExpenseType_ID).FirstOrDefault();
+                var travel = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == doc_id).Select(x => x.ForeignDomestic).FirstOrDefault();
                 var expType = _DataContext.ACCEDE_S_ExpenseTypes.Where(x => x.ExpenseType_ID == exp).Select(x => x.Description).FirstOrDefault();
                 emailDetails +=
                             "<tr>" +
                             "<td style='text-align: center;'>" + expType + "</td>" +
                             "<td style='text-align: center;'>" + item.TravelExpenseDetail_Date.Value.ToShortDateString() + "</td>" +
                             "<td style='text-align: center;'>" + item.LocParticulars + "</td>" +
-                            "<td style='text-align: center;'>" + item.Total_Expenses + "</td>" +
+                            "<td style='text-align: center;'>" + (travel == "Domestic" ? "₱" : "$") + Convert.ToDecimal(item.Total_Expenses).ToString("N2") + "</td>" +
                             "</tr>";
             }
             emailDetails += "</table>";

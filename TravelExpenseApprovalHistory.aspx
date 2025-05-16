@@ -177,7 +177,7 @@
                                                     <CellStyle HorizontalAlign="Center">
                                                     </CellStyle>
                                                     <Columns>
-                                                        <dx:GridViewDataTextColumn Caption="Remarks" FieldName="Remarks" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                        <dx:GridViewDataTextColumn Caption="Remarks" ShowInCustomizationForm="True" VisibleIndex="0">
                                                             <PropertiesTextEdit NullDisplayText=" ">
                                                             </PropertiesTextEdit>
                                                             <CellStyle HorizontalAlign="Left">

@@ -360,9 +360,9 @@
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn FieldName="WF_Id" ShowInCustomizationForm="True" Visible="False" VisibleIndex="14">
+                                                <dx:GridViewDataTextColumn FieldName="WF_Id" ShowInCustomizationForm="True" Visible="False" VisibleIndex="13">
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn FieldName="FAPWF_Id" ShowInCustomizationForm="True" Visible="False" VisibleIndex="15">
+                                                <dx:GridViewDataTextColumn FieldName="FAPWF_Id" ShowInCustomizationForm="True" Visible="False" VisibleIndex="14">
                                                 </dx:GridViewDataTextColumn>
                                                 <dx:GridViewDataComboBoxColumn Caption="Company" FieldName="Company_Id" ShowInCustomizationForm="True" VisibleIndex="3">
                                                     <PropertiesComboBox DataSourceID="sqlCompanyList" TextField="CompanyShortName" ValueField="WASSId">
@@ -380,7 +380,7 @@
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataDateColumn Caption="Date Created" FieldName="Date_Created" ShowInCustomizationForm="True" VisibleIndex="12">
+                                                <dx:GridViewDataDateColumn Caption="Date Created" FieldName="Date_Created" ShowInCustomizationForm="True" VisibleIndex="11">
                                                     <PropertiesDateEdit DisplayFormatString="MMM. dd, yyyy">
                                                     </PropertiesDateEdit>
                                                     <Columns>
@@ -392,16 +392,14 @@
                                                         </dx:GridViewDataComboBoxColumn>
                                                     </Columns>
                                                 </dx:GridViewDataDateColumn>
-                                                <dx:GridViewDataComboBoxColumn FieldName="Status" ShowInCustomizationForm="True" VisibleIndex="16">
-                                                    <PropertiesComboBox DataSourceID="sqlStatus" TextField="STS_Description" ValueField="STS_Id">
-                                                    </PropertiesComboBox>
+                                                <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
+                                                    <EditFormSettings Visible="False" />
+                                                </dx:GridViewDataTextColumn>
+                                                <dx:GridViewDataTextColumn Caption="Status" FieldName="STS_Description" ShowInCustomizationForm="True" VisibleIndex="15">
                                                     <Columns>
                                                         <dx:GridViewDataTextColumn FieldName="Remarks" ShowInCustomizationForm="True" VisibleIndex="0">
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
-                                                </dx:GridViewDataComboBoxColumn>
-                                                <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
-                                                    <EditFormSettings Visible="False" />
                                                 </dx:GridViewDataTextColumn>
                                             </Columns>
                                             <Toolbars>
@@ -445,78 +443,24 @@
                                                 </dx:GridViewToolbar>
                                             </Toolbars>
                                             <FormatConditions>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 1" FieldName="Status" Format="Custom">
+                                                <dx:GridViewFormatConditionHighlight Expression="[STS_Description] = 'Pending' Or [STS_Description] = 'Pending at Finance' Or [STS_Description] = 'Pending at Audit' Or [STS_Description] = 'Pending at P2P' Or [STS_Description] = 'Pending at Cashier'" FieldName="STS_Description" Format="Custom">
                                                     <CellStyle Font-Bold="True" ForeColor="#006DD6">
                                                     </CellStyle>
                                                 </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 3" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#E67C0E">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 7" FieldName="Status" Format="Custom">
+                                                <dx:GridViewFormatConditionHighlight Expression="[STS_Description] = 'Completed' Or [STS_Description] = 'Approved'" FieldName="STS_Description" Format="Custom">
                                                     <CellStyle Font-Bold="True" ForeColor="#006838">
                                                     </CellStyle>
                                                 </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 8" FieldName="Status" Format="Custom">
+                                                <dx:GridViewFormatConditionHighlight Expression="[STS_Description] = 'Rejected' Or [STS_Description] = 'Returned'" FieldName="STS_Description" Format="Custom">
+                                                    <CellStyle Font-Bold="True" ForeColor="#E67C0E">
+                                                    </CellStyle>
+                                                </dx:GridViewFormatConditionHighlight>
+                                                <dx:GridViewFormatConditionHighlight Expression="[STS_Description] = 'Disapproved'" FieldName="STS_Description" Format="Custom">
                                                     <CellStyle Font-Bold="True" ForeColor="#CC2A17">
                                                     </CellStyle>
                                                 </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 13" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#666666">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 20" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#006DD6">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 21" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#006DD6">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 22" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#006DD6">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Progress] &lt; 30" FieldName="Progress" Format="GreenText">
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 30" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#006DD6">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 38" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#006DD6">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 29" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#E67C0E">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 39" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#E67C0E">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 34" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#006DD6">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 35" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#E67C0E">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 36" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#006DD6">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 37" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#E67C0E">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 41" FieldName="Status" Format="Custom">
+                                                <dx:GridViewFormatConditionHighlight Expression="[STS_Description] = 'Forwarded'" FieldName="STS_Description" Format="Custom">
                                                     <CellStyle Font-Bold="True" ForeColor="#878787">
-                                                    </CellStyle>
-                                                </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[Status] = 5" FieldName="Status" Format="Custom">
-                                                    <CellStyle Font-Bold="True" ForeColor="#006838">
                                                     </CellStyle>
                                                 </dx:GridViewFormatConditionHighlight>
                                             </FormatConditions>
@@ -819,7 +763,16 @@
         <asp:SqlDataSource ID="sqlCompanyList" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [CompanyMaster] WHERE ([WASSId] IS NOT NULL)">
     </asp:SqlDataSource>
         <asp:SqlDataSource ID="sqlStatus" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_Status]"></asp:SqlDataSource>
-        <asp:SqlDataSource ID="sqlTravelExp" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_TravelExpenseMain] WHERE ([Preparer_Id] = @Preparer_Id) OR ([Employee_Id] = @Employee_Id)">
+        <asp:SqlDataSource ID="sqlTravelExp" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT ACCEDE_T_TravelExpenseMain.ID, ACCEDE_T_TravelExpenseMain.Status, ITP_S_Status.STS_Description, ACCEDE_T_TravelExpenseMain.Doc_No, ACCEDE_T_TravelExpenseMain.Employee_Id, 
+                  ACCEDE_T_TravelExpenseMain.Preparer_Id, ACCEDE_T_TravelExpenseMain.Company_Id, ACCEDE_T_TravelExpenseMain.Trip_To, ACCEDE_T_TravelExpenseMain.Purpose, ACCEDE_T_TravelExpenseMain.WF_Id, 
+                  ACCEDE_T_TravelExpenseMain.FAPWF_Id, ACCEDE_T_TravelExpenseMain.Remarks, ACCEDE_T_TravelExpenseMain.Dep_Code, ACCEDE_T_TravelExpenseMain.Date_From, ACCEDE_T_TravelExpenseMain.Date_To, 
+                  ACCEDE_T_TravelExpenseMain.Date_Created, ACCEDE_T_TravelExpenseMain.Time_Departed, ACCEDE_T_TravelExpenseMain.Time_Arrived, ACCEDE_T_TravelExpenseMain.ExpenseType_ID, 
+                  ACCEDE_T_TravelExpenseMain.ForeignDomestic, ACCEDE_T_TravelExpenseMain.ChargedToComp, ACCEDE_T_TravelExpenseMain.ChargedToDept, ACCEDE_T_TravelExpenseMain.LocBranch, 
+                  ACCEDE_T_TravelExpenseMain.ARRefNo, ACCEDE_T_TravelExpenseMain.SAP_Id
+FROM     ACCEDE_T_TravelExpenseMain INNER JOIN
+                  ITP_S_Status ON ACCEDE_T_TravelExpenseMain.Status = ITP_S_Status.STS_Id
+WHERE  (ACCEDE_T_TravelExpenseMain.Preparer_Id = @Preparer_Id) OR
+                  (ACCEDE_T_TravelExpenseMain.Employee_Id = @Employee_Id)">
             <SelectParameters>
                 <asp:Parameter Name="Preparer_Id" />
                 <asp:Parameter Name="Employee_Id" />
