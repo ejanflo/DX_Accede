@@ -712,7 +712,7 @@
                                         </dx:GridViewToolbar>
                                         <dx:GridViewToolbar>
                                             <Items>
-                                                <dx:GridViewToolbarItem BeginGroup="True" Name="New" Text="New">
+                                                <dx:GridViewToolbarItem BeginGroup="True" Name="New" Text="New Cash Advance">
                                                     <Image IconID="iconbuilder_actions_addcircled_svg_dark_16x16">
                                                     </Image>
                                                 </dx:GridViewToolbarItem>
