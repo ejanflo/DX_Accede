@@ -201,8 +201,9 @@ namespace DX_WebTemplate
 
             string actID = Convert.ToString(Session["wfa"]);
             string encryptedID = Encrypt(actID);
-            Session["ExpId_P2P"] = Convert.ToString(e.Parameters.Split('|').First());
+            Session["ExpId_p2p"] = Convert.ToString(e.Parameters.Split('|').First());
             Session["passP2PRFPID"] = Convert.ToString(e.Parameters.Split('|').First());
+            
 
 
             Debug.WriteLine("Main ID: " + Session["TravelExp_Id"]);

@@ -137,7 +137,11 @@ namespace DX_WebTemplate
                     var CashierVerify = _DataContext.vw_ACCEDE_FinApproverVerifies.Where(x => x.UserId == empCode)
                         .Where(x => x.Role_Name == "Accede Cashier").FirstOrDefault();
 
-                    if (CashierVerify != null/* && rfp_details.User_ID != empCode*/)
+                    var CashierStatus = _DataContext.ITP_S_Status
+                                        .Where(x => x.STS_Name == "Pending at Cashier")
+                                        .FirstOrDefault();
+
+                    if (CashierVerify != null && rfp_details.Status == CashierStatus.STS_Id /*&& rfp_details.User_ID != empCode*/)
                     //if (CashierVerify != null && rfp_details.Status == 7)
                     {
                         var edit_SAPDoc = formRFP.FindItemOrGroupByName("edit_SAPDoc") as LayoutItem;
@@ -170,7 +174,7 @@ namespace DX_WebTemplate
                     SqlRFPDocs.SelectParameters["Doc_ID"].DefaultValue = rfp_id.ToString();
                     SqlRFPDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType != null ? app_docType.DCT_Id.ToString() : "";
 
-                    if(rfp_details.Status == 1 && rfp_details.User_ID == empCode)
+                    if(rfp_details.Status == 1 && rfp_details.User_ID != empCode)
                     {
                         var BtnSaveUser = formRFP.FindItemOrGroupByName("BtnSaveDetailsUser") as LayoutItem;
                         var upload = formRFP.FindItemOrGroupByName("uploader_cashier") as LayoutItem;

@@ -202,7 +202,7 @@ namespace DX_WebTemplate
             string actID = Convert.ToString(Session["wfa"]);
             string encryptedID = Encrypt(actID);
             Session["ExpenseId"] = Convert.ToString(e.Parameters.Split('|').First());
-
+            Session["ExpId_audit"] = Convert.ToString(e.Parameters.Split('|').First());
 
             Debug.WriteLine("Main ID: " + Session["TravelExp_Id"]);
             Debug.WriteLine("WFA :" + Session["wfa"]);
@@ -221,7 +221,7 @@ namespace DX_WebTemplate
                 }
                 else if (app == "ACDE Expense")
                 {
-                    ASPxWebControl.RedirectOnCallback("~/AccedeExpenseViewPage.aspx");
+                    ASPxWebControl.RedirectOnCallback("~/AccedeAuditViewPage.aspx");
                 }
                 else if (app == "ACDE Expense Travel")
                 {
