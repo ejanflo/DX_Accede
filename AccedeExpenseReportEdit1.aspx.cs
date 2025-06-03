@@ -283,7 +283,7 @@ namespace DX_WebTemplate
                         //// - - Setting RA Workflow - - ////
 
                         var depcode = _DataContext.ITP_S_OrgDepartmentMasters
-                            .Where(x => x.ID == Convert.ToInt32(mainExp.Dept_Id))
+                            .Where(x => x.ID == Convert.ToInt32(mainExp.ExpChargedTo_DeptId))
                             .FirstOrDefault();
 
                         // Fetch data using the stored procedure
@@ -541,8 +541,9 @@ namespace DX_WebTemplate
 
         protected void WFSequenceGrid_CustomCallback(object sender, DevExpress.Web.ASPxGridViewCustomCallbackEventArgs e)
         {
+            var dept_id = e.Parameters != "" ? e.Parameters.ToString() : "0";
             var depcode = _DataContext.ITP_S_OrgDepartmentMasters
-                .Where(x => x.ID == Convert.ToInt32(e.Parameters))
+                .Where(x => x.ID == Convert.ToInt32(dept_id))
                 .FirstOrDefault();
 
             var expMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"])).FirstOrDefault();
@@ -702,15 +703,15 @@ namespace DX_WebTemplate
 
         [WebMethod]
         public static string AddExpDetailsAJAX(string dateAdd, string tin_no, string invoice_no, string cost_center,
-            string gross_amount, string net_amount, string supp, string particu, string acctCharge, string vat_amnt, string ewt_amnt, string currency, string io, string wbs)
+            string gross_amount, string net_amount, string supp, string particu, string acctCharge, string vat_amnt, string ewt_amnt, string currency, string io, string wbs, string remarks)
         {
             AccedeExpenseReportEdit1 exp = new AccedeExpenseReportEdit1();
             return exp.AddExpDetails(dateAdd, tin_no, invoice_no, cost_center,
-            gross_amount, net_amount, supp, particu, acctCharge, vat_amnt, ewt_amnt, currency, io, wbs);
+            gross_amount, net_amount, supp, particu, acctCharge, vat_amnt, ewt_amnt, currency, io, wbs, remarks);
         }
 
         public string AddExpDetails(string dateAdd, string tin_no, string invoice_no, string cost_center,
-            string gross_amount, string net_amount, string supp, string particu, string acctCharge, string vat_amnt, string ewt_amnt, string currency, string io, string wbs)
+            string gross_amount, string net_amount, string supp, string particu, string acctCharge, string vat_amnt, string ewt_amnt, string currency, string io, string wbs, string remarks)
         {
             try
             {
@@ -793,6 +794,11 @@ namespace DX_WebTemplate
                         if (wbs != "")
                         {
                             exp.ExpDtl_WBS = wbs;
+                        }
+
+                        if(remarks != "")
+                        {
+                            exp.ExpDetail_remarks = remarks;
                         }
                     }
                     _DataContext.ACCEDE_T_ExpenseDetails.InsertOnSubmit(exp);
@@ -1191,16 +1197,16 @@ namespace DX_WebTemplate
 
         [WebMethod]
         public static bool AddRFPReimburseAJAX(string comp_id, string payMethod, string purpose, string dept_id, string cCenter,
-            string io, string payee, string acctCharge, string amount, string remarks, bool isTravelrfp, string wbs, string currency, string classification, string CTComp_id, string CTDept_id)
+            string io, string payee, string acctCharge, string amount, string remarks, bool isTravelrfp, string wbs, string currency, string classification, string CTComp_id, string CTDept_id, string compLoc)
         {
             AccedeExpenseReportEdit1 exp = new AccedeExpenseReportEdit1();
 
             return exp.AddRFPReimburse(comp_id, payMethod, purpose, dept_id, cCenter,
-            io, payee, acctCharge, amount, remarks, isTravelrfp, wbs, currency, classification, CTComp_id, CTDept_id);
+            io, payee, acctCharge, amount, remarks, isTravelrfp, wbs, currency, classification, CTComp_id, CTDept_id, compLoc);
         }
 
         public bool AddRFPReimburse(string comp_id, string payMethod, string purpose, string dept_id, string cCenter,
-            string io, string payee, string acctCharge, string amount, string remarks, bool isTravelrfp, string wbs, string currency, string classification, string CTComp_id, string CTDept_id)
+            string io, string payee, string acctCharge, string amount, string remarks, bool isTravelrfp, string wbs, string currency, string classification, string CTComp_id, string CTDept_id, string compLoc)
         {
             try
             {
@@ -1225,6 +1231,14 @@ namespace DX_WebTemplate
 
                 var expDetails = _DataContext.ACCEDE_T_ExpenseDetails
                     .Where(x => x.ExpenseMain_ID == Convert.ToInt32(Session["ExpenseId"]));
+
+                var LiqReimTranType = _DataContext.ACCEDE_S_RFPTranTypes
+                    .Where(x => x.RFPTranType_Name == "Liquidation with Reimbursement")
+                    .FirstOrDefault();
+
+                var ReimTranType = _DataContext.ACCEDE_S_RFPTranTypes
+                    .Where(x => x.RFPTranType_Name == "Reimbursement")
+                    .FirstOrDefault();
 
                 decimal totalReim = new decimal(0);
                 decimal totalCA = new decimal(0);
@@ -1263,7 +1277,14 @@ namespace DX_WebTemplate
                             rfp.Remarks = remarks;
                         }
                         rfp.Exp_ID = expMain.ID;
-                        rfp.TranType = 2;
+                        if(rfpCA != null)
+                        {
+                            rfp.TranType = LiqReimTranType.ID;
+                        }
+                        else
+                        {
+                            rfp.TranType = ReimTranType.ID;
+                        }
                         rfp.IsExpenseReim = true;
                         rfp.isTravel = false;//isTravelrfp;
                         rfp.DateCreated = DateTime.Now;
@@ -1278,7 +1299,10 @@ namespace DX_WebTemplate
                         rfp.Classification_Type_Id = Convert.ToInt32(classification);
                         rfp.ChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
                         rfp.ChargedTo_DeptId = Convert.ToInt32(CTDept_id);
-
+                        if(compLoc != "")
+                        {
+                            rfp.Comp_Location_Id = Convert.ToInt32(compLoc);
+                        }
                     }
 
                     _DataContext.ACCEDE_T_RFPMains.InsertOnSubmit(rfp);
@@ -1877,6 +1901,10 @@ namespace DX_WebTemplate
                 {
                     exp_det_class.io = exp_details.ExpDtl_IO;
                 }
+                if (exp_details.ExpDetail_remarks != null)
+                {
+                    exp_det_class.remarks = exp_details.ExpDetail_remarks;
+                }
                 exp_det_class.totalAllocAmnt = totalAmnt;
 
                 Session["ExpDetailsID"] = expDetailID.ToString();
@@ -1963,14 +1991,14 @@ namespace DX_WebTemplate
 
         [WebMethod]
         public static string SaveExpDetailsAJAX(string dateAdd, string tin_no, string invoice_no, string cost_center,
-            string gross_amount, string net_amount, string supp, string particu, string acctCharge, string vat_amnt, string ewt_amnt, string currency, string io, string wbs)
+            string gross_amount, string net_amount, string supp, string particu, string acctCharge, string vat_amnt, string ewt_amnt, string currency, string io, string wbs, string remarks)
         {
             AccedeExpenseReportEdit1 exp = new AccedeExpenseReportEdit1();
-            return exp.SaveExpDetails(dateAdd, tin_no, invoice_no, cost_center, gross_amount, net_amount, supp, particu, acctCharge, vat_amnt, ewt_amnt, currency, io, wbs);
+            return exp.SaveExpDetails(dateAdd, tin_no, invoice_no, cost_center, gross_amount, net_amount, supp, particu, acctCharge, vat_amnt, ewt_amnt, currency, io, wbs, remarks);
         }
 
         public string SaveExpDetails(string dateAdd, string tin_no, string invoice_no, string cost_center,
-            string gross_amount, string net_amount, string supp, string particu, string acctCharge, string vat_amnt, string ewt_amnt, string currency, string io, string wbs)
+            string gross_amount, string net_amount, string supp, string particu, string acctCharge, string vat_amnt, string ewt_amnt, string currency, string io, string wbs, string remarks)
         {
             try
             {
@@ -2011,6 +2039,11 @@ namespace DX_WebTemplate
                         expDetail.ExpDtl_Currency = currency;
                         expDetail.ExpDtl_IO = string.IsNullOrEmpty(io) ? (string)null : io;
                         expDetail.ExpDtl_WBS = string.IsNullOrEmpty(wbs) ? (string)null : wbs;
+                        if(remarks != null)
+                        {
+                            expDetail.ExpDetail_remarks = remarks;
+                        }
+                        
                     }
                 }
 
@@ -2228,6 +2261,7 @@ namespace DX_WebTemplate
             public string preparerId { get; set; }
             public string io { get; set; }
             public decimal totalAllocAmnt { get; set; }
+            public string remarks { get; set; }
         }
 
         protected void exp_Department_Callback(object sender, CallbackEventArgsBase e)
@@ -2427,84 +2461,10 @@ namespace DX_WebTemplate
 
         protected void drpdown_WF_Callback(object sender, CallbackEventArgsBase e)
         {
-            var rfpCA = _DataContext.ACCEDE_T_RFPMains
-                .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]))
-                .Where(x => x.IsExpenseCA == true)
-                .Where(x => x.isTravel != true)
-                .Where(x=>x.isTravel != true);
 
-            var totalCA = new decimal(0.00);
-            foreach (var item in rfpCA)
-            {
-                totalCA += Convert.ToDecimal(item.Amount);
-            }
-
-            var expDetail = _DataContext.ACCEDE_T_ExpenseDetails
-                .Where(x => x.ExpenseMain_ID == Convert.ToInt32(Session["ExpenseId"]));
-
-            var totalExp = new decimal(0.00);
-
-            foreach (var item in expDetail)
-            {
-                totalExp += Convert.ToDecimal(item.GrossAmount);
-            }
-            //lbl_expenseTotal.Text = totalExp.ToString("#,##0.00") + "  " + mainExp.Exp_Currency;
-
-            var totalDue = new decimal(0.00);
-            totalDue = totalCA - totalExp;
-            var reimRFP = _DataContext.ACCEDE_T_RFPMains
-                .Where(x => x.IsExpenseReim == true)
-                .Where(x => x.Status != 4)
-                .Where(x => x.isTravel != true)
-                .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]));
-
-            var depcode = _DataContext.ITP_S_OrgDepartmentMasters
-                .Where(x => x.ID == Convert.ToInt32(e.Parameter))
-                .FirstOrDefault();
-
-            //var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses
-            //    .Where(x => x.CompanyId == Convert.ToInt32(exp_Company.Value))
-            //    .Where(x => x.UserId == exp_EmpId.ToString())
-            //    .Where(x => x.App_Id == 1032)
-            //    .Where(x => x.Minimum <= Convert.ToDecimal(Math.Abs(totalExp)))
-            //    .Where(x => x.Maximum >= Convert.ToDecimal(Math.Abs(totalExp)))
-            //    .Where(x => x.IsRA == true)
-            //    .Where(x => x.DepCode == (depcode != null ? depcode.DepCode : "0"))
-            //    .FirstOrDefault();
-
-            // Fetch data using the stored procedure
-            //DataTable rawf = GetWorkflowHeadersByExpenseAndDepartment("", Convert.ToInt32(exp_Company.Value), totalExp, depcode != null ? depcode.DepCode : "0", 1032);
-
-            //if (rawf != null && rawf.Rows.Count > 0)
-            //{
-            //    // Get the first row's WF_Id value
-            //    DataRow firstRow = rawf.Rows[0];
-            //    int wfId = Convert.ToInt32(firstRow["WF_Id"]);
-
-            //    // Update the SQL data source parameters
-            //    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
-            //    SqlWorkflowSequence.DataBind();
-
-            //    SqlWF.SelectParameters["WF_Id"].DefaultValue = wfId.ToString();
-            //    SqlWF.DataBind();
-
-            //    // Set the dropdown to the first item (if applicable)
-            //    drpdown_WF.DataSourceID = null;
-            //    drpdown_WF.DataSource = SqlWF;
-            //    drpdown_WF.DataBind();
-            //    drpdown_WF.SelectedIndex = 0;
-
-            //}
-            //else
-            //{
-            //    // Handle the case when no data is returned
-            //    drpdown_WF.SelectedIndex = -1; // Optionally reset the dropdown
-            //    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = string.Empty;
-            //    SqlWF.SelectParameters["WF_Id"].DefaultValue = string.Empty;
-            //}
-
+            var param = e.Parameter != "" ? e.Parameter.ToString() : "0";
+            var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(param)).FirstOrDefault();
             var expMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x=>x.ID == Convert.ToInt32(Session["ExpenseId"])).FirstOrDefault();
-
 
             var wfMapCheck = _DataContext.vw_ACCEDE_I_WFMappings.Where(x => x.UserId == expMain.ExpenseName)
                             .Where(x => x.Company_Id == Convert.ToInt32(expMain.CompanyId))
@@ -2519,31 +2479,29 @@ namespace DX_WebTemplate
             }
             else
             {
-                var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == expMain.ExpenseName)
-                                .Where(x => x.CompanyId == Convert.ToInt32(expMain.CompanyId))
-                                .Where(x => x.DepCode == depcode.DepCode)
-                                .Where(x => x.IsRA == true)
-                                .FirstOrDefault();
-
-                if (rawf != null)
+                if(depcode != null)
                 {
-                    SqlWF.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
-                    drpdown_WF.DataSource = SqlWF;
-                    drpdown_WF.SelectedIndex = 0;
-                    drpdown_WF.DataBind();
-                }
-                else
-                {
-                    SqlWF.SelectParameters["WF_Id"].DefaultValue = "0";
-                    drpdown_WF.DataSourceID = null;
-                    drpdown_WF.DataSource = SqlWF;
-                    drpdown_WF.DataBind();
+                    var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == expMain.ExpenseName)
+                            .Where(x => x.CompanyId == Convert.ToInt32(expMain.CompanyId))
+                            .Where(x => x.DepCode == depcode.DepCode)
+                            .Where(x => x.IsRA == true)
+                            .FirstOrDefault();
 
-                    //var test = drpdown_WF.DataSource.ToString();
-                    //SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = "0";
-                    //SqlWF.SelectParameters["WF_Id"].DefaultValue = "0";
-                    //SqlWorkflowSequence.DataBind();
-                    //SqlWF.DataBind();
+                    if (rawf != null)
+                    {
+                        SqlWF.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
+                        drpdown_WF.DataSource = SqlWF;
+                        drpdown_WF.SelectedIndex = 0;
+                        drpdown_WF.DataBind();
+                    }
+                    else
+                    {
+                        SqlWF.SelectParameters["WF_Id"].DefaultValue = "0";
+                        drpdown_WF.DataSourceID = null;
+                        drpdown_WF.DataSource = SqlWF;
+                        drpdown_WF.DataBind();
+
+                    }
                 }
             }
         }

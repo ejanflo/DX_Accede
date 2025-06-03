@@ -217,6 +217,8 @@
                var currency = exp_Currency.GetValue() != null ? exp_Currency.GetValue() : "";
                var io = IO.GetValue() != null ? IO.GetValue() : "";
                var wbs = WBS.GetValue() != null ? WBS.GetValue() : "";
+               var remarks = memo_expItem.GetValue() != null ? memo_expItem.GetValue() : "";
+
                SaveExpenseReport("Save2");
                LoadingPanel.Show();
 
@@ -237,7 +239,8 @@
                        ewt_amnt: ewt_amnt,
                        currency: currency,
                        io: io,
-                       wbs: wbs
+                       wbs: wbs,
+                       remarks: remarks
 
                    }),
                    contentType: "application/json; charset=utf-8",
@@ -316,6 +319,7 @@
                 var classification = drpdown_classification.GetValue() != null ? drpdown_classification.GetValue() : "";
                 var CTComp_id = exp_CTCompany.GetValue();
                 var CTDept_id = exp_CTDepartment.GetValue();
+                var compLoc = exp_CompLocation.GetValue() != null ? exp_CompLocation.GetValue() : "";
 
                 SaveExpenseReport("Save2");
                 console.log(dept_id);
@@ -339,7 +343,8 @@
                         currency: currency,
                         classification: classification,
                         CTComp_id: CTComp_id,
-                        CTDept_id: CTDept_id
+                        CTDept_id: CTDept_id,
+                        compLoc: compLoc
 
                     }),
                     contentType: "application/json; charset=utf-8",
@@ -520,6 +525,7 @@
                     vat_edit.SetValue(response.d.vat);
                     ewt_edit.SetValue(response.d.ewt);
                     io_edit.SetValue(response.d.io);
+                    memo_expItem_edit.SetValue(response.d.remarks);
 
                     expensePopup_edit.Show();
                     ExpAllocGrid_edit.Refresh();
@@ -626,6 +632,7 @@
                 var currency = exp_Currency.GetValue() != null ? exp_Currency.GetValue() : "";
                 var io = io_edit.GetValue() != null ? io_edit.GetValue() : "";
                 var wbs = wbs_edit.GetValue() != null ? wbs_edit.GetValue() : "";
+                var remarks = memo_expItem_edit.GetValue() != null ? memo_expItem_edit.GetValue() : "";
                 SaveExpenseReport("Save2");
                 LoadingPanel.Show();
 
@@ -646,7 +653,8 @@
                         ewt_amnt: ewt_amnt,
                         currency: currency,
                         io: io,
-                        wbs: wbs
+                        wbs: wbs,
+                        remarks: remarks
 
                     }),
                     contentType: "application/json; charset=utf-8",
@@ -1472,7 +1480,7 @@ ReimbursementTrap2();
                                                                         <CellStyle Font-Bold="True">
                                                                         </CellStyle>
                                                                     </dx:GridViewCommandColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="6">
+                                                                    <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="5">
                                                                         <EditFormSettings Visible="False" />
                                                                     </dx:GridViewDataTextColumn>
                                                                     <dx:GridViewDataTextColumn FieldName="Company_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="13">
@@ -1486,8 +1494,6 @@ ReimbursementTrap2();
                                                                     <dx:GridViewDataTextColumn FieldName="SAPCostCenter" ShowInCustomizationForm="True" VisibleIndex="8">
                                                                     </dx:GridViewDataTextColumn>
                                                                     <dx:GridViewDataTextColumn Caption="IO No." FieldName="IO_Num" ShowInCustomizationForm="True" VisibleIndex="9">
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="Payee" ShowInCustomizationForm="True" VisibleIndex="7">
                                                                     </dx:GridViewDataTextColumn>
                                                                     <dx:GridViewDataDateColumn FieldName="LastDayTransact" ShowInCustomizationForm="True" Visible="False" VisibleIndex="17">
                                                                     </dx:GridViewDataDateColumn>
@@ -1511,6 +1517,10 @@ ReimbursementTrap2();
                                                                     </dx:GridViewDataCheckColumn>
                                                                     <dx:GridViewDataComboBoxColumn Caption="Payment Method" FieldName="PayMethod" ShowInCustomizationForm="True" VisibleIndex="12">
                                                                         <PropertiesComboBox DataSourceID="sqlPayMethod" TextField="PMethod_name" ValueField="ID">
+                                                                        </PropertiesComboBox>
+                                                                    </dx:GridViewDataComboBoxColumn>
+                                                                    <dx:GridViewDataComboBoxColumn FieldName="Payee" ShowInCustomizationForm="True" VisibleIndex="7">
+                                                                        <PropertiesComboBox DataSourceID="SqlUserAll" TextField="FullName" ValueField="EmpCode">
                                                                         </PropertiesComboBox>
                                                                     </dx:GridViewDataComboBoxColumn>
                                                                 </Columns>
@@ -1586,9 +1596,9 @@ ReimbursementTrap2();
                                                                     </dx:GridViewDataDateColumn>
                                                                     <dx:GridViewDataTextColumn Caption="Supplier" FieldName="Supplier" ShowInCustomizationForm="True" VisibleIndex="4">
                                                                     </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn Caption="TIN" FieldName="TIN" ShowInCustomizationForm="True" Visible="False" VisibleIndex="11">
+                                                                    <dx:GridViewDataTextColumn Caption="TIN" FieldName="TIN" ShowInCustomizationForm="True" Visible="False" VisibleIndex="12">
                                                                     </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn Caption="Invoice/OR No." FieldName="InvoiceOR" ShowInCustomizationForm="True" Visible="False" VisibleIndex="12">
+                                                                    <dx:GridViewDataTextColumn Caption="Invoice/OR No." FieldName="InvoiceOR" ShowInCustomizationForm="True" Visible="False" VisibleIndex="13">
                                                                     </dx:GridViewDataTextColumn>
                                                                     <dx:GridViewDataTextColumn Caption="Gross Amount" FieldName="GrossAmount" ShowInCustomizationForm="True" VisibleIndex="7">
                                                                         <PropertiesTextEdit DisplayFormatString="#,##0.00">
@@ -1606,7 +1616,7 @@ ReimbursementTrap2();
                                                                         <PropertiesTextEdit DisplayFormatString="#,##0.00">
                                                                         </PropertiesTextEdit>
                                                                     </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn Caption="Doc No." FieldName="DocNo" ShowInCustomizationForm="True" Visible="False" VisibleIndex="13">
+                                                                    <dx:GridViewDataTextColumn Caption="Doc No." FieldName="DocNo" ShowInCustomizationForm="True" Visible="False" VisibleIndex="14">
                                                                     </dx:GridViewDataTextColumn>
                                                                     <dx:GridViewDataComboBoxColumn Caption="Account to be Charged" FieldName="AccountToCharged" ShowInCustomizationForm="True" Visible="False" VisibleIndex="5">
                                                                         <PropertiesComboBox DataSourceID="sqlAccountCharged" TextField="GLAccount" ValueField="AccCharged_ID">
@@ -1620,6 +1630,8 @@ ReimbursementTrap2();
                                                                         <PropertiesComboBox DataSourceID="SqlParticulars" TextField="P_Name" ValueField="ID">
                                                                         </PropertiesComboBox>
                                                                     </dx:GridViewDataComboBoxColumn>
+                                                                    <dx:GridViewDataTextColumn Caption="Remarks" FieldName="ExpDetail_remarks" ShowInCustomizationForm="True" VisibleIndex="11">
+                                                                    </dx:GridViewDataTextColumn>
                                                                 </Columns>
                                                                 <Toolbars>
                                                                     <dx:GridViewToolbar>
@@ -2041,7 +2053,8 @@ exp_EmpId.PerformCallback(s.GetValue());
         <dx:ASPxLoadingPanel ID="LoadingPanel" runat="server" Theme="MaterialCompact" ClientInstanceName="LoadingPanel" ShowImage="true" ShowText="true" Text="     Processing..." Modal="True">
         </dx:ASPxLoadingPanel>
 
-        <%-- This is where the document is rendered and viewed --%>
+        <%--<asp:SqlDataSource ID="sqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_CostCenter] ORDER BY [CostCenter]">
+    </asp:SqlDataSource>--%>
         <dx:ASPxPopupControl ID="caPopup" runat="server" FooterText="" HeaderText="Select Cash Advance/s" Width="100%" ClientInstanceName="caPopup" Modal="True" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" AllowDragging="True" CloseAction="CloseButton" CssClass="rounded">
             <CloseButtonImage IconID="outlookinspired_close_svg_white_16x16">
             </CloseButtonImage>
@@ -3011,6 +3024,24 @@ exp_EmpId.PerformCallback(s.GetValue());
                                         </dx:LayoutItem>
                                     </Items>
                                 </dx:LayoutGroup>
+                                <dx:LayoutGroup Caption="" ColSpan="2" ColumnSpan="2" GroupBoxDecoration="None" Width="100%">
+                                    <Items>
+                                        <dx:LayoutItem Caption="Remarks" ColSpan="1">
+                                            <LayoutItemNestedControlCollection>
+                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                    <dx:ASPxMemo ID="memo_expItem" runat="server" ClientInstanceName="memo_expItem" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" Width="100%">
+                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
+                                                            <RequiredField ErrorText="*Required" />
+                                                        </ValidationSettings>
+                                                        <Border BorderStyle="None" />
+                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                    </dx:ASPxMemo>
+                                                </dx:LayoutItemNestedControlContainer>
+                                            </LayoutItemNestedControlCollection>
+                                            <CaptionSettings HorizontalAlign="Left" Location="Top" />
+                                        </dx:LayoutItem>
+                                    </Items>
+                                </dx:LayoutGroup>
                                 <dx:LayoutGroup Caption="Cost Allocation" ColSpan="2" ColumnSpan="2" GroupBoxDecoration="HeadingLine" Width="100%" ColCount="2" ColumnCount="2">
                                     <Items>
                                         <dx:LayoutItem Caption="" ColSpan="1" Width="70%">
@@ -3466,6 +3497,24 @@ computeNetAmount(&quot;edit&quot;);
                                     <ParentContainerStyle ForeColor="Red">
                                     </ParentContainerStyle>
                                 </dx:LayoutGroup>
+                                <dx:LayoutGroup Caption="" ColSpan="2" ColumnSpan="2" GroupBoxDecoration="None" Width="100%">
+                                    <Items>
+                                        <dx:LayoutItem Caption="Remarks" ColSpan="1">
+                                            <LayoutItemNestedControlCollection>
+                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                    <dx:ASPxMemo ID="memo_expItem_edit" runat="server" ClientInstanceName="memo_expItem_edit" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" Width="100%">
+                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
+                                                            <RequiredField ErrorText="*Required" />
+                                                        </ValidationSettings>
+                                                        <Border BorderStyle="None" />
+                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                    </dx:ASPxMemo>
+                                                </dx:LayoutItemNestedControlContainer>
+                                            </LayoutItemNestedControlCollection>
+                                            <CaptionSettings HorizontalAlign="Left" Location="Top" />
+                                        </dx:LayoutItem>
+                                    </Items>
+                                </dx:LayoutGroup>
                                 <dx:LayoutGroup Caption="Cost Allocation" ColSpan="2" ColumnSpan="2" Width="100%" ColCount="2" ColumnCount="2">
                                     <Items>
                                         <dx:LayoutItem Caption="" ColSpan="1" Width="70%">
@@ -3718,7 +3767,7 @@ computeNetAmount(&quot;edit&quot;);
                 <asp:Parameter Name="FileSize" Type="String" />
                 <asp:Parameter Name="original_ID" Type="Int32" />
             </UpdateParameters>
-        </asp:SqlDataSource>
+    </asp:SqlDataSource>
     <asp:SqlDataSource ID="sqlAccountCharged" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_AccountCharged]"></asp:SqlDataSource>
        <%-- <asp:SqlDataSource ID="sqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_CostCenter] WHERE (([CompanyId] = @CompanyId) AND ([DepartmentId] = @DepartmentId))">
             <SelectParameters>
@@ -3805,12 +3854,13 @@ computeNetAmount(&quot;edit&quot;);
         <SelectParameters>
             <asp:Parameter Name="Company_ID" Type="Int32" />
         </SelectParameters>
-</asp:SqlDataSource>
+    </asp:SqlDataSource>
         <asp:SqlDataSource ID="SqlCompLocation" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_CompanyBranch] WHERE ([Comp_Id] = @Comp_Id)">
         <SelectParameters>
             <asp:Parameter Name="Comp_Id" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-        <asp:SqlDataSource ID="SqlDepartmentAll" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster]"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlDepartmentAll" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster]"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlUserAll" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_UserMaster]"></asp:SqlDataSource>
 </asp:Content>
 

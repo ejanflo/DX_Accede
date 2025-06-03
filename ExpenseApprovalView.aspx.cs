@@ -178,6 +178,33 @@ namespace DX_WebTemplate
                                 //}
                             }
 
+                            var reimRFP = _DataContext.ACCEDE_T_RFPMains
+                                    .Where(x => x.IsExpenseReim == true)
+                                    .Where(x => x.Status != 4)
+                                    .Where(x => x.Exp_ID == Convert.ToInt32(exp.ID))
+                                    .Where(x => x.isTravel != true)
+                                    .FirstOrDefault();
+
+                            if (reimRFP == null)
+                            {
+                                var reim = FormExpApprovalView.FindItemOrGroupByName("reimItem") as LayoutItem;
+                                if (reim != null)
+                                {
+                                    reim.ClientVisible = true;
+                                    //ReimburseGrid.Visible = false;
+                                }
+
+                            }
+                            else
+                            {
+                                var reim = FormExpApprovalView.FindItemOrGroupByName("ReimLayout") as LayoutGroup;
+                                if (reim != null)
+                                {
+                                    reim.ClientVisible = true;
+                                    link_rfp.Value = reimRFP.RFP_DocNum;
+                                }
+                            }
+
                             //APPROVE AND FORWARD BUTTON AND GENERATE AAF WF
                             var wfDetails = _DataContext.ITP_S_WorkflowDetails
                                 .Where(x => x.WF_Id == actDetails.WF_Id)
@@ -980,20 +1007,34 @@ namespace DX_WebTemplate
                     .Where(x => x.ID == rfpCA.PayMethod)
                     .FirstOrDefault().PMethod_name;
 
+                var payeeName = _DataContext.ITP_S_UserMasters
+                    .Where(x => x.EmpCode == rfpCA.Payee)
+                    .FirstOrDefault();
+
                 var tranTypeName = _DataContext.ACCEDE_S_RFPTranTypes
                     .Where(x => x.ID == rfpCA.TranType)
                     .FirstOrDefault().RFPTranType_Name;
+
+                var rawfDetail = _DataContext.ITP_S_WorkflowHeaders
+                    .Where(x => x.WF_Id == Convert.ToInt32(rfpCA.WF_Id))
+                    .FirstOrDefault();
+
+                var fapwfDetail = _DataContext.ITP_S_WorkflowHeaders
+                    .Where(x => x.WF_Id == Convert.ToInt32(rfpCA.FAPWF_Id))
+                    .FirstOrDefault();
 
                 rfp.company = compName != null ? compName : "";
                 rfp.department = deptName != null ? deptName : "";
                 rfp.payMethod = payMethName != null ? payMethName : "";
                 rfp.tranType = tranTypeName != null ? tranTypeName : "";
                 rfp.CostCenter = rfpCA.SAPCostCenter != null ? rfpCA.SAPCostCenter : "";
-                rfp.payee = rfpCA.Payee != null ? rfpCA.Payee : "";
+                rfp.payee = payeeName.FullName != null ? payeeName.FullName : "";
                 rfp.purpose = rfpCA.Purpose != null ? rfpCA.Purpose : "";
                 rfp.amount = rfpCA.Amount != null ? rfpCA.Amount.ToString() : "";
                 rfp.currency = rfpCA.Currency != null ? rfpCA.Currency : "";
                 rfp.docNum = rfpCA.RFP_DocNum != null ? rfpCA.RFP_DocNum : "";
+                rfp.RAWF = rawfDetail.Name != null ? rawfDetail.Name : "";
+                rfp.FAPWF = fapwfDetail.Name != null ? fapwfDetail.Name : "";
             }
             return rfp;
         }
@@ -1035,6 +1076,14 @@ namespace DX_WebTemplate
                     .Where(x => x.EmpCode == rfpReim.Payee)
                     .FirstOrDefault();
 
+                var rawfDetail = _DataContext.ITP_S_WorkflowHeaders
+                    .Where(x => x.WF_Id == Convert.ToInt32(rfpReim.WF_Id))
+                    .FirstOrDefault();
+
+                var fapwfDetail = _DataContext.ITP_S_WorkflowHeaders
+                    .Where(x => x.WF_Id == Convert.ToInt32(rfpReim.FAPWF_Id))
+                    .FirstOrDefault();
+
                 rfp.company = compName != null ? compName : "";
                 rfp.department = deptName != null ? deptName : "";
                 rfp.payMethod = payMethName != null ? payMethName : "";
@@ -1046,6 +1095,8 @@ namespace DX_WebTemplate
                 rfp.currency = rfpReim.Currency != null ? rfpReim.Currency : "";
                 rfp.docNum = rfpReim.RFP_DocNum != null ? rfpReim.RFP_DocNum : "";
                 rfp.payMethod_id = rfpReim.PayMethod != null ? rfpReim.PayMethod.ToString() : "";
+                rfp.RAWF = rawfDetail.Name != null ? rawfDetail.Name : "";
+                rfp.FAPWF = fapwfDetail.Name != null ? fapwfDetail.Name : "";
             }
             return rfp;
         }
@@ -1100,16 +1151,16 @@ namespace DX_WebTemplate
 
         public ExpItemDetails DisplayExpDetails(int item_id)
         {
-            var expMain = _DataContext.vw_ACCEDE_I_ExpenseDetails
+            var expDetail = _DataContext.vw_ACCEDE_I_ExpenseDetails
                 .Where(x=>x.ExpenseReportDetail_ID == item_id)
                 .FirstOrDefault();
 
             ExpItemDetails exp = new ExpItemDetails();
-            if(expMain != null)
+            if(expDetail != null)
             {
-                var expMainMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(expMain.ExpenseMain_ID)).FirstOrDefault();
+                var expMainMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(expDetail.ExpenseMain_ID)).FirstOrDefault();
                 var acct_charge = _DataContext.ACDE_T_MasterCodes
-                    .Where(x => x.ID == Convert.ToInt32(expMain.AccountToCharged))
+                    .Where(x => x.ID == Convert.ToInt32(expDetail.AccountToCharged))
                     .FirstOrDefault();
 
                 //var cost_center = _DataContext.ACCEDE_S_CostCenters.Where(x=>x.CostCenter_ID == Convert.ToInt32(expMain.CostCenterIOWBS)).FirstOrDefault();
@@ -1117,21 +1168,23 @@ namespace DX_WebTemplate
                     .Where(x=>x.ID == Convert.ToInt32(expMainMain.ExpChargedTo_DeptId))
                     .FirstOrDefault();
 
-                DateTime dateAdd = Convert.ToDateTime(expMain.DateAdded);
+                DateTime dateAdd = Convert.ToDateTime(expDetail.DateAdded);
 
+                //Assign values to fields -- 
                 exp.acctCharge = acct_charge != null ? acct_charge.Description : "";
                 exp.costCenter = cc != null ? cc.SAP_CostCenter.ToString() : "";
-                exp.particulars = expMain.P_Name != null ? expMain.P_Name.ToString() : "";
-                exp.supplier = expMain.Supplier != null ? expMain.Supplier : "";
-                exp.tin = expMain.TIN != null ? expMain.TIN : "";
-                exp.invoice = expMain.InvoiceOR != null ? expMain.InvoiceOR : "";
-                exp.gross = expMain.GrossAmount != null ? expMain.GrossAmount.ToString() : "";
+                exp.particulars = expDetail.P_Name != null ? expDetail.P_Name.ToString() : "";
+                exp.supplier = expDetail.Supplier != null ? expDetail.Supplier : "";
+                exp.tin = expDetail.TIN != null ? expDetail.TIN : "";
+                exp.invoice = expDetail.InvoiceOR != null ? expDetail.InvoiceOR : "";
+                exp.gross = expDetail.GrossAmount != null ? expDetail.GrossAmount.ToString() : "";
                 exp.dateCreated = dateAdd != null ? dateAdd.ToString("MMMM dd, yyyy") : "";
-                exp.net = expMain.NetAmount != null ? expMain.NetAmount.ToString() : "0.00";
-                exp.vat = expMain.VAT != null ? expMain.VAT.ToString() : "0.00";
-                exp.ewt = expMain.EWT != null ? expMain.EWT.ToString() : "0.00";
-                exp.io = expMain.ExpDtl_IO != null ? expMain.ExpDtl_IO.ToString() : "";
-                exp.wbs = expMain.ExpDtl_WBS != null ? expMain.ExpDtl_WBS.ToString() : "";
+                exp.net = expDetail.NetAmount != null ? expDetail.NetAmount.ToString() : "0.00";
+                exp.vat = expDetail.VAT != null ? expDetail.VAT.ToString() : "0.00";
+                exp.ewt = expDetail.EWT != null ? expDetail.EWT.ToString() : "0.00";
+                exp.io = expDetail.ExpDtl_IO != null ? expDetail.ExpDtl_IO.ToString() : "";
+                exp.wbs = expDetail.ExpDtl_WBS != null ? expDetail.ExpDtl_WBS.ToString() : "";
+                exp.remarks = expDetail.ExpDetail_remarks != null ? expDetail.ExpDetail_remarks.ToString() : "";
             }
 
             Session["ExpMainId"] = item_id.ToString();
@@ -1559,6 +1612,22 @@ namespace DX_WebTemplate
             //if (count == 1)
             //    drpdown_CostCenter.SelectedIndex = 0; drpdown_CostCenter.DataBind();
         }
+
+        protected void CAWFActivityGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            SqlCAWFActivity.SelectParameters["Document_Id"].DefaultValue = e.Parameters.ToString();
+            SqlCAWFActivity.DataBind();
+
+            CAWFActivityGrid.DataBind();
+        }
+
+        protected void CADocuGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            SqlCAFileAttach.SelectParameters["Doc_ID"].DefaultValue = e.Parameters.ToString();
+            SqlCAFileAttach.DataBind();
+
+            CADocuGrid.DataBind();
+        }
     }
 
     public class RFPDetails
@@ -1574,6 +1643,8 @@ namespace DX_WebTemplate
         public string currency { get; set; }
         public string docNum { get; set; }
         public string payMethod_id { get; set; }
+        public string RAWF { get; set; }
+        public string FAPWF { get; set; }
     }
 
     public class ExpItemDetails
@@ -1591,6 +1662,7 @@ namespace DX_WebTemplate
         public string ewt { get; set; }
         public string io { get; set; }
         public string wbs { get; set; }
+        public string remarks { get; set; }
     }
 
 }

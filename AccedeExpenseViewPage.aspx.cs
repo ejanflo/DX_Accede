@@ -52,7 +52,7 @@ namespace DX_WebTemplate
                     sqlMain.SelectParameters["ID"].DefaultValue = expDetails.ID.ToString();
                     SqlDocs.SelectParameters["Doc_ID"].DefaultValue = expDetails.ID.ToString();
                     SqlCA.SelectParameters["Exp_ID"].DefaultValue = expDetails.ID.ToString();
-                    SqlReim.SelectParameters["Exp_ID"].DefaultValue = expDetails.ID.ToString();
+                    SqlReimDetails.SelectParameters["Exp_ID"].DefaultValue = expDetails.ID.ToString();
                     SqlExpDetails.SelectParameters["ExpenseMain_ID"].DefaultValue = expDetails.ID.ToString();
                     SqlWFActivity.SelectParameters["Document_Id"].DefaultValue = expDetails.ID.ToString();
 
@@ -136,6 +136,34 @@ namespace DX_WebTemplate
                     if (status_id == "1" && expDetails.UserId == empCode)
                     {
                         btnRecall.ClientVisible = true;
+                    }
+
+
+                    var reimRFP = _DataContext.ACCEDE_T_RFPMains
+                                    .Where(x => x.IsExpenseReim == true)
+                                    .Where(x => x.Status != 4)
+                                    .Where(x => x.Exp_ID == Convert.ToInt32(exp.ID))
+                                    .Where(x => x.isTravel != true)
+                                    .FirstOrDefault();
+
+                    if (reimRFP == null)
+                    {
+                        var reim = FormExpApprovalView.FindItemOrGroupByName("reimItem") as LayoutItem;
+                        if (reim != null)
+                        {
+                            reim.ClientVisible = true;
+                            //ReimburseGrid.Visible = false;
+                        }
+
+                    }
+                    else
+                    {
+                        var reim = FormExpApprovalView.FindItemOrGroupByName("ReimLayout") as LayoutGroup;
+                        if (reim != null)
+                        {
+                            reim.ClientVisible = true;
+                            link_rfp.Value = reimRFP.RFP_DocNum;
+                        }
                     }
 
                 }
@@ -339,6 +367,38 @@ namespace DX_WebTemplate
             {
                 return ex.Message;
             }
+        }
+
+        protected void CAWFActivityGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            SqlCAWFActivity.SelectParameters["Document_Id"].DefaultValue = e.Parameters.ToString();
+            SqlCAWFActivity.DataBind();
+
+            CAWFActivityGrid.DataBind();
+        }
+
+        protected void CADocuGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            SqlCAFileAttach.SelectParameters["Doc_ID"].DefaultValue = e.Parameters.ToString();
+            SqlCAFileAttach.DataBind();
+
+            CADocuGrid.DataBind();
+        }
+
+        protected void ExpAllocGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            SqlExpMap.SelectParameters["ExpenseReportDetail_ID"].DefaultValue = e.Parameters.ToString();
+            SqlExpMap.DataBind();
+
+            ExpAllocGrid.DataBind();
+        }
+
+        protected void DocuGrid1_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            SqlExpDetailAttach.SelectParameters["ExpDetail_Id"].DefaultValue = e.Parameters.ToString();
+            SqlExpDetailAttach.DataBind();
+
+            DocuGrid1.DataBind();
         }
     }
 }

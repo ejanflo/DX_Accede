@@ -55,6 +55,7 @@ namespace DX_WebTemplate
                     SqlReimDetails.SelectParameters["Exp_ID"].DefaultValue = expDetails.ID.ToString();
                     SqlExpDetails.SelectParameters["ExpenseMain_ID"].DefaultValue = expDetails.ID.ToString();
                     SqlWFActivity.SelectParameters["Document_Id"].DefaultValue = expDetails.ID.ToString();
+                    SqlCADetails.SelectParameters["Exp_ID"].DefaultValue = expDetails.ID.ToString();
 
                     var exp = _DataContext.ACCEDE_T_ExpenseMains
                         .Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"]))
@@ -62,6 +63,13 @@ namespace DX_WebTemplate
 
                     SqlWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp.WF_Id).ToString();
                     SqlFAPWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp.FAPWF_Id).ToString();
+
+                    var app_docType = _DataContext.ITP_S_DocumentTypes
+                        .Where(x => x.DCT_Name == "ACDE Expense")
+                        .Where(x => x.App_Id == 1032)
+                        .FirstOrDefault();
+
+                    SqlDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType != null ? app_docType.DCT_Id.ToString() : "";
 
                     var status_id = exp.Status.ToString();
                     var user_id = exp.UserId.ToString();
@@ -105,17 +113,33 @@ namespace DX_WebTemplate
                         dueField.Caption = "Net Due to Employee";
 
                         var reimRFP = _DataContext.ACCEDE_T_RFPMains
-                            .Where(x => x.IsExpenseReim == true)
-                            .Where(x => x.Status != 4)
-                            .Where(x => x.isTravel != true)
-                            .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]));
+                                    .Where(x => x.IsExpenseReim == true)
+                                    .Where(x => x.Status != 4)
+                                    .Where(x => x.Exp_ID == Convert.ToInt32(exp.ID))
+                                    .Where(x => x.isTravel != true)
+                                    .FirstOrDefault();
 
-                        if(reimRFP != null)
+                        if (reimRFP == null)
                         {
+                            var reim = FormExpApprovalView.FindItemOrGroupByName("reimItem") as LayoutItem;
+                            if (reim != null)
+                            {
+                                reim.ClientVisible = true;
+                                //ReimburseGrid.Visible = false;
+                            }
+
+                        }
+                        else
+                        {
+                            var reim = FormExpApprovalView.FindItemOrGroupByName("ReimLayout") as LayoutGroup;
+                            if (reim != null)
+                            {
+                                reim.ClientVisible = true;
+                                link_rfp.Value = reimRFP.RFP_DocNum;
+                            }
+
                             var SAPdoc = FormExpApprovalView.FindItemOrGroupByName("SAPDoc") as LayoutItem;
                             SAPdoc.ClientVisible = true;
-
-                            btnDisburse.ClientVisible = true;
                         }
 
                     }
@@ -536,6 +560,22 @@ namespace DX_WebTemplate
             }
             else
                 return new { FileName = fileName, ContentType = contentType, Data = bytes };
+        }
+
+        protected void CAWFActivityGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            SqlCAWFActivity.SelectParameters["Document_Id"].DefaultValue = e.Parameters.ToString();
+            SqlCAWFActivity.DataBind();
+
+            CAWFActivityGrid.DataBind();
+        }
+
+        protected void CADocuGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            SqlCAFileAttach.SelectParameters["Doc_ID"].DefaultValue = e.Parameters.ToString();
+            SqlCAFileAttach.DataBind();
+
+            CADocuGrid.DataBind();
         }
     }
 }

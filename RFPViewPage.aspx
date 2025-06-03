@@ -1441,10 +1441,9 @@ RecallClick(); RecallPopup.Hide();
             <asp:Parameter Name="ID" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlActivity" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_T_WorkflowActivity] WHERE (([AppId] = @AppId) AND ([Document_Id] = @Document_Id)) ORDER BY [WFA_Id]">
+    <asp:SqlDataSource ID="SqlActivity" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_RFPWFActivity] WHERE ([Document_Id] = @Document_Id)">
         <SelectParameters>
-            <asp:Parameter Name="AppId" Type="Int32" DefaultValue="1032" />
-            <asp:Parameter DefaultValue="" Name="Document_Id" Type="Int32" />
+            <asp:Parameter Name="Document_Id" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
      <asp:SqlDataSource ID="SqlWorkflowSequence" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_RS_Workflow_Sequence] WHERE ([WF_Id] = @WF_Id) ORDER BY [Sequence]">

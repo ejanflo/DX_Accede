@@ -107,10 +107,32 @@ namespace DX_WebTemplate
                         var dueField = FormExpApprovalView.FindItemOrGroupByName("due_lbl") as LayoutItem;
                         dueField.Caption = "Net Due to Employee";
 
-                        var reimRFP = _DataContext.ACCEDE_T_RFPMains.Where(x => x.IsExpenseReim == true).Where(x => x.Status != 4).Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpenseId"]));
+                        var reimRFP = _DataContext.ACCEDE_T_RFPMains
+                                    .Where(x => x.IsExpenseReim == true)
+                                    .Where(x => x.Status != 4)
+                                    .Where(x => x.Exp_ID == Convert.ToInt32(exp_details.ID))
+                                    .Where(x => x.isTravel != true)
+                                    .FirstOrDefault();
 
-                        if (reimRFP != null)
+                        if (reimRFP == null)
                         {
+                            var reim = FormExpApprovalView.FindItemOrGroupByName("reimItem") as LayoutItem;
+                            if (reim != null)
+                            {
+                                reim.ClientVisible = true;
+                                //ReimburseGrid.Visible = false;
+                            }
+
+                        }
+                        else
+                        {
+                            var reim = FormExpApprovalView.FindItemOrGroupByName("ReimLayout") as LayoutGroup;
+                            if (reim != null)
+                            {
+                                reim.ClientVisible = true;
+                                link_rfp.Value = reimRFP.RFP_DocNum;
+                            }
+
                             var SAPdoc = FormExpApprovalView.FindItemOrGroupByName("SAPDoc") as LayoutItem;
                             SAPdoc.ClientVisible = true;
                         }
@@ -126,7 +148,6 @@ namespace DX_WebTemplate
                             AR_Reference.ClientVisible = true;
                         }
                     }
-
 
                     dueTotal.Text = "PHP " + FormatDecimal(dueComp) + "  PHP ";
 
@@ -586,6 +607,22 @@ namespace DX_WebTemplate
             Session["ExpMainIdP2P"] = item_id.ToString();
 
             return exp;
+        }
+
+        protected void CAWFActivityGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            SqlCAWFActivity.SelectParameters["Document_Id"].DefaultValue = e.Parameters.ToString();
+            SqlCAWFActivity.DataBind();
+
+            CAWFActivityGrid.DataBind();
+        }
+
+        protected void CADocuGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            SqlCAFileAttach.SelectParameters["Doc_ID"].DefaultValue = e.Parameters.ToString();
+            SqlCAFileAttach.DataBind();
+
+            CADocuGrid.DataBind();
         }
     }
 }

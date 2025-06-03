@@ -239,6 +239,7 @@
         function onDeptChanged(dept) {
             
             drpdown_WF.PerformCallback(dept);
+            console.log(dept);
             //drpdwn_FAPWF.PerformCallback();
         }
 

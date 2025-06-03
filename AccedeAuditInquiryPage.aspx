@@ -12,8 +12,8 @@
     #scrollableContainer {
             overflow: auto;
             height: 600px;
-            border: 1px solid #ccc; 
-            padding: 10px; 
+            border: 1px solid #ccc;
+            padding: 10px;
         }
 </style>
     <script>

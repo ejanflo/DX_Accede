@@ -130,6 +130,12 @@ namespace DX_WebTemplate
                             btnRecall.ClientVisible = true;
                         }
 
+                        if(rfp_details.User_ID != empCode && rfp_details.Payee != empCode)
+                        {
+                            BtnSaveDetailsUser.Visible = false;
+                            ExpBtn.Visible = false;
+                        }
+
                         amount_lbl.Text = rfp_details.Currency + " " + Convert.ToDecimal(rfp_details.Amount).ToString("#,##0.00");
                     }
                     var release_cash_status = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Disbursed").FirstOrDefault();

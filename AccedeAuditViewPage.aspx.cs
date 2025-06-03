@@ -523,6 +523,7 @@ namespace DX_WebTemplate
                 exp.ewt = expMain.EWT != null ? expMain.EWT.ToString() : "0.00";
                 exp.io = expMain.ExpDtl_IO != null ? expMain.ExpDtl_IO.ToString() : "";
                 exp.wbs = expMain.ExpDtl_WBS != null ? expMain.ExpDtl_WBS.ToString() : "";
+                exp.remarks = expMain.ExpDetail_remarks != null ? expMain.ExpDetail_remarks : "";
             }
 
             Session["ExpMainIdAudit"] = item_id;
@@ -818,6 +819,22 @@ namespace DX_WebTemplate
             {
                 return ex.Message;
             }
+        }
+
+        protected void CAWFActivityGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            SqlCAWFActivity.SelectParameters["Document_Id"].DefaultValue = e.Parameters.ToString();
+            SqlCAWFActivity.DataBind();
+
+            CAWFActivityGrid.DataBind();
+        }
+
+        protected void CADocuGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            SqlCAFileAttach.SelectParameters["Doc_ID"].DefaultValue = e.Parameters.ToString();
+            SqlCAFileAttach.DataBind();
+
+            CADocuGrid.DataBind();
         }
     }
     

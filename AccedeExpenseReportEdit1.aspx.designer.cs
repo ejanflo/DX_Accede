@@ -1059,6 +1059,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox accountCharged;
 
         /// <summary>
+        /// memo_expItem control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxMemo memo_expItem;
+
+        /// <summary>
         /// WFbtnToggle control.
         /// </summary>
         /// <remarks>
@@ -1282,6 +1291,15 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxComboBox accountCharged_edit;
+
+        /// <summary>
+        /// memo_expItem_edit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxMemo memo_expItem_edit;
 
         /// <summary>
         /// EditbtnToggle control.
@@ -1588,5 +1606,14 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlDepartmentAll;
+
+        /// <summary>
+        /// SqlUserAll control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlUserAll;
     }
 }

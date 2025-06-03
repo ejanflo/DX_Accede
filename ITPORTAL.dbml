@@ -830,51 +830,6 @@
       <Column Name="DCT_Name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
     </Type>
   </Table>
-  <Table Name="dbo.ACCEDE_T_ExpenseDetails" Member="ACCEDE_T_ExpenseDetails">
-    <Type Name="ACCEDE_T_ExpenseDetail">
-      <Column Name="ExpenseReportDetail_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="DateAdded" Type="System.DateTime" DbType="Date" CanBeNull="true" />
-      <Column Name="Supplier" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="TIN" Type="System.String" DbType="NVarChar(15)" CanBeNull="true" />
-      <Column Name="InvoiceOR" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="Particulars" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="AccountToCharged" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="CostCenterIOWBS" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="GrossAmount" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
-      <Column Name="VAT" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
-      <Column Name="EWT" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
-      <Column Name="NetAmount" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
-      <Column Name="IsUploaded" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="ExpenseMain_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Preparer_ID" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="ExpDtl_Currency" Type="System.String" DbType="VarChar(5)" CanBeNull="true" />
-      <Column Name="ExpDtl_IO" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="ExpDtl_WBS" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.vw_ACCEDE_I_ExpenseDetails" Member="vw_ACCEDE_I_ExpenseDetails">
-    <Type Name="vw_ACCEDE_I_ExpenseDetail">
-      <Column Name="ExpenseReportDetail_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="DateAdded" Type="System.DateTime" DbType="Date" CanBeNull="true" />
-      <Column Name="Supplier" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="TIN" Type="System.String" DbType="NVarChar(15)" CanBeNull="true" />
-      <Column Name="InvoiceOR" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="Particulars" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="AccountToCharged" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="CostCenterIOWBS" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="GrossAmount" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
-      <Column Name="VAT" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
-      <Column Name="EWT" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
-      <Column Name="NetAmount" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
-      <Column Name="IsUploaded" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="ExpenseMain_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Preparer_ID" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="ExpDtl_Currency" Type="System.String" DbType="VarChar(5)" CanBeNull="true" />
-      <Column Name="ExpDtl_IO" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="ExpDtl_WBS" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="P_Name" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.ACCEDE_T_ExpenseDetailFileAttach" Member="ACCEDE_T_ExpenseDetailFileAttaches">
     <Type Name="ACCEDE_T_ExpenseDetailFileAttach">
       <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -1220,6 +1175,53 @@
       <Column Name="WF_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="App_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="Company_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_T_ExpenseDetails" Member="ACCEDE_T_ExpenseDetails">
+    <Type Name="ACCEDE_T_ExpenseDetail">
+      <Column Name="ExpenseReportDetail_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="DateAdded" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="Supplier" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="TIN" Type="System.String" DbType="NVarChar(15)" CanBeNull="true" />
+      <Column Name="InvoiceOR" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Particulars" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="AccountToCharged" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="CostCenterIOWBS" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="GrossAmount" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="VAT" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="EWT" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="NetAmount" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="IsUploaded" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="ExpenseMain_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Preparer_ID" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="ExpDtl_Currency" Type="System.String" DbType="VarChar(5)" CanBeNull="true" />
+      <Column Name="ExpDtl_IO" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="ExpDtl_WBS" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="ExpDetail_remarks" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.vw_ACCEDE_I_ExpenseDetails" Member="vw_ACCEDE_I_ExpenseDetails">
+    <Type Name="vw_ACCEDE_I_ExpenseDetail">
+      <Column Name="ExpenseReportDetail_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DateAdded" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="Supplier" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="TIN" Type="System.String" DbType="NVarChar(15)" CanBeNull="true" />
+      <Column Name="InvoiceOR" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Particulars" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="AccountToCharged" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="CostCenterIOWBS" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="GrossAmount" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="VAT" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="EWT" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="NetAmount" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="IsUploaded" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="ExpenseMain_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Preparer_ID" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="ExpDtl_Currency" Type="System.String" DbType="VarChar(5)" CanBeNull="true" />
+      <Column Name="ExpDtl_IO" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="ExpDtl_WBS" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="P_Name" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="ExpDetail_remarks" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
     </Type>
   </Table>
 </Database>

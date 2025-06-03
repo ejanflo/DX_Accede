@@ -850,7 +850,7 @@ namespace DX_WebTemplate
         {
             var param = e.Parameter != "" ? e.Parameter.ToString() : "0";
             var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(param)).FirstOrDefault();
-            var amount = spinEdit_Amount.Value != null ? spinEdit_Amount.Value.ToString() : "0";
+            //var amount = spinEdit_Amount.Value != null ? spinEdit_Amount.Value.ToString() : "0";
             SqlWF.SelectParameters["CompanyId"].DefaultValue = depcode != null ? depcode.Company_ID.ToString() : "0";
             SqlWF.SelectParameters["DepCode"].DefaultValue = depcode != null ? depcode.DepCode.ToString() : "0";
             SqlWF.DataBind();

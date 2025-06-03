@@ -249,6 +249,33 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxMemo txt_remarks;
 
         /// <summary>
+        /// pnlExpLink control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlExpLink;
+
+        /// <summary>
+        /// link_rfp control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox link_rfp;
+
+        /// <summary>
+        /// ExpBtn control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton ExpBtn;
+
+        /// <summary>
         /// CAGrid0 control.
         /// </summary>
         /// <remarks>
@@ -303,13 +330,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxGridView ReimburseGrid;
 
         /// <summary>
-        /// btnViewReim0 control.
+        /// btnViewReim control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.GridViewCommandColumnCustomButton btnViewReim0;
+        protected global::DevExpress.Web.GridViewCommandColumnCustomButton btnViewReim;
 
         /// <summary>
         /// btnEditReim control.
@@ -735,6 +762,51 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxMemo remarks_reim;
 
         /// <summary>
+        /// RAWF_lbl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox RAWF_lbl;
+
+        /// <summary>
+        /// FAPWF_lbl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox FAPWF_lbl;
+
+        /// <summary>
+        /// CAWFActivityGrid control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxGridView CAWFActivityGrid;
+
+        /// <summary>
+        /// CADocuGrid control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxGridView CADocuGrid;
+
+        /// <summary>
+        /// btnDownloadFile2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.GridViewCommandColumnCustomButton btnDownloadFile2;
+
+        /// <summary>
         /// popupSubmitBtn1 control.
         /// </summary>
         /// <remarks>
@@ -762,13 +834,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxPopupControl ReimPopup;
 
         /// <summary>
-        /// FormReim control.
+        /// FormReim1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxFormLayout FormReim;
+        protected global::DevExpress.Web.ASPxFormLayout FormReim1;
 
         /// <summary>
         /// company_lbl_reim control.
@@ -888,6 +960,24 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxMemo ASPxMemo2;
 
         /// <summary>
+        /// Reim_RAWF_lbl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox Reim_RAWF_lbl;
+
+        /// <summary>
+        /// Reim_FAPWF_lbl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox Reim_FAPWF_lbl;
+
+        /// <summary>
         /// ASPxButton1 control.
         /// </summary>
         /// <remarks>
@@ -904,6 +994,177 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxButton ASPxButton2;
+
+        /// <summary>
+        /// ASPxPopupControl1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxPopupControl ASPxPopupControl1;
+
+        /// <summary>
+        /// ASPxFormLayout2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxFormLayout ASPxFormLayout2;
+
+        /// <summary>
+        /// ASPxButton9 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton ASPxButton9;
+
+        /// <summary>
+        /// ASPxButton10 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton ASPxButton10;
+
+        /// <summary>
+        /// ASPxTextBox1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox1;
+
+        /// <summary>
+        /// ASPxComboBox1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox ASPxComboBox1;
+
+        /// <summary>
+        /// ASPxTextBox2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox2;
+
+        /// <summary>
+        /// ASPxTextBox3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox3;
+
+        /// <summary>
+        /// ASPxTextBox4 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox4;
+
+        /// <summary>
+        /// ASPxTextBox5 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox5;
+
+        /// <summary>
+        /// ASPxTextBox6 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox6;
+
+        /// <summary>
+        /// ASPxTextBox7 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox7;
+
+        /// <summary>
+        /// ASPxTextBox8 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox8;
+
+        /// <summary>
+        /// ASPxMemo1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxMemo ASPxMemo1;
+
+        /// <summary>
+        /// ASPxTextBox9 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox9;
+
+        /// <summary>
+        /// ASPxTextBox10 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox10;
+
+        /// <summary>
+        /// ASPxMemo3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxMemo ASPxMemo3;
+
+        /// <summary>
+        /// ASPxButton11 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton ASPxButton11;
+
+        /// <summary>
+        /// ASPxButton12 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton ASPxButton12;
 
         /// <summary>
         /// ExpItemMapPopup control.
@@ -1651,5 +1912,23 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlCompanyCT;
+
+        /// <summary>
+        /// SqlCAWFActivity control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlCAWFActivity;
+
+        /// <summary>
+        /// SqlCAFileAttach control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlCAFileAttach;
     }
 }

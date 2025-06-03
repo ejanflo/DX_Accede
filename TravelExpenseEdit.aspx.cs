@@ -251,7 +251,7 @@ namespace DX_WebTemplate
         {
             AccedeExpenseReportEdit1 exp = new AccedeExpenseReportEdit1();
             return exp.AddExpDetails(dateAdd, tin_no, invoice_no, cost_center,
-            gross_amount, net_amount, supp, particu, acctCharge, vat_amnt, ewt_amnt, string.Empty, string.Empty, string.Empty);
+            gross_amount, net_amount, supp, particu, acctCharge, vat_amnt, ewt_amnt, string.Empty, string.Empty, string.Empty, string.Empty);
         }
 
 
