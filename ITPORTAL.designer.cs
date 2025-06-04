@@ -180,9 +180,6 @@ namespace DX_WebTemplate
     partial void InsertACCEDE_T_TravelForAccounting(ACCEDE_T_TravelForAccounting instance);
     partial void UpdateACCEDE_T_TravelForAccounting(ACCEDE_T_TravelForAccounting instance);
     partial void DeleteACCEDE_T_TravelForAccounting(ACCEDE_T_TravelForAccounting instance);
-    partial void InsertACCEDE_T_TravelExpenseDetailsMap(ACCEDE_T_TravelExpenseDetailsMap instance);
-    partial void UpdateACCEDE_T_TravelExpenseDetailsMap(ACCEDE_T_TravelExpenseDetailsMap instance);
-    partial void DeleteACCEDE_T_TravelExpenseDetailsMap(ACCEDE_T_TravelExpenseDetailsMap instance);
     partial void InsertACCEDE_T_TravelExpenseDetail(ACCEDE_T_TravelExpenseDetail instance);
     partial void UpdateACCEDE_T_TravelExpenseDetail(ACCEDE_T_TravelExpenseDetail instance);
     partial void DeleteACCEDE_T_TravelExpenseDetail(ACCEDE_T_TravelExpenseDetail instance);
@@ -237,6 +234,9 @@ namespace DX_WebTemplate
     partial void InsertACCEDE_T_ExpenseDetail(ACCEDE_T_ExpenseDetail instance);
     partial void UpdateACCEDE_T_ExpenseDetail(ACCEDE_T_ExpenseDetail instance);
     partial void DeleteACCEDE_T_ExpenseDetail(ACCEDE_T_ExpenseDetail instance);
+    partial void InsertACCEDE_T_TravelExpenseDetailsMap(ACCEDE_T_TravelExpenseDetailsMap instance);
+    partial void UpdateACCEDE_T_TravelExpenseDetailsMap(ACCEDE_T_TravelExpenseDetailsMap instance);
+    partial void DeleteACCEDE_T_TravelExpenseDetailsMap(ACCEDE_T_TravelExpenseDetailsMap instance);
     #endregion
 		
 		public ITPORTALDataContext(string connection) : 
@@ -719,14 +719,6 @@ namespace DX_WebTemplate
 			}
 		}
 		
-		public System.Data.Linq.Table<ACCEDE_T_TravelExpenseDetailsMap> ACCEDE_T_TravelExpenseDetailsMaps
-		{
-			get
-			{
-				return this.GetTable<ACCEDE_T_TravelExpenseDetailsMap>();
-			}
-		}
-		
 		public System.Data.Linq.Table<ACCEDE_T_TravelExpenseDetail> ACCEDE_T_TravelExpenseDetails
 		{
 			get
@@ -908,6 +900,14 @@ namespace DX_WebTemplate
 			get
 			{
 				return this.GetTable<ACCEDE_T_ExpenseDetail>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ACCEDE_T_TravelExpenseDetailsMap> ACCEDE_T_TravelExpenseDetailsMaps
+		{
+			get
+			{
+				return this.GetTable<ACCEDE_T_TravelExpenseDetailsMap>();
 			}
 		}
 	}
@@ -17953,524 +17953,6 @@ namespace DX_WebTemplate
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_T_TravelExpenseDetailsMap")]
-	public partial class ACCEDE_T_TravelExpenseDetailsMap : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _TravelExpenseDetailMap_ID;
-		
-		private System.Nullable<int> _TravelExpenseDetail_ID;
-		
-		private string _ReimTranspo_Type1;
-		
-		private System.Nullable<decimal> _ReimTranspo_Amount1;
-		
-		private string _ReimTranspo_Type2;
-		
-		private System.Nullable<decimal> _ReimTranspo_Amount2;
-		
-		private string _ReimTranspo_Type3;
-		
-		private System.Nullable<decimal> _ReimTranspo_Amount3;
-		
-		private string _FixedAllow_ForP;
-		
-		private System.Nullable<decimal> _FixedAllow_Amount;
-		
-		private string _MiscTravel_Type;
-		
-		private string _MiscTravel_Specify;
-		
-		private System.Nullable<decimal> _MiscTravel_Amount;
-		
-		private string _Entertainment_Explain;
-		
-		private System.Nullable<decimal> _Entertainment_Amount;
-		
-		private string _BusMeals_Explain;
-		
-		private System.Nullable<decimal> _BusMeals_Amount;
-		
-		private string _OtherBus_Type;
-		
-		private string _OtherBus_Specify;
-		
-		private System.Nullable<decimal> _OtherBus_Amount;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnTravelExpenseDetailMap_IDChanging(int value);
-    partial void OnTravelExpenseDetailMap_IDChanged();
-    partial void OnTravelExpenseDetail_IDChanging(System.Nullable<int> value);
-    partial void OnTravelExpenseDetail_IDChanged();
-    partial void OnReimTranspo_Type1Changing(string value);
-    partial void OnReimTranspo_Type1Changed();
-    partial void OnReimTranspo_Amount1Changing(System.Nullable<decimal> value);
-    partial void OnReimTranspo_Amount1Changed();
-    partial void OnReimTranspo_Type2Changing(string value);
-    partial void OnReimTranspo_Type2Changed();
-    partial void OnReimTranspo_Amount2Changing(System.Nullable<decimal> value);
-    partial void OnReimTranspo_Amount2Changed();
-    partial void OnReimTranspo_Type3Changing(string value);
-    partial void OnReimTranspo_Type3Changed();
-    partial void OnReimTranspo_Amount3Changing(System.Nullable<decimal> value);
-    partial void OnReimTranspo_Amount3Changed();
-    partial void OnFixedAllow_ForPChanging(string value);
-    partial void OnFixedAllow_ForPChanged();
-    partial void OnFixedAllow_AmountChanging(System.Nullable<decimal> value);
-    partial void OnFixedAllow_AmountChanged();
-    partial void OnMiscTravel_TypeChanging(string value);
-    partial void OnMiscTravel_TypeChanged();
-    partial void OnMiscTravel_SpecifyChanging(string value);
-    partial void OnMiscTravel_SpecifyChanged();
-    partial void OnMiscTravel_AmountChanging(System.Nullable<decimal> value);
-    partial void OnMiscTravel_AmountChanged();
-    partial void OnEntertainment_ExplainChanging(string value);
-    partial void OnEntertainment_ExplainChanged();
-    partial void OnEntertainment_AmountChanging(System.Nullable<decimal> value);
-    partial void OnEntertainment_AmountChanged();
-    partial void OnBusMeals_ExplainChanging(string value);
-    partial void OnBusMeals_ExplainChanged();
-    partial void OnBusMeals_AmountChanging(System.Nullable<decimal> value);
-    partial void OnBusMeals_AmountChanged();
-    partial void OnOtherBus_TypeChanging(string value);
-    partial void OnOtherBus_TypeChanged();
-    partial void OnOtherBus_SpecifyChanging(string value);
-    partial void OnOtherBus_SpecifyChanged();
-    partial void OnOtherBus_AmountChanging(System.Nullable<decimal> value);
-    partial void OnOtherBus_AmountChanged();
-    #endregion
-		
-		public ACCEDE_T_TravelExpenseDetailsMap()
-		{
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TravelExpenseDetailMap_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int TravelExpenseDetailMap_ID
-		{
-			get
-			{
-				return this._TravelExpenseDetailMap_ID;
-			}
-			set
-			{
-				if ((this._TravelExpenseDetailMap_ID != value))
-				{
-					this.OnTravelExpenseDetailMap_IDChanging(value);
-					this.SendPropertyChanging();
-					this._TravelExpenseDetailMap_ID = value;
-					this.SendPropertyChanged("TravelExpenseDetailMap_ID");
-					this.OnTravelExpenseDetailMap_IDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TravelExpenseDetail_ID", DbType="Int")]
-		public System.Nullable<int> TravelExpenseDetail_ID
-		{
-			get
-			{
-				return this._TravelExpenseDetail_ID;
-			}
-			set
-			{
-				if ((this._TravelExpenseDetail_ID != value))
-				{
-					this.OnTravelExpenseDetail_IDChanging(value);
-					this.SendPropertyChanging();
-					this._TravelExpenseDetail_ID = value;
-					this.SendPropertyChanged("TravelExpenseDetail_ID");
-					this.OnTravelExpenseDetail_IDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReimTranspo_Type1", DbType="NVarChar(50)")]
-		public string ReimTranspo_Type1
-		{
-			get
-			{
-				return this._ReimTranspo_Type1;
-			}
-			set
-			{
-				if ((this._ReimTranspo_Type1 != value))
-				{
-					this.OnReimTranspo_Type1Changing(value);
-					this.SendPropertyChanging();
-					this._ReimTranspo_Type1 = value;
-					this.SendPropertyChanged("ReimTranspo_Type1");
-					this.OnReimTranspo_Type1Changed();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReimTranspo_Amount1", DbType="Decimal(18,0)")]
-		public System.Nullable<decimal> ReimTranspo_Amount1
-		{
-			get
-			{
-				return this._ReimTranspo_Amount1;
-			}
-			set
-			{
-				if ((this._ReimTranspo_Amount1 != value))
-				{
-					this.OnReimTranspo_Amount1Changing(value);
-					this.SendPropertyChanging();
-					this._ReimTranspo_Amount1 = value;
-					this.SendPropertyChanged("ReimTranspo_Amount1");
-					this.OnReimTranspo_Amount1Changed();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReimTranspo_Type2", DbType="NVarChar(50)")]
-		public string ReimTranspo_Type2
-		{
-			get
-			{
-				return this._ReimTranspo_Type2;
-			}
-			set
-			{
-				if ((this._ReimTranspo_Type2 != value))
-				{
-					this.OnReimTranspo_Type2Changing(value);
-					this.SendPropertyChanging();
-					this._ReimTranspo_Type2 = value;
-					this.SendPropertyChanged("ReimTranspo_Type2");
-					this.OnReimTranspo_Type2Changed();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReimTranspo_Amount2", DbType="Decimal(18,0)")]
-		public System.Nullable<decimal> ReimTranspo_Amount2
-		{
-			get
-			{
-				return this._ReimTranspo_Amount2;
-			}
-			set
-			{
-				if ((this._ReimTranspo_Amount2 != value))
-				{
-					this.OnReimTranspo_Amount2Changing(value);
-					this.SendPropertyChanging();
-					this._ReimTranspo_Amount2 = value;
-					this.SendPropertyChanged("ReimTranspo_Amount2");
-					this.OnReimTranspo_Amount2Changed();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReimTranspo_Type3", DbType="NVarChar(50)")]
-		public string ReimTranspo_Type3
-		{
-			get
-			{
-				return this._ReimTranspo_Type3;
-			}
-			set
-			{
-				if ((this._ReimTranspo_Type3 != value))
-				{
-					this.OnReimTranspo_Type3Changing(value);
-					this.SendPropertyChanging();
-					this._ReimTranspo_Type3 = value;
-					this.SendPropertyChanged("ReimTranspo_Type3");
-					this.OnReimTranspo_Type3Changed();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReimTranspo_Amount3", DbType="Decimal(18,0)")]
-		public System.Nullable<decimal> ReimTranspo_Amount3
-		{
-			get
-			{
-				return this._ReimTranspo_Amount3;
-			}
-			set
-			{
-				if ((this._ReimTranspo_Amount3 != value))
-				{
-					this.OnReimTranspo_Amount3Changing(value);
-					this.SendPropertyChanging();
-					this._ReimTranspo_Amount3 = value;
-					this.SendPropertyChanged("ReimTranspo_Amount3");
-					this.OnReimTranspo_Amount3Changed();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FixedAllow_ForP", DbType="NVarChar(50)")]
-		public string FixedAllow_ForP
-		{
-			get
-			{
-				return this._FixedAllow_ForP;
-			}
-			set
-			{
-				if ((this._FixedAllow_ForP != value))
-				{
-					this.OnFixedAllow_ForPChanging(value);
-					this.SendPropertyChanging();
-					this._FixedAllow_ForP = value;
-					this.SendPropertyChanged("FixedAllow_ForP");
-					this.OnFixedAllow_ForPChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FixedAllow_Amount", DbType="Decimal(18,0)")]
-		public System.Nullable<decimal> FixedAllow_Amount
-		{
-			get
-			{
-				return this._FixedAllow_Amount;
-			}
-			set
-			{
-				if ((this._FixedAllow_Amount != value))
-				{
-					this.OnFixedAllow_AmountChanging(value);
-					this.SendPropertyChanging();
-					this._FixedAllow_Amount = value;
-					this.SendPropertyChanged("FixedAllow_Amount");
-					this.OnFixedAllow_AmountChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MiscTravel_Type", DbType="NVarChar(50)")]
-		public string MiscTravel_Type
-		{
-			get
-			{
-				return this._MiscTravel_Type;
-			}
-			set
-			{
-				if ((this._MiscTravel_Type != value))
-				{
-					this.OnMiscTravel_TypeChanging(value);
-					this.SendPropertyChanging();
-					this._MiscTravel_Type = value;
-					this.SendPropertyChanged("MiscTravel_Type");
-					this.OnMiscTravel_TypeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MiscTravel_Specify", DbType="NVarChar(50)")]
-		public string MiscTravel_Specify
-		{
-			get
-			{
-				return this._MiscTravel_Specify;
-			}
-			set
-			{
-				if ((this._MiscTravel_Specify != value))
-				{
-					this.OnMiscTravel_SpecifyChanging(value);
-					this.SendPropertyChanging();
-					this._MiscTravel_Specify = value;
-					this.SendPropertyChanged("MiscTravel_Specify");
-					this.OnMiscTravel_SpecifyChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MiscTravel_Amount", DbType="Decimal(18,0)")]
-		public System.Nullable<decimal> MiscTravel_Amount
-		{
-			get
-			{
-				return this._MiscTravel_Amount;
-			}
-			set
-			{
-				if ((this._MiscTravel_Amount != value))
-				{
-					this.OnMiscTravel_AmountChanging(value);
-					this.SendPropertyChanging();
-					this._MiscTravel_Amount = value;
-					this.SendPropertyChanged("MiscTravel_Amount");
-					this.OnMiscTravel_AmountChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Entertainment_Explain", DbType="NVarChar(50)")]
-		public string Entertainment_Explain
-		{
-			get
-			{
-				return this._Entertainment_Explain;
-			}
-			set
-			{
-				if ((this._Entertainment_Explain != value))
-				{
-					this.OnEntertainment_ExplainChanging(value);
-					this.SendPropertyChanging();
-					this._Entertainment_Explain = value;
-					this.SendPropertyChanged("Entertainment_Explain");
-					this.OnEntertainment_ExplainChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Entertainment_Amount", DbType="Decimal(18,0)")]
-		public System.Nullable<decimal> Entertainment_Amount
-		{
-			get
-			{
-				return this._Entertainment_Amount;
-			}
-			set
-			{
-				if ((this._Entertainment_Amount != value))
-				{
-					this.OnEntertainment_AmountChanging(value);
-					this.SendPropertyChanging();
-					this._Entertainment_Amount = value;
-					this.SendPropertyChanged("Entertainment_Amount");
-					this.OnEntertainment_AmountChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BusMeals_Explain", DbType="NVarChar(50)")]
-		public string BusMeals_Explain
-		{
-			get
-			{
-				return this._BusMeals_Explain;
-			}
-			set
-			{
-				if ((this._BusMeals_Explain != value))
-				{
-					this.OnBusMeals_ExplainChanging(value);
-					this.SendPropertyChanging();
-					this._BusMeals_Explain = value;
-					this.SendPropertyChanged("BusMeals_Explain");
-					this.OnBusMeals_ExplainChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BusMeals_Amount", DbType="Decimal(18,0)")]
-		public System.Nullable<decimal> BusMeals_Amount
-		{
-			get
-			{
-				return this._BusMeals_Amount;
-			}
-			set
-			{
-				if ((this._BusMeals_Amount != value))
-				{
-					this.OnBusMeals_AmountChanging(value);
-					this.SendPropertyChanging();
-					this._BusMeals_Amount = value;
-					this.SendPropertyChanged("BusMeals_Amount");
-					this.OnBusMeals_AmountChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OtherBus_Type", DbType="NVarChar(50)")]
-		public string OtherBus_Type
-		{
-			get
-			{
-				return this._OtherBus_Type;
-			}
-			set
-			{
-				if ((this._OtherBus_Type != value))
-				{
-					this.OnOtherBus_TypeChanging(value);
-					this.SendPropertyChanging();
-					this._OtherBus_Type = value;
-					this.SendPropertyChanged("OtherBus_Type");
-					this.OnOtherBus_TypeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OtherBus_Specify", DbType="NVarChar(50)")]
-		public string OtherBus_Specify
-		{
-			get
-			{
-				return this._OtherBus_Specify;
-			}
-			set
-			{
-				if ((this._OtherBus_Specify != value))
-				{
-					this.OnOtherBus_SpecifyChanging(value);
-					this.SendPropertyChanging();
-					this._OtherBus_Specify = value;
-					this.SendPropertyChanged("OtherBus_Specify");
-					this.OnOtherBus_SpecifyChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OtherBus_Amount", DbType="Decimal(18,0)")]
-		public System.Nullable<decimal> OtherBus_Amount
-		{
-			get
-			{
-				return this._OtherBus_Amount;
-			}
-			set
-			{
-				if ((this._OtherBus_Amount != value))
-				{
-					this.OnOtherBus_AmountChanging(value);
-					this.SendPropertyChanging();
-					this._OtherBus_Amount = value;
-					this.SendPropertyChanged("OtherBus_Amount");
-					this.OnOtherBus_AmountChanged();
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_T_TravelExpenseDetails")]
 	public partial class ACCEDE_T_TravelExpenseDetail : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -24617,6 +24099,548 @@ namespace DX_WebTemplate
 					this._ExpLineNum = value;
 					this.SendPropertyChanged("ExpLineNum");
 					this.OnExpLineNumChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_T_TravelExpenseDetailsMap")]
+	public partial class ACCEDE_T_TravelExpenseDetailsMap : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _TravelExpenseDetailMap_ID;
+		
+		private System.Nullable<int> _TravelExpenseDetail_ID;
+		
+		private string _ReimTranspo_Type1;
+		
+		private System.Nullable<decimal> _ReimTranspo_Amount1;
+		
+		private string _ReimTranspo_Type2;
+		
+		private System.Nullable<decimal> _ReimTranspo_Amount2;
+		
+		private string _ReimTranspo_Type3;
+		
+		private System.Nullable<decimal> _ReimTranspo_Amount3;
+		
+		private string _FixedAllow_ForP;
+		
+		private System.Nullable<decimal> _FixedAllow_Amount;
+		
+		private string _MiscTravel_Type;
+		
+		private string _MiscTravel_Specify;
+		
+		private System.Nullable<decimal> _MiscTravel_Amount;
+		
+		private string _Entertainment_Explain;
+		
+		private System.Nullable<decimal> _Entertainment_Amount;
+		
+		private string _BusMeals_Explain;
+		
+		private System.Nullable<decimal> _BusMeals_Amount;
+		
+		private string _OtherBus_Type;
+		
+		private string _OtherBus_Specify;
+		
+		private System.Nullable<decimal> _OtherBus_Amount;
+		
+		private string _FixedAllow_Remarks;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnTravelExpenseDetailMap_IDChanging(int value);
+    partial void OnTravelExpenseDetailMap_IDChanged();
+    partial void OnTravelExpenseDetail_IDChanging(System.Nullable<int> value);
+    partial void OnTravelExpenseDetail_IDChanged();
+    partial void OnReimTranspo_Type1Changing(string value);
+    partial void OnReimTranspo_Type1Changed();
+    partial void OnReimTranspo_Amount1Changing(System.Nullable<decimal> value);
+    partial void OnReimTranspo_Amount1Changed();
+    partial void OnReimTranspo_Type2Changing(string value);
+    partial void OnReimTranspo_Type2Changed();
+    partial void OnReimTranspo_Amount2Changing(System.Nullable<decimal> value);
+    partial void OnReimTranspo_Amount2Changed();
+    partial void OnReimTranspo_Type3Changing(string value);
+    partial void OnReimTranspo_Type3Changed();
+    partial void OnReimTranspo_Amount3Changing(System.Nullable<decimal> value);
+    partial void OnReimTranspo_Amount3Changed();
+    partial void OnFixedAllow_ForPChanging(string value);
+    partial void OnFixedAllow_ForPChanged();
+    partial void OnFixedAllow_AmountChanging(System.Nullable<decimal> value);
+    partial void OnFixedAllow_AmountChanged();
+    partial void OnMiscTravel_TypeChanging(string value);
+    partial void OnMiscTravel_TypeChanged();
+    partial void OnMiscTravel_SpecifyChanging(string value);
+    partial void OnMiscTravel_SpecifyChanged();
+    partial void OnMiscTravel_AmountChanging(System.Nullable<decimal> value);
+    partial void OnMiscTravel_AmountChanged();
+    partial void OnEntertainment_ExplainChanging(string value);
+    partial void OnEntertainment_ExplainChanged();
+    partial void OnEntertainment_AmountChanging(System.Nullable<decimal> value);
+    partial void OnEntertainment_AmountChanged();
+    partial void OnBusMeals_ExplainChanging(string value);
+    partial void OnBusMeals_ExplainChanged();
+    partial void OnBusMeals_AmountChanging(System.Nullable<decimal> value);
+    partial void OnBusMeals_AmountChanged();
+    partial void OnOtherBus_TypeChanging(string value);
+    partial void OnOtherBus_TypeChanged();
+    partial void OnOtherBus_SpecifyChanging(string value);
+    partial void OnOtherBus_SpecifyChanged();
+    partial void OnOtherBus_AmountChanging(System.Nullable<decimal> value);
+    partial void OnOtherBus_AmountChanged();
+    partial void OnFixedAllow_RemarksChanging(string value);
+    partial void OnFixedAllow_RemarksChanged();
+    #endregion
+		
+		public ACCEDE_T_TravelExpenseDetailsMap()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TravelExpenseDetailMap_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int TravelExpenseDetailMap_ID
+		{
+			get
+			{
+				return this._TravelExpenseDetailMap_ID;
+			}
+			set
+			{
+				if ((this._TravelExpenseDetailMap_ID != value))
+				{
+					this.OnTravelExpenseDetailMap_IDChanging(value);
+					this.SendPropertyChanging();
+					this._TravelExpenseDetailMap_ID = value;
+					this.SendPropertyChanged("TravelExpenseDetailMap_ID");
+					this.OnTravelExpenseDetailMap_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TravelExpenseDetail_ID", DbType="Int")]
+		public System.Nullable<int> TravelExpenseDetail_ID
+		{
+			get
+			{
+				return this._TravelExpenseDetail_ID;
+			}
+			set
+			{
+				if ((this._TravelExpenseDetail_ID != value))
+				{
+					this.OnTravelExpenseDetail_IDChanging(value);
+					this.SendPropertyChanging();
+					this._TravelExpenseDetail_ID = value;
+					this.SendPropertyChanged("TravelExpenseDetail_ID");
+					this.OnTravelExpenseDetail_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReimTranspo_Type1", DbType="NVarChar(50)")]
+		public string ReimTranspo_Type1
+		{
+			get
+			{
+				return this._ReimTranspo_Type1;
+			}
+			set
+			{
+				if ((this._ReimTranspo_Type1 != value))
+				{
+					this.OnReimTranspo_Type1Changing(value);
+					this.SendPropertyChanging();
+					this._ReimTranspo_Type1 = value;
+					this.SendPropertyChanged("ReimTranspo_Type1");
+					this.OnReimTranspo_Type1Changed();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReimTranspo_Amount1", DbType="Decimal(18,0)")]
+		public System.Nullable<decimal> ReimTranspo_Amount1
+		{
+			get
+			{
+				return this._ReimTranspo_Amount1;
+			}
+			set
+			{
+				if ((this._ReimTranspo_Amount1 != value))
+				{
+					this.OnReimTranspo_Amount1Changing(value);
+					this.SendPropertyChanging();
+					this._ReimTranspo_Amount1 = value;
+					this.SendPropertyChanged("ReimTranspo_Amount1");
+					this.OnReimTranspo_Amount1Changed();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReimTranspo_Type2", DbType="NVarChar(50)")]
+		public string ReimTranspo_Type2
+		{
+			get
+			{
+				return this._ReimTranspo_Type2;
+			}
+			set
+			{
+				if ((this._ReimTranspo_Type2 != value))
+				{
+					this.OnReimTranspo_Type2Changing(value);
+					this.SendPropertyChanging();
+					this._ReimTranspo_Type2 = value;
+					this.SendPropertyChanged("ReimTranspo_Type2");
+					this.OnReimTranspo_Type2Changed();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReimTranspo_Amount2", DbType="Decimal(18,0)")]
+		public System.Nullable<decimal> ReimTranspo_Amount2
+		{
+			get
+			{
+				return this._ReimTranspo_Amount2;
+			}
+			set
+			{
+				if ((this._ReimTranspo_Amount2 != value))
+				{
+					this.OnReimTranspo_Amount2Changing(value);
+					this.SendPropertyChanging();
+					this._ReimTranspo_Amount2 = value;
+					this.SendPropertyChanged("ReimTranspo_Amount2");
+					this.OnReimTranspo_Amount2Changed();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReimTranspo_Type3", DbType="NVarChar(50)")]
+		public string ReimTranspo_Type3
+		{
+			get
+			{
+				return this._ReimTranspo_Type3;
+			}
+			set
+			{
+				if ((this._ReimTranspo_Type3 != value))
+				{
+					this.OnReimTranspo_Type3Changing(value);
+					this.SendPropertyChanging();
+					this._ReimTranspo_Type3 = value;
+					this.SendPropertyChanged("ReimTranspo_Type3");
+					this.OnReimTranspo_Type3Changed();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReimTranspo_Amount3", DbType="Decimal(18,0)")]
+		public System.Nullable<decimal> ReimTranspo_Amount3
+		{
+			get
+			{
+				return this._ReimTranspo_Amount3;
+			}
+			set
+			{
+				if ((this._ReimTranspo_Amount3 != value))
+				{
+					this.OnReimTranspo_Amount3Changing(value);
+					this.SendPropertyChanging();
+					this._ReimTranspo_Amount3 = value;
+					this.SendPropertyChanged("ReimTranspo_Amount3");
+					this.OnReimTranspo_Amount3Changed();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FixedAllow_ForP", DbType="NVarChar(50)")]
+		public string FixedAllow_ForP
+		{
+			get
+			{
+				return this._FixedAllow_ForP;
+			}
+			set
+			{
+				if ((this._FixedAllow_ForP != value))
+				{
+					this.OnFixedAllow_ForPChanging(value);
+					this.SendPropertyChanging();
+					this._FixedAllow_ForP = value;
+					this.SendPropertyChanged("FixedAllow_ForP");
+					this.OnFixedAllow_ForPChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FixedAllow_Amount", DbType="Decimal(18,0)")]
+		public System.Nullable<decimal> FixedAllow_Amount
+		{
+			get
+			{
+				return this._FixedAllow_Amount;
+			}
+			set
+			{
+				if ((this._FixedAllow_Amount != value))
+				{
+					this.OnFixedAllow_AmountChanging(value);
+					this.SendPropertyChanging();
+					this._FixedAllow_Amount = value;
+					this.SendPropertyChanged("FixedAllow_Amount");
+					this.OnFixedAllow_AmountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MiscTravel_Type", DbType="NVarChar(50)")]
+		public string MiscTravel_Type
+		{
+			get
+			{
+				return this._MiscTravel_Type;
+			}
+			set
+			{
+				if ((this._MiscTravel_Type != value))
+				{
+					this.OnMiscTravel_TypeChanging(value);
+					this.SendPropertyChanging();
+					this._MiscTravel_Type = value;
+					this.SendPropertyChanged("MiscTravel_Type");
+					this.OnMiscTravel_TypeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MiscTravel_Specify", DbType="NVarChar(50)")]
+		public string MiscTravel_Specify
+		{
+			get
+			{
+				return this._MiscTravel_Specify;
+			}
+			set
+			{
+				if ((this._MiscTravel_Specify != value))
+				{
+					this.OnMiscTravel_SpecifyChanging(value);
+					this.SendPropertyChanging();
+					this._MiscTravel_Specify = value;
+					this.SendPropertyChanged("MiscTravel_Specify");
+					this.OnMiscTravel_SpecifyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MiscTravel_Amount", DbType="Decimal(18,0)")]
+		public System.Nullable<decimal> MiscTravel_Amount
+		{
+			get
+			{
+				return this._MiscTravel_Amount;
+			}
+			set
+			{
+				if ((this._MiscTravel_Amount != value))
+				{
+					this.OnMiscTravel_AmountChanging(value);
+					this.SendPropertyChanging();
+					this._MiscTravel_Amount = value;
+					this.SendPropertyChanged("MiscTravel_Amount");
+					this.OnMiscTravel_AmountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Entertainment_Explain", DbType="NVarChar(50)")]
+		public string Entertainment_Explain
+		{
+			get
+			{
+				return this._Entertainment_Explain;
+			}
+			set
+			{
+				if ((this._Entertainment_Explain != value))
+				{
+					this.OnEntertainment_ExplainChanging(value);
+					this.SendPropertyChanging();
+					this._Entertainment_Explain = value;
+					this.SendPropertyChanged("Entertainment_Explain");
+					this.OnEntertainment_ExplainChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Entertainment_Amount", DbType="Decimal(18,0)")]
+		public System.Nullable<decimal> Entertainment_Amount
+		{
+			get
+			{
+				return this._Entertainment_Amount;
+			}
+			set
+			{
+				if ((this._Entertainment_Amount != value))
+				{
+					this.OnEntertainment_AmountChanging(value);
+					this.SendPropertyChanging();
+					this._Entertainment_Amount = value;
+					this.SendPropertyChanged("Entertainment_Amount");
+					this.OnEntertainment_AmountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BusMeals_Explain", DbType="NVarChar(50)")]
+		public string BusMeals_Explain
+		{
+			get
+			{
+				return this._BusMeals_Explain;
+			}
+			set
+			{
+				if ((this._BusMeals_Explain != value))
+				{
+					this.OnBusMeals_ExplainChanging(value);
+					this.SendPropertyChanging();
+					this._BusMeals_Explain = value;
+					this.SendPropertyChanged("BusMeals_Explain");
+					this.OnBusMeals_ExplainChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BusMeals_Amount", DbType="Decimal(18,0)")]
+		public System.Nullable<decimal> BusMeals_Amount
+		{
+			get
+			{
+				return this._BusMeals_Amount;
+			}
+			set
+			{
+				if ((this._BusMeals_Amount != value))
+				{
+					this.OnBusMeals_AmountChanging(value);
+					this.SendPropertyChanging();
+					this._BusMeals_Amount = value;
+					this.SendPropertyChanged("BusMeals_Amount");
+					this.OnBusMeals_AmountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OtherBus_Type", DbType="NVarChar(50)")]
+		public string OtherBus_Type
+		{
+			get
+			{
+				return this._OtherBus_Type;
+			}
+			set
+			{
+				if ((this._OtherBus_Type != value))
+				{
+					this.OnOtherBus_TypeChanging(value);
+					this.SendPropertyChanging();
+					this._OtherBus_Type = value;
+					this.SendPropertyChanged("OtherBus_Type");
+					this.OnOtherBus_TypeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OtherBus_Specify", DbType="NVarChar(50)")]
+		public string OtherBus_Specify
+		{
+			get
+			{
+				return this._OtherBus_Specify;
+			}
+			set
+			{
+				if ((this._OtherBus_Specify != value))
+				{
+					this.OnOtherBus_SpecifyChanging(value);
+					this.SendPropertyChanging();
+					this._OtherBus_Specify = value;
+					this.SendPropertyChanged("OtherBus_Specify");
+					this.OnOtherBus_SpecifyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OtherBus_Amount", DbType="Decimal(18,0)")]
+		public System.Nullable<decimal> OtherBus_Amount
+		{
+			get
+			{
+				return this._OtherBus_Amount;
+			}
+			set
+			{
+				if ((this._OtherBus_Amount != value))
+				{
+					this.OnOtherBus_AmountChanging(value);
+					this.SendPropertyChanging();
+					this._OtherBus_Amount = value;
+					this.SendPropertyChanged("OtherBus_Amount");
+					this.OnOtherBus_AmountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FixedAllow_Remarks", DbType="NVarChar(200)")]
+		public string FixedAllow_Remarks
+		{
+			get
+			{
+				return this._FixedAllow_Remarks;
+			}
+			set
+			{
+				if ((this._FixedAllow_Remarks != value))
+				{
+					this.OnFixedAllow_RemarksChanging(value);
+					this.SendPropertyChanging();
+					this._FixedAllow_Remarks = value;
+					this.SendPropertyChanged("FixedAllow_Remarks");
+					this.OnFixedAllow_RemarksChanged();
 				}
 			}
 		}

@@ -865,30 +865,6 @@
       <Column Name="TravelExpenseMain_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
     </Type>
   </Table>
-  <Table Name="dbo.ACCEDE_T_TravelExpenseDetailsMap" Member="ACCEDE_T_TravelExpenseDetailsMaps">
-    <Type Name="ACCEDE_T_TravelExpenseDetailsMap">
-      <Column Name="TravelExpenseDetailMap_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="TravelExpenseDetail_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="ReimTranspo_Type1" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="ReimTranspo_Amount1" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
-      <Column Name="ReimTranspo_Type2" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="ReimTranspo_Amount2" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
-      <Column Name="ReimTranspo_Type3" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="ReimTranspo_Amount3" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
-      <Column Name="FixedAllow_ForP" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="FixedAllow_Amount" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
-      <Column Name="MiscTravel_Type" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="MiscTravel_Specify" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="MiscTravel_Amount" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
-      <Column Name="Entertainment_Explain" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="Entertainment_Amount" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
-      <Column Name="BusMeals_Explain" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="BusMeals_Amount" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
-      <Column Name="OtherBus_Type" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="OtherBus_Specify" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="OtherBus_Amount" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.ACCEDE_T_TravelExpenseDetails" Member="ACCEDE_T_TravelExpenseDetails">
     <Type Name="ACCEDE_T_TravelExpenseDetail">
       <Column Name="TravelExpenseDetail_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -1223,6 +1199,31 @@
       <Column Name="ExpDtl_WBS" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
       <Column Name="ExpDetail_remarks" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
       <Column Name="ExpLineNum" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_T_TravelExpenseDetailsMap" Member="ACCEDE_T_TravelExpenseDetailsMaps">
+    <Type Name="ACCEDE_T_TravelExpenseDetailsMap">
+      <Column Name="TravelExpenseDetailMap_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TravelExpenseDetail_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ReimTranspo_Type1" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="ReimTranspo_Amount1" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
+      <Column Name="ReimTranspo_Type2" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="ReimTranspo_Amount2" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
+      <Column Name="ReimTranspo_Type3" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="ReimTranspo_Amount3" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
+      <Column Name="FixedAllow_ForP" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="FixedAllow_Amount" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
+      <Column Name="MiscTravel_Type" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="MiscTravel_Specify" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="MiscTravel_Amount" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
+      <Column Name="Entertainment_Explain" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Entertainment_Amount" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
+      <Column Name="BusMeals_Explain" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="BusMeals_Amount" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
+      <Column Name="OtherBus_Type" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="OtherBus_Specify" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="OtherBus_Amount" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
+      <Column Name="FixedAllow_Remarks" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
     </Type>
   </Table>
 </Database>
