@@ -198,6 +198,7 @@ namespace DX_WebTemplate
             Session["wf"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "WF_Id");
             Session["wfd"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "WFD_Id");
             Session["doc_stat"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "Status");
+            Session["stat_desc"] = "Cashier";
             var app = context.ITP_S_DocumentTypes.Where(x => x.DCT_Id == Convert.ToInt32(expenseGrid.GetRowValuesByKeyValue(rowKey, "AppDocTypeId"))).Select(x => x.DCT_Name).FirstOrDefault();
 
             string actID = Convert.ToString(Session["wfa"]);

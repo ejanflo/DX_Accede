@@ -29,65 +29,6 @@ namespace DX_WebTemplate
         string ITPORTALcon = ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString;
         ITPORTALDataContext _DataContext = new ITPORTALDataContext(ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString);
 
-        DataSet ds = null;
-        DataSet dsDoc = null;
-
-        void ApplyStylesToGrid(dynamic grid, string colorCode)
-        {
-            var color = ColorTranslator.FromHtml(colorCode);
-            grid.StylesPager.CurrentPageNumber.BackColor = color;
-            grid.StylesPager.PageSizeItem.ComboBoxStyle.DropDownButtonStyle.HoverStyle.BackColor = color;
-            grid.StylesPager.PageSizeItem.ComboBoxStyle.ItemStyle.SelectedStyle.BackColor = color;
-        }
-
-        protected void ExpenseEditForm_Init(object sender, EventArgs e)
-        {
-            InitializeDataSet();
-        }
-
-        private void InitializeDataSet()
-        {
-            if (!IsPostBack || (Session["DataSet"] == null))
-            {
-                ds = new DataSet();
-                ds.Tables.AddRange(new[]
-                {
-                    CreateDataTable("TravelExpenseDetailMap_ID", "ReimTranspo_Type1", "ReimTranspo_Amount1", "ReimTranspo_Type2", "ReimTranspo_Amount2", "ReimTranspo_Type3", "ReimTranspo_Amount3", "FixedAllow_ForP", "FixedAllow_Amount", "MiscTravel_Type", "MiscTravel_Specify", "MiscTravel_Amount", "Entertainment_Explain", "Entertainment_Amount", "BusMeals_Explain", "BusMeals_Amount", "OtherBus_Type", "OtherBus_Specify", "OtherBus_Amount")
-                    //CreateDataTable("ReimTranspo_ID", "ReimTranspo_Type", "ReimTranspo_Amount"),
-                    //CreateDataTable("FixedAllow_ID", "FixedAllow_ForP", "FixedAllow_Amount"),
-                    //CreateDataTable("MiscTravelExp_ID", "MiscTravelExp_Type", "MiscTravelExp_Amount", "MiscTravelExp_Specify"),
-                    //CreateDataTable("OtherBusinessExp_ID", "OtherBusinessExp_Type", "OtherBusinessExp_Amount", "OtherBusinessExp_Specify"),
-                    //CreateDataTable("Entertainment_ID", "Entertainment_Explain", "Entertainment_Amount"),
-                    //CreateDataTable("BusinessMeal_ID", "BusinessMeal_Explain", "BusinessMeal_Amount")
-                });
-                Session["DataSet"] = ds;
-            }
-            else
-                ds = (DataSet)Session["DataSet"];
-
-
-            if (!IsPostBack || (Session["DataSetDoc"] == null))
-            {
-                dsDoc = new DataSet();
-                DataTable masterTable = new DataTable();
-                masterTable.Columns.Add("ID", typeof(int));
-                masterTable.Columns.Add("FileName", typeof(string));
-                masterTable.Columns.Add("FileAttachment", typeof(byte[]));
-                masterTable.Columns.Add("FileExtension", typeof(string));
-                masterTable.Columns.Add("FileSize", typeof(string));
-                masterTable.Columns.Add("Description", typeof(string));
-                masterTable.PrimaryKey = new DataColumn[] { masterTable.Columns["ID"] };
-
-                dsDoc.Tables.AddRange(new DataTable[] { masterTable/*, detailTable*/ });
-                Session["DataSetDoc"] = dsDoc;
-            }
-            else
-                dsDoc = (DataSet)Session["DataSetDoc"];
-            TraDocuGrid.DataSource = dsDoc.Tables[0];
-            TraDocuGrid.DataBind();
-
-        }
-
         protected void Page_Load(object sender, EventArgs e)
         {
             try
@@ -95,16 +36,6 @@ namespace DX_WebTemplate
                 if (AnfloSession.Current.ValidCookieUser())
                 {
                     AnfloSession.Current.CreateSession(HttpContext.Current.User.ToString());
-
-                    string colorCode = "#06838";
-                    ApplyStylesToGrid(CAGrid, colorCode);
-                    ApplyStylesToGrid(ExpenseGrid, colorCode);
-                    ApplyStylesToGrid(DocumentGrid, colorCode);
-                    ApplyStylesToGrid(WFSequenceGrid, colorCode);
-                    ApplyStylesToGrid(FAPWFGrid, colorCode);
-                    ApplyStylesToGrid(capopGrid, colorCode);
-                    ApplyStylesToGrid(ASPxGridView22, colorCode);
-                    ApplyStylesToGrid(ASPxGridView22, colorCode);
 
                     var mainExp = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).FirstOrDefault();
                     var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).FirstOrDefault();
@@ -126,7 +57,7 @@ namespace DX_WebTemplate
                             ExpenseEditForm.Items[0].Caption = "New Travel Expense";
 
                         SqlMain.SelectParameters["ID"].DefaultValue = mainExp.ID.ToString();
-                        SqlLocBranch.SelectParameters["Comp_Id"].DefaultValue = mainExp.ChargedToComp.ToString(); 
+                        SqlLocBranch.SelectParameters["Comp_Id"].DefaultValue = mainExp.ChargedToComp.ToString();
                         timedepartTE.DateTime = DateTime.Parse(mainExp.Time_Departed.ToString());
                         timearriveTE.DateTime = DateTime.Parse(mainExp.Time_Arrived.ToString());
                         Session["DocNo"] = mainExp.Doc_No.ToString();
@@ -142,21 +73,6 @@ namespace DX_WebTemplate
 
                     ASPxGridView22.DataSource = ds.Tables[0];
                     ASPxGridView22.DataBind();
-
-                    //reimTranGrid.DataSource = ds.Tables[0];
-                    //fixedAllowGrid.DataSource = ds.Tables[1];
-                    //miscTravelGrid.DataSource = ds.Tables[2];
-                    //otherBusGrid.DataSource = ds.Tables[3];
-                    //entertainmentGrid.DataSource = ds.Tables[4];
-                    //busMealsGrid.DataSource = ds.Tables[5];
-
-                    //reimTranGrid.DataBind();
-                    //fixedAllowGrid.DataBind();
-                    //miscTravelGrid.DataBind();
-                    //otherBusGrid.DataBind();
-                    //entertainmentGrid.DataBind();
-                    //busMealsGrid.DataBind();
-
                 }
                 else
                     Response.Redirect("~/Logon.aspx");
@@ -231,7 +147,7 @@ namespace DX_WebTemplate
                     drpdown_expenseType.Value = expType;
                     lbl_caTotal.Text = Convert.ToString(Session["currency"]) + totalca.ToString("N2");
                     lbl_expenseTotal.Text = Convert.ToString(Session["currency"]) + totalexp.ToString("N2");
-                    lbl_dueTotal.Text = totalexp > totalca ? "(" + Convert.ToString(Session["currency"]) +""+ (totalexp - totalca).ToString("N2") + ")" : Convert.ToString(Session["currency"]) + (totalca - totalexp).ToString("N2");
+                    lbl_dueTotal.Text = totalexp > totalca ? "(" + Convert.ToString(Session["currency"]) + "" + (totalexp - totalca).ToString("N2") + ")" : Convert.ToString(Session["currency"]) + (totalca - totalexp).ToString("N2");
 
                     var totExpCA = totalexp > totalca ? Convert.ToDecimal(totalexp - totalca) : Convert.ToDecimal(totalca - totalexp);
 
@@ -264,7 +180,7 @@ namespace DX_WebTemplate
                     {
                         Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.ChargedToComp && x.Description.Contains("Travel Domestic FAP>Manager>VP") && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
                     }
-                    
+
                     SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
                     SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
                 }
@@ -275,35 +191,49 @@ namespace DX_WebTemplate
             }
         }
 
-        private DataTable GetWorkflowHeadersByExpenseAndDepartment(string userId, int companyId, decimal totalExp, string depCode, int app_id)
+        DataSet ds = null;
+        DataSet dsDoc = null;
+
+        protected void ExpenseEditForm_Init(object sender, EventArgs e)
         {
-            DataTable dataTable = new DataTable();
+            InitializeDataSet();
+        }
 
-            using (SqlConnection connection = new SqlConnection(ITPORTALcon))
+        private void InitializeDataSet()
+        {
+            if (!IsPostBack || (Session["DataSet"] == null))
             {
-                using (SqlCommand command = new SqlCommand("sp_sel_ACCEDE_GetWorkflowHeadersByExpenseAndDepartment", connection))
+                ds = new DataSet();
+                ds.Tables.AddRange(new[]
                 {
-                    command.CommandType = CommandType.StoredProcedure;
-
-                    // Add parameters
-                    command.Parameters.AddWithValue("@UserId", userId);
-                    command.Parameters.AddWithValue("@CompanyId", companyId);
-                    command.Parameters.AddWithValue("@totalExp", totalExp);
-                    command.Parameters.AddWithValue("@DepCode", depCode);
-                    command.Parameters.AddWithValue("@AppId", app_id);
-
-                    // Open the connection
-                    connection.Open();
-
-                    // Execute the query and load the results into the DataTable
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        dataTable.Load(reader);
-                    }
-                }
+                    CreateDataTable("TravelExpenseDetailMap_ID", "ReimTranspo_Type1", "ReimTranspo_Amount1", "ReimTranspo_Type2", "ReimTranspo_Amount2", "ReimTranspo_Type3", "ReimTranspo_Amount3", "FixedAllow_ForP", "FixedAllow_Remarks", "FixedAllow_Amount", "MiscTravel_Type", "MiscTravel_Specify", "MiscTravel_Amount", "Entertainment_Explain", "Entertainment_Amount", "BusMeals_Explain", "BusMeals_Amount", "OtherBus_Type", "OtherBus_Specify", "OtherBus_Amount")
+                });
+                Session["DataSet"] = ds;
             }
+            else
+                ds = (DataSet)Session["DataSet"];
 
-            return dataTable;
+
+            if (!IsPostBack || (Session["DataSetDoc"] == null))
+            {
+                dsDoc = new DataSet();
+                DataTable masterTable = new DataTable();
+                masterTable.Columns.Add("ID", typeof(int));
+                masterTable.Columns.Add("FileName", typeof(string));
+                masterTable.Columns.Add("FileAttachment", typeof(byte[]));
+                masterTable.Columns.Add("FileExtension", typeof(string));
+                masterTable.Columns.Add("FileSize", typeof(string));
+                masterTable.Columns.Add("Description", typeof(string));
+                masterTable.PrimaryKey = new DataColumn[] { masterTable.Columns["ID"] };
+
+                dsDoc.Tables.AddRange(new DataTable[] { masterTable/*, detailTable*/ });
+                Session["DataSetDoc"] = dsDoc;
+            }
+            else
+                dsDoc = (DataSet)Session["DataSetDoc"];
+            TraDocuGrid.DataSource = dsDoc.Tables[0];
+            TraDocuGrid.DataBind();
+
         }
 
         protected void UploadController_FilesUploadComplete(object sender, DevExpress.Web.FilesUploadCompleteEventArgs e)
@@ -455,12 +385,6 @@ namespace DX_WebTemplate
             Session["UploadedFilesTable"] = ImgDS.Tables[0];
             TraDocuGrid.DataSource = ImgDS.Tables[0];   
             TraDocuGrid.DataBind();
-        }
-
-        protected void capopGrid_CustomCallback(object sender, DevExpress.Web.ASPxGridViewCustomCallbackEventArgs e)
-        {
-            capopGrid.DataBind();
-            capopGrid.Selection.UnselectAll();
         }
 
         [WebMethod]
@@ -1216,6 +1140,7 @@ namespace DX_WebTemplate
                     ReimTranspo_Amount2 = Convert.ToDecimal(e.NewValues["ReimTranspo_Amount2"]),
                     ReimTranspo_Amount3 = Convert.ToDecimal(e.NewValues["ReimTranspo_Amount3"]),
                     FixedAllow_ForP = Convert.ToString(e.NewValues["FixedAllow_ForP"]),
+                    FixedAllow_Remarks = Convert.ToString(e.NewValues["FixedAllow_Remarks"]),
                     FixedAllow_Amount = Convert.ToDecimal(e.NewValues["FixedAllow_Amount"]),
                     MiscTravel_Type = Convert.ToString(e.NewValues["MiscTravel_Type"]),
                     MiscTravel_Specify = Convert.ToString(e.NewValues["MiscTravel_Specify"]),
@@ -1314,8 +1239,9 @@ namespace DX_WebTemplate
                   BusMeals_Amount = {14}, 
                   OtherBus_Type = {15}, 
                   OtherBus_Specify = {16}, 
-                  OtherBus_Amount = {17}
-              WHERE TravelExpenseDetailMap_ID = {18}",
+                  OtherBus_Amount = {17}, 
+                  FixedAllow_Remarks = {18} 
+              WHERE TravelExpenseDetailMap_ID = {19}",
                     Convert.ToString(e.NewValues["ReimTranspo_Type1"]),
                     Convert.ToDecimal(e.NewValues["ReimTranspo_Amount1"]),
                     Convert.ToString(e.NewValues["ReimTranspo_Type2"]),
@@ -1334,6 +1260,7 @@ namespace DX_WebTemplate
                     Convert.ToString(e.NewValues["OtherBus_Type"]),
                     Convert.ToString(e.NewValues["OtherBus_Specify"]),
                     Convert.ToDecimal(e.NewValues["OtherBus_Amount"]),
+                    Convert.ToDecimal(e.NewValues["FixedAllow_Remarks"]),
                     Convert.ToInt32(e.Keys["TravelExpenseDetailMap_ID"])
                 );
             }
@@ -1356,177 +1283,6 @@ namespace DX_WebTemplate
             }
 
             calcExp((ASPxGridView)sender);
-        }
-
-        protected void reimTranGrid_RowInserting(object sender, DevExpress.Web.Data.ASPxDataInsertingEventArgs e)
-        {
-            if (Convert.ToString(Session["expAction"]) == "edit")
-            {
-                ACCEDE_T_TraExpReimTranspoMap rt = new ACCEDE_T_TraExpReimTranspoMap();
-                {
-                    rt.ReimTranspo_Type = Convert.ToString(e.NewValues["ReimTranspo_Type"]);
-                    rt.ReimTranspo_Amount = Convert.ToDecimal(e.NewValues["ReimTranspo_Amount"]);
-                    rt.TravelExpenseDetail_ID = Convert.ToInt32(Session["ExpDetailsID"]);
-                    rt.User_ID = Convert.ToInt32(Session["userID"]);
-                }
-                _DataContext.ACCEDE_T_TraExpReimTranspoMaps.InsertOnSubmit(rt);
-                _DataContext.SubmitChanges();
-            }
-            RowInsert((ASPxGridView)sender, 0, e, "ReimTranspo_ID");
-        }
-
-        protected void reimTranGrid_RowDeleting(object sender, DevExpress.Web.Data.ASPxDataDeletingEventArgs e)
-        {
-            RowDelete((ASPxGridView)sender, 0, e, "ReimTranspo_ID");
-
-            if (Session["expAction"].ToString() == "edit")
-            {
-
-                _DataContext.ExecuteCommand("DELETE FROM ACCEDE_T_TraExpReimTranspoMap WHERE ReimTranspo_ID = {0}", Convert.ToInt32(e.Values["ReimTranspo_ID"]));
-            }
-        }
-
-        protected void fixedAllowGrid_RowInserting(object sender, DevExpress.Web.Data.ASPxDataInsertingEventArgs e)
-        {
-            if (Convert.ToString(Session["expAction"]) == "edit")
-            {
-                ACCEDE_T_TraExpFixedAllowMap fa = new ACCEDE_T_TraExpFixedAllowMap();
-                {
-                    fa.FixedAllow_ForP = Convert.ToString(e.NewValues["FixedAllow_ForP"]);
-                    fa.FixedAllow_Amount = Convert.ToDecimal(e.NewValues["FixedAllow_Amount"]);
-                    fa.TravelExpenseDetail_ID = Convert.ToInt32(Session["ExpDetailsID"]);
-                    fa.User_ID = Convert.ToInt32(Session["userID"]);
-                }
-                _DataContext.ACCEDE_T_TraExpFixedAllowMaps.InsertOnSubmit(fa);
-                _DataContext.SubmitChanges();
-            }
-
-            RowInsert((ASPxGridView)sender, 1, e, "FixedAllow_ID");
-        }
-
-        protected void fixedAllowGrid_RowDeleting(object sender, DevExpress.Web.Data.ASPxDataDeletingEventArgs e)
-        {
-            RowDelete((ASPxGridView)sender, 1, e, "FixedAllow_ID"); 
-            
-            if (Session["expAction"].ToString() == "edit")
-            {
-
-                _DataContext.ExecuteCommand("DELETE FROM ACCEDE_T_TraExpFixedAllowMap WHERE FixedAllow_ID = {0}", Convert.ToInt32(e.Values["FixedAllow_ID"]));
-            }
-        }
-
-        protected void miscTravelGrid_RowInserting(object sender, DevExpress.Web.Data.ASPxDataInsertingEventArgs e)
-        {
-            if (Convert.ToString(Session["expAction"]) == "edit")
-            {
-                ACCEDE_T_TraExpMiscTravelMap mt = new ACCEDE_T_TraExpMiscTravelMap();
-                {
-                    mt.MiscTravelExp_Type = Convert.ToString(e.NewValues["MiscTravelExp_Type"]);
-                    mt.MiscTravelExp_Specify = Convert.ToString(e.NewValues["MiscTravelExp_Specify"]);
-                    mt.MiscTravelExp_Amount = Convert.ToDecimal(e.NewValues["MiscTravelExp_Amount"]);
-                    mt.TravelExpenseDetail_ID = Convert.ToInt32(Session["ExpDetailsID"]);
-                    mt.User_ID = Convert.ToInt32(Session["userID"]);
-                }
-                _DataContext.ACCEDE_T_TraExpMiscTravelMaps.InsertOnSubmit(mt);
-                _DataContext.SubmitChanges();
-            }
-
-            RowInsert((ASPxGridView)sender, 2, e, "MiscTravelExp_ID");
-        }
-
-        protected void miscTravelGrid_RowDeleting(object sender, DevExpress.Web.Data.ASPxDataDeletingEventArgs e)
-        {
-            RowDelete((ASPxGridView)sender, 2, e, "MiscTravelExp_ID");
-            if (Session["expAction"].ToString() == "edit")
-            {
-
-                _DataContext.ExecuteCommand("DELETE FROM ACCEDE_T_TraExpMiscTravelMap WHERE MiscTravelExp_ID = {0}", Convert.ToInt32(e.Values["MiscTravelExp_ID"]));
-            }
-        }
-
-        protected void otherBusGrid_RowInserting(object sender, DevExpress.Web.Data.ASPxDataInsertingEventArgs e)
-        {
-            if (Convert.ToString(Session["expAction"]) == "edit")
-            {
-                ACCEDE_T_TraExpOtherBusMap ob = new ACCEDE_T_TraExpOtherBusMap();
-                {
-                    ob.OtherBusinessExp_Type = Convert.ToString(e.NewValues["OtherBusinessExp_Type"]);
-                    ob.OtherBusinessExp_Specify = Convert.ToString(e.NewValues["OtherBusinessExp_Specify"]);
-                    ob.OtherBusinessExp_Amount = Convert.ToDecimal(e.NewValues["OtherBusinessExp_Amount"]);
-                    ob.TravelExpenseDetail_ID = Convert.ToInt32(Session["ExpDetailsID"]);
-                    ob.User_ID = Convert.ToInt32(Session["userID"]);
-                }
-                _DataContext.ACCEDE_T_TraExpOtherBusMaps.InsertOnSubmit(ob);
-                _DataContext.SubmitChanges();
-            }
-
-            RowInsert((ASPxGridView)sender, 3, e, "OtherBusinessExp_ID");
-        }
-
-        protected void otherBusGrid_RowDeleting(object sender, DevExpress.Web.Data.ASPxDataDeletingEventArgs e)
-        {
-            RowDelete((ASPxGridView)sender, 3, e, "OtherBusinessExp_ID");
-            if (Session["expAction"].ToString() == "edit")
-            {
-
-                _DataContext.ExecuteCommand("DELETE FROM ACCEDE_T_TraExpOtherBusMap WHERE OtherBusinessExp_ID = {0}", Convert.ToInt32(e.Values["OtherBusinessExp_ID"]));
-            }
-        }
-
-        protected void entertainmentGrid_RowInserting(object sender, DevExpress.Web.Data.ASPxDataInsertingEventArgs e)
-        {
-            if (Convert.ToString(Session["expAction"]) == "edit")
-            {
-                ACCEDE_T_TraExpEntertainmentMap em = new ACCEDE_T_TraExpEntertainmentMap();
-                {
-                    em.Entertainment_Explain = Convert.ToString(e.NewValues["Entertainment_Explain"]);
-                    em.Entertainment_Amount = Convert.ToDecimal(e.NewValues["Entertainment_Amount"]);
-                    em.TravelExpenseDetail_ID = Convert.ToInt32(Session["ExpDetailsID"]);
-                    em.User_ID = Convert.ToInt32(Session["userID"]);
-                }
-                _DataContext.ACCEDE_T_TraExpEntertainmentMaps.InsertOnSubmit(em);
-                _DataContext.SubmitChanges();
-            }
-
-            RowInsert((ASPxGridView)sender, 4, e, "Entertainment_ID");
-        }
-
-        protected void entertainmentGrid_RowDeleting(object sender, DevExpress.Web.Data.ASPxDataDeletingEventArgs e)
-        {
-            RowDelete((ASPxGridView)sender, 4, e, "Entertainment_ID");
-            if (Session["expAction"].ToString() == "edit")
-            {
-
-                _DataContext.ExecuteCommand("DELETE FROM ACCEDE_T_TraExpEntertainmentMap WHERE Entertainment_ID = {0}", Convert.ToInt32(e.Values["Entertainment_ID"]));
-            }
-        }
-
-        protected void busMealsGrid_RowInserting(object sender, DevExpress.Web.Data.ASPxDataInsertingEventArgs e)
-        {
-            if (Convert.ToString(Session["expAction"]) == "edit")
-            {
-                ACCEDE_T_TraExpBusinessMealMap bm = new ACCEDE_T_TraExpBusinessMealMap();
-                {
-                    bm.BusinessMeal_Explain = Convert.ToString(e.NewValues["BusinessMeal_Explain"]);
-                    bm.BusinessMeal_Amount = Convert.ToDecimal(e.NewValues["BusinessMeal_Amount"]);
-                    bm.TravelExpenseDetail_ID = Convert.ToInt32(Session["ExpDetailsID"]);
-                    bm.User_ID = Convert.ToInt32(Session["userID"]);
-                }
-                _DataContext.ACCEDE_T_TraExpBusinessMealMaps.InsertOnSubmit(bm);
-                _DataContext.SubmitChanges();
-            }
-
-            RowInsert((ASPxGridView)sender, 5, e, "BusinessMeal_ID");
-        }
-
-        protected void busMealsGrid_RowDeleting(object sender, DevExpress.Web.Data.ASPxDataDeletingEventArgs e)
-        {
-            RowDelete((ASPxGridView)sender, 5, e, "BusinessMeal_ID");
-            if (Session["expAction"].ToString() == "edit")
-            {
-
-                _DataContext.ExecuteCommand("DELETE FROM ACCEDE_T_TraExpBusinessMealMap WHERE BusinessMeal_ID = {0}", Convert.ToInt32(e.Values["BusinessMeal_ID"]));
-            }
         }
 
         public void InsertAttachments(int id)
@@ -1607,57 +1363,6 @@ namespace DX_WebTemplate
             {
                 throw;
             }
-
-            //string connectionString1 = ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString;
-            //using (SqlConnection connection = new SqlConnection(connectionString1))
-            //{
-            //    connection.Open();
-
-            //    // Iterate through rows of the DevExpress GridView
-            //    for (int i = 0; i < TraDocuGrid.VisibleRowCount; i++)
-            //    {
-            //        // Get the values of the current row
-            //        string fileName = TraDocuGrid.GetRowValues(i, "FileName")?.ToString();
-            //        byte[] fileAttachment = (byte[])TraDocuGrid.GetRowValues(i, "FileAttachment");
-            //        string fileExtension = TraDocuGrid.GetRowValues(i, "FileExtension")?.ToString();
-            //        string fileSize = TraDocuGrid.GetRowValues(i, "FileSize")?.ToString();
-            //        string description = TraDocuGrid.GetRowValues(i, "Description")?.ToString();
-
-            //        // Prepare the SQL query
-            //        string query = "INSERT INTO ITP_T_FileAttachment (FileAttachment, FileName, Description, DateUploaded, App_ID, Company_ID, Doc_ID, Doc_No, User_ID, FileExtension, FileSize, DocType_Id) OUTPUT INSERTED.ID VALUES (@FileAttachment, @FileName, @Description, @DateUploaded, @App_ID, @Company_ID, @Doc_ID, @Doc_No, @User_ID, @FileExtension, @FileSize, @DocType_Id)";
-
-            //        var doctype_id = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Select(x => x.DCT_Id).FirstOrDefault();
-
-            //        using (SqlCommand command = new SqlCommand(query, connection))
-            //        {
-            //            // Add parameters
-            //            command.Parameters.AddWithValue("@FileName", fileName);
-            //            command.Parameters.AddWithValue("@FileAttachment", fileAttachment);
-            //            command.Parameters.AddWithValue("@FileExtension", fileExtension);
-            //            command.Parameters.AddWithValue("@FileSize", fileSize);
-            //            command.Parameters.AddWithValue("@Description", description);
-            //            command.Parameters.AddWithValue("@DateUploaded", DateTime.Now);
-            //            command.Parameters.AddWithValue("@App_ID", 1032);
-            //            command.Parameters.AddWithValue("@Company_ID", _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).Select(x => x.Company_Id).FirstOrDefault());
-            //            command.Parameters.AddWithValue("@Doc_ID", id);
-            //            command.Parameters.AddWithValue("@Doc_No", Session["DocNo"].ToString());
-            //            command.Parameters.AddWithValue("@User_ID", Session["userID"] != null ? Session["userID"].ToString() : "0");
-            //            command.Parameters.AddWithValue("@DocType_Id", doctype_id);
-
-            //            int insertedId = (int)command.ExecuteScalar();
-
-            //            ACCEDE_T_TravelExpenseDetailsFileAttach docs = new ACCEDE_T_TravelExpenseDetailsFileAttach();
-            //            {
-            //                docs.FileAttachment_ID = insertedId;
-            //                docs.ExpenseDetails_ID = id;
-            //            };
-            //            _DataContext.ACCEDE_T_TravelExpenseDetailsFileAttaches.InsertOnSubmit(docs);
-
-            //            // Execute the query
-            //            command.ExecuteNonQuery();
-            //        }
-            //    }
-            //}
         }
 
         [WebMethod]
@@ -1727,6 +1432,7 @@ namespace DX_WebTemplate
                         map.ReimTranspo_Amount3 = row.IsNull("ReimTranspo_Amount3") ? 0 : Convert.ToDecimal(row["ReimTranspo_Amount3"]);
                         map.FixedAllow_ForP = row.IsNull("FixedAllow_ForP") ? string.Empty : Convert.ToString(row["FixedAllow_ForP"]);
                         map.FixedAllow_Amount = row.IsNull("FixedAllow_Amount") ? 0 : Convert.ToDecimal(row["FixedAllow_Amount"]);
+                        map.FixedAllow_Remarks = row.IsNull("FixedAllow_Remarks") ? string.Empty : Convert.ToString(row["FixedAllow_Remarks"]);
                         map.MiscTravel_Type = row.IsNull("MiscTravel_Type") ? string.Empty : Convert.ToString(row["MiscTravel_Type"]);
                         map.MiscTravel_Specify = row.IsNull("MiscTravel_Specify") ? string.Empty : Convert.ToString(row["MiscTravel_Specify"]);
                         map.MiscTravel_Amount = row.IsNull("MiscTravel_Amount") ? 0 : Convert.ToDecimal(row["MiscTravel_Amount"]);
@@ -1741,52 +1447,6 @@ namespace DX_WebTemplate
                     });
 
                     _DataContext.SubmitChanges();
-
-                    //InsertMappedData<ACCEDE_T_TraExpReimTranspoMap>(dataSet.Tables[0], (map, row) =>
-                    //{
-                    //    map.ReimTranspo_Type = Convert.ToInt32(row["ReimTranspo_Type"]);
-                    //    map.ReimTranspo_Amount = Convert.ToDecimal(row["ReimTranspo_Amount"]);
-                    //    map.TravelExpenseDetail_ID = travExpDetailId;
-                    //});
-
-                    //InsertMappedData<ACCEDE_T_TraExpFixedAllowMap>(dataSet.Tables[1], (map, row) =>
-                    //{
-                    //    map.FixedAllow_ForP = Convert.ToString(row["FixedAllow_ForP"]);
-                    //    map.FixedAllow_Amount = Convert.ToDecimal(row["FixedAllow_Amount"]);
-                    //    map.TravelExpenseDetail_ID = travExpDetailId;
-                    //});
-
-                    //InsertMappedData<ACCEDE_T_TraExpMiscTravelMap>(dataSet.Tables[2], (map, row) =>
-                    //{
-                    //    map.MiscTravelExp_Type = Convert.ToInt32(row["MiscTravelExp_Type"]);
-                    //    map.MiscTravelExp_Amount = Convert.ToDecimal(row["MiscTravelExp_Amount"]);
-                    //    map.MiscTravelExp_Specify = Convert.ToString(row["MiscTravelExp_Specify"]);
-                    //    map.TravelExpenseDetail_ID = travExpDetailId;
-                    //});
-
-                    //InsertMappedData<ACCEDE_T_TraExpOtherBusMap>(dataSet.Tables[3], (map, row) =>
-                    //{
-                    //    map.OtherBusinessExp_Type = Convert.ToInt32(row["OtherBusinessExp_Type"]);
-                    //    map.OtherBusinessExp_Amount = Convert.ToDecimal(row["OtherBusinessExp_Amount"]);
-                    //    map.OtherBusinessExp_Specify = Convert.ToString(row["OtherBusinessExp_Specify"]);
-                    //    map.TravelExpenseDetail_ID = travExpDetailId;
-                    //});
-
-                    //InsertMappedData<ACCEDE_T_TraExpEntertainmentMap>(dataSet.Tables[4], (map, row) =>
-                    //{
-                    //    map.Entertainment_Explain = Convert.ToString(row["Entertainment_Explain"]);
-                    //    map.Entertainment_Amount = Convert.ToDecimal(row["Entertainment_Amount"]);
-                    //    map.TravelExpenseDetail_ID = travExpDetailId;
-                    //});
-
-                    //InsertMappedData<ACCEDE_T_TraExpBusinessMealMap>(dataSet.Tables[5], (map, row) =>
-                    //{
-                    //    map.BusinessMeal_Explain = Convert.ToString(row["BusinessMeal_Explain"]);
-                    //    map.BusinessMeal_Amount = Convert.ToDecimal(row["BusinessMeal_Amount"]);
-                    //    map.TravelExpenseDetail_ID = travExpDetailId;
-                    //});
-
-                    // Commit all changes at once
                 }
                 else if (Convert.ToString(Session["expAction"]) == "edit")
                 {
@@ -2034,6 +1694,11 @@ namespace DX_WebTemplate
                 if (Convert.ToString(e.Value) == "0" || Convert.ToString(e.Value) == "0.00" )
                     e.DisplayText = string.Empty;
             }
+
+            if (e.Column.Caption == "#")
+            {
+                e.DisplayText = (e.VisibleIndex + 1).ToString();
+            }
         }
 
         protected void CAGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
@@ -2120,22 +1785,6 @@ namespace DX_WebTemplate
             }
         }
 
-        protected void docPanel_Callback(object sender, CallbackEventArgsBase e)
-        {
-            var code = e.Parameter as string;
-
-            if (code != null) 
-            {
-                QRGenerator qrReport = new QRGenerator();
-
-                qrReport.Parameters["code"].Value = code;
-
-                qrReport.CreateDocument();
-
-                ASPxWebDocumentViewer1.OpenReport(qrReport);
-            }
-        }
-
         protected void locBranch_Callback(object sender, CallbackEventArgsBase e)
         {
             if (e.Parameter != null && e.Parameter != "")
@@ -2186,6 +1835,78 @@ namespace DX_WebTemplate
                     comboBox.TextField = "Document_Type";
                     comboBox.DataBind();
                 }
+            }
+        }
+
+        protected void ASPxGridView22_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            // Clear the DataSet tables for the "add" action
+            ds = (DataSet)Session["DataSet"];
+            dsDoc = (DataSet)Session["DataSetDoc"];
+            foreach (DataTable table in ds.Tables)
+            {
+                table.Clear();
+            }
+            foreach (DataTable table in dsDoc.Tables)
+            {
+                table.Clear();
+            }
+            if (e.Parameters == "add")
+            {
+                Session["expAction"] = "add";
+            }
+            else if (e.Parameters == "edit")
+            {
+                Session["expAction"] = "edit";
+
+                // Load data from SqlDataSources into DataTables and merge
+                ds.Tables[0].Merge(GetDataTableFromSqlDataSource(SqlExpDetailsMap));
+                dsDoc.Tables[0].Merge(GetDataTableFromSqlDataSource(SqlDocs2));
+            }
+
+            // Bind the tables to the grids
+            ASPxGridView22.DataSource = ds.Tables[0];
+            ASPxGridView22.DataBind();
+
+            TraDocuGrid.DataSource = dsDoc.Tables[0];
+            TraDocuGrid.DataBind();
+        }
+
+        protected void ExpenseGrid_CustomColumnDisplayText(object sender, ASPxGridViewColumnDisplayTextEventArgs e)
+        {
+            if (e.Column.FieldName == "TravelExpenseDetail_ID" && e.Column.Caption == "Fixed Allowances")
+            {
+                var amount = Convert.ToDecimal(_DataContext.ACCEDE_T_TravelExpenseDetailsMaps.Where(or => or.TravelExpenseDetail_ID == Convert.ToInt32(e.Value)).Sum(or => or.FixedAllow_Amount));
+
+                if (amount.ToString() == "0.00" || string.IsNullOrEmpty(amount.ToString()))
+                    e.DisplayText = "0.00";
+                else
+                {
+                    e.DisplayText = amount.ToString("N");
+                }
+            }
+
+            if (e.Column.FieldName == "TravelExpenseDetail_ID" && e.Column.Caption == "Other Travel Expenses")
+            {
+                var travelExpenseDetailId = Convert.ToInt32(e.Value);
+                var total = _DataContext.ACCEDE_T_TravelExpenseDetailsMaps
+                    .Where(or => or.TravelExpenseDetail_ID == travelExpenseDetailId)
+                    .Sum(or =>
+                        (or.ReimTranspo_Amount1 ?? 0) +
+                        (or.ReimTranspo_Amount2 ?? 0) +
+                        (or.ReimTranspo_Amount3 ?? 0) +
+                        (or.MiscTravel_Amount ?? 0) +
+                        (or.Entertainment_Amount ?? 0) +
+                        (or.BusMeals_Amount ?? 0) +
+                        (or.OtherBus_Amount ?? 0)
+                    );
+
+                e.DisplayText = total == 0 ? "0.00" : total.ToString("N");
+            }
+
+            if (e.Column.Caption == "#")
+            {
+                e.DisplayText = (e.VisibleIndex + 1).ToString();
             }
         }
     }

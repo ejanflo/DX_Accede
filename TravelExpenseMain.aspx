@@ -203,7 +203,7 @@
                             <dx:LayoutItem Caption="" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxGridView ID="expenseGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="expenseGrid" Width="100%" DataSourceID="sqlTravelExp" KeyFieldName="ID" OnCustomCallback="expenseGrid_CustomCallback" OnCustomColumnDisplayText="expenseGrid_CustomColumnDisplayText" OnCustomButtonInitialize="expenseGrid_CustomButtonInitialize"  >
+                                        <dx:ASPxGridView ID="expenseGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="expenseGrid" Width="100%" DataSourceID="sqlTravelExp" KeyFieldName="ID" OnCustomCallback="expenseGrid_CustomCallback" OnCustomColumnDisplayText="expenseGrid_CustomColumnDisplayText" OnCustomButtonInitialize="expenseGrid_CustomButtonInitialize" Theme="MaterialCompact"  >
                                             <ClientSideEvents CustomButtonClick="OnCustomButtonClick" ToolbarItemClick="onToolbarItemClick" EndCallback="function(s, e) {
 	if(s.cp_btnid == &quot;btnPrint&quot;){
 	         loadPanel.Hide();
@@ -772,7 +772,13 @@
 FROM     ACCEDE_T_TravelExpenseMain INNER JOIN
                   ITP_S_Status ON ACCEDE_T_TravelExpenseMain.Status = ITP_S_Status.STS_Id
 WHERE  (ACCEDE_T_TravelExpenseMain.Preparer_Id = @Preparer_Id) OR
-                  (ACCEDE_T_TravelExpenseMain.Employee_Id = @Employee_Id)">
+                  (ACCEDE_T_TravelExpenseMain.Employee_Id = @Employee_Id)
+UNION
+SELECT ID, Status, NULL AS STS_Description, Doc_No, Employee_Id, Preparer_Id, Company_Id, Trip_To, Purpose, WF_Id, FAPWF_Id, Remarks, Dep_Code, Date_From, Date_To, Date_Created, Time_Departed, Time_Arrived, ExpenseType_ID, 
+                  ForeignDomestic, ChargedToComp, ChargedToDept, LocBranch, ARRefNo, SAP_Id
+FROM     ACCEDE_T_TravelExpenseMain AS ACCEDE_T_TravelExpenseMain_1
+WHERE  (Preparer_Id = @Preparer_Id) AND (Status IS NULL) OR
+                  (Status IS NULL) AND (Employee_Id = @Employee_Id)">
             <SelectParameters>
                 <asp:Parameter Name="Preparer_Id" />
                 <asp:Parameter Name="Employee_Id" />

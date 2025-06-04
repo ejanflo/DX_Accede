@@ -199,6 +199,7 @@ namespace DX_WebTemplate
             Session["wf"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "WF_Id");
             Session["wfd"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "WFD_Id");
             Session["doc_stat"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "Status");
+            Session["stat_desc"] = "LineFAP";
             Session["prep"] = context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).Select(x => x.Preparer_Id).FirstOrDefault();
             Session["empid"] = context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).Select(x => x.Employee_Id).FirstOrDefault();
 

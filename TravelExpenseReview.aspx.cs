@@ -33,14 +33,6 @@ namespace DX_WebTemplate
         DataSet ds = null;
         DataSet dsDoc = null;
 
-        void ApplyStylesToGrid(dynamic grid, string colorCode)
-        {
-            var color = ColorTranslator.FromHtml(colorCode);
-            grid.StylesPager.CurrentPageNumber.BackColor = color;
-            grid.StylesPager.PageSizeItem.ComboBoxStyle.DropDownButtonStyle.HoverStyle.BackColor = color;
-            grid.StylesPager.PageSizeItem.ComboBoxStyle.ItemStyle.SelectedStyle.BackColor = color;
-        }
-
         protected void Page_Load(object sender, EventArgs e)
         {
             try
@@ -48,15 +40,6 @@ namespace DX_WebTemplate
                 if (AnfloSession.Current.ValidCookieUser())
                 {
                     AnfloSession.Current.CreateSession(HttpContext.Current.User.ToString());
-
-                    string colorCode = "#06838";
-                    ApplyStylesToGrid(CAGrid, colorCode);
-                    ApplyStylesToGrid(ExpenseGrid, colorCode);
-                    ApplyStylesToGrid(DocumentGrid, colorCode);
-                    ApplyStylesToGrid(WFSequenceGrid, colorCode);
-                    ApplyStylesToGrid(FAPWFGrid, colorCode);
-                    ApplyStylesToGrid(ASPxGridView22, colorCode);
-                    ApplyStylesToGrid(ASPxGridView22, colorCode);
 
                     string empCode = Session["userID"].ToString();
                     var mainExp = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).FirstOrDefault();
@@ -1180,12 +1163,13 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static bool AJAXApproveDocument(string remarks, int chargedcomp, int chargeddept, string arNo)
+        public static string AJAXApproveDocument(string remarks, int chargedcomp, int chargeddept, string arNo)
         {
             TravelExpenseReview rev = new TravelExpenseReview();
-            rev.ApproveDocument(remarks, chargedcomp, chargeddept, arNo);
+            var result = rev.ApproveDocument(remarks, chargedcomp, chargeddept, arNo);
+            string stat = result ? Convert.ToString(rev.Session["stat_desc"]) : string.Empty; 
 
-            return true;
+            return stat;
         }
 
         public void updateTravelRFP(int docID, int reim_docID, string remarks, int chargedcomp, int chargeddept, string arNo)
@@ -1269,7 +1253,7 @@ namespace DX_WebTemplate
             }
         }
 
-        public void ApproveDocument(string remarks, int chargedcomp, int chargeddept, string arNo)
+        public bool ApproveDocument(string remarks, int chargedcomp, int chargeddept, string arNo)
         {
             try
             {
@@ -1473,9 +1457,12 @@ namespace DX_WebTemplate
                         SendEmailFromAudit(docID, audstatus, Convert.ToInt32(Session["prep"]), remarks, Convert.ToInt32(Session["userID"]));
                     }
                 }
+
+                return true;
             }
             catch (Exception)
             {
+                return false;
                 throw;
             }
         }
@@ -1506,9 +1493,12 @@ namespace DX_WebTemplate
                 string rfpIO;
                 string rfpPayee;
                 decimal rfpAmount;
-                DateTime rfpLastDayTransact;
+                string rfpLastDayTransact;
                 string rfpPurpose;
                 string rfpstatus;
+                string rfpDocNo;
+                string rfpChargeToComp;
+                string rfpChargeToDept;
 
                 var rfp = _DataContext.ACCEDE_T_RFPMains.Where(x => x.RFP_DocNum == rfpDoc).FirstOrDefault();
 
@@ -1523,12 +1513,15 @@ namespace DX_WebTemplate
                 rfpIO = rfp.IO_Num;
                 rfpPayee = rfp.Payee;
                 rfpAmount = Convert.ToDecimal(rfp.Amount);
-                rfpLastDayTransact = Convert.ToDateTime(rfp.LastDayTransact);
+                rfpLastDayTransact = Convert.ToDateTime(rfp.LastDayTransact).ToString("MM/dd/yy");
                 rfpPurpose = rfp.Purpose;
                 var stat = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(rfp.Exp_ID)).Select(x => x.Status).FirstOrDefault();
                 rfpstatus = _DataContext.ITP_S_Status.Where(x => x.STS_Id == stat).Select(x => x.STS_Description).FirstOrDefault();
+                rfpDocNo = rfp.RFP_DocNum;
+                rfpChargeToComp = _DataContext.CompanyMasters.Where(x => x.WASSId == Convert.ToInt32(rfp.ChargedTo_CompanyId)).Select(x => x.CompanyShortName).FirstOrDefault();
+                rfpChargeToDept = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(rfp.ChargedTo_DeptId)).Select(x => x.DepDesc).FirstOrDefault();
 
-                return new { rfpCompany, rfpPayMethod, rfpTypeTransact, rfpSAPDoc, rfpDepartment, rfpCostCenter, rfpIO, rfpPayee, rfpAmount, rfpLastDayTransact, rfpstatus };
+                return new { rfpCompany, rfpPayMethod, rfpTypeTransact, rfpSAPDoc, rfpDepartment, rfpCostCenter, rfpIO, rfpPayee, rfpAmount, rfpLastDayTransact, rfpPurpose, rfpstatus, rfpDocNo, rfpChargeToComp, rfpChargeToDept };
 
             }
             catch (Exception ex) { return false; }
@@ -1615,13 +1608,7 @@ namespace DX_WebTemplate
                 ds = new DataSet();
                 ds.Tables.AddRange(new[]
                 {
-                    CreateDataTable("TravelExpenseDetailMap_ID", "ReimTranspo_Type1", "ReimTranspo_Amount1", "ReimTranspo_Type2", "ReimTranspo_Amount2", "ReimTranspo_Type3", "ReimTranspo_Amount3", "FixedAllow_ForP", "FixedAllow_Amount", "MiscTravel_Type", "MiscTravel_Specify", "MiscTravel_Amount", "Entertainment_Explain", "Entertainment_Amount", "BusMeals_Explain", "BusMeals_Amount", "OtherBus_Type", "OtherBus_Specify", "OtherBus_Amount")
-                    //CreateDataTable("ReimTranspo_ID", "ReimTranspo_Type", "ReimTranspo_Amount"),
-                    //CreateDataTable("FixedAllow_ID", "FixedAllow_ForP", "FixedAllow_Amount"),
-                    //CreateDataTable("MiscTravelExp_ID", "MiscTravelExp_Type", "MiscTravelExp_Amount", "MiscTravelExp_Specify"),
-                    //CreateDataTable("OtherBusinessExp_ID", "OtherBusinessExp_Type", "OtherBusinessExp_Amount", "OtherBusinessExp_Specify"),
-                    //CreateDataTable("Entertainment_ID", "Entertainment_Explain", "Entertainment_Amount"),
-                    //CreateDataTable("BusinessMeal_ID", "BusinessMeal_Explain", "BusinessMeal_Amount")
+                    CreateDataTable("TravelExpenseDetailMap_ID", "ReimTranspo_Type1", "ReimTranspo_Amount1", "ReimTranspo_Type2", "ReimTranspo_Amount2", "ReimTranspo_Type3", "ReimTranspo_Amount3", "FixedAllow_ForP", "FixedAllow_Remarks", "FixedAllow_Amount", "MiscTravel_Type", "MiscTravel_Specify", "MiscTravel_Amount", "Entertainment_Explain", "Entertainment_Amount", "BusMeals_Explain", "BusMeals_Amount", "OtherBus_Type", "OtherBus_Specify", "OtherBus_Amount")
                 });
                 Session["DataSet"] = ds;
             }
@@ -1647,8 +1634,6 @@ namespace DX_WebTemplate
             }
             else
                 dsDoc = (DataSet)Session["DataSetDoc"];
-            TraDocuGrid.DataSource = dsDoc.Tables[0];
-            TraDocuGrid.DataBind();
         }
 
         private DataTable CreateDataTable(string idColumnName, params string[] columnNames)
@@ -1674,34 +1659,6 @@ namespace DX_WebTemplate
         {
             DataView dataView = (DataView)sqlDataSource.Select(DataSourceSelectArguments.Empty);
             return dataView.ToTable();
-        }
-
-        protected void addExpCallback_Callback(object sender, CallbackEventArgsBase e)
-        {
-            // Clear the DataSet tables for the "add" action
-            ds = (DataSet)Session["DataSet"];
-            foreach (DataTable table in ds.Tables)
-            {
-                table.Clear();
-            }
-            if (e.Parameter == "add")
-            {
-                Session["expAction"] = "add";
-            }
-            else if (e.Parameter == "edit")
-            {
-                Session["expAction"] = "edit";
-
-                // Load data from SqlDataSources into DataTables and merge
-                ds.Tables[0].Merge(GetDataTableFromSqlDataSource(SqlExpDetailsMap));
-            }
-
-            // Bind the tables to the grids
-            ASPxGridView22.DataSource = ds.Tables[0];
-            ASPxGridView22.DataBind();
-
-            TraDocuGrid.DataSource = SqlDocs2;
-            TraDocuGrid.DataBind();
         }
 
         protected void ExpenseGrid_CustomColumnDisplayText(object sender, ASPxGridViewColumnDisplayTextEventArgs e)
@@ -1735,6 +1692,11 @@ namespace DX_WebTemplate
 
                 e.DisplayText = total == 0 ? "0.00" : total.ToString("N");
             }
+
+            if (e.Column.Caption == "#")
+            {
+                e.DisplayText = (e.VisibleIndex + 1).ToString();
+            }
         }
 
         protected void ASPxGridView22_CustomColumnDisplayText(object sender, ASPxGridViewColumnDisplayTextEventArgs e)
@@ -1743,6 +1705,11 @@ namespace DX_WebTemplate
             {
                 if (Convert.ToString(e.Value) == "0" || Convert.ToString(e.Value) == "0.00")
                     e.DisplayText = string.Empty;
+            }
+
+            if (e.Column.Caption == "#")
+            {
+                e.DisplayText = (e.VisibleIndex + 1).ToString();
             }
         }
 
@@ -1817,6 +1784,33 @@ namespace DX_WebTemplate
                         e.Visible = DefaultBoolean.False;
                 }
             }
+        }
+
+        protected void ASPxGridView22_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            // Clear the DataSet tables for the "add" action
+            ds = (DataSet)Session["DataSet"];
+            foreach (DataTable table in ds.Tables)
+            {
+                table.Clear();
+            }
+            if (e.Parameters == "add")
+            {
+                Session["expAction"] = "add";
+            }
+            else if (e.Parameters == "edit")
+            {
+                Session["expAction"] = "edit";
+
+                // Load data from SqlDataSources into DataTables and merge
+                ds.Tables[0].Merge(GetDataTableFromSqlDataSource(SqlExpDetailsMap));
+            }
+
+            // Bind the tables to the grids
+            ASPxGridView22.DataSource = ds.Tables[0];
+            ASPxGridView22.DataBind();
+
+            TraDocuGrid.DataBind();
         }
     }
 }
