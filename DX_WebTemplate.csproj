@@ -333,6 +333,9 @@
       <DependentUpon>ITPORTAL.dbml</DependentUpon>
     </None>
     <None Include="packages.config" />
+    <Content Include="Temp\CostAllocation.xlsx" />
+    <Content Include="Temp\ExportedData.xlsx" />
+    <Content Include="Temp\MyData.xlsx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1023,9 +1026,7 @@
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Temp\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

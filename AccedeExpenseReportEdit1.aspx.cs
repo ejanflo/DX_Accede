@@ -750,6 +750,8 @@ namespace DX_WebTemplate
                         .Where(x => x.IsExpenseCA == true)
                         .Where(x => x.isTravel != true);
 
+                    var LastExpDetail = _DataContext.ACCEDE_T_ExpenseDetails.Where(x => x.ExpenseMain_ID == Convert.ToInt32(Session["ExpenseId"])).OrderByDescending(x => x.ExpLineNum).FirstOrDefault();
+
                     //if (rfpCA.Count() > 0)
                     //{
                     //    expMain.ExpenseType_ID = 1;
@@ -799,6 +801,15 @@ namespace DX_WebTemplate
                         if(remarks != "")
                         {
                             exp.ExpDetail_remarks = remarks;
+                        }
+
+                        if(LastExpDetail != null)
+                        {
+                            exp.ExpLineNum = LastExpDetail.ExpLineNum + 1;
+                        }
+                        else
+                        {
+                            exp.ExpLineNum = 1;
                         }
                     }
                     _DataContext.ACCEDE_T_ExpenseDetails.InsertOnSubmit(exp);
@@ -1052,6 +1063,18 @@ namespace DX_WebTemplate
                     var exp_det = _DataContext.ACCEDE_T_ExpenseDetails
                         .Where(x => x.ExpenseReportDetail_ID == item_id)
                         .FirstOrDefault();
+
+                    if(exp_det.ExpLineNum != null)
+                    {
+                        var allExp = _DataContext.ACCEDE_T_ExpenseDetails.Where(x => x.ExpenseMain_ID == Convert.ToInt32(exp_det.ExpenseMain_ID));
+                        foreach (var item in allExp)
+                        {
+                            if(item.ExpLineNum > exp_det.ExpLineNum)
+                            {
+                                item.ExpLineNum = item.ExpLineNum - 1;
+                            }
+                        }
+                    }
 
                     var exp_det_map = _DataContext.ACCEDE_T_ExpenseDetailsMaps
                         .Where(x => x.ExpenseReportDetail_ID == item_id);

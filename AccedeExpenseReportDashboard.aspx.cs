@@ -210,10 +210,10 @@ namespace DX_WebTemplate
                     main.ExpenseName = expName;
                     main.ReportDate = Convert.ToDateTime(expDate);
                     main.ExpenseType_ID = Convert.ToInt32(payType);
-                    if(Comp != "")
-                    {
-                        main.CompanyId = Convert.ToInt32(Comp);
-                    }
+                    //if(Comp != "")
+                    //{
+                    //    main.CompanyId = Convert.ToInt32(Comp);
+                    //}
                     
                     if(CostCenter != "")
                     {
@@ -227,10 +227,10 @@ namespace DX_WebTemplate
                     main.DateCreated = DateTime.Now;
                     main.isTravel = isTrav;
                     main.Exp_Currency = currency;
-                    if(department != "")
-                    {
-                        main.Dept_Id = Convert.ToInt32(department);
-                    }
+                    //if(department != "")
+                    //{
+                    //    main.Dept_Id = Convert.ToInt32(department);
+                    //}
                     main.ExpenseClassification = Convert.ToInt32(classification);
                     main.ExpChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
                     main.ExpChargedTo_DeptId = Convert.ToInt32(CTDept_id);

@@ -117,6 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="customSqlQuery1.Sql" xml:space="preserve">
+    <value>select "ACCEDE_T_RFPMain"."IO_Num",
+       "ACCEDE_T_RFPMain"."SAPCostCenter",
+       "ACCEDE_T_RFPMain"."Amount",
+       "ACCEDE_T_RFPMain"."RFP_DocNum",
+       "ACCEDE_T_RFPMain"."Exp_ID",
+       "ACCEDE_S_PayMethod"."PMethod_name"
+  from ("dbo"."ACCEDE_T_RFPMain"
+       "ACCEDE_T_RFPMain"
+  inner join "dbo"."ACCEDE_S_PayMethod"
+       "ACCEDE_S_PayMethod"
+       on ("ACCEDE_S_PayMethod"."ID" = "ACCEDE_T_RFPMain"."PayMethod"))
+ where ("ACCEDE_T_RFPMain"."TranType" = 2 OR "ACCEDE_T_RFPMain"."TranType" = 4)</value>
+  </data>
   <data name="sqlDataSource1.ResultSchemaSerializable" xml:space="preserve">
     <value>PERhdGFTZXQgTmFtZT0ic3FsRGF0YVNvdXJjZTEiPjxWaWV3IE5hbWU9IlJlaW1idXJzZW1lbnRzIj48RmllbGQgTmFtZT0iSU9fTnVtIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9IlNBUENvc3RDZW50ZXIiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iQW1vdW50IiBUeXBlPSJEZWNpbWFsIiAvPjxGaWVsZCBOYW1lPSJSRlBfRG9jTnVtIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9IkV4cF9JRCIgVHlwZT0iSW50MzIiIC8+PEZpZWxkIE5hbWU9IlBNZXRob2RfbmFtZSIgVHlwZT0iU3RyaW5nIiAvPjwvVmlldz48L0RhdGFTZXQ+</value>
   </data>

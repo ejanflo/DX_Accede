@@ -577,7 +577,7 @@
                             <dx:LayoutItem ColSpan="1" FieldName="FullName" Caption="Report Name">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="ASPxTextBox1" runat="server" Font-Bold="True" Font-Size="Small" Width="100%">
+                                        <dx:ASPxTextBox ID="ASPxTextBox1" runat="server" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True">
                                             <Border BorderStyle="None" />
                                             <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                         </dx:ASPxTextBox>
@@ -588,7 +588,7 @@
                             <dx:LayoutItem ColSpan="1" FieldName="ReportDate" Caption="Report Date">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="ASPxTextBox2" runat="server" Font-Bold="True" Font-Size="Small" Width="100%">
+                                        <dx:ASPxTextBox ID="ASPxTextBox2" runat="server" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True">
                                             <Border BorderStyle="None" />
                                             <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                         </dx:ASPxTextBox>
@@ -599,7 +599,7 @@
                             <dx:LayoutItem ColSpan="1" FieldName="CTCompName" Caption="Charged To Company">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="ASPxTextBox12" runat="server" Font-Bold="True" Font-Size="Small" Width="100%">
+                                        <dx:ASPxTextBox ID="ASPxTextBox12" runat="server" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True">
                                             <Border BorderStyle="None" />
                                             <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                         </dx:ASPxTextBox>
@@ -609,7 +609,7 @@
                             <dx:LayoutItem Caption="Location" ColSpan="1" FieldName="CompLocation">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="ASPxTextBox16" runat="server" Font-Bold="True" Font-Size="Small" Width="100%">
+                                        <dx:ASPxTextBox ID="ASPxTextBox16" runat="server" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True">
                                             <Border BorderStyle="None" />
                                             <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                         </dx:ASPxTextBox>
@@ -619,7 +619,7 @@
                             <dx:LayoutItem Caption="Charged To Department" ColSpan="1" FieldName="CTDeptName">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="ASPxTextBox13" runat="server" Font-Bold="True" Font-Size="Small" Width="100%">
+                                        <dx:ASPxTextBox ID="ASPxTextBox13" runat="server" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True">
                                             <Border BorderStyle="None" />
                                             <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                         </dx:ASPxTextBox>
@@ -629,7 +629,7 @@
                             <dx:LayoutItem Caption="Cost Center" ColSpan="1" FieldName="CostCenter">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="ASPxTextBox14" runat="server" Font-Bold="True" Font-Size="Small" Width="100%">
+                                        <dx:ASPxTextBox ID="ASPxTextBox14" runat="server" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True">
                                             <Border BorderStyle="None" />
                                             <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                         </dx:ASPxTextBox>
@@ -639,7 +639,7 @@
                             <dx:LayoutItem ColSpan="1" FieldName="ExpTypeName" Caption="Expense">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="ASPxTextBox4" runat="server" Font-Bold="True" Font-Size="Small" Width="100%">
+                                        <dx:ASPxTextBox ID="ASPxTextBox4" runat="server" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True">
                                             <Border BorderStyle="None" />
                                             <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                         </dx:ASPxTextBox>
@@ -650,7 +650,7 @@
                             <dx:LayoutItem ColSpan="1" FieldName="ExpCatName" Caption="Expense Category">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="ASPxTextBox6" runat="server" Font-Bold="True" Font-Size="Small" Width="100%">
+                                        <dx:ASPxTextBox ID="ASPxTextBox6" runat="server" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True">
                                             <Border BorderStyle="None" />
                                             <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                         </dx:ASPxTextBox>
@@ -661,7 +661,7 @@
                             <dx:LayoutItem Caption="Purpose" ColSpan="1" FieldName="Purpose">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxMemo ID="ASPxMemo1" runat="server" Font-Bold="True" Font-Size="Small" Height="71px" Width="100%">
+                                        <dx:ASPxMemo ID="ASPxMemo1" runat="server" Font-Bold="True" Font-Size="Small" Height="71px" Width="100%" ReadOnly="True">
                                             <Border BorderStyle="None" />
                                             <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                         </dx:ASPxMemo>
@@ -681,7 +681,7 @@
                             <dx:LayoutItem ColSpan="1" Caption="Cash Advance" HorizontalAlign="Right">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="caTotal" runat="server" Font-Bold="True" Font-Size="Small" Width="100%" ClientInstanceName="caTotal" HorizontalAlign="Right">
+                                        <dx:ASPxTextBox ID="caTotal" runat="server" Font-Bold="True" Font-Size="Small" Width="100%" ClientInstanceName="caTotal" HorizontalAlign="Right" ReadOnly="True">
                                             <Border BorderStyle="None" />
                                         </dx:ASPxTextBox>
                                     </dx:LayoutItemNestedControlContainer>
@@ -691,7 +691,7 @@
                             <dx:LayoutItem ColSpan="1" Caption="Total Expenses" HorizontalAlign="Right">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="expenseTotal" runat="server" Font-Bold="True" Font-Size="Small" Width="100%" ClientInstanceName="expenseTotal" HorizontalAlign="Right">
+                                        <dx:ASPxTextBox ID="expenseTotal" runat="server" Font-Bold="True" Font-Size="Small" Width="100%" ClientInstanceName="expenseTotal" HorizontalAlign="Right" ReadOnly="True">
                                             <Border BorderStyle="None" />
                                             <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
                                         </dx:ASPxTextBox>
@@ -702,7 +702,7 @@
                             <dx:LayoutItem ColSpan="1" Caption="Due to/(from) Company" HorizontalAlign="Right" Name="due_lbl">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="dueTotal" runat="server" Font-Bold="True" Font-Size="Small" Width="100%" ClientInstanceName="dueTotal" HorizontalAlign="Right">
+                                        <dx:ASPxTextBox ID="dueTotal" runat="server" Font-Bold="True" Font-Size="Small" Width="100%" ClientInstanceName="dueTotal" HorizontalAlign="Right" ReadOnly="True">
                                             <Border BorderStyle="None" />
                                         </dx:ASPxTextBox>
                                     </dx:LayoutItemNestedControlContainer>
@@ -1067,7 +1067,7 @@ linkToRFP();
                             <dx:LayoutItem Caption="Workflow Company" ColSpan="1" FieldName="CompanyShortName">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="ASPxTextBox3" runat="server" Font-Bold="True" Font-Size="Small" Width="100%">
+                                        <dx:ASPxTextBox ID="ASPxTextBox3" runat="server" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True">
                                             <Border BorderStyle="None" />
                                             <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                         </dx:ASPxTextBox>
@@ -1078,7 +1078,7 @@ linkToRFP();
                             <dx:LayoutItem Caption="Workflow Department" ColSpan="1" FieldName="DepDesc">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="ASPxTextBox15" runat="server" Font-Bold="True" Font-Size="Small" Width="100%">
+                                        <dx:ASPxTextBox ID="ASPxTextBox15" runat="server" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True">
                                             <Border BorderStyle="None" />
                                             <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                         </dx:ASPxTextBox>
@@ -1096,7 +1096,7 @@ linkToRFP();
                             <dx:LayoutItem ColSpan="1" FieldName="WFName" Caption="Workflow">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="ASPxTextBox10" runat="server" Font-Bold="True" Font-Size="Smaller" Width="100%">
+                                        <dx:ASPxTextBox ID="ASPxTextBox10" runat="server" Font-Bold="True" Font-Size="Smaller" Width="100%" ReadOnly="True">
                                             <Border BorderStyle="None" />
                                             <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                         </dx:ASPxTextBox>
@@ -1137,7 +1137,7 @@ linkToRFP();
                             <dx:LayoutItem Caption="FAP Workflow" ColSpan="1" FieldName="FAPWF_Name">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="ASPxTextBox11" runat="server" Font-Bold="True" Font-Size="Smaller" Width="100%">
+                                        <dx:ASPxTextBox ID="ASPxTextBox11" runat="server" Font-Bold="True" Font-Size="Smaller" Width="100%" ReadOnly="True">
                                             <Border BorderStyle="None" />
                                             <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                         </dx:ASPxTextBox>

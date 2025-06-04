@@ -253,7 +253,7 @@
                             LoadingPanel1.SetText('Printing successful! Redirecting&hellip;');
                             LoadingPanel1.Show();
                             setTimeout(function () {
-                                window.location.href = 'CashierInquiryPage.aspx';
+                                window.location.href = 'AllAccedeCashierPage.aspx';
                             }, 3000); // Adjust the time (in milliseconds) as needed
 
                         } else {
@@ -261,7 +261,7 @@
                             LoadingPanel1.Show();
                             // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
                             setTimeout(function () {
-                                window.location.href = 'CashierInquiryPage.aspx';
+                                window.location.href = 'AllAccedeCashierPage.aspx';
                             }, 3000); // Adjust the time (in milliseconds) as needed
                         }
                         

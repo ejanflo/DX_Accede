@@ -76,7 +76,7 @@
                     if (funcResult == "success") {
                         LoadingPanel.SetText('You approved this document. Redirecting&hellip;');
                         LoadingPanel.Show();
-                        window.location.href = 'AccedeApprovalPage.aspx';
+                        window.location.href = 'AllAccedeApprovalPage.aspx';
                         
                     } else {
                         Swal.fire({
@@ -93,7 +93,7 @@
                                 // If user clicks OK, call the C# function
                                 LoadingPanel.SetText('Redirecting&hellip;');
                                 LoadingPanel.Show();
-                                window.location.href = 'AccedeApprovalPage.aspx';
+                                window.location.href = 'AllAccedeApprovalPage.aspx';
 
                             }
                         });
@@ -106,6 +106,7 @@
         }
 
         function approveClick() {
+            LoadingPanel.SetText('Processing&hellip;');
             LoadingPanel.Show();
             var approve_remarks = txt_approve_remarks.GetValue();
             var pMethod = edit_PayMethod.GetValue();
@@ -141,7 +142,7 @@
                     if (funcResult == true) {
                         LoadingPanel.SetText('You approved this document. Redirecting&hellip;');
                         LoadingPanel.Show();
-                        window.location.href = 'AccedeApprovalPage.aspx';
+                        window.location.href = 'AllAccedeApprovalPage.aspx';
                         //Swal.fire({
                         //    title: 'Approved!',
                         //    text: 'You approved this request.',
@@ -175,7 +176,7 @@
                                 // If user clicks OK, call the C# function
                                 LoadingPanel.SetText('Redirecting&hellip;');
                                 LoadingPanel.Show();
-                                window.location.href = 'AccedeApprovalPage.aspx';
+                                window.location.href = 'AllAccedeApprovalPage.aspx';
 
                             }
                         });
@@ -188,6 +189,7 @@
         }
 
         function ReturnClick() {
+            LoadingPanel.SetText('Processing&hellip;');
             LoadingPanel.Show();
             var return_remarks = txt_return_remarks.GetValue();
             var pMethod = edit_PayMethod.GetValue();
@@ -223,7 +225,7 @@
                     if (funcResult == true) {
                         LoadingPanel.SetText('You returned this document. Redirecting&hellip;');
                         LoadingPanel.Show();
-                        window.location.href = 'AccedeApprovalPage.aspx';
+                        window.location.href = 'AllAccedeApprovalPage.aspx';
                         //Swal.fire({
                         //    title: 'Returned!',
                         //    text: 'You returned this request.',
@@ -257,7 +259,7 @@
                                 // If user clicks OK, call the C# function
                                 LoadingPanel.SetText('Redirecting&hellip;');
                                 LoadingPanel.Show();
-                                window.location.href = 'AccedeApprovalPage.aspx';
+                                window.location.href = 'AllAccedeApprovalPage.aspx';
 
                             }
                         });
@@ -270,6 +272,7 @@
         }
 
         function DisapproveClick() {
+            LoadingPanel.SetText('Processing&hellip;');
             LoadingPanel.Show();
             var disapprove_remarks = txt_disapprove_remarks.GetValue();
             var pMethod = edit_PayMethod.GetValue();
@@ -305,7 +308,7 @@
                     if (funcResult == true) {
                         LoadingPanel.SetText('you disapproved this document. Redirecting&hellip;');
                         LoadingPanel.Show();
-                        window.location.href = 'AccedeApprovalPage.aspx';
+                        window.location.href = 'AllAccedeApprovalPage.aspx';
                         //Swal.fire({
                         //    title: 'Disapproved!',
                         //    text: 'You disapproved this request.',
@@ -339,7 +342,7 @@
                                 // If user clicks OK, call the C# function
                                 LoadingPanel.SetText('Redirecting&hellip;');
                                 LoadingPanel.Show();
-                                window.location.href = 'AccedeApprovalPage.aspx';
+                                window.location.href = 'AllAccedeApprovalPage.aspx';
 
                             }
                         });
@@ -352,6 +355,7 @@
         }
 
         function editBtnClicked() {
+            LoadingPanel.SetText('Processing&hellip;');
             LoadingPanel.Show();
             var layoutControl = window["formRFP"];
 
