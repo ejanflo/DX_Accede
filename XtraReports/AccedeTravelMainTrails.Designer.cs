@@ -46,6 +46,7 @@
             this.xrTableCell17 = new DevExpress.XtraReports.UI.XRTableCell();
             this.xrTableCell18 = new DevExpress.XtraReports.UI.XRTableCell();
             this.GroupHeader1 = new DevExpress.XtraReports.UI.GroupHeaderBand();
+            this.xrLine1 = new DevExpress.XtraReports.UI.XRLine();
             this.xrLabel1 = new DevExpress.XtraReports.UI.XRLabel();
             this.xrTable1 = new DevExpress.XtraReports.UI.XRTable();
             this.xrTableRow1 = new DevExpress.XtraReports.UI.XRTableRow();
@@ -61,7 +62,6 @@
             this.id2 = new DevExpress.XtraReports.Parameters.Parameter();
             this.xrLabel2 = new DevExpress.XtraReports.UI.XRLabel();
             this.GroupHeader2 = new DevExpress.XtraReports.UI.GroupHeaderBand();
-            this.xrLine1 = new DevExpress.XtraReports.UI.XRLine();
             this.xrSubreport4 = new DevExpress.XtraReports.UI.XRSubreport();
             this.xrSubreport3 = new DevExpress.XtraReports.UI.XRSubreport();
             ((System.ComponentModel.ISupportInitialize)(this.xrTable4)).BeginInit();
@@ -238,6 +238,12 @@
             this.GroupHeader1.HeightF = 62.44267F;
             this.GroupHeader1.Name = "GroupHeader1";
             // 
+            // xrLine1
+            // 
+            this.xrLine1.LocationFloat = new DevExpress.Utils.PointFloat(1.541678F, 14.17173F);
+            this.xrLine1.Name = "xrLine1";
+            this.xrLine1.SizeF = new System.Drawing.SizeF(1073.958F, 2F);
+            // 
             // xrLabel1
             // 
             this.xrLabel1.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
@@ -397,20 +403,14 @@
             this.GroupHeader2.Level = 1;
             this.GroupHeader2.Name = "GroupHeader2";
             // 
-            // xrLine1
-            // 
-            this.xrLine1.LocationFloat = new DevExpress.Utils.PointFloat(1.541678F, 14.17173F);
-            this.xrLine1.Name = "xrLine1";
-            this.xrLine1.SizeF = new System.Drawing.SizeF(1073.958F, 2F);
-            // 
             // xrSubreport4
             // 
             this.xrSubreport4.CanShrink = true;
-            this.xrSubreport4.LocationFloat = new DevExpress.Utils.PointFloat(355.11F, 28.13F);
+            this.xrSubreport4.LocationFloat = new DevExpress.Utils.PointFloat(427.61F, 28.13001F);
             this.xrSubreport4.Name = "xrSubreport4";
             this.xrSubreport4.ParameterBindings.Add(new DevExpress.XtraReports.UI.ParameterBinding("id", this.id2));
             this.xrSubreport4.ReportSource = new DX_WebTemplate.XtraReports.AccedeExpenseRFP();
-            this.xrSubreport4.SizeF = new System.Drawing.SizeF(335F, 181.12F);
+            this.xrSubreport4.SizeF = new System.Drawing.SizeF(383.7154F, 181.12F);
             // 
             // xrSubreport3
             // 
@@ -419,7 +419,7 @@
             this.xrSubreport3.Name = "xrSubreport3";
             this.xrSubreport3.ParameterBindings.Add(new DevExpress.XtraReports.UI.ParameterBinding("id", this.id2));
             this.xrSubreport3.ReportSource = new DX_WebTemplate.XtraReports.AccedeExpenseCA();
-            this.xrSubreport3.SizeF = new System.Drawing.SizeF(335F, 181.12F);
+            this.xrSubreport3.SizeF = new System.Drawing.SizeF(402.5F, 181.12F);
             // 
             // AccedeTravelMainTrails
             // 

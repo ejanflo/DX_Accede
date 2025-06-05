@@ -220,6 +220,12 @@ namespace DX_WebTemplate
 
                         if (status == "Pending at Cashier")
                         {
+                            rfpPopup.ShowOnPageLoad = true;
+                        }
+
+                            if (status == "Pending at Cashier")
+                        {
+                            rfpPopup.ShowOnPageLoad = true;
                             disapproveItem.Visible = false;
                             returnItem.Visible = false;
 
