@@ -152,6 +152,8 @@ namespace DX_WebTemplate
                     {
                         var edit_SAPDoc = formRFP.FindItemOrGroupByName("edit_SAPDoc") as LayoutItem;
                         var lbl_SAPDoc = formRFP.FindItemOrGroupByName("lbl_SAPDoc") as LayoutItem;
+                        var edit_IO = formRFP.FindItemOrGroupByName("IO_edit") as LayoutItem;
+                        var lbl_IO = formRFP.FindItemOrGroupByName("IO_lbl") as LayoutItem;
                         var upload = formRFP.FindItemOrGroupByName("uploader_cashier") as LayoutItem;
                         var btnCash = formRFP.FindItemOrGroupByName("btnCash") as LayoutItem;
                         var btnPrint = formRFP.FindItemOrGroupByName("btnPrintRFP") as LayoutItem;
@@ -159,6 +161,8 @@ namespace DX_WebTemplate
 
                         edit_SAPDoc.ClientVisible = true;
                         lbl_SAPDoc.ClientVisible = false;
+                        edit_IO.ClientVisible = true;
+                        lbl_IO.ClientVisible = false;
                         upload.ClientVisible = true;
                         btnCash.ClientVisible = true;
                         BtnSave.ClientVisible = true;
@@ -179,8 +183,9 @@ namespace DX_WebTemplate
                     SqlActivity.SelectParameters["Document_Id"].DefaultValue = rfp_id.ToString();
                     SqlRFPDocs.SelectParameters["Doc_ID"].DefaultValue = rfp_id.ToString();
                     SqlRFPDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType != null ? app_docType.DCT_Id.ToString() : "";
+                    SqlIO.SelectParameters["CompanyId"].DefaultValue = rfp_details.ChargedTo_CompanyId.ToString();
 
-                    if(rfp_details.Status == 1 && rfp_details.User_ID != empCode)
+                    if (rfp_details.Status == 1 && rfp_details.User_ID != empCode)
                     {
                         var BtnSaveUser = formRFP.FindItemOrGroupByName("BtnSaveDetailsUser") as LayoutItem;
                         var upload = formRFP.FindItemOrGroupByName("uploader_cashier") as LayoutItem;
@@ -406,35 +411,46 @@ namespace DX_WebTemplate
                 var orgRole = _DataContext.ITP_S_SecurityUserOrgRoles.Where(x => x.OrgRoleId == Convert.ToInt32(cashierWFDetail.OrgRole_Id)).Where(x=>x.UserId == Session["userID"].ToString()).FirstOrDefault();
                 rfp_main.SAPDocNo = SAPDoc;
 
+                var wfDetails = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == Convert.ToInt32(Session["wfa"])).FirstOrDefault();
+
                 if(stats == 1)
                 {
-                    if (release_cash_status != null && cashierWF != null && cashierWFDetail != null && orgRole != null)
-                    {
-                        
-                        ITP_T_WorkflowActivity new_activity = new ITP_T_WorkflowActivity();
-                        {
-                            new_activity.Status = release_cash_status.STS_Id;
-                            new_activity.AppId = 1032;
-                            new_activity.CompanyId = rfp_main.Company_ID;
-                            new_activity.Document_Id = rfp_main.ID;
-                            new_activity.WF_Id = cashierWFDetail.WF_Id;
-                            new_activity.DateAssigned = DateTime.Now;
-                            new_activity.DateCreated = DateTime.Now;
-                            new_activity.IsActive = true;
-                            new_activity.OrgRole_Id = cashierWFDetail.OrgRole_Id;
-                            new_activity.WFD_Id = cashierWFDetail.WFD_Id;
-                            new_activity.AppDocTypeId = app_docType.DCT_Id;
-                            new_activity.ActedBy_User_Id = Session["userID"].ToString();
-                            new_activity.DateAction = DateTime.Now;
-                        }
-                        _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(new_activity);
-                        rfp_main.Status = release_cash_status.STS_Id;
-                    }
-                    else
-                    {
-                        //error in setup
-                        return "There is an error in setup. Please contact admin regarding this issue.";
-                    }
+                    //if (release_cash_status != null && cashierWF != null && cashierWFDetail != null && orgRole != null)
+                    //{
+
+                    //    //ITP_T_WorkflowActivity new_activity = new ITP_T_WorkflowActivity();
+                    //    //{
+                    //    //    new_activity.Status = release_cash_status.STS_Id;
+                    //    //    new_activity.AppId = 1032;
+                    //    //    new_activity.CompanyId = rfp_main.Company_ID;
+                    //    //    new_activity.Document_Id = rfp_main.ID;
+                    //    //    new_activity.WF_Id = cashierWFDetail.WF_Id;
+                    //    //    new_activity.DateAssigned = DateTime.Now;
+                    //    //    new_activity.DateCreated = DateTime.Now;
+                    //    //    new_activity.IsActive = true;
+                    //    //    new_activity.OrgRole_Id = cashierWFDetail.OrgRole_Id;
+                    //    //    new_activity.WFD_Id = cashierWFDetail.WFD_Id;
+                    //    //    new_activity.AppDocTypeId = app_docType.DCT_Id;
+                    //    //    new_activity.ActedBy_User_Id = Session["userID"].ToString();
+                    //    //    new_activity.DateAction = DateTime.Now;
+                    //    //}
+                    //    //_DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(new_activity);
+
+
+                    //}
+                    //else
+                    //{
+                    //    //error in setup
+                    //    return "There is an error in setup. Please contact admin regarding this issue.";
+                    //}
+
+                    //UPDATE ACTIVITY RFP
+                    wfDetails.Status = release_cash_status.STS_Id;
+                    wfDetails.DateAction = DateTime.Now;
+                    wfDetails.Remarks = Session["AuthUser"].ToString() + ": ;";
+                    wfDetails.ActedBy_User_Id = Session["userID"].ToString();
+
+                    rfp_main.Status = release_cash_status.STS_Id;
                 }
 
                 _DataContext.SubmitChanges();

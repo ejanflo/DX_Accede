@@ -249,6 +249,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox ASPxTextBox7;
 
         /// <summary>
+        /// io_edit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox io_edit;
+
+        /// <summary>
         /// ASPxTextBox8 control.
         /// </summary>
         /// <remarks>
@@ -697,5 +706,14 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlRFPDocs;
+
+        /// <summary>
+        /// SqlIO control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlIO;
     }
 }

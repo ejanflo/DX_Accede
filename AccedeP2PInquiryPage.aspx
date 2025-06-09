@@ -72,7 +72,7 @@
 <div class="centerPane conta" id="form1">
     <dx:ASPxFormLayout ID="ASPxFormLayout1" runat="server" Width="90%" Theme="iOS">
         <Items>
-            <dx:LayoutGroup Caption="Procure to Payment Inquiry Page" ColSpan="1" GroupBoxDecoration="HeadingLine">
+            <dx:LayoutGroup Caption="P2P Disbursement History Page" ColSpan="1" GroupBoxDecoration="HeadingLine">
                 <GroupBoxStyle>
                     <Caption Font-Size="X-Large" BackColor="#FEFEFE">
                         <%--<Paddings PaddingLeft="40%" />--%>
@@ -83,7 +83,7 @@
                     </dx:EmptyLayoutItem>
                     <dx:TabbedLayoutGroup ColSpan="1" Name="layoutTab">
                         <Items>
-                            <dx:LayoutGroup Caption="For Disbursement" ColSpan="1">
+                            <dx:LayoutGroup Caption="For Disbursement" ColSpan="1" ClientVisible="False">
                                 <Items>
                                     <dx:LayoutItem Caption="" ColSpan="1" Width="100%">
                                         <LayoutItemNestedControlCollection>

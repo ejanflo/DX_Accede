@@ -240,13 +240,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox drpdown_CostCenter;
 
         /// <summary>
-        /// edit_IO control.
+        /// io_edit control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox edit_IO;
+        protected global::DevExpress.Web.ASPxComboBox io_edit;
 
         /// <summary>
         /// ASPxTextBox8 control.
@@ -706,5 +706,14 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlCostCenterCT;
+
+        /// <summary>
+        /// SqlIO control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlIO;
     }
 }

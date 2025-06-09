@@ -849,13 +849,35 @@ onTravelClick();
                                                 </LayoutItemNestedControlCollection>
                                                 <CaptionSettings HorizontalAlign="Right" />
                                             </dx:LayoutItem>
-                                            <dx:LayoutItem Caption="IO" ColSpan="1" FieldName="IO_Num">
+                                            <dx:LayoutItem Caption="IO" ColSpan="1" FieldName="IO_Num" Name="IO_lbl">
                                                 <LayoutItemNestedControlCollection>
                                                     <dx:LayoutItemNestedControlContainer runat="server">
                                                         <dx:ASPxTextBox ID="ASPxTextBox7" runat="server" Font-Bold="True" ReadOnly="True" Width="100%">
                                                             <Border BorderStyle="None" />
                                                             <BorderBottom BorderColor="#333333" BorderStyle="Solid" BorderWidth="1px" />
                                                         </dx:ASPxTextBox>
+                                                    </dx:LayoutItemNestedControlContainer>
+                                                </LayoutItemNestedControlCollection>
+                                                <CaptionSettings HorizontalAlign="Right" />
+                                            </dx:LayoutItem>
+                                            <dx:LayoutItem Caption="IO" ColSpan="1" FieldName="IO_Num" ClientVisible="False" Name="IO_edit">
+                                                <LayoutItemNestedControlCollection>
+                                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                                        <dx:ASPxComboBox ID="io_edit" runat="server" ClientInstanceName="io_edit" DataSourceID="SqlIO" DropDownWidth="300px" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" TextField="IO_Num" TextFormatString="{0}" ValueField="IO_Num" Width="100%">
+                                                            <Columns>
+                                                                <dx:ListBoxColumn Caption="IO Number" FieldName="IO_Num" Name="IO Number">
+                                                                </dx:ListBoxColumn>
+                                                                <dx:ListBoxColumn Caption="IO Description" FieldName="IO_Description" Name="IO Description">
+                                                                </dx:ListBoxColumn>
+                                                            </Columns>
+                                                            <ClearButton DisplayMode="Always">
+                                                            </ClearButton>
+                                                            <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
+                                                                <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                            </ValidationSettings>
+                                                            <Border BorderStyle="None" />
+                                                            <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                        </dx:ASPxComboBox>
                                                     </dx:LayoutItemNestedControlContainer>
                                                 </LayoutItemNestedControlCollection>
                                                 <CaptionSettings HorizontalAlign="Right" />
@@ -1465,6 +1487,12 @@ RecallClick(); RecallPopup.Hide();
             <asp:Parameter Name="Doc_ID" Type="Int32" />
             <asp:Parameter DefaultValue="1032" Name="App_ID" Type="Int32" />
             <asp:Parameter DefaultValue="" Name="DocType_Id" Type="Int32" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlIO" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_IO] WHERE (([isActive] = @isActive) AND ([CompanyId] = @CompanyId)) ORDER BY [IO_Num]">
+        <SelectParameters>
+            <asp:Parameter DefaultValue="True" Name="isActive" Type="Boolean" />
+            <asp:Parameter Name="CompanyId" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
 </asp:Content>

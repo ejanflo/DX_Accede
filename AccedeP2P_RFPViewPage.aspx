@@ -202,8 +202,9 @@
             var CostCenter = drpdown_CostCenter.GetValue() != null ? drpdown_CostCenter.GetValue() : "";
             var ClassType = drpdown_classification.GetValue() != null ? drpdown_classification.GetValue() : "";
             var payMethod = edit_PayMethod.GetValue() != null ? edit_PayMethod.GetValue() : "";
-            var io = edit_IO.GetValue() != null ? edit_IO.GetValue() : "";
+            var io = io_edit.GetValue() != null ? io_edit.GetValue() : "";
             var acctCharged = edit_AcctCharged.GetValue() != null ? edit_AcctCharged.GetValue() : "";
+            var secureToken = new URLSearchParams(window.location.search).get('secureToken');
 
             $.ajax({
                 type: "POST",
@@ -219,7 +220,8 @@
                     ClassType: ClassType,
                     payMethod: payMethod,
                     io: io,
-                    acctCharged: acctCharged
+                    acctCharged: acctCharged,
+                    secureToken: secureToken
                 }),
                 success: function (response) {
                     // Update the description text box with the response value
@@ -237,10 +239,10 @@
                             }, 3000); // Adjust the time (in milliseconds) as needed
 
                             // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
-                            LoadingPanel1.SetText('Printing successful! Redirecting&hellip;');
+                            LoadingPanel1.SetText('Printing report! Redirecting&hellip;');
                             LoadingPanel1.Show();
                             setTimeout(function () {
-                                window.location.href = 'AccedeP2PInquiryPage.aspx';
+                                window.location.href = 'AllAccedeP2PPage.aspx';
                             }, 3000); // Adjust the time (in milliseconds) as needed
 
                         } else {
@@ -248,7 +250,7 @@
                             LoadingPanel1.Show();
                             // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
                             setTimeout(function () {
-                                window.location.href = 'AccedeP2PInquiryPage.aspx';
+                                window.location.href = 'AllAccedeP2PPage.aspx';
                             }, 3000); // Adjust the time (in milliseconds) as needed
                         }
                         
@@ -626,7 +628,7 @@ if(ASPxClientEdit.ValidateGroup('ViewFormCashier')){
                                             <dx:LayoutItem Caption="Charged To Company" ColSpan="2" FieldName="CTCompName" Name="txt_CTComp" ColumnSpan="2" Width="100%">
                                                 <LayoutItemNestedControlCollection>
                                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                                        <dx:ASPxTextBox ID="txt_CTCompany" runat="server" ClientInstanceName="txt_CTCompany" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
+                                                        <dx:ASPxTextBox ID="txt_CTCompany" runat="server" ClientInstanceName="txt_CTCompany" Font-Bold="True" Font-Size="Medium" HorizontalAlign="Left" ReadOnly="True" Width="100%">
                                                             <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                 <RequiredField ErrorText="*Required" />
                                                             </ValidationSettings>
@@ -656,7 +658,7 @@ drpdown_CostCenter.SetValue(&quot;&quot;);
                                             <dx:LayoutItem Caption="Location" ColSpan="2" FieldName="CompLocation" ColumnSpan="2" Width="100%">
                                                 <LayoutItemNestedControlCollection>
                                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                                        <dx:ASPxTextBox ID="txt_CompLoc" runat="server" ClientInstanceName="txt_CompLoc" Font-Bold="True" ReadOnly="True" Width="100%" Font-Size="Small" HorizontalAlign="Left">
+                                                        <dx:ASPxTextBox ID="txt_CompLoc" runat="server" ClientInstanceName="txt_CompLoc" Font-Bold="True" ReadOnly="True" Width="100%" Font-Size="Medium" HorizontalAlign="Left">
                                                             <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                 <RequiredField ErrorText="*Required" />
                                                             </ValidationSettings>
@@ -863,12 +865,21 @@ onTravelClick();
                                             <dx:LayoutItem Caption="IO" ColSpan="1" FieldName="IO_Num">
                                                 <LayoutItemNestedControlCollection>
                                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                                        <dx:ASPxTextBox ID="edit_IO" runat="server" Width="100%" ClientInstanceName="edit_IO" MaxLength="10" Font-Bold="True" Font-Size="Medium">
-                                                            <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="RFPApproval">
+                                                        <dx:ASPxComboBox ID="io_edit" runat="server" ClientInstanceName="io_edit" DataSourceID="SqlIO" DropDownWidth="300px" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" TextField="IO_Num" TextFormatString="{0}" ValueField="IO_Num" Width="100%">
+                                                            <Columns>
+                                                                <dx:ListBoxColumn Caption="IO Number" FieldName="IO_Num" Name="IO Number">
+                                                                </dx:ListBoxColumn>
+                                                                <dx:ListBoxColumn Caption="IO Description" FieldName="IO_Description" Name="IO Description">
+                                                                </dx:ListBoxColumn>
+                                                            </Columns>
+                                                            <ClearButton DisplayMode="Always">
+                                                            </ClearButton>
+                                                            <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
                                                                 <RequiredField ErrorText="*Required" />
                                                             </ValidationSettings>
-                                                            <Border BorderColor="#006838" BorderWidth="1px" />
-                                                        </dx:ASPxTextBox>
+                                                            <Border BorderStyle="None" />
+                                                            <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                        </dx:ASPxComboBox>
                                                     </dx:LayoutItemNestedControlContainer>
                                                 </LayoutItemNestedControlCollection>
                                                 <CaptionSettings HorizontalAlign="Right" />
@@ -1457,7 +1468,13 @@ saveFinChanges(1); SavePopup.Hide();
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlCostCenterCT" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE (([Company_ID] = @Company_ID) AND ([SAP_CostCenter] IS NOT NULL)) ORDER BY [SAP_CostCenter]">
         <SelectParameters>
-        <asp:Parameter Name="Company_ID" Type="Int32" />
-    </SelectParameters>
-</asp:SqlDataSource>
+            <asp:Parameter Name="Company_ID" Type="Int32" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlIO" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_IO] WHERE (([isActive] = @isActive) AND ([CompanyId] = @CompanyId)) ORDER BY [IO_Num]">
+        <SelectParameters>
+            <asp:Parameter DefaultValue="True" Name="isActive" Type="Boolean" />
+            <asp:Parameter Name="CompanyId" Type="Int32" />
+        </SelectParameters>
+    </asp:SqlDataSource>
 </asp:Content>

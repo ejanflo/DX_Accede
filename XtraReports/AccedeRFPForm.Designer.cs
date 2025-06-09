@@ -1805,12 +1805,12 @@
             this.xrCheckBox5.Borders = DevExpress.XtraPrinting.BorderSide.None;
             this.xrCheckBox5.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
             new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Visible", "Iif([isTravel] == True, True, False)\n"),
-            new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "CheckBoxState", "Iif([isTravel] == True, \'Checked\', \'Unchecked\')")});
+            new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "CheckBoxState", "Iif([isTravel] == True, \'Checked\', \'Unchecked\')\n")});
             this.xrCheckBox5.Font = new DevExpress.Drawing.DXFont("Arial", 7F, DevExpress.Drawing.DXFontStyle.Italic);
-            this.xrCheckBox5.LocationFloat = new DevExpress.Utils.PointFloat(21.26053F, 2F);
+            this.xrCheckBox5.LocationFloat = new DevExpress.Utils.PointFloat(9.999969F, 1.999985F);
             this.xrCheckBox5.Name = "xrCheckBox5";
             this.xrCheckBox5.Padding = new DevExpress.XtraPrinting.PaddingInfo(2, 2, 0, 0, 100F);
-            this.xrCheckBox5.SizeF = new System.Drawing.SizeF(68.08F, 16F);
+            this.xrCheckBox5.SizeF = new System.Drawing.SizeF(79.34055F, 15.99999F);
             this.xrCheckBox5.StylePriority.UseBorders = false;
             this.xrCheckBox5.StylePriority.UseFont = false;
             this.xrCheckBox5.StylePriority.UseTextAlignment = false;

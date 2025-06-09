@@ -74,6 +74,8 @@ namespace DX_WebTemplate
 
                     SqlUserSelf.SelectParameters["EmpCode"].DefaultValue = EmpCode;
 
+                    SqlIO.SelectParameters["CompanyId"].DefaultValue = mainExp.ExpChargedTo_CompanyId.ToString();
+
                     // Get the existing data from SqlDataSource
                     DataView dv = SqlUser.Select(DataSourceSelectArguments.Empty) as DataView;
 
@@ -541,7 +543,9 @@ namespace DX_WebTemplate
 
         protected void WFSequenceGrid_CustomCallback(object sender, DevExpress.Web.ASPxGridViewCustomCallbackEventArgs e)
         {
-            var dept_id = e.Parameters != "" ? e.Parameters.ToString() : "0";
+            var param = e.Parameters.Split('|');
+            var dept_id = param[0] != "null" ? param[0] : "0";
+            var comp = param[1] != "null" ? param[1] : "0";
             var depcode = _DataContext.ITP_S_OrgDepartmentMasters
                 .Where(x => x.ID == Convert.ToInt32(dept_id))
                 .FirstOrDefault();
@@ -549,7 +553,7 @@ namespace DX_WebTemplate
             var expMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"])).FirstOrDefault();
 
             var wfMapCheck = _DataContext.vw_ACCEDE_I_WFMappings.Where(x => x.UserId == expMain.ExpenseName)
-                            .Where(x => x.Company_Id == Convert.ToInt32(expMain.CompanyId))
+                            .Where(x => x.Company_Id == Convert.ToInt32(comp))
                             .FirstOrDefault();
 
             if (wfMapCheck != null)
@@ -562,29 +566,33 @@ namespace DX_WebTemplate
             }
             else
             {
-                var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == expMain.ExpenseName)
-                                .Where(x => x.CompanyId == Convert.ToInt32(expMain.CompanyId))
+                if(depcode != null)
+                {
+                    var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == expMain.ExpenseName)
+                                .Where(x => x.CompanyId == Convert.ToInt32(comp))
                                 .Where(x => x.DepCode == depcode.DepCode)
                                 .Where(x => x.IsRA == true)
                                 .FirstOrDefault();
 
-                if (rawf != null)
-                {
-                    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
-                    SqlWorkflowSequence.DataBind();
+                    if (rawf != null)
+                    {
+                        SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
+                        SqlWorkflowSequence.DataBind();
 
-                    WFSequenceGrid.DataSourceID = null;
-                    WFSequenceGrid.DataSource = SqlWorkflowSequence;
-                    WFSequenceGrid.DataBind();
-                }
-                else
-                {
-                    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = "0";
-                    WFSequenceGrid.DataSourceID = null;
-                    WFSequenceGrid.DataSource = SqlWorkflowSequence;
-                    WFSequenceGrid.DataBind();
+                        WFSequenceGrid.DataSourceID = null;
+                        WFSequenceGrid.DataSource = SqlWorkflowSequence;
+                        WFSequenceGrid.DataBind();
+                    }
+                    else
+                    {
+                        SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = "0";
+                        WFSequenceGrid.DataSourceID = null;
+                        WFSequenceGrid.DataSource = SqlWorkflowSequence;
+                        WFSequenceGrid.DataBind();
 
+                    }
                 }
+                
             }
 
                 
@@ -1300,7 +1308,7 @@ namespace DX_WebTemplate
                             rfp.Remarks = remarks;
                         }
                         rfp.Exp_ID = expMain.ID;
-                        if(rfpCA != null)
+                        if(totalCA > 0)
                         {
                             rfp.TranType = LiqReimTranType.ID;
                         }
@@ -1456,7 +1464,12 @@ namespace DX_WebTemplate
                         .Where(x => x.STS_Name == "Returned by P2P")
                         .FirstOrDefault();
 
-                    if( exp.Status == returnAuditStats.STS_Id)
+                    var rfpDocType = _DataContext.ITP_S_DocumentTypes
+                        .Where(x => x.DCT_Name == "ACDE RFP" || x.DCT_Description == "Accede Request For Payment")
+                        .Select(x => x.DCT_Id)
+                        .FirstOrDefault();
+
+                    if ( exp.Status == returnAuditStats.STS_Id)
                     {
                         var pendingAuditStats = _DataContext.ITP_S_Status
                             .Where(x => x.STS_Name == "Pending at Audit")
@@ -1467,7 +1480,79 @@ namespace DX_WebTemplate
                         {
                             reim.Status = pendingAuditStats.STS_Id;
                         }
-                        
+
+                        var wfID_audit = _DataContext.ITP_S_WorkflowHeaders
+                                .Where(x => x.Company_Id == exp.CompanyId)
+                                .Where(x => x.Name == "ACDE AUDIT")
+                                .FirstOrDefault();
+
+                        if (wfID_audit != null)
+                        {
+                            var expDocType = _DataContext.ITP_S_DocumentTypes
+                                .Where(x => x.DCT_Name == "ACDE Expense" || x.DCT_Description == "Accede Expense")
+                                .Select(x => x.DCT_Id)
+                                .FirstOrDefault();
+
+                            // GET WORKFLOW DETAILS ID
+                            var wfDetails_audit = from wfd in _DataContext.ITP_S_WorkflowDetails
+                                                where wfd.WF_Id == wfID_audit.WF_Id && wfd.Sequence == 1
+                                                select wfd.WFD_Id;
+                            int wfdID_audit = wfDetails_audit.FirstOrDefault();
+
+                            // GET ORG ROLE ID
+                            var orgRole = from or in _DataContext.ITP_S_WorkflowDetails
+                                          where or.WF_Id == wfID_audit.WF_Id && or.Sequence == 1
+                                          select or.OrgRole_Id;
+                            int orID = (int)orgRole.FirstOrDefault();
+
+                            if (pendingAuditStats != null && wfDetails_audit != null && orgRole != null)
+                            {
+                                //INSERT Reim ACTIVITY TO ITP_T_WorkflowActivity
+                                DateTime currentDate = DateTime.Now;
+                                ITP_T_WorkflowActivity wfa_reim = new ITP_T_WorkflowActivity()
+                                {
+                                    Status = pendingAuditStats.STS_Id,
+                                    DateAssigned = currentDate,
+                                    DateCreated = currentDate,
+                                    WF_Id = wfID_audit.WF_Id,
+                                    WFD_Id = wfdID_audit,
+                                    OrgRole_Id = orID,
+                                    Document_Id = exp.ID,
+                                    AppId = 1032,
+                                    ActedBy_User_Id = Session["userID"].ToString(),
+                                    CompanyId = Convert.ToInt32(exp.CompanyId),
+                                    AppDocTypeId = rfpDocType,
+                                    IsActive = true
+                                };
+                                _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(wfa_reim);
+
+
+                                //INSERT EXPENSE ACTIVITY TO ITP_T_WorkflowActivity
+                                ITP_T_WorkflowActivity wfa = new ITP_T_WorkflowActivity()
+                                {
+                                    Status = pendingAuditStats.STS_Id,
+                                    DateAssigned = currentDate,
+                                    DateCreated = currentDate,
+                                    WF_Id = wfID_audit.WF_Id,
+                                    WFD_Id = wfdID_audit,
+                                    OrgRole_Id = orID,
+                                    Document_Id = exp.ID,
+                                    AppId = 1032,
+                                    ActedBy_User_Id = Session["userID"].ToString(),
+                                    CompanyId = Convert.ToInt32(exp.CompanyId),
+                                    AppDocTypeId = expDocType,
+                                    IsActive = true
+                                };
+                                _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(wfa);
+                            }
+
+                            _DataContext.SubmitChanges();
+                        }
+                        else
+                        {
+                            return "There is no workflow (ACDE AUDIT) setup for your company. Please contact Admin to setup the workflow.";
+                        }
+
                     }
                     else if(exp.Status == returnP2PStats.STS_Id)
                     {
@@ -1480,7 +1565,81 @@ namespace DX_WebTemplate
                         {
                             reim.Status = pendingP2PStats.STS_Id;
                         }
-                        
+
+                        var wfID_p2p = _DataContext.ITP_S_WorkflowHeaders
+                                .Where(x => x.Company_Id == exp.CompanyId)
+                                .Where(x => x.Name == "ACDE P2P")
+                                .FirstOrDefault();
+
+                        if (wfID_p2p != null)
+                        {
+                            var expDocType = _DataContext.ITP_S_DocumentTypes
+                                .Where(x => x.DCT_Name == "ACDE Expense" || x.DCT_Description == "Accede Expense")
+                                .Select(x => x.DCT_Id)
+                                .FirstOrDefault();
+
+                            // GET WORKFLOW DETAILS ID
+                            var wfDetails_p2p = from wfd in _DataContext.ITP_S_WorkflowDetails
+                                                where wfd.WF_Id == wfID_p2p.WF_Id && wfd.Sequence == 1
+                                                select wfd.WFD_Id;
+                            int wfdID_p2p = wfDetails_p2p.FirstOrDefault();
+
+                            // GET ORG ROLE ID
+                            var orgRole = from or in _DataContext.ITP_S_WorkflowDetails
+                                          where or.WF_Id == wfID_p2p.WF_Id && or.Sequence == 1
+                                          select or.OrgRole_Id;
+                            int orID = (int)orgRole.FirstOrDefault();
+
+                            if (pendingP2PStats != null && wfDetails_p2p != null && orgRole != null)
+                            {
+                                DateTime currentDate = DateTime.Now;
+                                if (reim != null)
+                                {
+                                    //INSERT Reim ACTIVITY TO ITP_T_WorkflowActivity
+                                    ITP_T_WorkflowActivity wfa_reim = new ITP_T_WorkflowActivity()
+                                    {
+                                        Status = pendingP2PStats.STS_Id,
+                                        DateAssigned = currentDate,
+                                        DateCreated = currentDate,
+                                        WF_Id = wfID_p2p.WF_Id,
+                                        WFD_Id = wfdID_p2p,
+                                        OrgRole_Id = orID,
+                                        Document_Id = reim.ID,
+                                        AppId = 1032,
+                                        ActedBy_User_Id = Session["userID"].ToString(),
+                                        CompanyId = Convert.ToInt32(exp.CompanyId),
+                                        AppDocTypeId = rfpDocType,
+                                        IsActive = true
+                                    };
+                                    _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(wfa_reim);
+                                }
+
+                                //INSERT EXPENSE ACTIVITY TO ITP_T_WorkflowActivity
+                                ITP_T_WorkflowActivity wfa = new ITP_T_WorkflowActivity()
+                                {
+                                    Status = pendingP2PStats.STS_Id,
+                                    DateAssigned = currentDate,
+                                    DateCreated = currentDate,
+                                    WF_Id = wfID_p2p.WF_Id,
+                                    WFD_Id = wfdID_p2p,
+                                    OrgRole_Id = orID,
+                                    Document_Id = exp.ID,
+                                    AppId = 1032,
+                                    ActedBy_User_Id = Session["userID"].ToString(),
+                                    CompanyId = Convert.ToInt32(exp.CompanyId),
+                                    AppDocTypeId = expDocType,
+                                    IsActive = true
+                                };
+                                _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(wfa);
+                            }
+
+                            _DataContext.SubmitChanges();
+                        }
+                        else
+                        {
+                            return "There is no workflow (ACDE P2P) setup for your company. Please contact Admin to setup the workflow.";
+                        }
+
                     }
                     else
                     {
@@ -2289,15 +2448,14 @@ namespace DX_WebTemplate
 
         protected void exp_Department_Callback(object sender, CallbackEventArgsBase e)
         {
-            var comp_id = exp_EmpId.Value;
+            var comp_id = e.Parameter.ToString();
 
-            sqlDept.SelectParameters["Company_ID"].DefaultValue = comp_id.ToString();
+            sqlDept.SelectParameters["CompanyId"].DefaultValue = comp_id.ToString();
 
             exp_Department.DataSourceID = null;
             exp_Department.DataSource = sqlDept;
             exp_Department.DataBind();
 
-            exp_Department.SelectedIndex = 0;
         }
 
         protected void UploadControllerExpD_FilesUploadComplete(object sender, FilesUploadCompleteEventArgs e)
@@ -2485,9 +2643,11 @@ namespace DX_WebTemplate
         protected void drpdown_WF_Callback(object sender, CallbackEventArgsBase e)
         {
 
-            var param = e.Parameter != "" ? e.Parameter.ToString() : "0";
-            var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(param)).FirstOrDefault();
-            var expMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x=>x.ID == Convert.ToInt32(Session["ExpenseId"])).FirstOrDefault();
+            var param = e.Parameter.Split('|');
+            var dept_id = param[0] != "null" ? param[0] : "0";
+            var comp = param[1] != "null" ? param[1] : "0";
+            var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(dept_id)).FirstOrDefault();
+            var expMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x=>x.ID == Convert.ToInt32(comp)).FirstOrDefault();
 
             var wfMapCheck = _DataContext.vw_ACCEDE_I_WFMappings.Where(x => x.UserId == expMain.ExpenseName)
                             .Where(x => x.Company_Id == Convert.ToInt32(expMain.CompanyId))
@@ -2911,6 +3071,26 @@ namespace DX_WebTemplate
             ASPxGridView grid = (ASPxGridView)sender;
 
             grid.JSProperties["cpComputeUnalloc_edit"] = totalNetAmount;
+        }
+
+        protected void IO_Callback(object sender, CallbackEventArgsBase e)
+        {
+            SqlIO.SelectParameters["CompanyId"].DefaultValue = e.Parameter.ToString();
+            SqlIO.DataBind();
+
+            IO.DataSourceID = null;
+            IO.DataSource = SqlIO;
+            IO.DataBind();
+        }
+
+        protected void io_edit_Callback(object sender, CallbackEventArgsBase e)
+        {
+            SqlIO.SelectParameters["CompanyId"].DefaultValue = e.Parameter.ToString();
+            SqlIO.DataBind();
+
+            io_edit.DataSourceID = null;
+            io_edit.DataSource = SqlIO;
+            io_edit.DataBind();
         }
     }
 }

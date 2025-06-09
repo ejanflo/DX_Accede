@@ -77,6 +77,30 @@
             }
         }
 
+        function linkToRFP() {
+            var rfpDoc = link_rfp.GetValue();
+
+            $.ajax({
+                type: "POST",
+                url: "AccedeExpenseReportEdit1.aspx/RedirectToRFPDetailsAJAX",
+                data: JSON.stringify({
+                    rfpDoc: rfpDoc
+
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    // Handle success
+                    LoadingPanel.SetText("Loading RFP Document&hellip;");
+                    LoadingPanel.Show();
+                    window.location.href = 'RFPViewPage.aspx';
+                },
+                failure: function (response) {
+                    // Handle failure
+                }
+            });
+        }
+
         function OnFowardWFChanged(wf_id) {
             WFSequenceGrid0.PerformCallback(wf_id);
         }
@@ -85,13 +109,16 @@
 
             LoadingPanel.Show();
             var return_remarks = txt_returnApp_remarks.GetValue();
+            var secureToken = new URLSearchParams(window.location.search).get('secureToken');
+
             $.ajax({
                 type: "POST",
                 url: "AccedeAuditViewPage.aspx/btnReturnAppClickAjax",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: JSON.stringify({
-                    return_remarks: return_remarks
+                    return_remarks: return_remarks,
+                    secureToken: secureToken
                 }),
                 success: function (response) {
                     // Update the description text box with the response value
@@ -101,7 +128,7 @@
                     if (funcResult == "success") {
                         LoadingPanel.SetText('You returned this request. Redirecting&hellip;');
                         LoadingPanel.Show();
-                        window.location.href = 'AccedeAuditInquiryPage.aspx';
+                        window.location.href = 'AllAccedeAuditPage.aspx';
 
                     } else {
                         //LoadingPanel.SetText('There is an error returning this request. Redirecting&hellip;');
@@ -248,6 +275,7 @@
             LoadingPanel.Show();
             var forwardWF = drpdown_ForwardWF.GetValue() != null ? drpdown_ForwardWF.GetValue() : "";
             var remarks = txt_forward_remarks.GetValue() != null ? txt_forward_remarks.GetValue() : "";
+            var secureToken = new URLSearchParams(window.location.search).get('secureToken');
             $.ajax({
                 type: "POST",
                 url: "AccedeAuditViewPage.aspx/btnApproveForwardAJAX",
@@ -255,7 +283,8 @@
                 dataType: "json",
                 data: JSON.stringify({
                     forwardWF: forwardWF,
-                    remarks: remarks
+                    remarks: remarks,
+                    secureToken: secureToken
                 }),
                 success: function (response) {
                     // Update the description text box with the response value
@@ -265,7 +294,7 @@
                     if (funcResult == "success") {
                         LoadingPanel.SetText('You forwarded this document. Redirecting&hellip;');
                         LoadingPanel.Show();
-                        window.location.href = 'AccedeApprovalPage.aspx';
+                        window.location.href = 'AllAccedeAuditPage.aspx';
 
                     } else {
                         Swal.fire({
@@ -282,7 +311,7 @@
                                 // If user clicks OK, call the C# function
                                 LoadingPanel.SetText('Redirecting&hellip;');
                                 LoadingPanel.Show();
-                                window.location.href = 'AccedeApprovalPage.aspx';
+                                window.location.href = 'AllAccedeAuditPage.aspx';
 
                             }
                         });
@@ -297,13 +326,15 @@
          function approveClick() {
              LoadingPanel.Show();
              var approve_remarks = txt_approve_remarks.GetValue();
+             var secureToken = new URLSearchParams(window.location.search).get('secureToken');
              $.ajax({
                  type: "POST",
                  url: "AccedeAuditViewPage.aspx/btnApproveClickAjax",
                  contentType: "application/json; charset=utf-8",
                  dataType: "json",
                  data: JSON.stringify({
-                     approve_remarks: approve_remarks
+                     approve_remarks: approve_remarks,
+                     secureToken: secureToken
                  }),
                  success: function (response) {
                      // Update the description text box with the response value
@@ -313,7 +344,7 @@
                      if (funcResult == "success") {
                          LoadingPanel.SetText('You approved this request. Redirecting&hellip;');
                          LoadingPanel.Show();
-                         window.location.href = 'AccedeAuditInquiryPage.aspx';
+                         window.location.href = 'AllAccedeAuditPage.aspx';
 
                      } else {
                          alert(response.d);
@@ -330,13 +361,15 @@
          function ReturnClick() {
              LoadingPanel.Show();
              var return_remarks = txt_return_remarks.GetValue();
+             var secureToken = new URLSearchParams(window.location.search).get('secureToken');
              $.ajax({
                  type: "POST",
                  url: "AccedeAuditViewPage.aspx/btnReturnClickAjax",
                  contentType: "application/json; charset=utf-8",
                  dataType: "json",
                  data: JSON.stringify({
-                     return_remarks: return_remarks
+                     return_remarks: return_remarks,
+                     secureToken: secureToken
                  }),
                  success: function (response) {
                      // Update the description text box with the response value
@@ -346,12 +379,12 @@
                      if (funcResult == true) {
                          LoadingPanel.SetText('You returned this request. Redirecting&hellip;');
                          LoadingPanel.Show();
-                         window.location.href = 'AccedeApprovalPage.aspx';
+                         window.location.href = 'AllAccedeAuditPage.aspx';
 
                      } else {
                          LoadingPanel.SetText('There is an error returning this request. Redirecting&hellip;');
                          LoadingPanel.Show();
-                         window.location.href = 'ExpenseApprovalView.aspx';
+                         window.location.href = 'AllAccedeAuditPage.aspx';
                      }
                  },
                  error: function (xhr, status, error) {
@@ -363,13 +396,15 @@
          function DisapproveClick() {
              LoadingPanel.Show();
              var disapprove_remarks = txt_disapprove_remarks.GetValue();
+             var secureToken = new URLSearchParams(window.location.search).get('secureToken');
              $.ajax({
                  type: "POST",
                  url: "ExpenseApprovalView.aspx/btnDisapproveClickAjax",
                  contentType: "application/json; charset=utf-8",
                  dataType: "json",
                  data: JSON.stringify({
-                     disapprove_remarks: disapprove_remarks
+                     disapprove_remarks: disapprove_remarks,
+                     secureToken: secureToken
                  }),
                  success: function (response) {
                      // Update the description text box with the response value
@@ -379,12 +414,12 @@
                      if (funcResult == true) {
                          LoadingPanel.SetText('You disapproved this request. Redirecting&hellip;');
                          LoadingPanel.Show();
-                         window.location.href = 'AccedeApprovalPage.aspx';
+                         window.location.href = 'AllAccedeAuditPage.aspx';
                      } else {
 
                          LoadingPanel.SetText('There is an error disapproving this request. Redirecting&hellip;');
                          LoadingPanel.Show();
-                         window.location.href = 'ExpenseApprovalView.aspx';
+                         window.location.href = 'AllAccedeAuditPage.aspx';
                      }
                  },
                  error: function (xhr, status, error) {
@@ -952,6 +987,33 @@
                                     </dx:LayoutItem>
                                     <dx:EmptyLayoutItem ColSpan="1">
                                     </dx:EmptyLayoutItem>
+                                    <dx:LayoutGroup Caption="REIMBURSEMENT DETAILS" ClientVisible="False" ColSpan="1" Name="ReimLayout">
+                                        <Items>
+                                            <dx:LayoutItem Caption="" ColSpan="1" FieldName="ExpDocNo">
+                                                <LayoutItemNestedControlCollection>
+                                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                                        <asp:Panel ID="pnlExpLink" runat="server" CssClass="exp-link-container">
+                                                            <dx:ASPxTextBox ID="link_rfp" runat="server" ClientInstanceName="link_rfp" CssClass="exp-link-textbox" Font-Bold="True" ReadOnly="True">
+                                                                <Border BorderStyle="None" />
+                                                                <BorderLeft BorderStyle="None" />
+                                                                <BorderTop BorderStyle="None" />
+                                                                <BorderRight BorderStyle="None" />
+                                                                <BorderBottom BorderColor="#333333" BorderStyle="Solid" BorderWidth="1px" />
+                                                            </dx:ASPxTextBox>
+                                                            <dx:ASPxButton ID="ExpBtn" runat="server" AutoPostBack="False" CssClass="edit-button" ToolTip="Open Details">
+                                                                <ClientSideEvents Click="function(s, e) {
+        linkToRFP();
+        }" />
+                                                                <Image IconID="actions_up_svg_white_16x16">
+                                                                </Image>
+                                                            </dx:ASPxButton>
+                                                        </asp:Panel>
+                                                    </dx:LayoutItemNestedControlContainer>
+                                                </LayoutItemNestedControlCollection>
+                                                <CaptionSettings HorizontalAlign="Left" Location="Top" />
+                                            </dx:LayoutItem>
+                                        </Items>
+                                    </dx:LayoutGroup>
                                     <dx:EmptyLayoutItem ColSpan="1">
                                     </dx:EmptyLayoutItem>
                                 </Items>

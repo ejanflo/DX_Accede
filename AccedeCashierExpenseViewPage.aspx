@@ -97,6 +97,30 @@
             }
         }
 
+        function linkToRFP() {
+            var rfpDoc = link_rfp.GetValue();
+
+            $.ajax({
+                type: "POST",
+                url: "AccedeExpenseReportEdit1.aspx/RedirectToRFPDetailsAJAX",
+                data: JSON.stringify({
+                    rfpDoc: rfpDoc
+
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    // Handle success
+                    LoadingPanel.SetText("Loading RFP Document&hellip;");
+                    LoadingPanel.Show();
+                    window.location.href = 'RFPViewPage.aspx';
+                },
+                failure: function (response) {
+                    // Handle failure
+                }
+            });
+        }
+
         function viewReimModal(item_id) {
             $.ajax({
                 type: "POST",
@@ -266,12 +290,14 @@
 
             LoadingPanel.Show();
             var payMethod = payMethod_drpdown_reim_edit.GetValue();
+            var io = io_edit.GetValue() != null ? io_edit.GetValue() : "";
             $.ajax({
                 type: "POST",
                 url: "ExpenseApprovalView.aspx/SaveReimDetailsAJAX",
                 data: JSON.stringify({
 
-                    payMethod: payMethod
+                    payMethod: payMethod,
+                    io: io
 
                 }),
                 contentType: "application/json; charset=utf-8",
@@ -314,7 +340,7 @@
                         LoadingPanel.SetText('Changes saved. Document will proceed to Finance.');
                         LoadingPanel.Show();
 
-                        window.location.href = 'CashierInquiryPage.aspx';
+                        window.location.href = 'AllAccedeCashierPage.aspx';
 
                     } else {
                         alert(response.d);
@@ -335,6 +361,7 @@
             LoadingPanel.Show();
 
             var SAPDoc = edit_SAPDocNo.GetValue() != null ? edit_SAPDocNo.GetValue() : "";
+            var secureToken = new URLSearchParams(window.location.search).get('secureToken');
 
             $.ajax({
                 type: "POST",
@@ -343,28 +370,42 @@
                 dataType: "json",
                 data: JSON.stringify({
                     SAPDoc: SAPDoc,
-                    stats: stats
+                    stats: stats,
+                    secureToken: secureToken
                 }),
                 success: function (response) {
                     // Update the description text box with the response value
                     var funcResult = response.d;
 
-                    if (funcResult == "success") {
+                    if (funcResult == "success with reim") {
+                        LoadingPanel.SetText('You approved this request. Redirecting&hellip;');
+                        LoadingPanel.Show();
 
+                        setTimeout(function () {
+                            window.open('RFPPrintPage.aspx', '_blank');
+                        }, 3000); // Adjust the time (in milliseconds) as needed
 
+                        // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
+                        LoadingPanel.SetText('Printing report&hellip;');
+                        LoadingPanel.Show();
+                        setTimeout(function () {
+                            window.location.href = 'AllAccedeCashierPage.aspx';
+                        }, 3000); // Adjust the time (in milliseconds) as needed
+
+                    } else if (funcResult == "success with reim") {
                         if (stats == 1) {
                             LoadingPanel.SetText('Payment disbursed! Redirecting&hellip;');
                             LoadingPanel.Show();
                             // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
                             setTimeout(function () {
-                                window.location.href = 'CashierInquiryPage.aspx';
+                                window.location.href = 'AllAccedeCashierPage.aspx';
                             }, 3000); // Adjust the time (in milliseconds) as needed
                         } else {
                             LoadingPanel.SetText('Changes saved successfully! Updating document&hellip;');
                             LoadingPanel.Show();
                             // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
                             setTimeout(function () {
-                                window.location.href = 'CashierInquiryPage.aspx';
+                                window.location.href = 'AllAccedeCashierPage.aspx';
                             }, 3000); // Adjust the time (in milliseconds) as needed
                         }
 
@@ -373,8 +414,9 @@
                         LoadingPanel.SetText('Changes saving failed!&hellip;');
                         LoadingPanel.Hide();
 
-                        window.location.href = 'AccedeCashierExpenseViewPage.aspx';
+                        //window.location.href = 'AccedeCashierExpenseViewPage.aspx';
                     }
+
                 },
                 error: function (xhr, status, error) {
                     console.log("Error:", error);
@@ -2187,13 +2229,21 @@
                             <dx:LayoutItem Caption="IO" ClientVisible="False" ColSpan="1" FieldName="IO_Num">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="io_lbl_reim_edit" runat="server" ClientInstanceName="io_lbl_reim_edit" Width="100%" Font-Bold="True" Font-Size="Small" ReadOnly="True">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
+                                        <dx:ASPxComboBox ID="io_edit" runat="server" ClientInstanceName="io_edit" DataSourceID="SqlIO" DropDownWidth="300px" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" TextField="IO_Num" TextFormatString="{0}" ValueField="IO_Num" Width="100%">
+                                            <Columns>
+                                                <dx:ListBoxColumn Caption="IO Number" FieldName="IO_Num" Name="IO Number">
+                                                </dx:ListBoxColumn>
+                                                <dx:ListBoxColumn Caption="IO Description" FieldName="IO_Description" Name="IO Description">
+                                                </dx:ListBoxColumn>
+                                            </Columns>
+                                            <ClearButton DisplayMode="Always">
+                                            </ClearButton>
+                                            <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
+                                                <RequiredField ErrorText="*Required" />
                                             </ValidationSettings>
                                             <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
+                                            <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                        </dx:ASPxComboBox>
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
                                 <CaptionSettings HorizontalAlign="Right" />
@@ -2908,4 +2958,10 @@ saveAR(); SaveARPopup.Hide();
     <asp:SqlDataSource ID="sqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([SAP_CostCenter] IS NOT NULL) ORDER BY [SAP_CostCenter]">
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlParticulars" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_Particulars]"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlIO" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_IO] WHERE (([isActive] = @isActive) AND ([CompanyId] = @CompanyId)) ORDER BY [IO_Num]">
+        <SelectParameters>
+            <asp:Parameter DefaultValue="True" Name="isActive" Type="Boolean" />
+            <asp:Parameter Name="CompanyId" Type="Int32" />
+        </SelectParameters>
+    </asp:SqlDataSource>
 </asp:Content>

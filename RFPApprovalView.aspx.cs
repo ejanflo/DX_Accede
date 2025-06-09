@@ -401,14 +401,14 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static bool btnApproveClickAjax(string approve_remarks, string pMethod, string io, string acctCharge, string cCenter, string secureToken, string CTComp_id, string CTDept_id, string ClassType)
+        public static string btnApproveClickAjax(string approve_remarks, string pMethod, string io, string acctCharge, string cCenter, string secureToken, string CTComp_id, string CTDept_id, string ClassType)
         {
             RFPApprovalView rfp = new RFPApprovalView();
             var isApprove = rfp.btnApproveClick(approve_remarks, pMethod, io, acctCharge, cCenter, secureToken, CTComp_id, CTDept_id, ClassType);
             return isApprove;
         }
 
-        public bool btnApproveClick(string approve_remarks, string pMethod, string io, string acctCharge, string cCenter, string secureToken, string CTComp_id, string CTDept_id, string ClassType)
+        public string btnApproveClick(string approve_remarks, string pMethod, string io, string acctCharge, string cCenter, string secureToken, string CTComp_id, string CTDept_id, string ClassType)
         {
             try
             {
@@ -619,7 +619,7 @@ namespace DX_WebTemplate
                                 }
                                 else
                                 {
-                                    return false;
+                                    return "Finance WF data not found.";
                                 }
 
                                 //End of Finance WF transition
@@ -630,6 +630,11 @@ namespace DX_WebTemplate
                                     .Where(x => x.ID == rfp_main.PayMethod)
                                     .FirstOrDefault();
 
+                                var app_docType = _DataContext.ITP_S_DocumentTypes
+                                    .Where(x => x.DCT_Name == "ACDE RFP")
+                                    .Where(x => x.App_Id == 1032)
+                                    .FirstOrDefault();
+
                                 if (payMethodDesc.PMethod_desc == "Check")
                                 {
                                     var P2PStatus = _DataContext.ITP_S_Status
@@ -637,6 +642,60 @@ namespace DX_WebTemplate
                                         .FirstOrDefault();
 
                                     rfp_main.Status = P2PStatus.STS_Id;
+
+
+                                    ///////
+
+                                    var wfID_p2p = _DataContext.ITP_S_WorkflowHeaders
+                                        .Where(x => x.Company_Id == rfp_main.ChargedTo_CompanyId)
+                                        .Where(x => x.Name == "ACDE P2P")
+                                        .FirstOrDefault();
+
+                                    if (wfID_p2p != null)
+                                    {
+                                        
+
+                                        // GET WORKFLOW DETAILS ID
+                                        var wfDetails_p2p = from wfd in _DataContext.ITP_S_WorkflowDetails
+                                                            where wfd.WF_Id == wfID_p2p.WF_Id && wfd.Sequence == 1
+                                                            select wfd.WFD_Id;
+                                        int wfdID_p2p = wfDetails_p2p.FirstOrDefault();
+
+                                        // GET ORG ROLE ID
+                                        var orgRole = from or in _DataContext.ITP_S_WorkflowDetails
+                                                      where or.WF_Id == wfID_p2p.WF_Id && or.Sequence == 1
+                                                      select or.OrgRole_Id;
+                                        int orID = (int)orgRole.FirstOrDefault();
+
+                                        if (P2PStatus != null && orgRole != null)
+                                        {
+                                            //INSERT CASH ADVANCE ACTIVITY TO ITP_T_WorkflowActivity
+                                            DateTime currentDate = DateTime.Now;
+                                            ITP_T_WorkflowActivity wfa = new ITP_T_WorkflowActivity()
+                                            {
+                                                Status = P2PStatus.STS_Id,
+                                                DateAssigned = currentDate,
+                                                WF_Id = wfID_p2p.WF_Id,
+                                                WFD_Id = wfdID_p2p,
+                                                OrgRole_Id = orID,
+                                                Document_Id = rfp_main.ID,
+                                                AppId = 1032,
+                                                ActedBy_User_Id = Session["userID"].ToString(),
+                                                CompanyId = Convert.ToInt32(rfp_main.ChargedTo_CompanyId),
+                                                AppDocTypeId = app_docType.DCT_Id,
+                                                IsActive = true,
+                                                Remarks = approve_remarks
+                                            };
+                                            _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(wfa);
+
+                                        }
+
+                                        _DataContext.SubmitChanges();
+                                    }
+                                    else
+                                    {
+                                        return "There is no workflow (ACDE P2P) setup for your company. Please contact Admin to setup the workflow.";
+                                    }
 
                                     var creator_detail = _DataContext.ITP_S_UserMasters
                                         .Where(x => x.EmpCode == rfp_main.User_ID)
@@ -657,6 +716,61 @@ namespace DX_WebTemplate
 
                                     rfp_main.Status = CashierStatus.STS_Id;
 
+                                    var wfID_cash = _DataContext.ITP_S_WorkflowHeaders
+                                        .Where(x => x.Company_Id == rfp_main.ChargedTo_CompanyId)
+                                        .Where(x => x.Name == "ACDE P2P")
+                                        .FirstOrDefault();
+
+                                    if (wfID_cash != null)
+                                    {
+                                        var expDocType = _DataContext.ITP_S_DocumentTypes
+                                            .Where(x => x.DCT_Name == "ACDE Expense" || x.DCT_Description == "Accede Expense")
+                                            .Select(x => x.DCT_Id)
+                                            .FirstOrDefault();
+
+                                        // GET WORKFLOW DETAILS ID
+                                        var wfDetails_cash = from wfd in _DataContext.ITP_S_WorkflowDetails
+                                                             where wfd.WF_Id == wfID_cash.WF_Id && wfd.Sequence == 1
+                                                             select wfd.WFD_Id;
+                                        int wfdID_cash = wfDetails_cash.FirstOrDefault();
+
+                                        // GET ORG ROLE ID
+                                        var orgRole = from or in _DataContext.ITP_S_WorkflowDetails
+                                                      where or.WF_Id == wfID_cash.WF_Id && or.Sequence == 1
+                                                      select or.OrgRole_Id;
+                                        int orID = (int)orgRole.FirstOrDefault();
+
+                                        if (CashierStatus != null && orgRole != null)
+                                        {
+                                            //INSERT Reim ACTIVITY TO ITP_T_WorkflowActivity
+                                            DateTime currentDate = DateTime.Now;
+                                            ITP_T_WorkflowActivity wfa = new ITP_T_WorkflowActivity()
+                                            {
+                                                Status = CashierStatus.STS_Id,
+                                                DateAssigned = currentDate,
+                                                DateCreated = currentDate,
+                                                WF_Id = wfID_cash.WF_Id,
+                                                WFD_Id = wfdID_cash,
+                                                OrgRole_Id = orID,
+                                                Document_Id = rfp_main.ID,
+                                                AppId = 1032,
+                                                ActedBy_User_Id = Session["userID"].ToString(),
+                                                CompanyId = Convert.ToInt32(rfp_main.ChargedTo_CompanyId),
+                                                AppDocTypeId = app_docType.DCT_Id,
+                                                IsActive = true,
+                                                Remarks = approve_remarks
+                                            };
+                                            _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(wfa);
+
+                                        }
+
+                                        _DataContext.SubmitChanges();
+                                    }
+                                    else
+                                    {
+                                        return "There is no workflow (ACDE Cashier) setup for your company. Please contact Admin to setup the workflow.";
+                                    }
+
                                     var creator_detail = _DataContext.ITP_S_UserMasters
                                         .Where(x => x.EmpCode == rfp_main.User_ID)
                                         .FirstOrDefault();
@@ -676,14 +790,14 @@ namespace DX_WebTemplate
                         _DataContext.SubmitChanges();
                     }
 
-                    return true;
+                    return "success";
                 }
 
-                return false;
+                return "Secure Token not found.";
             }
             catch (Exception ex)
             {
-                return false;
+                return ex.Message;
             }
         }
 

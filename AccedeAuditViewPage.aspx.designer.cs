@@ -240,6 +240,33 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxMemo txt_remarks;
 
         /// <summary>
+        /// pnlExpLink control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlExpLink;
+
+        /// <summary>
+        /// link_rfp control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox link_rfp;
+
+        /// <summary>
+        /// ExpBtn control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton ExpBtn;
+
+        /// <summary>
         /// CAGrid control.
         /// </summary>
         /// <remarks>

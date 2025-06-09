@@ -15,6 +15,7 @@
         function OnCustomButtonClick(s, e) {
             expenseGrid.PerformCallback(s.GetRowKey(e.visibleIndex) + "|" + e.buttonID);
             if (e.buttonID != "btnPrint") {
+                loadPanel.SetText("Loading document&hellip;");
                 loadPanel.Show();
             }
         }
@@ -37,7 +38,7 @@
                             <dx:LayoutItem Caption="" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxGridView ID="expenseGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="expenseGrid" Width="100%" DataSourceID="sqlAllApproval" KeyFieldName="Document_Id" OnCustomCallback="expenseGrid_CustomCallback" OnCustomColumnDisplayText="expenseGrid_CustomColumnDisplayText">
+                                        <dx:ASPxGridView ID="expenseGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="expenseGrid" Width="100%" DataSourceID="sqlAllApproval" KeyFieldName="WFA_Id" OnCustomCallback="expenseGrid_CustomCallback" OnCustomColumnDisplayText="expenseGrid_CustomColumnDisplayText">
                                             <ClientSideEvents CustomButtonClick="OnCustomButtonClick" ToolbarItemClick="onToolbarItemClick" />
                                             <SettingsDetail AllowOnlyOneMasterRowExpanded="True" />
                                             <SettingsContextMenu Enabled="True">
@@ -125,7 +126,7 @@
                                             <SettingsSearchPanel CustomEditorID="tbToolbarSearch" ShowClearButton="True" Visible="True" />
                                             <SettingsExport EnableClientSideExportAPI="True" ExcelExportMode="WYSIWYG" FileName="MyData">
                                             </SettingsExport>
-                                            <SettingsLoadingPanel Text="Loading..." />
+                                            <SettingsLoadingPanel Text="Loading..." Mode="Disabled" />
                                             <Columns>
                                                 <dx:GridViewCommandColumn Caption="Action" ShowInCustomizationForm="True" VisibleIndex="0">
                                                     <CustomButtons>
@@ -199,6 +200,8 @@
                                                 <dx:GridViewDataTextColumn Caption="Purpose" ShowInCustomizationForm="True" VisibleIndex="6">
                                                     <Columns>
                                                         <dx:GridViewDataTextColumn Caption="Preparer" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                        </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewDataTextColumn FieldName="AppDocTypeId" ShowInCustomizationForm="True" VisibleIndex="1">
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:GridViewDataTextColumn>

@@ -139,7 +139,7 @@
                     var funcResult = response.d;
                     LoadingPanel.Hide();
 
-                    if (funcResult == true) {
+                    if (funcResult == "success") {
                         LoadingPanel.SetText('You approved this document. Redirecting&hellip;');
                         LoadingPanel.Show();
                         window.location.href = 'AllAccedeApprovalPage.aspx';
@@ -162,24 +162,27 @@
                         //    }
                         //});
                     } else {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'There is an error approving this document.',
-                            icon: 'error',
-                            showCancelButton: false,
-                            confirmButtonColor: '#3085d6',
-                            cancelButtonColor: '#d33',
-                            confirmButtonText: 'OK',
-                            allowOutsideClick: false
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                // If user clicks OK, call the C# function
-                                LoadingPanel.SetText('Redirecting&hellip;');
-                                LoadingPanel.Show();
-                                window.location.href = 'AllAccedeApprovalPage.aspx';
+                        LoadingPanel.SetText('Error: ' + funcResult +' Redirecting&hellip;');
+                        LoadingPanel.Show();
+                        window.location.href = 'AllAccedeApprovalPage.aspx';
+                        //Swal.fire({
+                        //    title: 'Error!',
+                        //    text: 'There is an error approving this document.',
+                        //    icon: 'error',
+                        //    showCancelButton: false,
+                        //    confirmButtonColor: '#3085d6',
+                        //    cancelButtonColor: '#d33',
+                        //    confirmButtonText: 'OK',
+                        //    allowOutsideClick: false
+                        //}).then((result) => {
+                        //    if (result.isConfirmed) {
+                        //        // If user clicks OK, call the C# function
+                        //        LoadingPanel.SetText('Redirecting&hellip;');
+                        //        LoadingPanel.Show();
+                        //        window.location.href = 'AllAccedeApprovalPage.aspx';
 
-                            }
-                        });
+                        //    }
+                        //});
                     }
                 },
                 error: function (xhr, status, error) {
@@ -1946,7 +1949,11 @@ DisapproveClick(); DisapprovePopup.Hide();
     <asp:SqlDataSource ID="SqlOrgRole" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_SecurityOrgRoles]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlUser" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_UserMaster]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlStatus" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_Status]"></asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlPayMethod" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_PayMethod]"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlPayMethod" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_PayMethod] WHERE ([isActive] = @isActive)">
+        <SelectParameters>
+            <asp:Parameter DefaultValue="True" Name="isActive" Type="Boolean" />
+        </SelectParameters>
+    </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlAcctCharged" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACDE_T_MasterCodes] WHERE ([Code] = @Code)">
         <SelectParameters>
             <asp:Parameter DefaultValue="ExpCat" Name="Code" Type="String" />

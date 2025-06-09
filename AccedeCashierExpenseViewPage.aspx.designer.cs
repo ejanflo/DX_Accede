@@ -870,13 +870,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox costCenter_lbl_reim_edit;
 
         /// <summary>
-        /// io_lbl_reim_edit control.
+        /// io_edit control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox io_lbl_reim_edit;
+        protected global::DevExpress.Web.ASPxComboBox io_edit;
 
         /// <summary>
         /// payee_lbl_reim_edit control.
@@ -1453,5 +1453,14 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlParticulars;
+
+        /// <summary>
+        /// SqlIO control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlIO;
     }
 }

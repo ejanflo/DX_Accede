@@ -565,12 +565,14 @@
             LoadingPanel.SetText('Processing&hellip;');
             LoadingPanel.Show();
             var payMethod = payMethod_drpdown_reim_edit.GetValue();
+            var io = io_lbl_reim_edit.GetValue() != null ? io_lbl_reim_edit.GetValue() : "";
             $.ajax({
                 type: "POST",
                 url: "ExpenseApprovalView.aspx/SaveReimDetailsAJAX",
                 data: JSON.stringify({
 
-                    payMethod : payMethod
+                    payMethod: payMethod,
+                    io: io
 
                 }),
                 contentType: "application/json; charset=utf-8",
@@ -601,6 +603,7 @@
                 var ewt_amnt = ewt_edit.GetValue() != 0.00 ? ewt_edit.GetValue() : "0";
                 var io = io_edit.GetValue() != null ? io_edit.GetValue() : "";
                 var wbs = wbs_edit.GetValue() != null ? wbs_edit.GetValue() : "";
+                var cc = costCenter_edit.GetValue();
 
                 LoadingPanel.Show();
 
@@ -613,7 +616,8 @@
                         vat_amnt: vat_amnt,
                         ewt_amnt: ewt_amnt,
                         io: io,
-                        wbs: wbs
+                        wbs: wbs,
+                        cc: cc
 
                     }),
                     contentType: "application/json; charset=utf-8",
@@ -2859,7 +2863,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                         <dx:LayoutItem Caption="Cost Center" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="costCenter_edit" runat="server" ClientInstanceName="costCenter_edit" DataSourceID="sqlCostCenter" Font-Bold="True" Font-Size="Small" TextField="SAP_CostCenter" ValueField="SAP_CostCenter" Width="100%" ReadOnly="True">
+                                                    <dx:ASPxComboBox ID="costCenter_edit" runat="server" ClientInstanceName="costCenter_edit" DataSourceID="sqlCostCenter" Font-Bold="True" Font-Size="Small" TextField="SAP_CostCenter" ValueField="SAP_CostCenter" Width="100%">
                                                         <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
                                                             <RequiredField ErrorText="*Required" IsRequired="True" />
                                                         </ValidationSettings>
@@ -2891,13 +2895,21 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                         <dx:LayoutItem Caption="IO" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxTextBox ID="io_edit" runat="server" ClientInstanceName="io_edit" Font-Bold="True" Font-Size="Small" Width="100%">
+                                                    <dx:ASPxComboBox ID="io_edit" runat="server" ClientInstanceName="io_edit" DataSourceID="SqlIO" DropDownWidth="300px" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" TextField="IO_Num" TextFormatString="{0}" ValueField="IO_Num" Width="100%">
+                                                        <Columns>
+                                                            <dx:ListBoxColumn Caption="IO Number" FieldName="IO_Num" Name="IO Number">
+                                                            </dx:ListBoxColumn>
+                                                            <dx:ListBoxColumn Caption="IO Description" FieldName="IO_Description" Name="IO Description">
+                                                            </dx:ListBoxColumn>
+                                                        </Columns>
+                                                        <ClearButton DisplayMode="Always">
+                                                        </ClearButton>
                                                         <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
-                                                            <RequiredField ErrorText="*Required" />
+                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
                                                         </ValidationSettings>
                                                         <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                    </dx:ASPxTextBox>
+                                                    </dx:ASPxComboBox>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                             <CaptionSettings HorizontalAlign="Right" />
@@ -3274,13 +3286,21 @@ computeNetAmount(&quot;edit&quot;);
                             <dx:LayoutItem Caption="IO" ClientVisible="False" ColSpan="1" FieldName="IO_Num">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="io_lbl_reim_edit" runat="server" ClientInstanceName="io_lbl_reim_edit" Width="100%" Font-Bold="True" Font-Size="Small" ReadOnly="True">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
+                                        <dx:ASPxComboBox ID="io_lbl_reim_edit" runat="server" ClientInstanceName="io_lbl_reim_edit" DataSourceID="SqlIO" DropDownWidth="300px" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" TextField="IO_Num" TextFormatString="{0}" ValueField="IO_Num" Width="100%">
+                                            <Columns>
+                                                <dx:ListBoxColumn Caption="IO Number" FieldName="IO_Num" Name="IO Number">
+                                                </dx:ListBoxColumn>
+                                                <dx:ListBoxColumn Caption="IO Description" FieldName="IO_Description" Name="IO Description">
+                                                </dx:ListBoxColumn>
+                                            </Columns>
+                                            <ClearButton DisplayMode="Always">
+                                            </ClearButton>
+                                            <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
+                                                <RequiredField ErrorText="*Required" IsRequired="True" />
                                             </ValidationSettings>
                                             <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
+                                            <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                        </dx:ASPxComboBox>
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
                                 <CaptionSettings HorizontalAlign="Right" />
@@ -3846,13 +3866,19 @@ DisapproveClick(); DisapprovePopup.Hide();
         </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlCAWFActivity" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_RFPWFActivity] WHERE ([Document_Id] = @Document_Id)">
-    <SelectParameters>
-        <asp:Parameter Name="Document_Id" Type="Int32" />
-    </SelectParameters>
-</asp:SqlDataSource>
-        <asp:SqlDataSource ID="SqlCAFileAttach" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_RFPFileAttach] WHERE ([Doc_ID] = @Doc_ID)">
-    <SelectParameters>
-        <asp:Parameter Name="Doc_ID" Type="Int32" />
-    </SelectParameters>
-</asp:SqlDataSource>
+        <SelectParameters>
+            <asp:Parameter Name="Document_Id" Type="Int32" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlCAFileAttach" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_RFPFileAttach] WHERE ([Doc_ID] = @Doc_ID)">
+        <SelectParameters>
+            <asp:Parameter Name="Doc_ID" Type="Int32" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlIO" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_IO] WHERE (([isActive] = @isActive) AND ([CompanyId] = @CompanyId)) ORDER BY [IO_Num]">
+        <SelectParameters>
+            <asp:Parameter DefaultValue="True" Name="isActive" Type="Boolean" />
+            <asp:Parameter Name="CompanyId" Type="Int32" />
+        </SelectParameters>
+    </asp:SqlDataSource>
 </asp:Content>

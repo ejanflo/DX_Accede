@@ -1083,7 +1083,7 @@ namespace DX_WebTemplate
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox io_edit;
+        protected global::DevExpress.Web.ASPxComboBox io_edit;
 
         /// <summary>
         /// supplier_edit control.
@@ -1281,7 +1281,7 @@ namespace DX_WebTemplate
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox io_lbl_reim_edit;
+        protected global::DevExpress.Web.ASPxComboBox io_lbl_reim_edit;
 
         /// <summary>
         /// payee_lbl_reim_edit control.
@@ -1831,5 +1831,14 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlCAFileAttach;
+
+        /// <summary>
+        /// SqlIO control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlIO;
     }
 }

@@ -135,7 +135,7 @@ namespace DX_WebTemplate
                 var doc_id = expenseGrid.GetRowValues(e.VisibleIndex, "ID").ToString();
                 var expDetails = context.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(doc_id)).FirstOrDefault();
                 //Check if the status is "saved" and make the button visible accordingly
-                if (statusValue != null && (statusValue.ToString() == PendingAuditStat.STS_Id.ToString()) && expDetails.ExpenseType_ID == Convert.ToInt32(liquidationDoc.ExpenseType_ID))
+                if (statusValue != null && (statusValue.ToString() == PendingAuditStat.STS_Id.ToString()) /*&& expDetails.ExpenseType_ID == Convert.ToInt32(liquidationDoc.ExpenseType_ID)*/)
                     e.Visible = DevExpress.Utils.DefaultBoolean.True;
                 else
                     e.Visible = DevExpress.Utils.DefaultBoolean.False;

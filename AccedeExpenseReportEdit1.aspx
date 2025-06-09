@@ -1013,7 +1013,12 @@
                                                 <ClientSideEvents Click="function(s, e) {
 	       
 if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) { 
-	ReimbursementTrap();
+if(exp_Company.GetValue() != 0 &amp;&amp; exp_Department.GetValue() != 0){
+ReimbursementTrap();
+}else{
+alert('Please verify your workflow details.');
+}
+	
 }
 
         }" />
@@ -1091,6 +1096,8 @@ drpdown_CostCenter.PerformCallback(s.GetValue()+&quot;|&quot;+exp_CTDepartment.G
 var classType = drpdown_classification.GetValue() != null ? drpdown_classification.GetValue() : &quot;&quot;;
 drpdwn_FAPWF.PerformCallback(s.GetValue()+&quot;|&quot;+classType );
 exp_CompLocation.PerformCallback(s.GetValue());
+IO.PerformCallback(s.GetValue());
+io_edit.PerformCallback(s.GetValue());
 }" />
                                                                 <ClearButton DisplayMode="Always">
                                                                 </ClearButton>
@@ -1870,7 +1877,7 @@ ReimbursementTrap2();
                                                         <dx:LayoutItem Caption="Workflow Company" ColSpan="1" FieldName="CompanyId">
                                                             <LayoutItemNestedControlCollection>
                                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                                    <dx:ASPxComboBox ID="exp_Company" runat="server" ClientInstanceName="exp_Company" DataSourceID="SqlCompany" EnableTheming="True" Font-Bold="True" Font-Size="Small" OnCallback="exp_Company_Callback" ReadOnly="True" TextField="CompanyDesc" ValueField="CompanyId" Width="100%">
+                                                                    <dx:ASPxComboBox ID="exp_Company" runat="server" ClientInstanceName="exp_Company" DataSourceID="SqlCompany" EnableTheming="True" Font-Bold="True" Font-Size="Small" OnCallback="exp_Company_Callback" TextField="CompanyDesc" ValueField="CompanyId" Width="100%">
                                                                         <ClientSideEvents SelectedIndexChanged="function(s, e) {
 exp_Department.PerformCallback(s.GetValue());
 //drpdown_CostCenter.SetValue(&quot;&quot;);
@@ -1893,7 +1900,8 @@ exp_EmpId.PerformCallback(s.GetValue());
                                                                 <dx:LayoutItemNestedControlContainer runat="server">
                                                                     <dx:ASPxComboBox ID="exp_Department" runat="server" ClientInstanceName="exp_Department" DataSourceID="sqlDept" EnableTheming="True" Font-Bold="True" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" OnCallback="exp_Department_Callback" TextField="DepDesc" TextFormatString="{0} - {1}" ValueField="ID" Width="100%">
                                                                         <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	OnDeptChanged(s.GetValue());
+var comp = exp_Company.GetValue() != null ? exp_Company.GetValue() : &quot;&quot;;
+	OnDeptChanged(s.GetValue()+&quot;|&quot;+comp);
 }" />
                                                                         <Columns>
                                                                             <dx:ListBoxColumn Caption="Code" FieldName="DepCode">
@@ -2559,7 +2567,7 @@ exp_EmpId.PerformCallback(s.GetValue());
                     <dx:LayoutItemNestedControlContainer runat="server">
                         <dx:ASPxButton ID="ASPxButton7" runat="server" AutoPostBack="False" BackColor="White" ForeColor="Gray" HorizontalAlign="Right" Text="Cancel">
                             <ClientSideEvents Click="function(s, e) {
-	SubmitPopup.Hide();
+	SubmitPopup2.Hide();
 }" />
                             <Border BorderColor="Gray" />
                         </dx:ASPxButton>
@@ -2863,7 +2871,7 @@ exp_EmpId.PerformCallback(s.GetValue());
                                         <dx:LayoutItem Caption="IO" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="IO" runat="server" ClientInstanceName="IO" DataSourceID="SqlIO" DropDownWidth="300px" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" OnCallback="costCenter_Callback" TextField="IO_Num" TextFormatString="{0}" ValueField="IO_Num" Width="100%">
+                                                    <dx:ASPxComboBox ID="IO" runat="server" ClientInstanceName="IO" DataSourceID="SqlIO" DropDownWidth="300px" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" OnCallback="IO_Callback" TextField="IO_Num" TextFormatString="{0}" ValueField="IO_Num" Width="100%">
                                                         <Columns>
                                                             <dx:ListBoxColumn Caption="IO Number" FieldName="IO_Num" Name="IO Number">
                                                             </dx:ListBoxColumn>
@@ -2873,7 +2881,7 @@ exp_EmpId.PerformCallback(s.GetValue());
                                                         <ClearButton DisplayMode="Always">
                                                         </ClearButton>
                                                         <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
-                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                            <RequiredField ErrorText="*Required" />
                                                         </ValidationSettings>
                                                         <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
@@ -3338,7 +3346,7 @@ ExpAllocGrid.PerformCallback();
                                         <dx:LayoutItem Caption="IO" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="io_edit" runat="server" ClientInstanceName="io_edit" DataSourceID="SqlIO" DropDownWidth="300px" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" OnCallback="costCenter_Callback" TextField="IO_Num" TextFormatString="{0}" ValueField="IO_Num" Width="100%">
+                                                    <dx:ASPxComboBox ID="io_edit" runat="server" ClientInstanceName="io_edit" DataSourceID="SqlIO" DropDownWidth="300px" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" OnCallback="io_edit_Callback" TextField="IO_Num" TextFormatString="{0}" ValueField="IO_Num" Width="100%">
                                                         <Columns>
                                                             <dx:ListBoxColumn Caption="IO Number" FieldName="IO_Num" Name="IO Number">
                                                             </dx:ListBoxColumn>
@@ -3348,7 +3356,7 @@ ExpAllocGrid.PerformCallback();
                                                         <ClearButton DisplayMode="Always">
                                                         </ClearButton>
                                                         <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
-                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                            <RequiredField ErrorText="*Required" />
                                                         </ValidationSettings>
                                                         <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
@@ -3887,9 +3895,10 @@ computeNetAmount(&quot;edit&quot;);
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlDepartmentAll" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlUserAll" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_UserMaster]"></asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlIO" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_IO] WHERE ([isActive] = @isActive) ORDER BY [IO_Num]">
+    <asp:SqlDataSource ID="SqlIO" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_IO] WHERE (([isActive] = @isActive) AND ([CompanyId] = @CompanyId)) ORDER BY [IO_Num]">
         <SelectParameters>
             <asp:Parameter DefaultValue="True" Name="isActive" Type="Boolean" />
+            <asp:Parameter Name="CompanyId" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
 </asp:Content>

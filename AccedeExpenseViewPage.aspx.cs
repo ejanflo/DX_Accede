@@ -400,5 +400,65 @@ namespace DX_WebTemplate
 
             DocuGrid1.DataBind();
         }
+
+        [WebMethod]
+        public static RFPDetails DisplayCADetailsAJAX(int item_id)
+        {
+            AccedeExpenseViewPage rfp = new AccedeExpenseViewPage();
+            return rfp.DisplayCADetails(item_id);
+        }
+
+        public RFPDetails DisplayCADetails(int item_id)
+        {
+            var rfpCA = _DataContext.ACCEDE_T_RFPMains
+                .Where(x => x.ID == item_id)
+                .FirstOrDefault();
+
+            RFPDetails rfp = new RFPDetails();
+            if (rfpCA != null)
+            {
+                var compName = _DataContext.CompanyMasters
+                    .Where(x => x.WASSId == rfpCA.Company_ID)
+                    .FirstOrDefault().CompanyShortName;
+
+                var deptName = _DataContext.ITP_S_OrgDepartmentMasters
+                    .Where(x => x.ID == rfpCA.Department_ID)
+                    .FirstOrDefault().DepDesc;
+
+                var payMethName = _DataContext.ACCEDE_S_PayMethods
+                    .Where(x => x.ID == rfpCA.PayMethod)
+                    .FirstOrDefault().PMethod_name;
+
+                var payeeName = _DataContext.ITP_S_UserMasters
+                    .Where(x => x.EmpCode == rfpCA.Payee)
+                    .FirstOrDefault();
+
+                var tranTypeName = _DataContext.ACCEDE_S_RFPTranTypes
+                    .Where(x => x.ID == rfpCA.TranType)
+                    .FirstOrDefault().RFPTranType_Name;
+
+                var rawfDetail = _DataContext.ITP_S_WorkflowHeaders
+                    .Where(x => x.WF_Id == Convert.ToInt32(rfpCA.WF_Id))
+                    .FirstOrDefault();
+
+                var fapwfDetail = _DataContext.ITP_S_WorkflowHeaders
+                    .Where(x => x.WF_Id == Convert.ToInt32(rfpCA.FAPWF_Id))
+                    .FirstOrDefault();
+
+                rfp.company = compName != null ? compName : "";
+                rfp.department = deptName != null ? deptName : "";
+                rfp.payMethod = payMethName != null ? payMethName : "";
+                rfp.tranType = tranTypeName != null ? tranTypeName : "";
+                rfp.CostCenter = rfpCA.SAPCostCenter != null ? rfpCA.SAPCostCenter : "";
+                rfp.payee = payeeName.FullName != null ? payeeName.FullName : "";
+                rfp.purpose = rfpCA.Purpose != null ? rfpCA.Purpose : "";
+                rfp.amount = rfpCA.Amount != null ? rfpCA.Amount.ToString() : "";
+                rfp.currency = rfpCA.Currency != null ? rfpCA.Currency : "";
+                rfp.docNum = rfpCA.RFP_DocNum != null ? rfpCA.RFP_DocNum : "";
+                rfp.RAWF = rawfDetail.Name != null ? rawfDetail.Name : "";
+                rfp.FAPWF = fapwfDetail.Name != null ? fapwfDetail.Name : "";
+            }
+            return rfp;
+        }
     }
 }

@@ -190,7 +190,7 @@ namespace DX_WebTemplate
             string[] args = e.Parameters.Split('|');
             string rowKey = args[0];
 
-            Session["TravelExp_Id"] = e.Parameters.Split('|').First();
+            Session["TravelExp_Id"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "Document_Id");
             Session["comp"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "CompanyId");
             Session["PassActID"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "WFA_Id");
             Session["wfa"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "WFA_Id");
@@ -221,7 +221,8 @@ namespace DX_WebTemplate
                 }
                 else if (app == "ACDE Expense")
                 {
-                    ASPxWebControl.RedirectOnCallback("~/AccedeAuditViewPage.aspx");
+                    string redirectUrl = $"~/AccedeAuditViewPage.aspx?secureToken={encryptedID}";
+                    ASPxWebControl.RedirectOnCallback(redirectUrl);
                 }
                 else if (app == "ACDE Expense Travel")
                 {

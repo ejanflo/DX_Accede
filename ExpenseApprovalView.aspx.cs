@@ -67,6 +67,8 @@ namespace DX_WebTemplate
                                 .Where(x => x.ID == Convert.ToInt32(actDetails.Document_Id))
                                 .FirstOrDefault();
 
+                            SqlIO.SelectParameters["CompanyId"].DefaultValue = exp.ExpChargedTo_CompanyId.ToString();
+
                             SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = exp.ExpChargedTo_CompanyId.ToString();
                             SqlCompany.SelectParameters["UserId"].DefaultValue = exp.ExpenseName.ToString();
 
@@ -741,6 +743,74 @@ namespace DX_WebTemplate
 
                                 exp_main.Status = Convert.ToInt32(pending_audit.STS_Id);
 
+                                var wfID = _DataContext.ITP_S_WorkflowHeaders
+                                        .Where(x => x.Company_Id == exp_main.ExpChargedTo_CompanyId)
+                                        .Where(x => x.Name == "ACDE AUDIT")
+                                        .FirstOrDefault();
+
+                                if (wfID != null)
+                                {
+                                    var expDocType = _DataContext.ITP_S_DocumentTypes
+                                        .Where(x => x.DCT_Name == "ACDE Expense" || x.DCT_Description == "Accede Expense")
+                                        .Select(x => x.DCT_Id)
+                                        .FirstOrDefault();
+                                    
+                                    // GET WORKFLOW DETAILS ID
+                                    var wfDetails = from wfd in _DataContext.ITP_S_WorkflowDetails
+                                                    where wfd.WF_Id == wfID.WF_Id && wfd.Sequence == 1
+                                                    select wfd.WFD_Id;
+                                    int wfdID = wfDetails.FirstOrDefault();
+
+                                    // GET ORG ROLE ID
+                                    var orgRole = from or in _DataContext.ITP_S_WorkflowDetails
+                                                    where or.WF_Id == wfID.WF_Id && or.Sequence == 1
+                                                    select or.OrgRole_Id;
+                                    int orID = (int)orgRole.FirstOrDefault();
+
+                                    //INSERT EXPENSE TO ITP_T_WorkflowActivity
+                                    DateTime currentDate = DateTime.Now;
+                                    ITP_T_WorkflowActivity wfa = new ITP_T_WorkflowActivity()
+                                    {
+                                        Status = pending_audit.STS_Id,
+                                        DateAssigned = currentDate,
+                                        WF_Id = wfID.WF_Id,
+                                        WFD_Id = wfdID,
+                                        OrgRole_Id = orID,
+                                        Document_Id = Convert.ToInt32(exp_main.ID),
+                                        AppId = 1032,
+                                        Remarks = Session["AuthUser"].ToString() + ": " + remarks + ";",
+                                        CompanyId = Convert.ToInt32(exp_main.ExpChargedTo_CompanyId),
+                                        AppDocTypeId = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense" || x.DCT_Description == "Accede Expense").Select(x => x.DCT_Id).FirstOrDefault(),
+                                        IsActive = true,
+                                    };
+                                    _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(wfa);
+
+                                    if (rfp_main != null)
+                                    {
+                                        //Insert reimburse activity to ITP_T_WorkflowActivity
+                                        ITP_T_WorkflowActivity wfa_reim = new ITP_T_WorkflowActivity()
+                                        {
+                                            Status = pending_audit.STS_Id,
+                                            DateAssigned = currentDate,
+                                            WF_Id = wfID.WF_Id,
+                                            WFD_Id = wfdID,
+                                            OrgRole_Id = orID,
+                                            Document_Id = Convert.ToInt32(rfp_main.ID),
+                                            AppId = 1032,
+                                            Remarks = Session["AuthUser"].ToString() + ": " + remarks + ";",
+                                            CompanyId = Convert.ToInt32(exp_main.ExpChargedTo_CompanyId),
+                                            AppDocTypeId = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP" || x.DCT_Description == "Accede Request For Payment").Select(x => x.DCT_Id).FirstOrDefault(),
+                                            IsActive = true,
+                                        };
+                                        _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(wfa_reim);
+                                    }
+
+                                }
+                                else
+                                {
+                                    return "There is no workflow (ACDE AUDIT) setup for your company. Please contact Admin to setup the workflow.";
+                                }
+
                                 var creator_detail = _DataContext.ITP_S_UserMasters
                                     .Where(x => x.EmpCode == exp_main.UserId)
                                     .FirstOrDefault();
@@ -1061,7 +1131,7 @@ namespace DX_WebTemplate
                     .FirstOrDefault().CompanyShortName;
 
                 var deptName = _DataContext.ITP_S_OrgDepartmentMasters
-                    .Where(x => x.ID == rfpReim.Department_ID)
+                    .Where(x => x.ID == rfpReim.ChargedTo_DeptId)
                     .FirstOrDefault().DepDesc;
 
                 var payMethName = _DataContext.ACCEDE_S_PayMethods
@@ -1102,13 +1172,13 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static string SaveReimDetailsAJAX(string payMethod)
+        public static string SaveReimDetailsAJAX(string payMethod, string io)
         {
             ExpenseApprovalView exp = new ExpenseApprovalView();
-            return exp.SaveReimDetails(payMethod);
+            return exp.SaveReimDetails(payMethod, io);
         }
 
-        public string SaveReimDetails(string payMethod)
+        public string SaveReimDetails(string payMethod, string io)
         {
             try
             {
@@ -1117,6 +1187,7 @@ namespace DX_WebTemplate
                     .FirstOrDefault();
 
                 reimDetails.PayMethod = Convert.ToInt32(payMethod);
+                reimDetails.IO_Num = io;
 
                 var caDetails = _DataContext.ACCEDE_T_RFPMains
                     .Where(x => x.Exp_ID == Convert.ToInt32(reimDetails.Exp_ID))
@@ -1164,15 +1235,15 @@ namespace DX_WebTemplate
                     .FirstOrDefault();
 
                 //var cost_center = _DataContext.ACCEDE_S_CostCenters.Where(x=>x.CostCenter_ID == Convert.ToInt32(expMain.CostCenterIOWBS)).FirstOrDefault();
-                var cc = _DataContext.ITP_S_OrgDepartmentMasters
-                    .Where(x=>x.ID == Convert.ToInt32(expMainMain.ExpChargedTo_DeptId))
-                    .FirstOrDefault();
+                //var cc = _DataContext.ITP_S_OrgDepartmentMasters
+                //    .Where(x=>x.ID == Convert.ToInt32(expMainMain.ExpChargedTo_DeptId))
+                //    .FirstOrDefault();
 
                 DateTime dateAdd = Convert.ToDateTime(expDetail.DateAdded);
 
                 //Assign values to fields -- 
                 exp.acctCharge = acct_charge != null ? acct_charge.Description : "";
-                exp.costCenter = cc != null ? cc.SAP_CostCenter.ToString() : "";
+                exp.costCenter = expDetail.CostCenterIOWBS != null ? expDetail.CostCenterIOWBS.ToString() : "";
                 exp.particulars = expDetail.P_Name != null ? expDetail.P_Name.ToString() : "";
                 exp.supplier = expDetail.Supplier != null ? expDetail.Supplier : "";
                 exp.tin = expDetail.TIN != null ? expDetail.TIN : "";
@@ -1295,13 +1366,13 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static string SaveExpDetailsAJAX(string net_amount, string vat_amnt, string ewt_amnt, string io, string wbs)
+        public static string SaveExpDetailsAJAX(string net_amount, string vat_amnt, string ewt_amnt, string io, string wbs, string cc)
         {
             ExpenseApprovalView exp = new ExpenseApprovalView();
-            return exp.SaveExpDetails(net_amount, vat_amnt, ewt_amnt, io, wbs);
+            return exp.SaveExpDetails(net_amount, vat_amnt, ewt_amnt, io, wbs, cc);
         }
 
-        public string SaveExpDetails(string net_amount, string vat_amnt, string ewt_amnt, string io, string wbs)
+        public string SaveExpDetails(string net_amount, string vat_amnt, string ewt_amnt, string io, string wbs, string cc)
         {
             try
             {
@@ -1314,6 +1385,7 @@ namespace DX_WebTemplate
                 expDetails.EWT = Convert.ToDecimal(ewt_amnt);
                 expDetails.ExpDtl_IO = io;
                 expDetails.ExpDtl_WBS = wbs;
+                expDetails.CostCenterIOWBS = cc;
 
 
                 var reim = _DataContext.ACCEDE_T_RFPMains

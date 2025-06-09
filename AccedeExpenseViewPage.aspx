@@ -77,7 +77,6 @@
             console.log(e.buttonID);
             if (e.buttonID == 'btnView') {
                 var item_id = s.GetRowKey(e.visibleIndex);
-
                 viewCADetailModal(item_id);
             }
 
@@ -133,7 +132,7 @@
         function viewCADetailModal(item_id) {
             $.ajax({
                 type: "POST",
-                url: "ExpenseApprovalView.aspx/DisplayCADetailsAJAX",
+                url: "AccedeExpenseViewPage.aspx/DisplayCADetailsAJAX",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: JSON.stringify({
