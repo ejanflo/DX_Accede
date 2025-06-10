@@ -109,7 +109,7 @@
 
           function onAmountChanged(pay) {
               var amount = spinEdit_Amount.GetValue() != null ? spinEdit_Amount.GetValue() : 0;
-              var comp_id = drpdown_Company.GetValue();
+              var comp_id = drpdown_CTCompany.GetValue();
               var payMethod = pay != null ? pay : 0;
               var payMethodTxt = drpdown_PayMethod.GetText();
               console.log(comp_id);
@@ -149,16 +149,16 @@
                       success: function (response) {
                           //Update the description text box with the response value
                           if (response.d != 0 && amount > response.d) {
-                              //warning_txt.SetText("Amount entered is beyond company's system limit. Please use SAP Concur instead or continue with this transaction.");
-                              //PetCashPopupSave.Show();
+                              warning_txt.SetText("Amount entered is beyond company's system limit. Please use SAP Concur instead or continue with this transaction.");
+                              PetCashPopupSave.Show();
                               //spinEdit_Amount.SetValue("");
                           }
 
                           console.log(response.d);
                           if (response.d == "0") {
                               console.log(response.d);
-                              //warning_txt.SetText("Error verifying company amount limit.");
-                              //PetCashPopupSave.Show();
+                              warning_txt.SetText("Error verifying company amount limit.");
+                              PetCashPopupSave.Show();
                               //spinEdit_Amount.SetValue("");
                           }
                       },
