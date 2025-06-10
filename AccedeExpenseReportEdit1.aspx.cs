@@ -285,7 +285,7 @@ namespace DX_WebTemplate
                         //// - - Setting RA Workflow - - ////
 
                         var depcode = _DataContext.ITP_S_OrgDepartmentMasters
-                            .Where(x => x.ID == Convert.ToInt32(mainExp.ExpChargedTo_DeptId))
+                            .Where(x => x.ID == Convert.ToInt32(mainExp.Dept_Id))
                             .FirstOrDefault();
 
                         // Fetch data using the stored procedure
@@ -1227,17 +1227,17 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static bool AddRFPReimburseAJAX(string comp_id, string payMethod, string purpose, string dept_id, string cCenter,
-            string io, string payee, string acctCharge, string amount, string remarks, bool isTravelrfp, string wbs, string currency, string classification, string CTComp_id, string CTDept_id, string compLoc)
+        public static string AddRFPReimburseAJAX(string comp_id, string payMethod, string purpose, string dept_id, string cCenter,
+            string io, string payee, string acctCharge, string amount, string remarks, bool isTravelrfp, string wbs, string currency, string classification, string CTComp_id, string CTDept_id, string compLoc, string wf, string fapwf)
         {
             AccedeExpenseReportEdit1 exp = new AccedeExpenseReportEdit1();
 
             return exp.AddRFPReimburse(comp_id, payMethod, purpose, dept_id, cCenter,
-            io, payee, acctCharge, amount, remarks, isTravelrfp, wbs, currency, classification, CTComp_id, CTDept_id, compLoc);
+            io, payee, acctCharge, amount, remarks, isTravelrfp, wbs, currency, classification, CTComp_id, CTDept_id, compLoc, wf, fapwf);
         }
 
-        public bool AddRFPReimburse(string comp_id, string payMethod, string purpose, string dept_id, string cCenter,
-            string io, string payee, string acctCharge, string amount, string remarks, bool isTravelrfp, string wbs, string currency, string classification, string CTComp_id, string CTDept_id, string compLoc)
+        public string AddRFPReimburse(string comp_id, string payMethod, string purpose, string dept_id, string cCenter,
+            string io, string payee, string acctCharge, string amount, string remarks, bool isTravelrfp, string wbs, string currency, string classification, string CTComp_id, string CTDept_id, string compLoc, string wf, string fapwf)
         {
             try
             {
@@ -1274,6 +1274,11 @@ namespace DX_WebTemplate
                 decimal totalReim = new decimal(0);
                 decimal totalCA = new decimal(0);
                 decimal totalExpense = new decimal(0);
+
+                if(wf == "" || fapwf == "")
+                {
+                    return "Error in workflow details. Please check your workflow.";
+                }
 
                 foreach (var ca in rfpCA)
                 {
@@ -1334,6 +1339,8 @@ namespace DX_WebTemplate
                         {
                             rfp.Comp_Location_Id = Convert.ToInt32(compLoc);
                         }
+                        rfp.WF_Id = Convert.ToInt32(wf);
+                        rfp.FAPWF_Id = Convert.ToInt32(fapwf);
                     }
 
                     _DataContext.ACCEDE_T_RFPMains.InsertOnSubmit(rfp);
@@ -1343,10 +1350,10 @@ namespace DX_WebTemplate
                 
                 _DataContext.SubmitChanges();
 
-                return true;
+                return "success";
             }catch (Exception ex)
             {
-                return false;
+                return ex.Message;
             }
         }
 
@@ -2646,11 +2653,12 @@ namespace DX_WebTemplate
             var param = e.Parameter.Split('|');
             var dept_id = param[0] != "null" ? param[0] : "0";
             var comp = param[1] != "null" ? param[1] : "0";
+            var emp = param[2] != "null" ? param[2] : "";
             var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(dept_id)).FirstOrDefault();
-            var expMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x=>x.ID == Convert.ToInt32(comp)).FirstOrDefault();
+            //var expMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x=>x.ID == Convert.ToInt32(comp)).FirstOrDefault();
 
-            var wfMapCheck = _DataContext.vw_ACCEDE_I_WFMappings.Where(x => x.UserId == expMain.ExpenseName)
-                            .Where(x => x.Company_Id == Convert.ToInt32(expMain.CompanyId))
+            var wfMapCheck = _DataContext.vw_ACCEDE_I_WFMappings.Where(x => x.UserId == emp)
+                            .Where(x => x.Company_Id == Convert.ToInt32(comp))
                             .FirstOrDefault();
 
             if (wfMapCheck != null)
@@ -2664,8 +2672,8 @@ namespace DX_WebTemplate
             {
                 if(depcode != null)
                 {
-                    var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == expMain.ExpenseName)
-                            .Where(x => x.CompanyId == Convert.ToInt32(expMain.CompanyId))
+                    var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == emp)
+                            .Where(x => x.CompanyId == Convert.ToInt32(comp))
                             .Where(x => x.DepCode == depcode.DepCode)
                             .Where(x => x.IsRA == true)
                             .FirstOrDefault();
@@ -2803,6 +2811,11 @@ namespace DX_WebTemplate
                 exp_EmpId.TextField = "FullName";   // Ensure text field is set correctly
                 exp_EmpId.ValueField = "DelegateFor_UserID"; // Ensure value field is set correctly
                 exp_EmpId.DataBind();
+
+                if(exp_EmpId.Items.Count() > 0)
+                {
+                    exp_EmpId.SelectedIndex = 0;
+                }
             }
         }
 

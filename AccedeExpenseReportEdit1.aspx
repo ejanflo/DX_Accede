@@ -320,6 +320,8 @@
                 var CTComp_id = exp_CTCompany.GetValue();
                 var CTDept_id = exp_CTDepartment.GetValue();
                 var compLoc = exp_CompLocation.GetValue() != null ? exp_CompLocation.GetValue() : "";
+                var wf = drpdown_WF.GetValue != null ? drpdown_WF.GetValue() : "";
+                var fapwf = drpdwn_FAPWF.GetValue != null ? drpdwn_FAPWF.GetValue() : "";
 
                 SaveExpenseReport("Save2");
                 console.log(dept_id);
@@ -344,14 +346,16 @@
                         classification: classification,
                         CTComp_id: CTComp_id,
                         CTDept_id: CTDept_id,
-                        compLoc: compLoc
+                        compLoc: compLoc,
+                        wf: wf,
+                        fapwf: fapwf
 
                     }),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
                         // Handle success
-                        if (response.d == true) {
+                        if (response.d == "success") {
                             if (stat == 0) {
                                 LoadingPanel.SetText("Updating document&hellip;");
                                 LoadingPanel.Show();
@@ -364,7 +368,11 @@
                         } else {
                             LoadingPanel.SetText("Error adding reimbursement!");
                             LoadingPanel.Show();
-                            window.location.href = 'AccedeExpenseReportEdit1.aspx';
+                            setTimeout(function () {
+                                window.location.href = 'AccedeExpenseReportEdit1.aspx';
+                            }, 3000); 
+
+                            
                         }
                     },
                     failure: function (response) {
@@ -809,31 +817,34 @@
         function ReimbursementTrap2() {
             LoadingPanel.SetText("Generating RFP for Reimbursement&hellip;");
             LoadingPanel.Show();
-            var t_amount = "100";
-            $.ajax({
-                type: "POST",
-                url: "AccedeExpenseReportEdit1.aspx/CheckReimburseValidationAJAX",
-                data: JSON.stringify({
-                    t_amount: t_amount
-                }),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    // Handle success
-                    if (response.d == true) {
-                        LoadingPanel.Hide();
-                        AddReimbursement(0);
+            setTimeout(function () {
+                var t_amount = "100";
+                $.ajax({
+                    type: "POST",
+                    url: "AccedeExpenseReportEdit1.aspx/CheckReimburseValidationAJAX",
+                    data: JSON.stringify({
+                        t_amount: t_amount
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        // Handle success
+                        if (response.d == true) {
+                            //LoadingPanel.Hide();
+                            AddReimbursement(0);
+                        }
+                        else {
+                            //LoadingPanel.Hide();
+                            reimbursePopup2.Show();
+                        }
+
+                    },
+                    failure: function (response) {
+                        // Handle failure
                     }
-                    else {
-                        LoadingPanel.Hide();
-                        reimbursePopup2.Show();
-                    }
-                        
-                },
-                failure: function (response) {
-                    // Handle failure
-                }
-            });
+                });
+            }, 3000); // 3000 ms = 3 seconds
+            
         }
 
         function computeNetAmount(stat) {
@@ -1901,7 +1912,8 @@ exp_EmpId.PerformCallback(s.GetValue());
                                                                     <dx:ASPxComboBox ID="exp_Department" runat="server" ClientInstanceName="exp_Department" DataSourceID="sqlDept" EnableTheming="True" Font-Bold="True" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" OnCallback="exp_Department_Callback" TextField="DepDesc" TextFormatString="{0} - {1}" ValueField="ID" Width="100%">
                                                                         <ClientSideEvents SelectedIndexChanged="function(s, e) {
 var comp = exp_Company.GetValue() != null ? exp_Company.GetValue() : &quot;&quot;;
-	OnDeptChanged(s.GetValue()+&quot;|&quot;+comp);
+var emp = exp_EmpId.GetValue() != null ? exp_EmpId.GetValue() : &quot;&quot;;
+	OnDeptChanged(s.GetValue()+&quot;|&quot;+comp+&quot;|&quot;+emp);
 }" />
                                                                         <Columns>
                                                                             <dx:ListBoxColumn Caption="Code" FieldName="DepCode">

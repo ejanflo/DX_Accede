@@ -484,6 +484,8 @@ namespace DX_WebTemplate
                                 };
                                 _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(wfa);
 
+
+                                rfp_main.Status = Cashier_status.STS_Id;
                             }
 
                             //UPDATE ACTIVITY RFP
