@@ -107,17 +107,12 @@
             this.recAppr2Date = new DevExpress.XtraReports.Parameters.Parameter();
             this.companyid = new DevExpress.XtraReports.Parameters.Parameter();
             this.reimbursement = new DevExpress.XtraReports.Parameters.Parameter();
-            this.xrLabel47 = new DevExpress.XtraReports.UI.XRLabel();
-            this.xrLabel48 = new DevExpress.XtraReports.UI.XRLabel();
             ((System.ComponentModel.ISupportInitialize)(this.xrTable6)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.xrTable2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this)).BeginInit();
             // 
             // TopMargin
             // 
-            this.TopMargin.Controls.AddRange(new DevExpress.XtraReports.UI.XRControl[] {
-            this.xrLabel47,
-            this.xrLabel48});
             this.TopMargin.HeightF = 20F;
             this.TopMargin.Name = "TopMargin";
             // 
@@ -873,32 +868,6 @@
             this.reimbursement.ValueInfo = "0";
             this.reimbursement.Visible = false;
             // 
-            // xrLabel47
-            // 
-            this.xrLabel47.Font = new DevExpress.Drawing.DXFont("Arial", 4F, DevExpress.Drawing.DXFontStyle.Bold);
-            this.xrLabel47.LocationFloat = new DevExpress.Utils.PointFloat(923.3482F, 10F);
-            this.xrLabel47.Multiline = true;
-            this.xrLabel47.Name = "xrLabel47";
-            this.xrLabel47.Padding = new DevExpress.XtraPrinting.PaddingInfo(2, 2, 0, 0, 100F);
-            this.xrLabel47.SizeF = new System.Drawing.SizeF(33.42828F, 6.850013F);
-            this.xrLabel47.StylePriority.UseFont = false;
-            this.xrLabel47.StylePriority.UseTextAlignment = false;
-            this.xrLabel47.Text = "ACCEDE";
-            this.xrLabel47.TextAlignment = DevExpress.XtraPrinting.TextAlignment.TopRight;
-            // 
-            // xrLabel48
-            // 
-            this.xrLabel48.Font = new DevExpress.Drawing.DXFont("Arial", 4F, DevExpress.Drawing.DXFontStyle.Italic);
-            this.xrLabel48.LocationFloat = new DevExpress.Utils.PointFloat(956.7766F, 10F);
-            this.xrLabel48.Multiline = true;
-            this.xrLabel48.Name = "xrLabel48";
-            this.xrLabel48.Padding = new DevExpress.XtraPrinting.PaddingInfo(2, 2, 0, 0, 100F);
-            this.xrLabel48.SizeF = new System.Drawing.SizeF(98.22351F, 6.850015F);
-            this.xrLabel48.StylePriority.UseFont = false;
-            this.xrLabel48.StylePriority.UseTextAlignment = false;
-            this.xrLabel48.Text = "-  Developed by RTGarcia | EMAlburo";
-            this.xrLabel48.TextAlignment = DevExpress.XtraPrinting.TextAlignment.TopLeft;
-            // 
             // AccedeExpenseReportView
             // 
             this.Bands.AddRange(new DevExpress.XtraReports.UI.Band[] {
@@ -1083,7 +1052,5 @@
         private DevExpress.XtraReports.Parameters.Parameter reimbursement;
         private DevExpress.XtraReports.UI.XRSubreport xrSubreport4;
         private DevExpress.XtraReports.UI.XRSubreport xrSubreport3;
-        private DevExpress.XtraReports.UI.XRLabel xrLabel47;
-        private DevExpress.XtraReports.UI.XRLabel xrLabel48;
     }
 }

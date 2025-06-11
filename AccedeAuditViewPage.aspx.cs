@@ -271,7 +271,7 @@ namespace DX_WebTemplate
                         .FirstOrDefault();
 
                     var rfp_main_CA = _DataContext.ACCEDE_T_RFPMains
-                        .Where(x => x.Exp_ID == Convert.ToInt32(Session["ExpId_audit"]))
+                        .Where(x => x.Exp_ID == Convert.ToInt32(exp_main.ID))
                         .Where(x => x.IsExpenseCA == true)
                         .Where(x => x.isTravel != true);
 

@@ -293,7 +293,7 @@ namespace DX_WebTemplate
 
                     if (rfp_main_reim != null)
                     {
-                        Session["ExpenseId"] = rfp_main_reim.ID.ToString();
+                        Session["passRFPID"] = rfp_main_reim.ID.ToString();
                         stat = "success with reim";
                         payMethod = _DataContext.ACCEDE_S_PayMethods
                             .Where(x => x.ID == rfp_main_reim.PayMethod)
@@ -305,7 +305,7 @@ namespace DX_WebTemplate
                     }
                     else
                     {
-                        Session["ExpenseId"] = "";
+                        Session["passRFPID"] = "";
                         stat = "success";
                         payMethod = _DataContext.ACCEDE_S_PayMethods
                             .Where(x => x.ID == rfp_main_ca.PayMethod)

@@ -32,6 +32,153 @@
                 <Items>
                     <dx:TabbedLayoutGroup ColSpan="2" ColumnSpan="2" Width="100%">
                         <Items>
+                            <dx:LayoutGroup Caption="Expense Type" ColSpan="1">
+                                <Items>
+                                    <dx:LayoutItem Caption="" ColSpan="1">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxGridView ID="gridMain0" runat="server" AutoGenerateColumns="False" ClientInstanceName="gridMain" DataSourceID="SqlParticulars" EnableTheming="True" KeyFieldName="CostCenter_ID" OnRowInserting="gridMain_RowInserting" OnRowUpdating="gridMain_RowUpdating" Theme="iOS" Width="95%">
+                                                    <ClientSideEvents CustomButtonClick="OnCustomButtonClick" EndCallback="function(s, e) {
+	if (s.cpErrorMessage) {
+        alert(s.cpErrorMessage);
+        s.cpErrorMessage = null; // Clear the message
+    }
+}" ToolbarItemClick="OnToolbarItemClick" />
+                                                    <SettingsDetail AllowOnlyOneMasterRowExpanded="True" />
+                                                    <SettingsContextMenu Enabled="True">
+                                                    </SettingsContextMenu>
+                                                    <SettingsAdaptivity AdaptiveDetailColumnCount="2" AdaptivityMode="HideDataCells">
+                                                    </SettingsAdaptivity>
+                                                    <SettingsCustomizationDialog Enabled="True" />
+                                                    <SettingsPager AlwaysShowPager="True">
+                                                        <PageSizeItemSettings Visible="True">
+                                                        </PageSizeItemSettings>
+                                                    </SettingsPager>
+                                                    <SettingsEditing Mode="Batch">
+                                                    </SettingsEditing>
+                                                    <Settings GridLines="Horizontal" ShowHeaderFilterButton="True" VerticalScrollableHeight="350" />
+                                                    <SettingsBehavior EnableCustomizationWindow="True" />
+                                                    <SettingsResizing ColumnResizeMode="Control" Visualization="Postponed" />
+                                                    <SettingsDataSecurity AllowDelete="False" />
+                                                    <SettingsPopup>
+                                                        <FilterControl AutoUpdatePosition="False">
+                                                        </FilterControl>
+                                                    </SettingsPopup>
+                                                    <SettingsSearchPanel CustomEditorID="tbToolbarSearch" Visible="True" />
+                                                    <SettingsExport EnableClientSideExportAPI="True" ExcelExportMode="WYSIWYG" FileName="MyData">
+                                                    </SettingsExport>
+                                                    <SettingsLoadingPanel Mode="Disabled" />
+                                                    <EditFormLayoutProperties>
+                                                        <SettingsItemCaptions ChangeCaptionLocationInAdaptiveMode="False" />
+                                                    </EditFormLayoutProperties>
+                                                    <Columns>
+                                                        <dx:GridViewCommandColumn Caption="Action" ShowEditButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0">
+                                                            <CustomButtons>
+                                                                <dx:GridViewCommandColumnCustomButton ID="btnEdit0" Text="Edit" Visibility="Invisible">
+                                                                    <Image IconID="iconbuilder_actions_edit_svg_16x16" ToolTip="Open Document">
+                                                                    </Image>
+                                                                    <Styles>
+                                                                        <Style BackColor="#006DD6" Font-Bold="True" Font-Size="Smaller" ForeColor="White">
+                                                                            <Paddings PaddingBottom="4px" PaddingLeft="8px" PaddingRight="8px" PaddingTop="4px" />
+                                                                        </Style>
+                                                                    </Styles>
+                                                                </dx:GridViewCommandColumnCustomButton>
+                                                                <dx:GridViewCommandColumnCustomButton ID="btnPrint0" Text="Print" Visibility="Invisible">
+                                                                    <Image IconID="dashboards_print_svg_white_16x16" ToolTip="Print Document">
+                                                                    </Image>
+                                                                    <Styles>
+                                                                        <Style BackColor="#E67C03" Font-Bold="True" Font-Size="Smaller" ForeColor="White">
+                                                                            <Paddings PaddingBottom="4px" PaddingLeft="8px" PaddingRight="8px" PaddingTop="4px" />
+                                                                        </Style>
+                                                                    </Styles>
+                                                                </dx:GridViewCommandColumnCustomButton>
+                                                            </CustomButtons>
+                                                            <CellStyle HorizontalAlign="Center" VerticalAlign="Middle">
+                                                            </CellStyle>
+                                                        </dx:GridViewCommandColumn>
+                                                        <dx:GridViewDataTextColumn Caption="Expense Name" FieldName="P_Name" ShowInCustomizationForm="True" VisibleIndex="1">
+                                                            <CellStyle Font-Bold="True">
+                                                            </CellStyle>
+                                                        </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewDataTextColumn Caption="Description" FieldName="P_Description" ShowInCustomizationForm="True" VisibleIndex="6">
+                                                        </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewDataTextColumn FieldName="P_AdditionalText" ShowInCustomizationForm="True" VisibleIndex="7" Caption="Additional Text">
+                                                            <PropertiesTextEdit DisplayFormatString="M/dd/yyyy">
+                                                            </PropertiesTextEdit>
+                                                        </dx:GridViewDataTextColumn>
+                                                    </Columns>
+                                                    <Toolbars>
+                                                        <dx:GridViewToolbar>
+                                                        </dx:GridViewToolbar>
+                                                        <dx:GridViewToolbar>
+                                                            <Items>
+                                                                <dx:GridViewToolbarItem BeginGroup="True" Name="NewCC" Text="New" Visible="False">
+                                                                    <Image IconID="iconbuilder_actions_addcircled_svg_dark_16x16">
+                                                                    </Image>
+                                                                </dx:GridViewToolbarItem>
+                                                                <dx:GridViewToolbarItem Alignment="Left" BeginGroup="True">
+                                                                    <Template>
+                                                                        <dx:ASPxButtonEdit ID="tbToolbarSearch0" runat="server" Height="100%" NullText="Search..." Theme="iOS" Width="400px">
+                                                                            <Buttons>
+                                                                                <dx:SpinButtonExtended Image-IconID="find_find_16x16gray">
+                                                                                </dx:SpinButtonExtended>
+                                                                            </Buttons>
+                                                                        </dx:ASPxButtonEdit>
+                                                                    </Template>
+                                                                </dx:GridViewToolbarItem>
+                                                                <dx:GridViewToolbarItem Alignment="Right" BeginGroup="True" Command="Refresh">
+                                                                </dx:GridViewToolbarItem>
+                                                                <dx:GridViewToolbarItem Alignment="Right" BeginGroup="True" Text="Selection" Visible="False">
+                                                                    <Items>
+                                                                        <dx:GridViewToolbarItem BeginGroup="True" Name="dataSelectAll" Text="Select All">
+                                                                            <ScrollUpButtonImage IconID="snap_highlight_svg_16x16">
+                                                                            </ScrollUpButtonImage>
+                                                                        </dx:GridViewToolbarItem>
+                                                                        <dx:GridViewToolbarItem Name="dataUnselectAll" Text="Unselect All">
+                                                                            <ScrollUpButtonImage IconID="pdfviewer_selectall_svg_16x16">
+                                                                            </ScrollUpButtonImage>
+                                                                        </dx:GridViewToolbarItem>
+                                                                        <dx:GridViewToolbarItem BeginGroup="True" Name="dataSelectAllOnPage" Text="Select all on the page">
+                                                                            <ScrollUpButtonImage IconID="richedit_selecttable_svg_16x16">
+                                                                            </ScrollUpButtonImage>
+                                                                        </dx:GridViewToolbarItem>
+                                                                        <dx:GridViewToolbarItem Name="dataUnselectAllOnPage" Text="Unselect all on the page">
+                                                                            <ScrollUpButtonImage IconID="richedit_selecttablecolumn_svg_16x16">
+                                                                            </ScrollUpButtonImage>
+                                                                        </dx:GridViewToolbarItem>
+                                                                    </Items>
+                                                                    <ScrollUpButtonImage IconID="spreadsheet_selectdatamember_svg_16x16">
+                                                                    </ScrollUpButtonImage>
+                                                                </dx:GridViewToolbarItem>
+                                                                <dx:GridViewToolbarItem Alignment="Right" BeginGroup="True" Text="Export">
+                                                                    <Items>
+                                                                        <dx:GridViewToolbarItem Command="ExportToXlsx">
+                                                                        </dx:GridViewToolbarItem>
+                                                                        <dx:GridViewToolbarItem Command="ExportToPdf">
+                                                                        </dx:GridViewToolbarItem>
+                                                                    </Items>
+                                                                </dx:GridViewToolbarItem>
+                                                            </Items>
+                                                        </dx:GridViewToolbar>
+                                                    </Toolbars>
+                                                    <Styles>
+                                                        <Header Wrap="True">
+                                                        </Header>
+                                                        <Row Wrap="True">
+                                                        </Row>
+                                                        <Cell Wrap="False">
+                                                        </Cell>
+                                                        <SearchPanel HorizontalAlign="Right">
+                                                        </SearchPanel>
+                                                    </Styles>
+                                                    <Border BorderWidth="0px" />
+                                                    <BorderBottom BorderWidth="1px" />
+                                                </dx:ASPxGridView>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                    </dx:LayoutItem>
+                                </Items>
+                            </dx:LayoutGroup>
                             <dx:LayoutGroup Caption="Cost Center" ColSpan="1">
                                 <Items>
                                     <dx:LayoutItem Caption="" ColSpan="1">
@@ -281,4 +428,22 @@
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="sqlVAT" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_M_Computation]"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlParticulars" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" DeleteCommand="DELETE FROM [ACCEDE_S_Particulars] WHERE [ID] = @ID" InsertCommand="INSERT INTO [ACCEDE_S_Particulars] ([P_Description], [P_Name], [P_AdditionalText], [isActive]) VALUES (@P_Description, @P_Name, @P_AdditionalText, @isActive)" SelectCommand="SELECT * FROM [ACCEDE_S_Particulars] ORDER BY [P_Name]" UpdateCommand="UPDATE [ACCEDE_S_Particulars] SET [P_Description] = @P_Description, [P_Name] = @P_Name, [P_AdditionalText] = @P_AdditionalText, [isActive] = @isActive WHERE [ID] = @ID">
+        <DeleteParameters>
+            <asp:Parameter Name="ID" Type="Int32" />
+        </DeleteParameters>
+        <InsertParameters>
+            <asp:Parameter Name="P_Description" Type="String" />
+            <asp:Parameter Name="P_Name" Type="String" />
+            <asp:Parameter Name="P_AdditionalText" Type="String" />
+            <asp:Parameter Name="isActive" Type="Boolean" />
+        </InsertParameters>
+        <UpdateParameters>
+            <asp:Parameter Name="P_Description" Type="String" />
+            <asp:Parameter Name="P_Name" Type="String" />
+            <asp:Parameter Name="P_AdditionalText" Type="String" />
+            <asp:Parameter Name="isActive" Type="Boolean" />
+            <asp:Parameter Name="ID" Type="Int32" />
+        </UpdateParameters>
+    </asp:SqlDataSource>
 </asp:Content>

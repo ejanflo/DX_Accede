@@ -331,41 +331,45 @@ namespace DX_WebTemplate
                         }
                         else
                         {
-                            var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == mainExp.ExpenseName)
+                            if(depcode != null)
+                            {
+                                var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == mainExp.ExpenseName)
                                 .Where(x => x.CompanyId == Convert.ToInt32(mainExp.CompanyId))
                                 .Where(x => x.DepCode == depcode.DepCode)
                                 .Where(x => x.IsRA == true)
                                 .FirstOrDefault();
 
-                            if (rawf != null)
-                            {
-                                SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
-                                SqlWF.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
-                                drpdown_WF.DataSource = SqlWF;
-                                drpdown_WF.SelectedIndex = 0;
-                                drpdown_WF.DataBind();
+                                if (rawf != null)
+                                {
+                                    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
+                                    SqlWF.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
+                                    drpdown_WF.DataSource = SqlWF;
+                                    drpdown_WF.SelectedIndex = 0;
+                                    drpdown_WF.DataBind();
 
-                                WFSequenceGrid.DataSourceID = null;
-                                WFSequenceGrid.DataSource = SqlWorkflowSequence;
-                                WFSequenceGrid.DataBind();
-                            }
-                            else
-                            {
-                                SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = "0";
-                                SqlWF.SelectParameters["WF_Id"].DefaultValue = "0";
-                                drpdown_WF.DataSourceID = null;
-                                drpdown_WF.DataSource = SqlWF;
-                                drpdown_WF.DataBind();
+                                    WFSequenceGrid.DataSourceID = null;
+                                    WFSequenceGrid.DataSource = SqlWorkflowSequence;
+                                    WFSequenceGrid.DataBind();
+                                }
+                                else
+                                {
+                                    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = "0";
+                                    SqlWF.SelectParameters["WF_Id"].DefaultValue = "0";
+                                    drpdown_WF.DataSourceID = null;
+                                    drpdown_WF.DataSource = SqlWF;
+                                    drpdown_WF.DataBind();
 
-                                WFSequenceGrid.DataSourceID = null;
-                                WFSequenceGrid.DataSource = SqlWorkflowSequence;
-                                WFSequenceGrid.DataBind();
-                                //var test = drpdown_WF.DataSource.ToString();
-                                //SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = "0";
-                                //SqlWF.SelectParameters["WF_Id"].DefaultValue = "0";
-                                //SqlWorkflowSequence.DataBind();
-                                //SqlWF.DataBind();
+                                    WFSequenceGrid.DataSourceID = null;
+                                    WFSequenceGrid.DataSource = SqlWorkflowSequence;
+                                    WFSequenceGrid.DataBind();
+                                    //var test = drpdown_WF.DataSource.ToString();
+                                    //SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = "0";
+                                    //SqlWF.SelectParameters["WF_Id"].DefaultValue = "0";
+                                    //SqlWorkflowSequence.DataBind();
+                                    //SqlWF.DataBind();
+                                }
                             }
+                            
                         }
 
                             

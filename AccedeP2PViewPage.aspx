@@ -435,7 +435,7 @@
                             window.location.href = 'AllAccedeP2PPage.aspx';
                         }, 3000); // Adjust the time (in milliseconds) as needed
 
-                    } else if (funcResult == "success with reim") {
+                    } else if (funcResult == "success") {
                         LoadingPanel.SetText('You approved this request. Redirecting&hellip;');
                         LoadingPanel.Show();
                         window.location.href = 'AllAccedeP2PPage.aspx';

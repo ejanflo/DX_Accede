@@ -201,8 +201,6 @@
                                                     <Columns>
                                                         <dx:GridViewDataTextColumn Caption="Preparer" ShowInCustomizationForm="True" VisibleIndex="0">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="AppDocTypeId" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                        </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:GridViewDataTextColumn>
                                                 <dx:GridViewDataTextColumn FieldName="WFA_Id" ShowInCustomizationForm="True" Visible="False" VisibleIndex="15">

@@ -270,7 +270,7 @@ namespace DX_WebTemplate
 
                     if (rfp_main_reimburse != null)
                     {
-                        Session["ExpenseId"] = rfp_main_reimburse.ID.ToString();
+                        Session["passRFPID"] = rfp_main_reimburse.ID.ToString();
                         stat = "success with reim";
                         rfp_main_reimburse.ChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
                         rfp_main_reimburse.ChargedTo_DeptId = Convert.ToInt32(CTDept_id);
@@ -386,7 +386,7 @@ namespace DX_WebTemplate
                     }
                     else
                     {
-                        Session["ExpenseId"] = "";
+                        Session["passRFPID"] = "";
                         stat = "success";
                         exp_main.Status = completed_status.STS_Id;
                         var disbursed_status = _DataContext.ITP_S_Status
