@@ -402,7 +402,7 @@ namespace DX_WebTemplate
 
                             var wfID_cash = _DataContext.ITP_S_WorkflowHeaders
                                 .Where(x => x.Company_Id == exp_main.CompanyId)
-                                .Where(x => x.Name == "ACDE P2P")
+                                .Where(x => x.Name == "ACDE CASHIER")
                                 .FirstOrDefault();
 
                             if (wfID_cash != null)

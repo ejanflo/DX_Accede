@@ -718,7 +718,7 @@ namespace DX_WebTemplate
 
                                     var wfID_cash = _DataContext.ITP_S_WorkflowHeaders
                                         .Where(x => x.Company_Id == rfp_main.ChargedTo_CompanyId)
-                                        .Where(x => x.Name == "ACDE P2P")
+                                        .Where(x => x.Name == "ACDE CASHIER")
                                         .FirstOrDefault();
 
                                     if (wfID_cash != null)
