@@ -672,31 +672,13 @@ namespace DX_WebTemplate
 
                                         if (Cash_status != null && wfDetails_cash != null && orgRole != null)
                                         {
-                                            //INSERT Reim ACTIVITY TO ITP_T_WorkflowActivity
-                                            DateTime currentDate = DateTime.Now;
-                                            ITP_T_WorkflowActivity wfa = new ITP_T_WorkflowActivity()
-                                            {
-                                                Status = Cash_status.STS_Id,
-                                                DateAssigned = currentDate,
-                                                DateCreated = currentDate,
-                                                WF_Id = wfID_cash.WF_Id,
-                                                WFD_Id = wfdID_cash,
-                                                OrgRole_Id = orID,
-                                                Document_Id = rfp_main.ID,
-                                                AppId = 1032,
-                                                CompanyId = Convert.ToInt32(exp_main.CompanyId),
-                                                AppDocTypeId = rfp_app_docType.DCT_Id,
-                                                IsActive = true,
-                                                Remarks = remarks
-                                            };
-                                            _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(wfa);
 
                                             //INSERT EXPENSE ACTIVITY TO ITP_T_WorkflowActivity
                                             ITP_T_WorkflowActivity wfaExp = new ITP_T_WorkflowActivity()
                                             {
                                                 Status = Cash_status.STS_Id,
-                                                DateAssigned = currentDate,
-                                                DateCreated = currentDate,
+                                                DateAssigned = DateTime.Now,
+                                                DateCreated = DateTime.Now,
                                                 WF_Id = wfID_cash.WF_Id,
                                                 WFD_Id = wfdID_cash,
                                                 OrgRole_Id = orID,
