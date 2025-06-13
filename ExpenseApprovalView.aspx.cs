@@ -607,7 +607,7 @@ namespace DX_WebTemplate
                         }
                         else //End of previous WF
                         {
-                            if (wfHead_data.IsRA == true)
+                            if (wfHead_data.WF_Id.ToString() == exp_main.WF_Id.ToString())
                             {
                                 var RFPCA = _DataContext.ACCEDE_T_RFPMains
                                 .Where(x => x.Exp_ID == Convert.ToInt32(exp_main.ID))
