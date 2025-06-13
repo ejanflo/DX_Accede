@@ -406,6 +406,10 @@
             var AR = txt_AR.GetValue() != null ? txt_AR.GetValue() : "";
             var compLoc = exp_CompLocation.GetValue() != null ? exp_CompLocation.GetValue() : "";
 
+            if (btn == "CreateSubmit") {
+                AddReimbursement(1);
+            }
+
             $.ajax({
                 type: "POST",
                 url: "AccedeExpenseReportEdit1.aspx/UpdateExpenseAJAX",
@@ -440,7 +444,7 @@
                         if (btn == "SaveReimburse") {
                             window.location.href = 'AccedeExpenseReportEdit1.aspx';
                         } else if (btn == "CreateSubmit") {
-                            AddReimbursement(1);
+                            
                             LoadingPanel.SetText("Expense report successfully submitted. Redirecting&hellip;");
                             LoadingPanel.Show();
                             window.location.href = 'AccedeExpenseReportDashboard.aspx';

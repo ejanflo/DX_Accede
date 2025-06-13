@@ -641,6 +641,81 @@ namespace DX_WebTemplate
                                     {
                                         rfp_main.Status = PendingCashier.STS_Id;
                                     }
+
+                                    var Cash_status = _DataContext.ITP_S_Status
+                                        .Where(x => x.STS_Name == "Pending at Cashier")
+                                        .FirstOrDefault();
+
+                                    var wfID_cash = _DataContext.ITP_S_WorkflowHeaders
+                                        .Where(x => x.Company_Id == exp_main.CompanyId)
+                                        .Where(x => x.Name == "ACDE CASHIER")
+                                        .FirstOrDefault();
+
+                                    if (wfID_cash != null)
+                                    {
+                                        var expDocType = _DataContext.ITP_S_DocumentTypes
+                                            .Where(x => x.DCT_Name == "ACDE Expense" || x.DCT_Description == "Accede Expense")
+                                            .Select(x => x.DCT_Id)
+                                            .FirstOrDefault();
+
+                                        // GET WORKFLOW DETAILS ID
+                                        var wfDetails_cash = from wfd in _DataContext.ITP_S_WorkflowDetails
+                                                             where wfd.WF_Id == wfID_cash.WF_Id && wfd.Sequence == 1
+                                                             select wfd.WFD_Id;
+                                        int wfdID_cash = wfDetails_cash.FirstOrDefault();
+
+                                        // GET ORG ROLE ID
+                                        var orgRole = from or in _DataContext.ITP_S_WorkflowDetails
+                                                      where or.WF_Id == wfID_cash.WF_Id && or.Sequence == 1
+                                                      select or.OrgRole_Id;
+                                        int orID = (int)orgRole.FirstOrDefault();
+
+                                        if (Cash_status != null && wfDetails_cash != null && orgRole != null)
+                                        {
+                                            //INSERT Reim ACTIVITY TO ITP_T_WorkflowActivity
+                                            DateTime currentDate = DateTime.Now;
+                                            ITP_T_WorkflowActivity wfa = new ITP_T_WorkflowActivity()
+                                            {
+                                                Status = Cash_status.STS_Id,
+                                                DateAssigned = currentDate,
+                                                DateCreated = currentDate,
+                                                WF_Id = wfID_cash.WF_Id,
+                                                WFD_Id = wfdID_cash,
+                                                OrgRole_Id = orID,
+                                                Document_Id = rfp_main.ID,
+                                                AppId = 1032,
+                                                CompanyId = Convert.ToInt32(exp_main.CompanyId),
+                                                AppDocTypeId = rfp_app_docType.DCT_Id,
+                                                IsActive = true,
+                                                Remarks = remarks
+                                            };
+                                            _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(wfa);
+
+                                            //INSERT EXPENSE ACTIVITY TO ITP_T_WorkflowActivity
+                                            ITP_T_WorkflowActivity wfaExp = new ITP_T_WorkflowActivity()
+                                            {
+                                                Status = Cash_status.STS_Id,
+                                                DateAssigned = currentDate,
+                                                DateCreated = currentDate,
+                                                WF_Id = wfID_cash.WF_Id,
+                                                WFD_Id = wfdID_cash,
+                                                OrgRole_Id = orID,
+                                                Document_Id = exp_main.ID,
+                                                AppId = 1032,
+                                                CompanyId = Convert.ToInt32(exp_main.CompanyId),
+                                                AppDocTypeId = expDocType,
+                                                IsActive = true,
+                                                Remarks = remarks
+                                            };
+                                            _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(wfaExp);
+                                        }
+
+                                        _DataContext.SubmitChanges();
+                                    }
+                                    else
+                                    {
+                                        return "There is no workflow (ACDE P2P) setup for your company. Please contact Admin to setup the workflow.";
+                                    }
                                 }
                                 else
                                 {

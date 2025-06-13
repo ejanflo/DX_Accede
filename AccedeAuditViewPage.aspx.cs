@@ -353,7 +353,6 @@ namespace DX_WebTemplate
                                         OrgRole_Id = orID,
                                         Document_Id = wfDetail_reim.Document_Id,
                                         AppId = 1032,
-                                        ActedBy_User_Id = Session["userID"].ToString(),
                                         CompanyId = Convert.ToInt32(exp_main.CompanyId),
                                         AppDocTypeId = rfpDocType,
                                         IsActive = true,
@@ -371,7 +370,6 @@ namespace DX_WebTemplate
                                         OrgRole_Id = orID,
                                         Document_Id = wfDetails.Document_Id,
                                         AppId = 1032,
-                                        ActedBy_User_Id = Session["userID"].ToString(),
                                         CompanyId = Convert.ToInt32(exp_main.CompanyId),
                                         AppDocTypeId = expDocType,
                                         IsActive = true,
@@ -424,7 +422,7 @@ namespace DX_WebTemplate
                                               select or.OrgRole_Id;
                                 int orID = (int)orgRole.FirstOrDefault();
 
-                                if (Cash_status != null && wfDetails != null && orgRole != null)
+                                if (Cash_status != null && wfDetails_cash != null && orgRole != null)
                                 {
                                     //INSERT Reim ACTIVITY TO ITP_T_WorkflowActivity
                                     DateTime currentDate = DateTime.Now;
@@ -438,7 +436,6 @@ namespace DX_WebTemplate
                                         OrgRole_Id = orID,
                                         Document_Id = wfDetail_reim.Document_Id,
                                         AppId = 1032,
-                                        ActedBy_User_Id = Session["userID"].ToString(),
                                         CompanyId = Convert.ToInt32(exp_main.CompanyId),
                                         AppDocTypeId = rfpDocType,
                                         IsActive = true,
@@ -457,7 +454,6 @@ namespace DX_WebTemplate
                                         OrgRole_Id = orID,
                                         Document_Id = wfDetails.Document_Id,
                                         AppId = 1032,
-                                        ActedBy_User_Id = Session["userID"].ToString(),
                                         CompanyId = Convert.ToInt32(exp_main.CompanyId),
                                         AppDocTypeId = expDocType,
                                         IsActive = true,
@@ -536,7 +532,6 @@ namespace DX_WebTemplate
                                     OrgRole_Id = orID,
                                     Document_Id = wfDetails.Document_Id,
                                     AppId = 1032,
-                                    ActedBy_User_Id = Session["userID"].ToString(),
                                     CompanyId = Convert.ToInt32(exp_main.CompanyId),
                                     AppDocTypeId = expDocType,
                                     IsActive = true,
