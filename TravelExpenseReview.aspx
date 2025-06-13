@@ -2305,7 +2305,7 @@
                                     <ClientSideEvents Click="saveRFPChanges" />
                                     <Paddings PaddingBottom="4px" PaddingLeft="8px" PaddingRight="8px" PaddingTop="4px" />
                                 </dx:ASPxButton>
-                                <dx:ASPxButton ID="btnCancel" runat="server" BackColor="White" ClientInstanceName="btnCancel" CssClass="d-inline" ForeColor="#999999" Text="Cancel">
+                                <dx:ASPxButton ID="btnCancel" runat="server" BackColor="White" ClientInstanceName="btnCancel" CssClass="d-inline" ForeColor="#999999" Text="Cancel" AutoPostBack="False">
                                     <ClientSideEvents Click="function(s, e) {
 	rfpPopup.Hide();
 }" />
