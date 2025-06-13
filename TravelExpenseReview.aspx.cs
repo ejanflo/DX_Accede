@@ -244,92 +244,11 @@ namespace DX_WebTemplate
                             }
                         }
 
-                        var due_lbl = ExpenseEditForm.FindItemOrGroupByName("due_lbl") as LayoutItem;
-                        var reimDetails = ExpenseEditForm.FindItemOrGroupByName("reimDetails") as LayoutItem;
-                        var remItem = ExpenseEditForm.FindItemOrGroupByName("remItem") as LayoutItem;
-
-                        var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.isTravel == true && x.IsExpenseReim == true).FirstOrDefault();
-
-                        if (reim != null)
-                        {
-                            reimDetails.ClientVisible = true;
-                            reimTB.Text = Convert.ToString(reim.RFP_DocNum);
-                        }
-
-                        var travelExpId = Convert.ToInt32(Session["TravelExp_Id"]);
-                        var userId = Convert.ToString(Session["prep"]);
-
-                        var totalca = _DataContext.ACCEDE_T_RFPMains
-                            .Where(x => x.Exp_ID == travelExpId && x.TranType == 1 && x.User_ID == userId && x.isTravel == true)
-                            .Sum(x => (decimal?)x.Amount) ?? 0;
-                        Session["totalCA"] = totalca;
-
-                        var totalexp = _DataContext.ACCEDE_T_TravelExpenseDetails
-                            .Where(x => x.TravelExpenseMain_ID == travelExpId)
-                            .Sum(x => (decimal?)x.Total_Expenses) ?? 0;
-                        Session["totalEXP"] = totalexp;
-
-                        var countCA = _DataContext.ACCEDE_T_RFPMains
-                            .Count(x => x.Exp_ID == travelExpId && x.TranType == 1 && x.User_ID == userId && x.isTravel == true);
-
-                        var countExp = _DataContext.ACCEDE_T_TravelExpenseDetails
-                            .Count(x => x.TravelExpenseMain_ID == travelExpId);
-
-                        var expType = countCA > 0 && countExp == 0 ? "1" : countCA == 0 && countExp > 0 ? "2" : "1";
-
-                        if (totalexp > totalca)
-                        {
-                            remItem.ClientVisible = false;
-                            due_lbl.Caption = "Due To Employee";
-                            if (reim != null)
-                                reimDetails.ClientVisible = true;
-                            else
-                                reimDetails.ClientVisible = false;
-                        }
-                        else if (totalca > totalexp)
-                        {
-                            due_lbl.Caption = "Due To Company";
-                            reimDetails.ClientVisible = false;
-                            remItem.ClientVisible = true;
-
-                            if (status == "Pending at Cashier")
-                            {
-                                arNoTB.ClientEnabled = true;
-                                UploadController.ClientVisible = true;
-                            }
-                            else if (status == "Pending")
-                                remItem.ClientVisible = false;
-                        }
-                        else
-                        {
-                            due_lbl.Caption = "Due To Company";
-                            reimDetails.ClientVisible = false;
-                            remItem.ClientVisible = false;
-                        }
-
-                        departmentCB.Value = expType;
-                        lbl_caTotal.Text = Convert.ToString(Session["currency"]) + totalca.ToString("N2");
-                        lbl_expenseTotal.Text = Convert.ToString(Session["currency"]) + totalexp.ToString("N2");
-                        lbl_dueTotal.Text = totalexp > totalca ? "(" + Convert.ToString(Session["currency"]) + "" + (totalexp - totalca).ToString("N2") + ")" : Convert.ToString(Session["currency"]) + (totalca - totalexp).ToString("N2");
-
-                        var totExpCA = totalexp > totalca ? Convert.ToDecimal(totalexp - totalca) : Convert.ToDecimal(totalca - totalexp);
-
-                        if (mainExp != null)
-                        {
-                            Session["mainwfid"] = Convert.ToString(mainExp.WF_Id);
-                            SqlWF.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
-                            SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
-
-                            Session["fapwfid"] = Convert.ToString(mainExp.FAPWF_Id);
-                            SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
-                            SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
-                        }
-
                         CAGrid.DataBind();
                         ExpenseGrid.DataBind();
-                    }
 
-                    //InitializeExpCA(mainExp, status);
+                        InitializeExpCA(mainExp, status);
+                    }
                 }
                 else
                     Response.Redirect("~/Logon.aspx");
