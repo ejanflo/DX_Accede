@@ -2301,7 +2301,7 @@
                     <dx:LayoutItem Caption="" ColSpan="2" ColumnSpan="2" HorizontalAlign="Right" Width="100%">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
-                                <dx:ASPxButton ID="rfpSave" runat="server" BackColor="#006DD6" ClientInstanceName="rfpSave" CssClass="d-inline me-3" Text="Save">
+                                <dx:ASPxButton ID="rfpSave" runat="server" BackColor="#006DD6" ClientInstanceName="rfpSave" CssClass="d-inline me-3" Text="Save" AutoPostBack="False">
                                     <ClientSideEvents Click="saveRFPChanges" />
                                     <Paddings PaddingBottom="4px" PaddingLeft="8px" PaddingRight="8px" PaddingTop="4px" />
                                 </dx:ASPxButton>

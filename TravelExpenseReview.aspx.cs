@@ -244,10 +244,91 @@ namespace DX_WebTemplate
                             }
                         }
 
+                        var due_lbl = ExpenseEditForm.FindItemOrGroupByName("due_lbl") as LayoutItem;
+                        var reimDetails = ExpenseEditForm.FindItemOrGroupByName("reimDetails") as LayoutItem;
+                        var remItem = ExpenseEditForm.FindItemOrGroupByName("remItem") as LayoutItem;
+
+                        var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.isTravel == true && x.IsExpenseReim == true).FirstOrDefault();
+
+                        if (reim != null)
+                        {
+                            reimDetails.ClientVisible = true;
+                            reimTB.Text = Convert.ToString(reim.RFP_DocNum);
+                        }
+
+                        var travelExpId = Convert.ToInt32(Session["TravelExp_Id"]);
+                        var userId = Convert.ToString(Session["prep"]);
+
+                        var totalca = _DataContext.ACCEDE_T_RFPMains
+                            .Where(x => x.Exp_ID == travelExpId && x.TranType == 1 && x.User_ID == userId && x.isTravel == true)
+                            .Sum(x => (decimal?)x.Amount) ?? 0;
+                        Session["totalCA"] = totalca;
+
+                        var totalexp = _DataContext.ACCEDE_T_TravelExpenseDetails
+                            .Where(x => x.TravelExpenseMain_ID == travelExpId)
+                            .Sum(x => (decimal?)x.Total_Expenses) ?? 0;
+                        Session["totalEXP"] = totalexp;
+
+                        var countCA = _DataContext.ACCEDE_T_RFPMains
+                            .Count(x => x.Exp_ID == travelExpId && x.TranType == 1 && x.User_ID == userId && x.isTravel == true);
+
+                        var countExp = _DataContext.ACCEDE_T_TravelExpenseDetails
+                            .Count(x => x.TravelExpenseMain_ID == travelExpId);
+
+                        var expType = countCA > 0 && countExp == 0 ? "1" : countCA == 0 && countExp > 0 ? "2" : "1";
+
+                        if (totalexp > totalca)
+                        {
+                            remItem.ClientVisible = false;
+                            due_lbl.Caption = "Due To Employee";
+                            if (reim != null)
+                                reimDetails.ClientVisible = true;
+                            else
+                                reimDetails.ClientVisible = false;
+                        }
+                        else if (totalca > totalexp)
+                        {
+                            due_lbl.Caption = "Due To Company";
+                            reimDetails.ClientVisible = false;
+                            remItem.ClientVisible = true;
+
+                            if (status == "Pending at Cashier")
+                            {
+                                arNoTB.ClientEnabled = true;
+                                UploadController.ClientVisible = true;
+                            }
+                            else if (status == "Pending")
+                                remItem.ClientVisible = false;
+                        }
+                        else
+                        {
+                            due_lbl.Caption = "Due To Company";
+                            reimDetails.ClientVisible = false;
+                            remItem.ClientVisible = false;
+                        }
+
+                        departmentCB.Value = expType;
+                        lbl_caTotal.Text = Convert.ToString(Session["currency"]) + totalca.ToString("N2");
+                        lbl_expenseTotal.Text = Convert.ToString(Session["currency"]) + totalexp.ToString("N2");
+                        lbl_dueTotal.Text = totalexp > totalca ? "(" + Convert.ToString(Session["currency"]) + "" + (totalexp - totalca).ToString("N2") + ")" : Convert.ToString(Session["currency"]) + (totalca - totalexp).ToString("N2");
+
+                        var totExpCA = totalexp > totalca ? Convert.ToDecimal(totalexp - totalca) : Convert.ToDecimal(totalca - totalexp);
+
+                        if (mainExp != null)
+                        {
+                            Session["mainwfid"] = Convert.ToString(mainExp.WF_Id);
+                            SqlWF.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
+                            SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
+
+                            Session["fapwfid"] = Convert.ToString(mainExp.FAPWF_Id);
+                            SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
+                            SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
+                        }
+
                         CAGrid.DataBind();
                         ExpenseGrid.DataBind();
 
-                        InitializeExpCA(mainExp, status);
+                        //InitializeExpCA(mainExp, status);
                     }
                 }
                 else
@@ -260,249 +341,11 @@ namespace DX_WebTemplate
             }
         }
 
-        //protected void Page_Load(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        if (!AnfloSession.Current.ValidCookieUser())
-        //        {
-        //            Response.Redirect("~/Logon.aspx");
-        //            return;
-        //        }
-
-        //        AnfloSession.Current.CreateSession(HttpContext.Current.User.ToString());
-
-        //        string empCode = Session["userID"].ToString();
-        //        int travelExpId = Convert.ToInt32(Session["TravelExp_Id"]);
-        //        int appId = 1032;
-        //        string docTypeName = "ACDE Expense Travel";
-
-        //        var mainExp = _DataContext.ACCEDE_T_TravelExpenseMains.FirstOrDefault(x => x.ID == travelExpId);
-        //        var appDocType = _DataContext.ITP_S_DocumentTypes.FirstOrDefault(x => x.DCT_Name == docTypeName && x.App_Id == appId);
-        //        var disbursedStatusId = _DataContext.ITP_S_Status.FirstOrDefault(x => x.STS_Name == "Disbursed")?.STS_Id;
-
-        //        Session["statusid"] = disbursedStatusId;
-        //        Session["appdoctype"] = appDocType?.DCT_Id;
-
-        //        if (mainExp != null)
-        //        {
-        //            string foreignDomestic = mainExp.ForeignDomestic;
-        //            string status = _DataContext.ITP_S_Status
-        //                .Where(x => x.STS_Id == Convert.ToInt32(mainExp.Status))
-        //                .Select(x => x.STS_Description)
-        //                .FirstOrDefault();
-
-        //            Session["isForeignTravel"] = foreignDomestic == "Foreign" ? 1 : 0;
-        //            Session["ford"] = foreignDomestic;
-        //            Session["currency"] = foreignDomestic == "Domestic" ? '₱' : foreignDomestic == "Foreign" ? '$' : ' ';
-        //            Session["doc_stat2"] = status;
-
-        //            ExpenseEditForm.Items[0].Caption = $"Travel Expense Document No.: {mainExp.Doc_No} ({status})";
-
-        //            bool isPendingAtFinanceOrP2P = status == "Pending at Finance" || status == "Pending at P2P";
-
-        //            chargedCB.ClientEnabled = isPendingAtFinanceOrP2P;
-        //            chargedCB0.ClientEnabled = isPendingAtFinanceOrP2P;
-        //            chargedCB.DropDownButton.Visible = isPendingAtFinanceOrP2P;
-        //            chargedCB0.DropDownButton.Visible = isPendingAtFinanceOrP2P;
-
-        //            SqlMain.SelectParameters["ID"].DefaultValue = mainExp.ID.ToString();
-        //            timedepartTE.DateTime = DateTime.Parse(mainExp.Time_Departed.ToString());
-        //            timearriveTE.DateTime = DateTime.Parse(mainExp.Time_Arrived.ToString());
-        //            Session["DocNo"] = mainExp.Doc_No.ToString();
-
-        //            var forAccounting = ExpenseEditForm.FindItemOrGroupByName("forAccounting") as LayoutGroup;
-        //            forAccounting.ClientVisible = status.Contains("Pending at Finance");
-
-        //            var disapproveItem = ExpenseEditForm.FindItemOrGroupByName("disapproveItem") as LayoutItem;
-        //            var returnItem = ExpenseEditForm.FindItemOrGroupByName("returnItem") as LayoutItem;
-        //            var returnPrevItem = ExpenseEditForm.FindItemOrGroupByName("returnPrevItem") as LayoutItem;
-        //            var forwardItem = ExpenseEditForm.FindItemOrGroupByName("forwardItem") as LayoutItem;
-
-        //            int wfID = Convert.ToInt32(Session["wf"]);
-        //            int wfdID = Convert.ToInt32(Session["wfd"]);
-        //            int sequence = Convert.ToInt32(_DataContext.ITP_S_WorkflowDetails
-        //                .Where(x => x.WFD_Id == wfdID)
-        //                .Select(x => x.Sequence)
-        //                .FirstOrDefault() + 1);
-
-        //            var orgRoleID = _DataContext.ITP_S_WorkflowDetails
-        //                .Where(x => x.WF_Id == wfID && x.Sequence == sequence)
-        //                .Select(x => x.OrgRole_Id)
-        //                .FirstOrDefault();
-
-        //            bool isForwardVisible = false;
-
-        //            if ((status == "Pending at Finance" || status == "Forwarded") && orgRoleID == null)
-        //            {
-        //                isForwardVisible = true;
-        //                string forwardNameFilter = "forward";
-
-        //                if (status == "Pending at Finance")
-        //                {
-        //                    var FinExecVerify = _DataContext.vw_ACCEDE_FinApproverVerifies.FirstOrDefault(x => x.UserId == empCode && x.Role_Name == "Accede Finance Executive");
-        //                    var FinCFOVerify = _DataContext.vw_ACCEDE_FinApproverVerifies.FirstOrDefault(x => x.UserId == empCode && x.Role_Name == "Accede CFO");
-
-        //                    if (FinExecVerify != null) forwardNameFilter = "forward cfo";
-        //                    else if (FinCFOVerify != null) forwardNameFilter = "forward pres";
-        //                    else forwardNameFilter = "forward exec";
-        //                }
-
-        //                var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
-        //                    .Where(x => x.Name.Contains(forwardNameFilter) && x.App_Id == appId &&
-        //                        (x.Company_Id == mainExp.Company_Id || x.Company_Id == mainExp.ChargedToComp))
-        //                    .ToList();
-
-        //                if (forwardWFList.Any())
-        //                {
-        //                    drpdown_ForwardWF.DataSource = forwardWFList;
-        //                    drpdown_ForwardWF.ValueField = "WF_Id";
-        //                    drpdown_ForwardWF.TextField = "Name";
-        //                    drpdown_ForwardWF.DataBind();
-
-        //                    if (drpdown_ForwardWF.Items.Count == 1)
-        //                    {
-        //                        drpdown_ForwardWF.SelectedIndex = 0;
-        //                        SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
-        //                    }
-        //                }
-        //            }
-
-        //            forwardItem.Visible = isForwardVisible;
-
-        //            if (isPendingAtFinanceOrP2P || mainExp.ExpenseType_ID != 1)
-        //            {
-        //                disapproveItem.Visible = false;
-        //            }
-
-        //            if (status == "Pending at Audit")
-        //            {
-        //                disapproveItem.Visible = false;
-        //                returnBtn.Text = "Return to Creator";
-        //                returnPrevItem.ClientVisible = true;
-        //            }
-
-        //            if (status == "Pending at Cashier")
-        //            {
-        //                disapproveItem.Visible = false;
-        //                returnItem.Visible = false;
-
-        //                bool hasFAPWA = _DataContext.ITP_T_WorkflowActivities.Any(x =>
-        //                    x.AppId == appId &&
-        //                    x.AppDocTypeId == appDocType.DCT_Id &&
-        //                    x.Document_Id == mainExp.ID &&
-        //                    x.WF_Id == mainExp.FAPWF_Id);
-
-        //                if (hasFAPWA)
-        //                {
-        //                    approveBtn.Text = approvePopBtn.Text = "Disburse";
-        //                    ApprovePopup.HeaderText = "Disburse Expense Item";
-        //                    ASPxFormLayout1_E2.Text = "Are you sure to disburse item?";
-        //                }
-        //                else
-        //                {
-        //                    approveBtn.Text = approvePopBtn.Text = "Approve";
-        //                    ApprovePopup.HeaderText = "Approve Expense Report";
-        //                    ASPxFormLayout1_E2.Text = "Are you sure to approve item?";
-        //                }
-        //            }
-        //        }
-
-        //        CAGrid.DataBind();
-        //        ExpenseGrid.DataBind();
-        //        InitializeExpCA(mainExp, Session["doc_stat2"]?.ToString());
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Debug.WriteLine(ex.Message);
-        //    }
-        //}
-
-
         private void InitializeExpCA(ACCEDE_T_TravelExpenseMain mainExp, string status)
         {
             try
             {
-                var due_lbl = ExpenseEditForm.FindItemOrGroupByName("due_lbl") as LayoutItem;
-                var reimDetails = ExpenseEditForm.FindItemOrGroupByName("reimDetails") as LayoutItem;
-                var remItem = ExpenseEditForm.FindItemOrGroupByName("remItem") as LayoutItem;
-
-                var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.isTravel == true && x.IsExpenseReim == true).FirstOrDefault();
-
-                if (reim != null)
-                {
-                    reimDetails.ClientVisible = true;
-                    reimTB.Text = Convert.ToString(reim.RFP_DocNum);
-                }
-
-                var travelExpId = Convert.ToInt32(Session["TravelExp_Id"]);
-                var userId = Convert.ToString(Session["prep"]);
-
-                var totalca = _DataContext.ACCEDE_T_RFPMains
-                    .Where(x => x.Exp_ID == travelExpId && x.TranType == 1 && x.User_ID == userId && x.isTravel == true)
-                    .Sum(x => (decimal?)x.Amount) ?? 0;
-                Session["totalCA"] = totalca;
-
-                var totalexp = _DataContext.ACCEDE_T_TravelExpenseDetails
-                    .Where(x => x.TravelExpenseMain_ID == travelExpId)
-                    .Sum(x => (decimal?)x.Total_Expenses) ?? 0;
-                Session["totalEXP"] = totalexp;
-
-                var countCA = _DataContext.ACCEDE_T_RFPMains
-                    .Count(x => x.Exp_ID == travelExpId && x.TranType == 1 && x.User_ID == userId && x.isTravel == true);
-
-                var countExp = _DataContext.ACCEDE_T_TravelExpenseDetails
-                    .Count(x => x.TravelExpenseMain_ID == travelExpId);
-
-                var expType = countCA > 0 && countExp == 0 ? "1" : countCA == 0 && countExp > 0 ? "2" : "1";
-
-                if (totalexp > totalca)
-                {
-                    remItem.ClientVisible = false;
-                    due_lbl.Caption = "Due To Employee";
-                    if (reim != null)
-                        reimDetails.ClientVisible = true;
-                    else
-                        reimDetails.ClientVisible = false;
-                }
-                else if (totalca > totalexp)
-                {
-                    due_lbl.Caption = "Due To Company";
-                    reimDetails.ClientVisible = false;
-                    remItem.ClientVisible = true;
-
-                    if (status == "Pending at Cashier")
-                    {
-                        arNoTB.ClientEnabled = true;
-                        UploadController.ClientVisible = true;
-                    }
-                    else if(status == "Pending")
-                        remItem.ClientVisible = false;
-                }
-                else
-                {
-                    due_lbl.Caption = "Due To Company";
-                    reimDetails.ClientVisible = false;
-                    remItem.ClientVisible = false;
-                }
-
-                departmentCB.Value = expType;
-                lbl_caTotal.Text = Convert.ToString(Session["currency"]) + totalca.ToString("N2");
-                lbl_expenseTotal.Text = Convert.ToString(Session["currency"]) + totalexp.ToString("N2");
-                lbl_dueTotal.Text = totalexp > totalca ? "(" + Convert.ToString(Session["currency"]) + "" + (totalexp - totalca).ToString("N2") + ")" : Convert.ToString(Session["currency"]) + (totalca - totalexp).ToString("N2");
-
-                var totExpCA = totalexp > totalca ? Convert.ToDecimal(totalexp - totalca) : Convert.ToDecimal(totalca - totalexp);
-
-                if (mainExp != null)
-                {
-                    Session["mainwfid"] = Convert.ToString(mainExp.WF_Id);
-                    SqlWF.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
-                    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
-
-                    Session["fapwfid"] = Convert.ToString(mainExp.FAPWF_Id);
-                    SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
-                    SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
-                }
+                
             }
             catch (Exception)
             {

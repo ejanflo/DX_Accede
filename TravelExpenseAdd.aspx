@@ -1865,7 +1865,7 @@
                                                                                                     <dx:LayoutItem Caption="" ColSpan="1">
                                                                                                         <LayoutItemNestedControlCollection>
                                                                                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                                                                                <dx:ASPxGridView ID="WFSequenceGrid0" runat="server" AutoGenerateColumns="False" ClientInstanceName="WFSequenceGrid" DataSourceID="SqlWFA" Theme="MaterialCompact" Width="100%">
+                                                                                                                <dx:ASPxGridView ID="WFSequenceGrid0" runat="server" AutoGenerateColumns="False" ClientInstanceName="WFSequenceGrid0" DataSourceID="SqlWFA" Theme="MaterialCompact" Width="100%">
                                                                                                                     <SettingsPager Mode="ShowAllRecords">
                                                                                                                     </SettingsPager>
                                                                                                                     <SettingsPopup>
@@ -1946,9 +1946,7 @@
                                                                                                         <LayoutItemNestedControlCollection>
                                                                                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                                                                                 <dx:ASPxComboBox ID="drpdown_WF" runat="server" ClientEnabled="False" ClientInstanceName="drpdown_WF" DataSourceID="SqlWF" Font-Bold="True" Height="39px" SelectedIndex="0" TextField="Name" ValueField="WF_Id" Width="100%">
-                                                                                                                    <ClientSideEvents Init="function(s, e) {
-	WFSequenceGrid.PerformCallback();
-}" SelectedIndexChanged="function(s, e) {
+                                                                                                                    <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	        OnWFChanged();
         }" />
                                                                                                                     <DropDownButton Visible="False">
@@ -2012,9 +2010,7 @@
                                                                                                         <LayoutItemNestedControlCollection>
                                                                                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                                                                                 <dx:ASPxComboBox ID="drpdown_FAPWF" runat="server" ClientEnabled="False" ClientInstanceName="drpdown_FAPWF" DataSourceID="SqlFAPWF2" Font-Bold="True" Height="39px" SelectedIndex="0" TextField="Name" ValueField="WF_Id" Width="100%">
-                                                                                                                    <ClientSideEvents Init="function(s, e) {
-	WFSequenceGrid.PerformCallback();
-}" SelectedIndexChanged="function(s, e) {
+                                                                                                                    <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	        OnWFChanged();
         }" />
                                                                                                                     <SettingsLoadingPanel Enabled="False" />
