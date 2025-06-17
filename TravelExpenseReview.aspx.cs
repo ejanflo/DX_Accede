@@ -41,294 +41,384 @@ namespace DX_WebTemplate
                 {
                     AnfloSession.Current.CreateSession(HttpContext.Current.User.ToString());
 
-                    string empCode = Session["userID"].ToString();
-                    var mainExp = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).FirstOrDefault();
-                    var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).FirstOrDefault();
-                    var status = "";
-                    Session["statusid"] = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Disbursed").Select(x => x.STS_Id).FirstOrDefault();
-                    Session["appdoctype"] = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).Select(x => x.DCT_Id).FirstOrDefault();
-
-                    if (mainExp != null)
-                    {
-                        Session["isForeignTravel"] = mainExp.ForeignDomestic == "Foreign" ? 1 : 0;
-                        Session["ford"] = mainExp.ForeignDomestic;
-                        Session["currency"] = mainExp.ForeignDomestic == "Domestic" ? '₱' : mainExp.ForeignDomestic == "Foreign" ? '$' : ' ';
-                        status = _DataContext.ITP_S_Status.Where(x => x.STS_Id == Convert.ToInt32(mainExp.Status)).Select(x => x.STS_Description).FirstOrDefault();
-                        Session["doc_stat2"] = status;
-
-                        ExpenseEditForm.Items[0].Caption = "Travel Expense Document No.: " + mainExp.Doc_No + " (" + status + ")";
-
-                        if (status == "Pending at Finance" || status == "Pending at P2P")
-                        {
-                            chargedCB.ClientEnabled = true;
-                            chargedCB0.ClientEnabled = true;
-                            chargedCB.DropDownButton.Visible = true;
-                            chargedCB0.DropDownButton.Visible = true;
-                        }
-                        else
-                        {
-                            chargedCB.ClientEnabled = false;
-                            chargedCB0.ClientEnabled = false;
-                            chargedCB.DropDownButton.Visible = false;
-                            chargedCB0.DropDownButton.Visible = false;
-                        }
-
-                        SqlMain.SelectParameters["ID"].DefaultValue = mainExp.ID.ToString();
-                        timedepartTE.DateTime = DateTime.Parse(mainExp.Time_Departed.ToString());
-                        timearriveTE.DateTime = DateTime.Parse(mainExp.Time_Arrived.ToString());
-                        Session["DocNo"] = mainExp.Doc_No.ToString();
-
-                        var forAccounting = ExpenseEditForm.FindItemOrGroupByName("forAccounting") as LayoutGroup;
-                        if (status.Contains("Pending at Finance"))
-                            forAccounting.ClientVisible = true;
-                        else
-                            forAccounting.ClientVisible = false;
-
-                        var disapproveItem = ExpenseEditForm.FindItemOrGroupByName("disapproveItem") as LayoutItem;
-                        var returnItem = ExpenseEditForm.FindItemOrGroupByName("returnItem") as LayoutItem;
-                        var returnPrevItem = ExpenseEditForm.FindItemOrGroupByName("returnPrevItem") as LayoutItem;
-                        var forwardItem = ExpenseEditForm.FindItemOrGroupByName("forwardItem") as LayoutItem;
-
-                        // GET WORKFLOW ID 
-                        var wfID = Convert.ToInt32(Session["wf"]);
-                        // GET WORKFLOWDETAILS ID
-                        var wfdID = Convert.ToInt32(Session["wfd"]);
-                        // GET SEQUENCE
-                        var sequence = _DataContext.ITP_S_WorkflowDetails
-                            .Where(x => x.WFD_Id == wfdID)
-                            .Select(x => x.Sequence)
-                            .FirstOrDefault() + 1;
-                        // GET ORGROLE ID
-                        var orgRoleID = _DataContext.ITP_S_WorkflowDetails
-                            .Where(x => x.WF_Id == wfID && x.Sequence == sequence)
-                            .Select(x => x.OrgRole_Id)
-                            .FirstOrDefault();
-
-                        if ((status == "Pending at Finance") && orgRoleID == null)
-                        {
-                            forwardItem.Visible = true;
-
-                            var FinExecVerify = _DataContext.vw_ACCEDE_FinApproverVerifies.Where(x => x.UserId == empCode)
-                                .Where(x => x.Role_Name == "Accede Finance Executive").FirstOrDefault();
-
-                            var FinCFOVerify = _DataContext.vw_ACCEDE_FinApproverVerifies.Where(x => x.UserId == empCode)
-                                .Where(x => x.Role_Name == "Accede CFO").FirstOrDefault();
-
-                            if (FinExecVerify != null)
-                            {
-                                var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
-                                    .Where(x => x.Name.Contains("forward cfo") && x.App_Id == 1032 && (x.Company_Id == mainExp.Company_Id || x.Company_Id == mainExp.ChargedToComp))
-                                    .ToList();
-
-                                if (forwardWFList.Any()) // Ensure there's data before binding
-                                {
-                                    drpdown_ForwardWF.DataSource = forwardWFList;
-                                    drpdown_ForwardWF.ValueField = "WF_Id";
-                                    drpdown_ForwardWF.TextField = "Name";
-                                    drpdown_ForwardWF.DataBind();
-
-                                    if (drpdown_ForwardWF.Items.Count == 1)
-                                    {
-                                        drpdown_ForwardWF.SelectedIndex = 0;
-                                        SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
-
-                                    }
-                                }
-                            }
-                            else if (FinCFOVerify != null)
-                            {
-                                var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
-                                    .Where(x => x.Name.Contains("forward pres") && x.App_Id == 1032 && (x.Company_Id == mainExp.Company_Id || x.Company_Id == mainExp.ChargedToComp))
-                                    .ToList();
-
-                                if (forwardWFList.Any()) // Ensure there's data before binding
-                                {
-                                    drpdown_ForwardWF.DataSource = forwardWFList;
-                                    drpdown_ForwardWF.ValueField = "WF_Id";
-                                    drpdown_ForwardWF.TextField = "Name";
-                                    drpdown_ForwardWF.DataBind();
-
-                                    if (drpdown_ForwardWF.Items.Count == 1)
-                                    {
-                                        drpdown_ForwardWF.SelectedIndex = 0;
-                                        SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
-
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
-                                    .Where(x => x.Name.Contains("forward exec") && x.App_Id == 1032 && (x.Company_Id == mainExp.Company_Id || x.Company_Id == mainExp.ChargedToComp))
-                                    .ToList();
-
-                                if (forwardWFList.Any()) // Ensure there's data before binding
-                                {
-                                    drpdown_ForwardWF.DataSource = forwardWFList;
-                                    drpdown_ForwardWF.ValueField = "WF_Id";
-                                    drpdown_ForwardWF.TextField = "Name";
-                                    drpdown_ForwardWF.DataBind();
-
-                                    if (drpdown_ForwardWF.Items.Count == 1)
-                                    {
-                                        drpdown_ForwardWF.SelectedIndex = 0;
-                                        SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
-                                    }
-                                }
-                            }
-                        }
-                        else if ((status == "Forwarded") && orgRoleID == null)
-                        {
-                            forwardItem.Visible = true;
-
-                            var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
-                                    .Where(x => x.Name.Contains("forward"))
-                                    .Where(x => x.App_Id == 1032)
-                                    .Where(x => (x.Company_Id == mainExp.Company_Id || x.Company_Id == mainExp.ChargedToComp))
-                                    .ToList();
-
-                            if (forwardWFList.Any()) // Ensure there's data before binding
-                            {
-                                drpdown_ForwardWF.DataSource = forwardWFList;
-                                drpdown_ForwardWF.ValueField = "WF_Id";
-                                drpdown_ForwardWF.TextField = "Name";
-                                drpdown_ForwardWF.DataBind();
-
-                                if (drpdown_ForwardWF.Items.Count == 1)
-                                {
-                                    drpdown_ForwardWF.SelectedIndex = 0;
-                                    SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
-                                }
-                            }
-                        }
-                        else
-                        {
-                            forwardItem.Visible = false;
-                        }
-
-                        if (status == "Pending at Finance" || status == "Pending at P2P" || mainExp.ExpenseType_ID != 1)
-                        {
-                            disapproveItem.Visible = false;
-                        }
-
-                        if (status == "Pending at Audit")
-                        {
-                            disapproveItem.Visible = false;
-                            returnBtn.Text = "Return to Creator";
-                            returnPrevItem.ClientVisible = true;
-                        }
-
-                        if (status == "Pending at Cashier")
-                        {
-                            disapproveItem.Visible = false;
-                            returnItem.Visible = false;
-
-                            var fapWACount = _DataContext.ITP_T_WorkflowActivities.Count(x => x.AppId == 1032 && x.AppDocTypeId == app_docType.DCT_Id && x.Document_Id == mainExp.ID && x.WF_Id == mainExp.FAPWF_Id);
-
-                            if (fapWACount > 0)
-                            {
-                                approveBtn.Text = "Disburse";
-                                approvePopBtn.Text = "Disburse";
-                                ApprovePopup.HeaderText = "Disburse Expense Item";
-                                ASPxFormLayout1_E2.Text = "Are you sure to disburse item?";
-                            }
-                            else
-                            {
-                                approveBtn.Text = "Approve";
-                                approvePopBtn.Text = "Approve";
-                                ApprovePopup.HeaderText = "Approve Expense Report";
-                                ASPxFormLayout1_E2.Text = "Are you sure to approve item?";
-                            }
-                        }
-                    }
-
-                    var due_lbl = ExpenseEditForm.FindItemOrGroupByName("due_lbl") as LayoutItem;
-                    var reimDetails = ExpenseEditForm.FindItemOrGroupByName("reimDetails") as LayoutItem;
-                    var remItem = ExpenseEditForm.FindItemOrGroupByName("remItem") as LayoutItem;
-
-                    var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.isTravel == true && x.IsExpenseReim == true).FirstOrDefault();
-
-                    if (reim != null)
-                    {
-                        reimDetails.ClientVisible = true;
-                        reimTB.Text = Convert.ToString(reim.RFP_DocNum);
-                    }
-
-                    var travelExpId = Convert.ToInt32(Session["TravelExp_Id"]);
-                    var userId = Convert.ToString(Session["prep"]);
-
-                    var totalca = _DataContext.ACCEDE_T_RFPMains
-                        .Where(x => x.Exp_ID == travelExpId && x.TranType == 1 && x.User_ID == userId && x.isTravel == true)
-                        .Sum(x => (decimal?)x.Amount) ?? 0;
-                    Session["totalCA"] = totalca;
-
-                    var totalexp = _DataContext.ACCEDE_T_TravelExpenseDetails
-                        .Where(x => x.TravelExpenseMain_ID == travelExpId)
-                        .Sum(x => (decimal?)x.Total_Expenses) ?? 0;
-                    Session["totalEXP"] = totalexp;
-
-                    var countCA = _DataContext.ACCEDE_T_RFPMains
-                        .Count(x => x.Exp_ID == travelExpId && x.TranType == 1 && x.User_ID == userId && x.isTravel == true);
-
-                    var countExp = _DataContext.ACCEDE_T_TravelExpenseDetails
-                        .Count(x => x.TravelExpenseMain_ID == travelExpId);
-
-                    var expType = countCA > 0 && countExp == 0 ? "1" : countCA == 0 && countExp > 0 ? "2" : "1";
-
-                    if (totalexp > totalca)
-                    {
-                        remItem.ClientVisible = false;
-                        due_lbl.Caption = "Due To Employee";
-                        if (reim != null)
-                            reimDetails.ClientVisible = true;
-                        else
-                            reimDetails.ClientVisible = false;
-                    }
-                    else if (totalca > totalexp)
-                    {
-                        due_lbl.Caption = "Due To Company";
-                        reimDetails.ClientVisible = false;
-                        remItem.ClientVisible = true;
-
-                        if (status == "Pending at Cashier")
-                        {
-                            arNoTB.ClientEnabled = true;
-                            UploadController.ClientVisible = true;
-                        }
-                        else if (status == "Pending")
-                            remItem.ClientVisible = false;
-                    }
-                    else
-                    {
-                        due_lbl.Caption = "Due To Company";
-                        reimDetails.ClientVisible = false;
-                        remItem.ClientVisible = false;
-                    }
-
-                    departmentCB.Value = expType;
-                    lbl_caTotal.Text = Convert.ToString(Session["currency"]) + totalca.ToString("N2");
-                    lbl_expenseTotal.Text = Convert.ToString(Session["currency"]) + totalexp.ToString("N2");
-                    lbl_dueTotal.Text = totalexp > totalca ? "(" + Convert.ToString(Session["currency"]) + "" + (totalexp - totalca).ToString("N2") + ")" : Convert.ToString(Session["currency"]) + (totalca - totalexp).ToString("N2");
-
-                    var totExpCA = totalexp > totalca ? Convert.ToDecimal(totalexp - totalca) : Convert.ToDecimal(totalca - totalexp);
-
-                    if (mainExp != null)
-                    {
-                        Session["mainwfid"] = Convert.ToString(mainExp.WF_Id);
-                        SqlWF.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
-                        SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
-
-                        Session["fapwfid"] = Convert.ToString(mainExp.FAPWF_Id);
-                        SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
-                        SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
-                    }
-
                     if (!IsPostBack)
                     {
+                        string empCode = Session["userID"].ToString();
+                        var mainExp = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).FirstOrDefault();
+                        var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).FirstOrDefault();
+                        var status = "";
+                        Session["statusid"] = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Disbursed").Select(x => x.STS_Id).FirstOrDefault();
+                        Session["appdoctype"] = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).Select(x => x.DCT_Id).FirstOrDefault();
+
+                        if (mainExp != null)
+                        {
+                            Session["isForeignTravel"] = mainExp.ForeignDomestic == "Foreign" ? 1 : 0;
+                            Session["ford"] = mainExp.ForeignDomestic;
+                            Session["currency"] = mainExp.ForeignDomestic == "Domestic" ? '₱' : mainExp.ForeignDomestic == "Foreign" ? '$' : ' ';
+                            status = _DataContext.ITP_S_Status.Where(x => x.STS_Id == Convert.ToInt32(mainExp.Status)).Select(x => x.STS_Description).FirstOrDefault();
+                            Session["doc_stat2"] = status;
+
+                            Session["mainwfid"] = Convert.ToString(mainExp.WF_Id);
+                            SqlWF.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
+                            SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
+
+                            Session["fapwfid"] = Convert.ToString(mainExp.FAPWF_Id);
+                            SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
+                            SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
+                            
+                            ExpenseEditForm.Items[0].Caption = "Travel Expense Document No.: " + mainExp.Doc_No + " (" + status + ")";
+
+                            //if (status == "Pending at Finance" || status == "Pending at P2P")
+                            //{
+                            //    chargedCB.ClientEnabled = true;
+                            //    chargedCB0.ClientEnabled = true;
+                            //    chargedCB.DropDownButton.Visible = true;
+                            //    chargedCB0.DropDownButton.Visible = true;
+                            //}
+                            //else
+                            //{
+                            //    chargedCB.ClientEnabled = false;
+                            //    chargedCB0.ClientEnabled = false;
+                            //    chargedCB.DropDownButton.Visible = false;
+                            //    chargedCB0.DropDownButton.Visible = false;
+                            //}
+
+                            SqlMain.SelectParameters["ID"].DefaultValue = mainExp.ID.ToString();
+                            timedepartTE.DateTime = DateTime.Parse(mainExp.Time_Departed.ToString());
+                            timearriveTE.DateTime = DateTime.Parse(mainExp.Time_Arrived.ToString());
+                            Session["DocNo"] = mainExp.Doc_No.ToString();
+
+                            var forAccounting = ExpenseEditForm.FindItemOrGroupByName("forAccounting") as LayoutGroup;
+                            if (status.Contains("Pending at Finance"))
+                                forAccounting.ClientVisible = true;
+                            else
+                                forAccounting.ClientVisible = false;
+
+                            var disapproveItem = ExpenseEditForm.FindItemOrGroupByName("disapproveItem") as LayoutItem;
+                            var returnItem = ExpenseEditForm.FindItemOrGroupByName("returnItem") as LayoutItem;
+                            var returnPrevItem = ExpenseEditForm.FindItemOrGroupByName("returnPrevItem") as LayoutItem;
+                            var forwardItem = ExpenseEditForm.FindItemOrGroupByName("forwardItem") as LayoutItem;
+
+                            var due_lbl = ExpenseEditForm.FindItemOrGroupByName("due_lbl") as LayoutItem;
+                            var reimDetails = ExpenseEditForm.FindItemOrGroupByName("reimDetails") as LayoutItem;
+                            var remItem = ExpenseEditForm.FindItemOrGroupByName("remItem") as LayoutItem;
+                            var sapItem = ExpenseEditForm.FindItemOrGroupByName("sapItem") as LayoutItem;
+
+                            // GET WORKFLOW ID 
+                            var wfID = Convert.ToInt32(Session["wf"]);
+                            // GET WORKFLOWDETAILS ID
+                            var wfdID = Convert.ToInt32(Session["wfd"]);
+                            // GET SEQUENCE
+                            var sequence = _DataContext.ITP_S_WorkflowDetails
+                                .Where(x => x.WFD_Id == wfdID)
+                                .Select(x => x.Sequence)
+                                .FirstOrDefault() + 1;
+                            // GET ORGROLE ID
+                            var orgRoleID = _DataContext.ITP_S_WorkflowDetails
+                                .Where(x => x.WF_Id == wfID && x.Sequence == sequence)
+                                .Select(x => x.OrgRole_Id)
+                                .FirstOrDefault();
+
+                            // Enable or disable chargedCB and chargedCB0 based on status
+                            bool isPendingFinanceOrP2P = status == "Pending at Finance" || status == "Pending at P2P";
+
+                            chargedCB.ClientEnabled = isPendingFinanceOrP2P;
+                            chargedCB0.ClientEnabled = isPendingFinanceOrP2P;
+                            chargedCB.DropDownButton.Visible = isPendingFinanceOrP2P;
+                            chargedCB0.DropDownButton.Visible = isPendingFinanceOrP2P;
+
+                            // Forward dropdown logic
+                            bool isPendingFinanceOrForwarded = (status == "Pending at Finance" || status == "Forwarded") && orgRoleID == null;
+                            forwardItem.Visible = isPendingFinanceOrForwarded;
+
+                            if (isPendingFinanceOrForwarded)
+                            {
+                                string roleType = null;
+
+                                if (status == "Pending at Finance")
+                                {
+                                    if (_DataContext.vw_ACCEDE_FinApproverVerifies.Any(x => x.UserId == empCode && x.Role_Name == "Accede Finance Executive"))
+                                        roleType = "forward cfo";
+                                    else if (_DataContext.vw_ACCEDE_FinApproverVerifies.Any(x => x.UserId == empCode && x.Role_Name == "Accede CFO"))
+                                        roleType = "forward pres";
+                                    else
+                                        roleType = "forward exec";
+                                }
+                                else
+                                {
+                                    roleType = "forward";
+                                }
+
+                                var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
+                                    .Where(x => x.Name.Contains(roleType) && x.App_Id == 1032 && (x.Company_Id == mainExp.Company_Id || x.Company_Id == mainExp.ChargedToComp))
+                                    .ToList();
+
+                                if (forwardWFList.Any())
+                                {
+                                    drpdown_ForwardWF.DataSource = forwardWFList;
+                                    drpdown_ForwardWF.ValueField = "WF_Id";
+                                    drpdown_ForwardWF.TextField = "Name";
+                                    drpdown_ForwardWF.DataBind();
+
+                                    if (drpdown_ForwardWF.Items.Count == 1)
+                                    {
+                                        drpdown_ForwardWF.SelectedIndex = 0;
+                                        SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                forwardItem.Visible = false;
+                            }
+
+                            // Disapprove visibility rules
+                            if (status == "Pending at Finance" || status == "Pending at P2P" || mainExp.ExpenseType_ID != 1)
+                            {
+                                disapproveItem.Visible = false;
+                            }
+
+                            if (status == "Pending at Audit")
+                            {
+                                disapproveItem.Visible = false;
+                                returnBtn.Text = "Return to Creator";
+                                returnPrevItem.ClientVisible = true;
+                            }
+
+                            if (status == "Pending at Cashier")
+                            {
+                                disapproveItem.Visible = false;
+                                returnItem.Visible = false;
+
+                                var fapWACount = _DataContext.ITP_T_WorkflowActivities.Count(x =>
+                                    x.AppId == 1032 &&
+                                    x.AppDocTypeId == app_docType.DCT_Id &&
+                                    x.Document_Id == mainExp.ID &&
+                                    x.WF_Id == mainExp.FAPWF_Id);
+
+                                if (fapWACount > 0)
+                                {
+                                    approveBtn.Text = "Disburse";
+                                    approvePopBtn.Text = "Disburse";
+                                    ApprovePopup.HeaderText = "Disburse Expense Item";
+                                    ASPxFormLayout1_E2.Text = "Are you sure to disburse item?";
+                                }
+                                else
+                                {
+                                    approveBtn.Text = "Approve";
+                                    approvePopBtn.Text = "Approve";
+                                    ApprovePopup.HeaderText = "Approve Expense Report";
+                                    ASPxFormLayout1_E2.Text = "Are you sure to approve item?";
+                                }
+                            }
+
+                            //if ((status == "Pending at Finance") && orgRoleID == null)
+                            //{
+                            //    forwardItem.Visible = true;
+
+                            //    var FinExecVerify = _DataContext.vw_ACCEDE_FinApproverVerifies.Where(x => x.UserId == empCode)
+                            //        .Where(x => x.Role_Name == "Accede Finance Executive").FirstOrDefault();
+
+                            //    var FinCFOVerify = _DataContext.vw_ACCEDE_FinApproverVerifies.Where(x => x.UserId == empCode)
+                            //        .Where(x => x.Role_Name == "Accede CFO").FirstOrDefault();
+
+                            //    if (FinExecVerify != null)
+                            //    {
+                            //        var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
+                            //            .Where(x => x.Name.Contains("forward cfo") && x.App_Id == 1032 && (x.Company_Id == mainExp.Company_Id || x.Company_Id == mainExp.ChargedToComp))
+                            //            .ToList();
+
+                            //        if (forwardWFList.Any()) // Ensure there's data before binding
+                            //        {
+                            //            drpdown_ForwardWF.DataSource = forwardWFList;
+                            //            drpdown_ForwardWF.ValueField = "WF_Id";
+                            //            drpdown_ForwardWF.TextField = "Name";
+                            //            drpdown_ForwardWF.DataBind();
+
+                            //            if (drpdown_ForwardWF.Items.Count == 1)
+                            //            {
+                            //                drpdown_ForwardWF.SelectedIndex = 0;
+                            //                SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
+
+                            //            }
+                            //        }
+                            //    }
+                            //    else if (FinCFOVerify != null)
+                            //    {
+                            //        var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
+                            //            .Where(x => x.Name.Contains("forward pres") && x.App_Id == 1032 && (x.Company_Id == mainExp.Company_Id || x.Company_Id == mainExp.ChargedToComp))
+                            //            .ToList();
+
+                            //        if (forwardWFList.Any()) // Ensure there's data before binding
+                            //        {
+                            //            drpdown_ForwardWF.DataSource = forwardWFList;
+                            //            drpdown_ForwardWF.ValueField = "WF_Id";
+                            //            drpdown_ForwardWF.TextField = "Name";
+                            //            drpdown_ForwardWF.DataBind();
+
+                            //            if (drpdown_ForwardWF.Items.Count == 1)
+                            //            {
+                            //                drpdown_ForwardWF.SelectedIndex = 0;
+                            //                SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
+
+                            //            }
+                            //        }
+                            //    }
+                            //    else
+                            //    {
+                            //        var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
+                            //            .Where(x => x.Name.Contains("forward exec") && x.App_Id == 1032 && (x.Company_Id == mainExp.Company_Id || x.Company_Id == mainExp.ChargedToComp))
+                            //            .ToList();
+
+                            //        if (forwardWFList.Any()) // Ensure there's data before binding
+                            //        {
+                            //            drpdown_ForwardWF.DataSource = forwardWFList;
+                            //            drpdown_ForwardWF.ValueField = "WF_Id";
+                            //            drpdown_ForwardWF.TextField = "Name";
+                            //            drpdown_ForwardWF.DataBind();
+
+                            //            if (drpdown_ForwardWF.Items.Count == 1)
+                            //            {
+                            //                drpdown_ForwardWF.SelectedIndex = 0;
+                            //                SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
+                            //            }
+                            //        }
+                            //    }
+                            //}
+                            //else if ((status == "Forwarded") && orgRoleID == null)
+                            //{
+                            //    forwardItem.Visible = true;
+
+                            //    var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
+                            //            .Where(x => x.Name.Contains("forward"))
+                            //            .Where(x => x.App_Id == 1032)
+                            //            .Where(x => (x.Company_Id == mainExp.Company_Id || x.Company_Id == mainExp.ChargedToComp))
+                            //            .ToList();
+
+                            //    if (forwardWFList.Any()) // Ensure there's data before binding
+                            //    {
+                            //        drpdown_ForwardWF.DataSource = forwardWFList;
+                            //        drpdown_ForwardWF.ValueField = "WF_Id";
+                            //        drpdown_ForwardWF.TextField = "Name";
+                            //        drpdown_ForwardWF.DataBind();
+
+                            //        if (drpdown_ForwardWF.Items.Count == 1)
+                            //        {
+                            //            drpdown_ForwardWF.SelectedIndex = 0;
+                            //            SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
+                            //        }
+                            //    }
+                            //}
+                            //else
+                            //{
+                            //    forwardItem.Visible = false;
+                            //}
+
+                            //if (status == "Pending at Finance" || status == "Pending at P2P" || mainExp.ExpenseType_ID != 1)
+                            //{
+                            //    disapproveItem.Visible = false;
+                            //}
+
+                            //if (status == "Pending at Audit")
+                            //{
+                            //    disapproveItem.Visible = false;
+                            //    returnBtn.Text = "Return to Creator";
+                            //    returnPrevItem.ClientVisible = true;
+                            //}
+
+                            //if (status == "Pending at Cashier")
+                            //{
+                            //    disapproveItem.Visible = false;
+                            //    returnItem.Visible = false;
+
+                            //    var fapWACount = _DataContext.ITP_T_WorkflowActivities.Count(x => x.AppId == 1032 && x.AppDocTypeId == app_docType.DCT_Id && x.Document_Id == mainExp.ID && x.WF_Id == mainExp.FAPWF_Id);
+
+                            //    if (fapWACount > 0)
+                            //    {
+                            //        approveBtn.Text = "Disburse";
+                            //        approvePopBtn.Text = "Disburse";
+                            //        ApprovePopup.HeaderText = "Disburse Expense Item";
+                            //        ASPxFormLayout1_E2.Text = "Are you sure to disburse item?";
+                            //    }
+                            //    else
+                            //    {
+                            //        approveBtn.Text = "Approve";
+                            //        approvePopBtn.Text = "Approve";
+                            //        ApprovePopup.HeaderText = "Approve Expense Report";
+                            //        ASPxFormLayout1_E2.Text = "Are you sure to approve item?";
+                            //    }
+                            //}
+
+                            var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.isTravel == true && x.IsExpenseReim == true).FirstOrDefault();
+
+                            if (reim != null)
+                            {
+                                reimDetails.ClientVisible = true;
+                                
+                            }
+
+                            var travelExpId = Convert.ToInt32(Session["TravelExp_Id"]);
+                            var userId = Convert.ToString(Session["prep"]);
+
+                            var totalca = _DataContext.ACCEDE_T_RFPMains
+                                .Where(x => x.Exp_ID == travelExpId && x.TranType == 1 && x.User_ID == userId && x.isTravel == true)
+                                .Sum(x => (decimal?)x.Amount) ?? 0;
+                            Session["totalCA"] = totalca;
+
+                            var totalexp = _DataContext.ACCEDE_T_TravelExpenseDetails
+                                .Where(x => x.TravelExpenseMain_ID == travelExpId)
+                                .Sum(x => (decimal?)x.Total_Expenses) ?? 0;
+                            Session["totalEXP"] = totalexp;
+
+                            var countCA = _DataContext.ACCEDE_T_RFPMains
+                                .Count(x => x.Exp_ID == travelExpId && x.TranType == 1 && x.User_ID == userId && x.isTravel == true);
+
+                            var countExp = _DataContext.ACCEDE_T_TravelExpenseDetails
+                                .Count(x => x.TravelExpenseMain_ID == travelExpId);
+
+                            var expType = countCA > 0 && countExp == 0 ? "1" : countCA == 0 && countExp > 0 ? "2" : "1";
+
+                            if (totalexp > totalca)
+                            {
+                                remItem.ClientVisible = false;
+                                due_lbl.Caption = "Due To Employee";
+                                if (reim != null)
+                                    reimDetails.ClientVisible = true;
+                                else
+                                    reimDetails.ClientVisible = false;
+                            }
+                            else if (totalca > totalexp)
+                            {
+                                due_lbl.Caption = "Due To Company";
+                                reimDetails.ClientVisible = false;
+                                remItem.ClientVisible = true;
+
+                                if (status == "Pending at Cashier")
+                                {
+                                    arNoTB.ClientEnabled = true;
+                                    UploadController.ClientVisible = true;
+                                }
+                                else if (status == "Pending")
+                                    remItem.ClientVisible = false;
+                            }
+                            else
+                            {
+                                due_lbl.Caption = "Due To Company";
+                                reimDetails.ClientVisible = false;
+                                remItem.ClientVisible = false;
+                            }
+
+                            departmentCB.Value = expType;
+                            lbl_caTotal.Text = Convert.ToString(Session["currency"]) + totalca.ToString("N2");
+                            lbl_expenseTotal.Text = Convert.ToString(Session["currency"]) + totalexp.ToString("N2");
+                            lbl_dueTotal.Text = totalexp > totalca ? "(" + Convert.ToString(Session["currency"]) + "" + (totalexp - totalca).ToString("N2") + ")" : Convert.ToString(Session["currency"]) + (totalca - totalexp).ToString("N2");
+
+                            var totExpCA = totalexp > totalca ? Convert.ToDecimal(totalexp - totalca) : Convert.ToDecimal(totalca - totalexp);
+
+                        }
+
                         CAGrid.DataBind();
                         ExpenseGrid.DataBind();
-
-                        //InitializeExpCA(mainExp, status);
                     }
                 }
                 else
@@ -338,18 +428,6 @@ namespace DX_WebTemplate
             {
                 //Response.Redirect("~/Logon.aspx");
                 Debug.WriteLine(ex.Message);
-            }
-        }
-
-        private void InitializeExpCA(ACCEDE_T_TravelExpenseMain mainExp, string status)
-        {
-            try
-            {
-                
-            }
-            catch (Exception)
-            {
-                Response.Redirect("~/Logon.aspx");
             }
         }
 
@@ -385,16 +463,24 @@ namespace DX_WebTemplate
                     docs.App_ID = 1032;
                     docs.User_ID = Session["userID"].ToString();
                     docs.FileExtension = file.FileName.Split('.').Last();
-                    docs.Description = String.Empty;
                     docs.FileSize = filesizeStr;
                     docs.Doc_No = Session["DocNo"].ToString();
-                    docs.Company_ID = Convert.ToInt32(companyCB.Value);
+                    docs.Company_ID = Convert.ToInt32(chargedCB.Value);
                     docs.DateUploaded = DateTime.Now;
                     docs.DocType_Id = app_docType != null ? app_docType.DCT_Id : 0;
-                };
+                }
                 _DataContext.ITP_T_FileAttachments.InsertOnSubmit(docs);
+                _DataContext.SubmitChanges();
+
+                ACCEDE_T_TravelExpenseDetailsFileAttach attach = new ACCEDE_T_TravelExpenseDetailsFileAttach();
+                {
+                    attach.FileAttachment_ID = docs.ID;
+                    attach.ExpenseDetails_ID = docs.Doc_ID;
+                    attach.DocumentType = "main";
+                }
+                _DataContext.ACCEDE_T_TravelExpenseDetailsFileAttaches.InsertOnSubmit(attach);
+                _DataContext.SubmitChanges();
             }
-            _DataContext.SubmitChanges();
             SqlDocs.DataBind();
         }
 

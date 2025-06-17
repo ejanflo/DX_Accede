@@ -825,13 +825,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxGridView TraDocuGrid;
 
         /// <summary>
-        /// ASPxTextBox6 control.
+        /// btnDownload0 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox6;
+        protected global::DevExpress.Web.GridViewCommandColumnCustomButton btnDownload0;
 
         /// <summary>
         /// LoadingPanel control.
@@ -1005,13 +1005,13 @@ namespace DX_WebTemplate
         protected global::System.Web.UI.WebControls.SqlDataSource SqlDocs;
 
         /// <summary>
-        /// SqlDocs2 control.
+        /// SqlDocs1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.SqlDataSource SqlDocs2;
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlDocs1;
 
         /// <summary>
         /// SqlRTMap control.

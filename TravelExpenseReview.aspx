@@ -785,12 +785,6 @@
                                                     <ParentContainerStyle Font-Bold="True">
                                                     </ParentContainerStyle>
                                                 </dx:LayoutItem>
-                                                <dx:EmptyLayoutItem ColSpan="1">
-                                                    <BorderBottom BorderColor="#878787" BorderStyle="Solid" BorderWidth="1px" />
-                                                    <ParentContainerStyle>
-                                                        <Paddings PaddingBottom="15px" />
-                                                    </ParentContainerStyle>
-                                                </dx:EmptyLayoutItem>
                                                 <dx:LayoutItem Caption="Reimbursement Details" ClientVisible="False" ColSpan="1" Name="reimDetails" Width="100%">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
@@ -814,7 +808,7 @@
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings Location="Top" />
-                                                    <Paddings Padding="0px" PaddingBottom="20px" />
+                                                    <Paddings PaddingTop="20px" />
                                                     <CaptionCellStyle>
                                                         <Paddings PaddingBottom="10px" />
                                                     </CaptionCellStyle>
@@ -833,13 +827,23 @@
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings Location="Top" />
-                                                    <Paddings PaddingBottom="20px" />
+                                                    <Paddings PaddingTop="20px" />
                                                 </dx:LayoutItem>
-                                                <dx:EmptyLayoutItem ColSpan="1">
-                                                    <BorderTop BorderColor="#878787" BorderStyle="Solid" BorderWidth="1px" />
-                                                </dx:EmptyLayoutItem>
+                                                <dx:LayoutItem Caption="SAP Document No." ClientVisible="False" ColSpan="1" Name="sapItem">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxCheckBox ID="sapCheck" runat="server" CheckState="Unchecked" ClientEnabled="False" ClientInstanceName="sapCheck" Width="100%">
+                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True">
+                                                                    <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                </ValidationSettings>
+                                                            </dx:ASPxCheckBox>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionSettings Location="Top" />
+                                                    <Paddings PaddingTop="20px" />
+                                                </dx:LayoutItem>
                                                 <dx:LayoutGroup Caption="For Accounting Department Use Only" ColSpan="1" GroupBoxDecoration="HeadingLine" Name="forAccounting" CssClass="p-0">
-                                                    <Paddings Padding="0px" />
+                                                    <Paddings PaddingTop="20px" />
                                                     <Items>
                                                         <dx:LayoutItem Caption="" ColSpan="1" Width="100%" CssClass="p-0">
                                                             <LayoutItemNestedControlCollection>
@@ -1376,7 +1380,7 @@
                                                 <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Center" Width="100%">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxUploadControl ID="UploadController" runat="server" AutoStartUpload="True" OnFilesUploadComplete="UploadController_FilesUploadComplete" ShowProgressPanel="True" UploadMode="Auto" Width="100%" ClientVisible="False">
+                                                            <dx:ASPxUploadControl ID="UploadController" runat="server" AutoStartUpload="True" OnFilesUploadComplete="UploadController_FilesUploadComplete" ShowProgressPanel="True" UploadMode="Auto" Width="100%">
                                                                 <ClientSideEvents FilesUploadComplete="function(s, e) {
 	DocumentGrid.Refresh();
 }
@@ -1546,35 +1550,35 @@
                                                                                                             <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="7">
                                                                                                                 <EditFormSettings Visible="False" />
                                                                                                             </dx:GridViewDataTextColumn>
-                                                                                                            <dx:GridViewDataComboBoxColumn FieldName="Status" ShowInCustomizationForm="True" VisibleIndex="8">
-                                                                                                                <PropertiesComboBox DataSourceID="SqlStatus" TextField="STS_Description" ValueField="STS_Id">
-                                                                                                                </PropertiesComboBox>
-                                                                                                            </dx:GridViewDataComboBoxColumn>
                                                                                                             <dx:GridViewDataComboBoxColumn Caption="Approver" FieldName="ActedBy_User_Id" ShowInCustomizationForm="True" VisibleIndex="1">
                                                                                                                 <PropertiesComboBox DataSourceID="SqlEmpName" TextField="FullName" ValueField="EmpCode">
                                                                                                                 </PropertiesComboBox>
                                                                                                                 <CellStyle Font-Bold="False">
                                                                                                                 </CellStyle>
                                                                                                             </dx:GridViewDataComboBoxColumn>
+                                                                                                            <dx:GridViewDataTextColumn Caption="Status" FieldName="STS_Description" ShowInCustomizationForm="True" VisibleIndex="9">
+                                                                                                                <CellStyle HorizontalAlign="Center">
+                                                                                                                </CellStyle>
+                                                                                                            </dx:GridViewDataTextColumn>
                                                                                                         </Columns>
                                                                                                         <FormatConditions>
-                                                                                                            <dx:GridViewFormatConditionHighlight Expression="[Status] = 7 Or [Status] = 40 Or [Status] = 28" FieldName="Status" Format="Custom">
-                                                                                                                <CellStyle Font-Bold="True" ForeColor="#006838">
-                                                                                                                </CellStyle>
-                                                                                                            </dx:GridViewFormatConditionHighlight>
-                                                                                                            <dx:GridViewFormatConditionHighlight Expression="[Status] = 2 Or [Status] = 3 Or [Status] = 15 Or [Status] = 29 Or [Status] = 35 Or [Status] = 37 Or [Status] = 39" FieldName="Status" Format="Custom">
-                                                                                                                <CellStyle Font-Bold="True" ForeColor="#E67C0E">
-                                                                                                                </CellStyle>
-                                                                                                            </dx:GridViewFormatConditionHighlight>
-                                                                                                            <dx:GridViewFormatConditionHighlight Expression="[Status] = 8" FieldName="Status" Format="Custom">
-                                                                                                                <CellStyle Font-Bold="True" ForeColor="#CC2A17">
-                                                                                                                </CellStyle>
-                                                                                                            </dx:GridViewFormatConditionHighlight>
-                                                                                                            <dx:GridViewFormatConditionHighlight Expression="[Status] = 1 Or [Status] = 30 Or [Status] = 34 Or [Status] = 36 Or [Status] = 38" FieldName="Status" Format="Custom">
+                                                                                                            <dx:GridViewFormatConditionHighlight Expression="[STS_Description] = 'Pending' Or [STS_Description] = 'Pending at Finance' Or [STS_Description] = 'Pending at Audit' Or [STS_Description] = 'Pending at P2P' Or [STS_Description] = 'Pending at Cashier'" FieldName="STS_Description" Format="Custom">
                                                                                                                 <CellStyle Font-Bold="True" ForeColor="#006DD6">
                                                                                                                 </CellStyle>
                                                                                                             </dx:GridViewFormatConditionHighlight>
-                                                                                                            <dx:GridViewFormatConditionHighlight Expression="[Status] = 41" FieldName="Status" Format="Custom">
+                                                                                                            <dx:GridViewFormatConditionHighlight Expression="[STS_Description] = 'Completed' Or [STS_Description] = 'Approved'" FieldName="STS_Description" Format="Custom">
+                                                                                                                <CellStyle Font-Bold="True" ForeColor="#006838">
+                                                                                                                </CellStyle>
+                                                                                                            </dx:GridViewFormatConditionHighlight>
+                                                                                                            <dx:GridViewFormatConditionHighlight Expression="[STS_Description] = 'Rejected' Or [STS_Description] = 'Returned'" FieldName="STS_Description" Format="Custom">
+                                                                                                                <CellStyle Font-Bold="True" ForeColor="#E67C0E">
+                                                                                                                </CellStyle>
+                                                                                                            </dx:GridViewFormatConditionHighlight>
+                                                                                                            <dx:GridViewFormatConditionHighlight Expression="[STS_Description] = 'Disapproved'" FieldName="STS_Description" Format="Custom">
+                                                                                                                <CellStyle Font-Bold="True" ForeColor="#CC2A17">
+                                                                                                                </CellStyle>
+                                                                                                            </dx:GridViewFormatConditionHighlight>
+                                                                                                            <dx:GridViewFormatConditionHighlight Expression="[STS_Description] = 'Forwarded'" FieldName="STS_Description" Format="Custom">
                                                                                                                 <CellStyle Font-Bold="True" ForeColor="#878787">
                                                                                                                 </CellStyle>
                                                                                                             </dx:GridViewFormatConditionHighlight>
@@ -1816,15 +1820,6 @@
                                     </dx:LayoutItem>
                                 </Items>
                             </dx:LayoutGroup>
-                            <dx:LayoutItem Caption="Total Expenses" ColSpan="1" HorizontalAlign="Right" Visible="False">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="ASPxTextBox7" runat="server" Width="50%">
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <BorderTop BorderStyle="Solid" />
-                            </dx:LayoutItem>
                             <dx:TabbedLayoutGroup ColSpan="1" Width="100%">
                                 <Items>
                                     <dx:LayoutGroup Caption="Expense Items" ColSpan="1" Width="100%">
@@ -2380,16 +2375,6 @@
                                 </LayoutItemNestedControlCollection>
                                 <CaptionSettings HorizontalAlign="Left" VerticalAlign="Middle" />
                             </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Projected Liquidation Date" ColSpan="1" Name="PLD" ShowCaption="True" Visible="False" Width="100%">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="PLD_lbl" runat="server" Font-Bold="True" Font-Size="Medium" ReadOnly="True" Width="100%">
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" BorderWidth="1px" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                            </dx:LayoutItem>
                             <dx:LayoutItem Caption="Type of Transaction" ColSpan="1" Width="100%" VerticalAlign="Middle">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
@@ -2442,17 +2427,6 @@ onTravelClick();
                                 <CaptionSettings HorizontalAlign="Left" VerticalAlign="Middle" />
                                 <CaptionStyle Font-Italic="False" Font-Size="Small">
                                 </CaptionStyle>
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="WBS" ColSpan="1" FieldName="WBS" Name="WBS" Visible="False" Width="100%">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="ASPxTextBox12" runat="server" Font-Bold="True" Font-Size="Medium" ReadOnly="True" Width="100%">
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" BorderWidth="1px" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Left" Location="Top" />
                             </dx:LayoutItem>
                             <dx:LayoutItem Caption="Nature of Disbursement/Purpose" ColSpan="1" Width="100%" VerticalAlign="Middle">
                                 <LayoutItemNestedControlCollection>
@@ -2576,235 +2550,6 @@ onTravelClick();
                             </dx:LayoutItem>
                         </Items>
                         <SettingsItemCaptions ChangeCaptionLocationInAdaptiveMode="True" HorizontalAlign="Right" />
-                    </dx:LayoutGroup>
-                    <dx:LayoutGroup Caption="Supporting Documents" ColSpan="1" Visible="False" Width="100%">
-                        <Items>
-                            <dx:LayoutItem Caption="" ClientVisible="False" ColSpan="1" Name="uploader_cashier">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxUploadControl ID="UploadController0" runat="server" AutoStartUpload="True" OnFilesUploadComplete="UploadController_FilesUploadComplete" ShowProgressPanel="True" UploadMode="Auto" Width="80%">
-                                            <ClientSideEvents FilesUploadComplete="function(s, e) {
-	DocuGrid.Refresh();
-}
-" />
-                                            <AdvancedModeSettings EnableDragAndDrop="True" EnableFileList="True" EnableMultiSelect="True">
-                                            </AdvancedModeSettings>
-                                        </dx:ASPxUploadControl>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxGridView ID="DocuGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="DocuGrid" KeyFieldName="ID">
-                                            <ClientSideEvents CustomButtonClick="onViewAttachment" />
-                                            <SettingsPopup>
-                                                <FilterControl AutoUpdatePosition="False">
-                                                </FilterControl>
-                                            </SettingsPopup>
-                                            <Columns>
-                                                <dx:GridViewCommandColumn Caption="Action" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                    <CustomButtons>
-                                                        <dx:GridViewCommandColumnCustomButton ID="btnDownloadFile" Text="Open File">
-                                                            <Image IconID="pdfviewer_next_svg_16x16">
-                                                            </Image>
-                                                        </dx:GridViewCommandColumnCustomButton>
-                                                        <dx:GridViewCommandColumnCustomButton ID="btnRemove" Text="Remove">
-                                                            <Image IconID="iconbuilder_actions_trash_svg_16x16">
-                                                            </Image>
-                                                            <Styles>
-                                                                <Style ForeColor="Red">
-                                                                </Style>
-                                                            </Styles>
-                                                        </dx:GridViewCommandColumnCustomButton>
-                                                    </CustomButtons>
-                                                    <CellStyle HorizontalAlign="Left">
-                                                    </CellStyle>
-                                                </dx:GridViewCommandColumn>
-                                                <dx:GridViewDataTextColumn FieldName="ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="0">
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn Caption="File Name" FieldName="FileName" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn Caption="Description" FieldName="FileDesc" ShowInCustomizationForm="True" VisibleIndex="4">
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn Caption="File Size" FieldName="FileSize" ShowInCustomizationForm="True" VisibleIndex="5">
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn FieldName="Orig_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="6">
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn FieldName="isExist" ShowInCustomizationForm="True" Visible="False" VisibleIndex="7">
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn Caption="File Ext" FieldName="FileExt" ShowInCustomizationForm="True" VisibleIndex="3">
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn FieldName="FileByte" ShowInCustomizationForm="True" Visible="False" VisibleIndex="8">
-                                                </dx:GridViewDataTextColumn>
-                                            </Columns>
-                                        </dx:ASPxGridView>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                            </dx:LayoutItem>
-                        </Items>
-                    </dx:LayoutGroup>
-                    <dx:LayoutGroup Caption="Workflow" ColCount="3" ColSpan="2" ColumnCount="3" ColumnSpan="2" GroupBoxDecoration="HeadingLine" Visible="False" Width="100%">
-                        <Items>
-                            <dx:LayoutItem Caption="" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxButton ID="WFbtnToggle" runat="server" AutoPostBack="False" ClientInstanceName="WFbtnToggle" HorizontalAlign="Left" RenderMode="Link" Text="Show">
-                                            <ClientSideEvents Click="function(s, e) {
-	isToggleWF();
-}" />
-                                            <Image IconID="outlookinspired_expandcollapse_svg_32x32">
-                                            </Image>
-                                        </dx:ASPxButton>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                            </dx:LayoutItem>
-                            <dx:LayoutGroup Caption="" ClientVisible="False" ColCount="2" ColSpan="1" ColumnCount="2" Name="WFLayout" Width="100%">
-                                <Items>
-                                    <dx:LayoutGroup Caption="Workflow Details" ColSpan="1" GroupBoxDecoration="HeadingLine">
-                                        <GroupBoxStyle>
-                                            <Caption Font-Bold="True">
-                                            </Caption>
-                                        </GroupBoxStyle>
-                                        <Items>
-                                            <dx:LayoutItem Caption="Workflow" ColSpan="1" FieldName="Name">
-                                                <LayoutItemNestedControlCollection>
-                                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                                        <dx:ASPxTextBox ID="ASPxTextBox14" runat="server" Font-Bold="True" Font-Size="Medium" ReadOnly="True" Width="100%">
-                                                            <Border BorderStyle="None" />
-                                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" BorderWidth="1px" />
-                                                        </dx:ASPxTextBox>
-                                                    </dx:LayoutItemNestedControlContainer>
-                                                </LayoutItemNestedControlCollection>
-                                                <CaptionSettings HorizontalAlign="Right" />
-                                            </dx:LayoutItem>
-                                        </Items>
-                                    </dx:LayoutGroup>
-                                    <dx:LayoutGroup Caption="Workflow Sequence" ColSpan="1" GroupBoxDecoration="HeadingLine">
-                                        <Items>
-                                            <dx:LayoutItem Caption="" ColSpan="1">
-                                                <LayoutItemNestedControlCollection>
-                                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                                        <dx:ASPxGridView ID="WFSequenceGrid1" runat="server" AutoGenerateColumns="False" ClientInstanceName="WFSequenceGrid" DataSourceID="SqlWorkflowSequence" Width="100%">
-                                                            <SettingsEditing Mode="Batch">
-                                                            </SettingsEditing>
-                                                            <SettingsDataSecurity AllowDelete="False" AllowEdit="False" AllowInsert="False" />
-                                                            <SettingsPopup>
-                                                                <FilterControl AutoUpdatePosition="False">
-                                                                </FilterControl>
-                                                            </SettingsPopup>
-                                                            <Columns>
-                                                                <dx:GridViewDataTextColumn Caption="Sequence" FieldName="Sequence" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                                </dx:GridViewDataTextColumn>
-                                                                <dx:GridViewDataComboBoxColumn Caption="Approver" FieldName="FullName" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                                    <PropertiesComboBox TextFormatString="{0}" ValueField="TerritoryID">
-                                                                        <Columns>
-                                                                            <dx:ListBoxColumn Caption="Territory" FieldName="TerritoryDescription">
-                                                                            </dx:ListBoxColumn>
-                                                                            <dx:ListBoxColumn Caption="Region" FieldName="RegionID">
-                                                                            </dx:ListBoxColumn>
-                                                                        </Columns>
-                                                                    </PropertiesComboBox>
-                                                                </dx:GridViewDataComboBoxColumn>
-                                                            </Columns>
-                                                        </dx:ASPxGridView>
-                                                    </dx:LayoutItemNestedControlContainer>
-                                                </LayoutItemNestedControlCollection>
-                                            </dx:LayoutItem>
-                                        </Items>
-                                    </dx:LayoutGroup>
-                                    <dx:LayoutGroup Caption="FAP Workflow Details" ColSpan="1" GroupBoxDecoration="HeadingLine">
-                                        <Items>
-                                            <dx:LayoutItem Caption="Workflow" ColSpan="1" FieldName="FAPWorkflow">
-                                                <LayoutItemNestedControlCollection>
-                                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                                        <dx:ASPxTextBox ID="ASPxTextBox15" runat="server" Font-Bold="True" Font-Size="Medium" ReadOnly="True" Width="100%">
-                                                            <Border BorderStyle="None" />
-                                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" BorderWidth="1px" />
-                                                        </dx:ASPxTextBox>
-                                                    </dx:LayoutItemNestedControlContainer>
-                                                </LayoutItemNestedControlCollection>
-                                                <CaptionSettings HorizontalAlign="Right" />
-                                            </dx:LayoutItem>
-                                        </Items>
-                                    </dx:LayoutGroup>
-                                    <dx:LayoutGroup Caption="FAP Workfow Sequence" ColSpan="1" GroupBoxDecoration="HeadingLine">
-                                        <Items>
-                                            <dx:LayoutItem Caption="" ColSpan="1">
-                                                <LayoutItemNestedControlCollection>
-                                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                                        <dx:ASPxGridView ID="FAPWFGrid0" runat="server" AutoGenerateColumns="False" ClientInstanceName="FAPWFGrid" DataSourceID="SqlFAPWF" Width="100%">
-                                                            <SettingsEditing Mode="Batch">
-                                                            </SettingsEditing>
-                                                            <SettingsDataSecurity AllowDelete="False" AllowEdit="False" AllowInsert="False" />
-                                                            <SettingsPopup>
-                                                                <FilterControl AutoUpdatePosition="False">
-                                                                </FilterControl>
-                                                            </SettingsPopup>
-                                                            <Columns>
-                                                                <dx:GridViewDataTextColumn Caption="Sequence" FieldName="Sequence" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                                </dx:GridViewDataTextColumn>
-                                                                <dx:GridViewDataComboBoxColumn Caption="Approver" FieldName="FullName" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                                    <PropertiesComboBox TextFormatString="{0}" ValueField="TerritoryID">
-                                                                        <Columns>
-                                                                            <dx:ListBoxColumn Caption="Territory" FieldName="TerritoryDescription">
-                                                                            </dx:ListBoxColumn>
-                                                                            <dx:ListBoxColumn Caption="Region" FieldName="RegionID">
-                                                                            </dx:ListBoxColumn>
-                                                                        </Columns>
-                                                                    </PropertiesComboBox>
-                                                                </dx:GridViewDataComboBoxColumn>
-                                                            </Columns>
-                                                        </dx:ASPxGridView>
-                                                    </dx:LayoutItemNestedControlContainer>
-                                                </LayoutItemNestedControlCollection>
-                                            </dx:LayoutItem>
-                                        </Items>
-                                    </dx:LayoutGroup>
-                                </Items>
-                            </dx:LayoutGroup>
-                        </Items>
-                    </dx:LayoutGroup>
-                    <dx:LayoutGroup Caption="Workflow Activity" ColSpan="2" ColumnSpan="2" GroupBoxDecoration="HeadingLine" Visible="False" Width="100%">
-                        <Items>
-                            <dx:LayoutItem Caption="" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxGridView ID="WFActivityGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="WFActivityGrid" DataSourceID="SqlActivity" Width="100%">
-                                            <SettingsEditing Mode="Batch">
-                                            </SettingsEditing>
-                                            <SettingsDataSecurity AllowDelete="False" AllowEdit="False" AllowInsert="False" />
-                                            <SettingsPopup>
-                                                <FilterControl AutoUpdatePosition="False">
-                                                </FilterControl>
-                                            </SettingsPopup>
-                                            <Columns>
-                                                <dx:GridViewDataTextColumn FieldName="DateAssigned" ShowInCustomizationForm="True" VisibleIndex="3">
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn FieldName="DateAction" ShowInCustomizationForm="True" VisibleIndex="4">
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataComboBoxColumn Caption="Workflow" FieldName="WF_Id" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                    <PropertiesComboBox DataSourceID="SqlWorkflow" TextField="Description" ValueField="WF_Id">
-                                                    </PropertiesComboBox>
-                                                </dx:GridViewDataComboBoxColumn>
-                                                <dx:GridViewDataComboBoxColumn Caption="Org Role" FieldName="OrgRole_Id" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                    <PropertiesComboBox DataSourceID="SqlOrgRole" TextField="Role_Name" ValueField="Id">
-                                                    </PropertiesComboBox>
-                                                </dx:GridViewDataComboBoxColumn>
-                                                <dx:GridViewDataComboBoxColumn Caption="Approver" FieldName="ActedBy_User_Id" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                    <PropertiesComboBox DataSourceID="SqlUser" TextField="FullName" ValueField="EmpCode">
-                                                    </PropertiesComboBox>
-                                                </dx:GridViewDataComboBoxColumn>
-                                                <dx:GridViewDataComboBoxColumn FieldName="Status" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="5">
-                                                    <PropertiesComboBox DataSourceID="SqlStatus" TextField="STS_Name" ValueField="STS_Id">
-                                                    </PropertiesComboBox>
-                                                </dx:GridViewDataComboBoxColumn>
-                                            </Columns>
-                                        </dx:ASPxGridView>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                            </dx:LayoutItem>
-                        </Items>
                     </dx:LayoutGroup>
                     <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Right" Width="100%">
                         <LayoutItemNestedControlCollection>

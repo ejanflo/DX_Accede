@@ -285,6 +285,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox arNoTB;
 
         /// <summary>
+        /// sapCheck control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxCheckBox sapCheck;
+
+        /// <summary>
         /// forAccountingGrid control.
         /// </summary>
         /// <remarks>
@@ -510,15 +519,6 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxMemo locParticularsMemo;
 
         /// <summary>
-        /// ASPxTextBox7 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox7;
-
-        /// <summary>
         /// ASPxGridView22 control.
         /// </summary>
         /// <remarks>
@@ -627,15 +627,6 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox rfpPayMethod;
 
         /// <summary>
-        /// PLD_lbl control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox PLD_lbl;
-
-        /// <summary>
         /// rfpTypeTransact control.
         /// </summary>
         /// <remarks>
@@ -670,15 +661,6 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxTextBox rfpLastDayTransact;
-
-        /// <summary>
-        /// ASPxTextBox12 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox12;
 
         /// <summary>
         /// rfpPurpose control.
@@ -751,96 +733,6 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxComboBox rfpPayee;
-
-        /// <summary>
-        /// UploadController0 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxUploadControl UploadController0;
-
-        /// <summary>
-        /// DocuGrid control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxGridView DocuGrid;
-
-        /// <summary>
-        /// btnDownloadFile control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.GridViewCommandColumnCustomButton btnDownloadFile;
-
-        /// <summary>
-        /// btnRemove control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.GridViewCommandColumnCustomButton btnRemove;
-
-        /// <summary>
-        /// WFbtnToggle control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxButton WFbtnToggle;
-
-        /// <summary>
-        /// ASPxTextBox14 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox14;
-
-        /// <summary>
-        /// WFSequenceGrid1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxGridView WFSequenceGrid1;
-
-        /// <summary>
-        /// ASPxTextBox15 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox15;
-
-        /// <summary>
-        /// FAPWFGrid0 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxGridView FAPWFGrid0;
-
-        /// <summary>
-        /// WFActivityGrid control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxGridView WFActivityGrid;
 
         /// <summary>
         /// formRFP_E1 control.

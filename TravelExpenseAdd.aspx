@@ -224,9 +224,9 @@
         }
 
         async function ExpPopupClick(s, e) {
-            LoadingPanel.Show();
             if (!ASPxClientEdit.ValidateGroup("expAdd")) return;
 
+            LoadingPanel.Show();
             const locParticulars = locParticularsMemo.GetText();
             const travelDate = travelDateCalendar.GetDate();
             let totalExp = totalExpTB.GetValue();
@@ -244,6 +244,10 @@
                     });
                 }
 
+                if (TraDocuGrid.batchEditApi.HasChanges()) {
+                    TraDocuGrid.UpdateEdit();
+                }
+
                 const response = await $.ajax({
                     type: "POST",
                     url: "TravelExpenseAdd.aspx/AddTravelExpenseDetailsAJAX",
@@ -257,8 +261,8 @@
                 });
 
                 if (response) {
-                    ExpenseGrid.PerformCallback();
-                    wfCallback.PerformCallback(response.d.totExpCA);
+                    ExpenseGrid.PerformCallback(response.d.totExpCA);
+                    //wfCallback.PerformCallback(response.d.totExpCA);
 
                     handleExpCA(
                         response.d.expType,
@@ -276,13 +280,6 @@
                     totalExpTB.SetValue('');
                     LoadingPanel.Hide();
                     travelExpensePopup.Hide();
-
-                    //await new Promise((resolve) => {
-                    //    wfCallback.EndCallback.ClearHandlers();
-                    //    wfCallback.EndCallback.AddHandler(function () {
-                    //        resolve();
-                    //    });
-                    //});
                 } else {
                 }
             } catch (error) {
@@ -436,17 +433,18 @@
         function onToolbarItemClick(s, e) {
             if (e.item.name === "addCA") {
                 caPopup.Show();
-                capopGrid.Refresh();
+                capopGrid.PerformCallback();
             }
 
             if (e.item.name === "addExpense") {
 
                 travelDateCalendar.SetDate(null);
+                locParticularsMemo.SetText('');
                 totalExpTB.SetValue('00.00');
 
                 travelExpensePopup.Show();
                 ASPxGridView22.PerformCallback("add");
-                
+                TraDocuGrid.Refresh();
             }
 
             if (e.item.name === "createCA") {
@@ -529,28 +527,30 @@
                     //}
 
                     if (btnCommand == "btnRemoveCA") {
-                        CAGrid.PerformCallback();
+                        CAGrid.PerformCallback(response.d.totExpCA);
                     } else if (btnCommand == "btnRemoveExp") {
-                        ExpenseGrid.PerformCallback();
+                        ExpenseGrid.PerformCallback(response.d.totExpCA);
                     }
 
-                    wfCallback.EndCallback.ClearHandlers();
-                    wfCallback.EndCallback.AddHandler(function () {
-                        LoadingPanel.Hide();
-                        handleExpCA(
-                            response.d.expType,
-                            response.d.totalca,
-                            response.d.totalexp,
-                            response.d.allTot,
-                            response.d.totExpCA,
-                            response.d.hasReim,
-                            response.d.CA,
-                            response.d.EXP
-                        );
-                    });
+                    handleExpCA(
+                        response.d.expType,
+                        response.d.totalca,
+                        response.d.totalexp,
+                        response.d.allTot,
+                        response.d.totExpCA,
+                        response.d.hasReim,
+                        response.d.CA,
+                        response.d.EXP
+                    );
 
-                    // Perform the callback
-                    wfCallback.PerformCallback(response.d.totExpCA);
+                    //wfCallback.EndCallback.ClearHandlers();
+                    //wfCallback.EndCallback.AddHandler(function () {
+                    //    LoadingPanel.Hide();
+                        
+                    //});
+
+                    //// Perform the callback
+                    //wfCallback.PerformCallback(response.d.totExpCA);
                 },
                 failure: function (response) {
                     // Handle failure
@@ -572,24 +572,24 @@
                             dataType: "json",
                             success: function (response) {
                                 // Handle success
-                                CAGrid.PerformCallback();
-
-                                wfCallback.EndCallback.ClearHandlers();
-                                wfCallback.EndCallback.AddHandler(function () {
-                                    caPopup.Hide();
-                                    LoadingPanel.Hide();
-                                    handleExpCA(
-                                        response.d.expType,
-                                        response.d.totalca,
-                                        response.d.totalexp,
-                                        response.d.allTot,
-                                        response.d.totExpCA,
-                                        response.d.hasReim,
-                                        response.d.CA,
-                                        response.d.EXP
-                                    );
-                                });
-                                wfCallback.PerformCallback(response.d.totExpCA);
+                                CAGrid.PerformCallback(response.d.totExpCA);
+                                handleExpCA(
+                                    response.d.expType,
+                                    response.d.totalca,
+                                    response.d.totalexp,
+                                    response.d.allTot,
+                                    response.d.totExpCA,
+                                    response.d.hasReim,
+                                    response.d.CA,
+                                    response.d.EXP
+                                );
+                                //wfCallback.EndCallback.ClearHandlers();
+                                //wfCallback.EndCallback.AddHandler(function () {
+                                //    caPopup.Hide();
+                                //    LoadingPanel.Hide();
+                                    
+                                //});
+                                //wfCallback.PerformCallback(response.d.totExpCA);
                             },
                             failure: function (response) {
                                 // Handle failure
@@ -781,6 +781,7 @@
                 totalExpTB.SetValue(data.totalExp);
                 travelDateCalendar.SetDate(new Date(data.travelDate));
                 ASPxGridView22.PerformCallback("edit");
+                TraDocuGrid.Refresh();
             } catch (error) {
                 console.error("Error:", error);
                 loadPanel.Hide(); // Hide loader even if there's an error
@@ -825,7 +826,7 @@
     </script>
     <div class="conta" id="demoFabContent">
 
-        <%--ADD REIMBURSEMENT--%>
+        <%--<div id="expDiv" style="height: 500px; width: 1200px; overflow: scroll;">--%>
         <div class="position-fixed bottom-0 right-0 p-3" style="z-index: 5; right: 0; bottom: 0;">
             <div id="liveToast" class="toast hide" data-bs-animation="true" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
                 <div class="toast-header">
@@ -1854,7 +1855,7 @@
                                                                 </ExpandBarTemplate>
                                                                 <PanelCollection>
                                                                     <dx:PanelContent runat="server">
-                                                                        <dx:ASPxCallbackPanel ID="wfCallback" runat="server" ClientInstanceName="wfCallback" Width="100%">
+                                                                        <dx:ASPxCallbackPanel ID="wfCallback" runat="server" ClientInstanceName="wfCallback" Width="100%" OnCallback="wfCallback_Callback">
                                                                             <SettingsLoadingPanel Enabled="False" />
                                                                             <PanelCollection>
                                                                                 <dx:PanelContent runat="server">
@@ -1946,9 +1947,6 @@
                                                                                                         <LayoutItemNestedControlCollection>
                                                                                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                                                                                 <dx:ASPxComboBox ID="drpdown_WF" runat="server" ClientEnabled="False" ClientInstanceName="drpdown_WF" DataSourceID="SqlWF" Font-Bold="True" Height="39px" SelectedIndex="0" TextField="Name" ValueField="WF_Id" Width="100%">
-                                                                                                                    <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	        OnWFChanged();
-        }" />
                                                                                                                     <DropDownButton Visible="False">
                                                                                                                     </DropDownButton>
                                                                                                                     <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
@@ -2010,9 +2008,6 @@
                                                                                                         <LayoutItemNestedControlCollection>
                                                                                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                                                                                 <dx:ASPxComboBox ID="drpdown_FAPWF" runat="server" ClientEnabled="False" ClientInstanceName="drpdown_FAPWF" DataSourceID="SqlFAPWF2" Font-Bold="True" Height="39px" SelectedIndex="0" TextField="Name" ValueField="WF_Id" Width="100%">
-                                                                                                                    <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	        OnWFChanged();
-        }" />
                                                                                                                     <SettingsLoadingPanel Enabled="False" />
                                                                                                                     <DropDownButton Visible="False">
                                                                                                                     </DropDownButton>
@@ -2123,7 +2118,7 @@
                                     <dx:LayoutItem Caption="" ColSpan="2" ColumnSpan="2" Width="100%">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxGridView ID="capopGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="capopGrid" DataSourceID="sqlRFPMainCA" Font-Size="Smaller" KeyFieldName="ID" Width="100%" EnableTheming="True" Theme="MaterialCompact">
+                                                <dx:ASPxGridView ID="capopGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="capopGrid" DataSourceID="sqlRFPMainCA" Font-Size="Smaller" KeyFieldName="ID" Width="100%" EnableTheming="True" Theme="MaterialCompact" OnCustomCallback="capopGrid_CustomCallback" EnableCallbackAnimation="True">
                                                     <ClientSideEvents ToolbarItemClick="onToolbarItemClick" />
                                                     <SettingsPopup>
                                                         <FilterControl AutoUpdatePosition="False">
@@ -2673,7 +2668,7 @@
                                             <dx:LayoutItem Caption="" ColSpan="1" VerticalAlign="Middle" Width="80%">
                                                 <LayoutItemNestedControlCollection>
                                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                                        <dx:ASPxGridView ID="ASPxGridView22" runat="server" AutoGenerateColumns="False" ClientInstanceName="ASPxGridView22" EnableTheming="True" Font-Size="Small" KeyFieldName="TravelExpenseDetailMap_ID" OnCustomCallback="ASPxGridView22_CustomCallback" OnCustomColumnDisplayText="ASPxGridView22_CustomColumnDisplayText" OnRowDeleting="ASPxGridView22_RowDeleting" OnRowInserting="ASPxGridView22_RowInserting" OnRowUpdating="ASPxGridView22_RowUpdating" Theme="MaterialCompact" Width="100%" EnableViewState="False">
+                                                        <dx:ASPxGridView ID="ASPxGridView22" runat="server" AutoGenerateColumns="False" ClientInstanceName="ASPxGridView22" EnableTheming="True" Font-Size="Small" KeyFieldName="TravelExpenseDetailMap_ID" OnCustomCallback="ASPxGridView22_CustomCallback" OnCustomColumnDisplayText="ASPxGridView22_CustomColumnDisplayText" OnRowDeleting="ASPxGridView22_RowDeleting" OnRowInserting="ASPxGridView22_RowInserting" OnRowUpdating="ASPxGridView22_RowUpdating" Theme="MaterialCompact" Width="100%">
                                                             <ClientSideEvents BatchEditChangesSaving="calcExpenses
 " BatchEditEndEditing="calcExpenses" BatchEditRowInserting="calcExpenses
 " BatchEditRowValidating="calcExpenses" BatchEditStartEditing="calcExpenses" EndCallback="calcExpenses
@@ -2716,7 +2711,6 @@
                                                                 <FilterControl AutoUpdatePosition="False">
                                                                 </FilterControl>
                                                             </SettingsPopup>
-                                                            <SettingsLoadingPanel Mode="Disabled" />
                                                             <Columns>
                                                                 <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="35px" Caption=" ">
                                                                     <HeaderStyle HorizontalAlign="Center" />
@@ -3088,12 +3082,14 @@
                                                             <Paddings PaddingBottom="10px" />
                                                             <TextBoxStyle Font-Size="Small" />
                                                         </dx:ASPxUploadControl>
-                                                        <dx:ASPxGridView ID="TraDocuGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="TraDocuGrid" Font-Size="Small" KeyFieldName="ID" OnCellEditorInitialize="TraDocuGrid_CellEditorInitialize" OnRowDeleting="TraDocuGrid_RowDeleting" OnRowUpdating="TraDocuGrid_RowUpdating" Theme="MaterialCompact" Width="100%">
+                                                        <dx:ASPxGridView ID="TraDocuGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="TraDocuGrid" Font-Size="Small" KeyFieldName="ID" Theme="MaterialCompact" Width="100%" DataSourceID="SqlDocs1">
                                                             <ClientSideEvents CustomButtonClick="onCustomButtonClick" />
                                                             <SettingsPager Mode="ShowAllRecords">
                                                             </SettingsPager>
-                                                            <SettingsEditing Mode="Inline">
+                                                            <SettingsEditing Mode="Batch">
+                                                                <BatchEditSettings StartEditAction="Click" />
                                                             </SettingsEditing>
+                                                            <Settings ShowStatusBar="Hidden" />
                                                             <SettingsCommandButton>
                                                                 <EditButton>
                                                                     <Image IconID="richedit_trackingchanges_trackchanges_svg_16x16">
@@ -3119,23 +3115,47 @@
                                                                 </FilterControl>
                                                             </SettingsPopup>
                                                             <Columns>
-                                                                <dx:GridViewCommandColumn Caption="Action" ShowDeleteButton="True" ShowEditButton="True" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                                </dx:GridViewCommandColumn>
+<dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" Caption="Action" VisibleIndex="0"></dx:GridViewCommandColumn>
                                                                 <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
                                                                     <EditFormSettings Visible="False" />
                                                                 </dx:GridViewDataTextColumn>
-                                                                <dx:GridViewDataTextColumn FieldName="FileName" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                                <dx:GridViewDataTextColumn FieldName="FileName" ShowInCustomizationForm="True" VisibleIndex="2">
                                                                     <EditFormSettings Visible="True" />
                                                                 </dx:GridViewDataTextColumn>
-                                                                <dx:GridViewDataTextColumn FieldName="FileExtension" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                                <dx:GridViewDataTextColumn FieldName="FileExtension" ShowInCustomizationForm="True" VisibleIndex="4" Visible="False">
+                                                                </dx:GridViewDataTextColumn>
+                                                                <dx:GridViewDataTextColumn FieldName="URL" ShowInCustomizationForm="True" Visible="False" VisibleIndex="5">
+                                                                </dx:GridViewDataTextColumn>
+                                                                <dx:GridViewDataDateColumn FieldName="DateUploaded" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="6">
+                                                                    <EditFormSettings Visible="False" />
+                                                                </dx:GridViewDataDateColumn>
+<dx:GridViewDataTextColumn FieldName="App_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="7"></dx:GridViewDataTextColumn>
+                                                                <dx:GridViewDataTextColumn FieldName="Company_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="8">
+                                                                </dx:GridViewDataTextColumn>
+                                                                <dx:GridViewDataTextColumn FieldName="User_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="9">
+                                                                </dx:GridViewDataTextColumn>
+                                                                <dx:GridViewDataTextColumn FieldName="Doc_No" ShowInCustomizationForm="True" Visible="False" VisibleIndex="10">
+                                                                </dx:GridViewDataTextColumn>
+                                                                <dx:GridViewDataTextColumn FieldName="Doc_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="11">
+                                                                </dx:GridViewDataTextColumn>
+                                                                <dx:GridViewCommandColumn Caption="File" ShowInCustomizationForm="True" VisibleIndex="13" Visible="False">
+                                                                    <CustomButtons>
+                                                                        <dx:GridViewCommandColumnCustomButton ID="btnDownload0" Text="Open File">
+                                                                            <Image IconID="pdfviewer_next_svg_16x16">
+                                                                            </Image>
+                                                                        </dx:GridViewCommandColumnCustomButton>
+                                                                    </CustomButtons>
+                                                                </dx:GridViewCommandColumn>
+                                                                <dx:GridViewDataTextColumn Caption="File Size" FieldName="FileSize" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="12">
+                                                                    <EditFormSettings Visible="False" />
                                                                     <EditFormSettings Visible="False" />
                                                                 </dx:GridViewDataTextColumn>
-                                                                <dx:GridViewDataTextColumn Caption="File Size" FieldName="FileSize" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="13">
-                                                                    <EditFormSettings Visible="False" />
-                                                                </dx:GridViewDataTextColumn>
-                                                                <dx:GridViewDataTextColumn FieldName="FileAttachment" ShowInCustomizationForm="True" Visible="False" VisibleIndex="2">
-                                                                </dx:GridViewDataTextColumn>
-                                                                <dx:GridViewDataComboBoxColumn FieldName="Description" ShowInCustomizationForm="True" VisibleIndex="4">
+                                                                <dx:GridViewDataComboBoxColumn FieldName="Description" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                                    <PropertiesComboBox DataSourceID="SqlSupDocType" TextField="Document_Type" ValueField="Document_Type">
+                                                                        <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                        </ValidationSettings>
+                                                                    </PropertiesComboBox>
                                                                     <EditFormSettings Visible="True" />
                                                                 </dx:GridViewDataComboBoxColumn>
                                                             </Columns>
@@ -3144,10 +3164,9 @@
                                                                     <Paddings PaddingBottom="5px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="5px" />
                                                                 </Header>
                                                                 <Cell>
-                                                                    <Paddings PaddingBottom="2px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="2px" />
+                                                                    <Paddings PaddingBottom="5px" PaddingLeft="5px" PaddingRight="5px" PaddingTop="5px" />
                                                                 </Cell>
                                                             </Styles>
-                                                            <Paddings PaddingBottom="20px" />
                                                         </dx:ASPxGridView>
                                                     </dx:LayoutItemNestedControlContainer>
                                                 </LayoutItemNestedControlCollection>
@@ -3159,15 +3178,6 @@
                                     </dx:LayoutGroup>
                                 </Items>
                             </dx:TabbedLayoutGroup>
-                            <dx:LayoutItem Caption="Total Expenses" ColSpan="1" HorizontalAlign="Right" Visible="False">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="ASPxTextBox6" runat="server" Width="50%">
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <BorderTop BorderStyle="Solid" />
-                            </dx:LayoutItem>
                         </Items>
                         <Paddings PaddingBottom="0px" PaddingLeft="0px" PaddingRight="0px" PaddingTop="0px" />
                     </dx:ASPxFormLayout>
@@ -3300,7 +3310,11 @@
             <asp:Parameter Name="TravelExpenseDetailMap_ID" Type="Int32" />
         </UpdateParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlDocs" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" DeleteCommand="DELETE FROM [ITP_T_FileAttachment] WHERE [ID] = @original_ID" InsertCommand="INSERT INTO [ITP_T_FileAttachment] ([FileName], [Description], [DateUploaded], [FileSize]) VALUES (@FileName, @Description, @DateUploaded, @FileSize)" OldValuesParameterFormatString="original_{0}" SelectCommand="SELECT [ID], [FileName], [FileAttachment], [Description], [DateUploaded], [FileSize] FROM [ITP_T_FileAttachment] WHERE (([App_ID] = @App_ID) AND ([Doc_ID] = @Doc_ID) AND ([User_ID] = @User_ID) AND ([DocType_Id] = @DocType_Id))" UpdateCommand="UPDATE [ITP_T_FileAttachment] SET [FileName] = @FileName, [Description] = @Description, [DateUploaded] = @DateUploaded, [FileSize] = @FileSize WHERE [ID] = @original_ID">
+    <asp:SqlDataSource ID="SqlDocs" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" DeleteCommand="DELETE FROM [ITP_T_FileAttachment] WHERE [ID] = @original_ID" InsertCommand="INSERT INTO [ITP_T_FileAttachment] ([FileName], [Description], [DateUploaded], [FileSize]) VALUES (@FileName, @Description, @DateUploaded, @FileSize)" OldValuesParameterFormatString="original_{0}" SelectCommand="SELECT ITP_T_FileAttachment.ID, ITP_T_FileAttachment.FileName, ITP_T_FileAttachment.FileAttachment, ITP_T_FileAttachment.Description, ITP_T_FileAttachment.DateUploaded, ITP_T_FileAttachment.FileSize
+FROM     ITP_T_FileAttachment INNER JOIN
+                  ACCEDE_T_TravelExpenseDetailsFileAttach ON ITP_T_FileAttachment.ID = ACCEDE_T_TravelExpenseDetailsFileAttach.FileAttachment_ID
+WHERE  (ITP_T_FileAttachment.App_ID = @App_ID) AND (ITP_T_FileAttachment.Doc_ID = @Doc_ID) AND (ITP_T_FileAttachment.User_ID = @User_ID) AND (ITP_T_FileAttachment.DocType_Id = @DocType_Id) AND 
+                  (ACCEDE_T_TravelExpenseDetailsFileAttach.DocumentType = @DocumentType)" UpdateCommand="UPDATE [ITP_T_FileAttachment] SET [FileName] = @FileName, [Description] = @Description, [DateUploaded] = @DateUploaded, [FileSize] = @FileSize WHERE [ID] = @original_ID">
         <DeleteParameters>
             <asp:Parameter Name="original_ID" Type="Int32" />
         </DeleteParameters>
@@ -3314,7 +3328,8 @@
             <asp:Parameter Name="App_ID" Type="Int32" DefaultValue="1032" />
             <asp:SessionParameter DefaultValue="" Name="Doc_ID" SessionField="TravelExp_Id" Type="Int32" />
             <asp:SessionParameter DefaultValue="" Name="User_ID" SessionField="userID" />
-            <asp:Parameter DefaultValue="1018" Name="DocType_Id" />
+            <asp:SessionParameter DefaultValue="" Name="DocType_Id" SessionField="appdoctype" />
+            <asp:Parameter DefaultValue="main" Name="DocumentType" />
         </SelectParameters>
         <UpdateParameters>
             <asp:Parameter Name="FileName" Type="String" />
@@ -3324,11 +3339,34 @@
             <asp:Parameter Name="original_ID" Type="Int32" />
         </UpdateParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlDocs2" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" OldValuesParameterFormatString="original_{0}" SelectCommand="SELECT * FROM [vw_ACCEDE_I_TravelDocsPerDate] WHERE (([App_ID] = @App_ID) AND ([Doc_ID] = @Doc_ID))">
+    <asp:SqlDataSource ID="SqlDocs1" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" DeleteCommand="DELETE FROM [ITP_T_FileAttachment] WHERE [ID] = @original_ID" InsertCommand="INSERT INTO [ITP_T_FileAttachment] ([FileName], [Description], [DateUploaded], [FileSize]) VALUES (@FileName, @Description, @DateUploaded, @FileSize)" OldValuesParameterFormatString="original_{0}" SelectCommand="SELECT ITP_T_FileAttachment.ID, ITP_T_FileAttachment.FileName, ITP_T_FileAttachment.FileAttachment, ITP_T_FileAttachment.Description, ITP_T_FileAttachment.DateUploaded, ITP_T_FileAttachment.FileSize
+FROM     ITP_T_FileAttachment INNER JOIN
+                  ACCEDE_T_TravelExpenseDetailsFileAttach ON ITP_T_FileAttachment.ID = ACCEDE_T_TravelExpenseDetailsFileAttach.FileAttachment_ID
+WHERE  (ITP_T_FileAttachment.App_ID = @App_ID) AND (ITP_T_FileAttachment.Doc_ID = @Doc_ID) AND (ITP_T_FileAttachment.User_ID = @User_ID) AND (ITP_T_FileAttachment.DocType_Id = @DocType_Id) AND 
+                  (ACCEDE_T_TravelExpenseDetailsFileAttach.DocumentType = @DocumentType)" UpdateCommand="UPDATE [ITP_T_FileAttachment] SET [FileName] = @FileName, [Description] = @Description, [DateUploaded] = @DateUploaded, [FileSize] = @FileSize WHERE [ID] = @original_ID">
+        <DeleteParameters>
+            <asp:Parameter Name="original_ID" Type="Int32" />
+        </DeleteParameters>
+        <InsertParameters>
+            <asp:Parameter Name="FileName" Type="String" />
+            <asp:Parameter Name="Description" Type="String" />
+            <asp:Parameter Name="DateUploaded" Type="DateTime" />
+            <asp:Parameter Name="FileSize" Type="String" />
+        </InsertParameters>
         <SelectParameters>
             <asp:Parameter Name="App_ID" Type="Int32" DefaultValue="1032" />
-            <asp:SessionParameter Name="Doc_ID" SessionField="ExpDetailsID" Type="Int32" />
+            <asp:SessionParameter DefaultValue="0" Name="Doc_ID" SessionField="ExpDetailsID" Type="Int32" />
+            <asp:SessionParameter DefaultValue="" Name="User_ID" SessionField="userID" />
+            <asp:SessionParameter DefaultValue="" Name="DocType_Id" SessionField="appdoctype" />
+            <asp:Parameter DefaultValue="sub" Name="DocumentType" />
         </SelectParameters>
+        <UpdateParameters>
+            <asp:Parameter Name="FileName" Type="String" />
+            <asp:Parameter Name="Description" Type="String" />
+            <asp:Parameter Name="DateUploaded" Type="DateTime" />
+            <asp:Parameter Name="FileSize" Type="String" />
+            <asp:Parameter Name="original_ID" Type="Int32" />
+        </UpdateParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlRTMap" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" DeleteCommand="DELETE FROM [ACCEDE_T_TraExpReimTranspoMap] WHERE [ReimTranspo_ID] = @ReimTranspo_ID" InsertCommand="INSERT INTO [ACCEDE_T_TraExpReimTranspoMap] ([ReimTranspo_Type], [ReimTranspo_Amount], [TravelExpenseDetail_ID], [User_ID]) VALUES (@ReimTranspo_Type, @ReimTranspo_Amount, @TravelExpenseDetail_ID, @User_ID)" SelectCommand="SELECT * FROM [ACCEDE_T_TraExpReimTranspoMap] WHERE (([TravelExpenseDetail_ID] = @TravelExpenseDetail_ID)) ORDER BY [ReimTranspo_ID]" UpdateCommand="UPDATE [ACCEDE_T_TraExpReimTranspoMap] SET [ReimTranspo_Type] = @ReimTranspo_Type, [ReimTranspo_Amount] = @ReimTranspo_Amount, [TravelExpenseDetail_ID] = @TravelExpenseDetail_ID, [User_ID] = @User_ID WHERE [ReimTranspo_ID] = @ReimTranspo_ID">
         <DeleteParameters>

@@ -201,9 +201,6 @@ namespace DX_WebTemplate
     partial void InsertACCEDE_T_TraExpBusinessMealMap(ACCEDE_T_TraExpBusinessMealMap instance);
     partial void UpdateACCEDE_T_TraExpBusinessMealMap(ACCEDE_T_TraExpBusinessMealMap instance);
     partial void DeleteACCEDE_T_TraExpBusinessMealMap(ACCEDE_T_TraExpBusinessMealMap instance);
-    partial void InsertACCEDE_T_TravelExpenseDetailsFileAttach(ACCEDE_T_TravelExpenseDetailsFileAttach instance);
-    partial void UpdateACCEDE_T_TravelExpenseDetailsFileAttach(ACCEDE_T_TravelExpenseDetailsFileAttach instance);
-    partial void DeleteACCEDE_T_TravelExpenseDetailsFileAttach(ACCEDE_T_TravelExpenseDetailsFileAttach instance);
     partial void InsertACCEDE_S_UserDelegation(ACCEDE_S_UserDelegation instance);
     partial void UpdateACCEDE_S_UserDelegation(ACCEDE_S_UserDelegation instance);
     partial void DeleteACCEDE_S_UserDelegation(ACCEDE_S_UserDelegation instance);
@@ -237,6 +234,9 @@ namespace DX_WebTemplate
     partial void InsertACCEDE_T_TravelExpenseDetailsMap(ACCEDE_T_TravelExpenseDetailsMap instance);
     partial void UpdateACCEDE_T_TravelExpenseDetailsMap(ACCEDE_T_TravelExpenseDetailsMap instance);
     partial void DeleteACCEDE_T_TravelExpenseDetailsMap(ACCEDE_T_TravelExpenseDetailsMap instance);
+    partial void InsertACCEDE_T_TravelExpenseDetailsFileAttach(ACCEDE_T_TravelExpenseDetailsFileAttach instance);
+    partial void UpdateACCEDE_T_TravelExpenseDetailsFileAttach(ACCEDE_T_TravelExpenseDetailsFileAttach instance);
+    partial void DeleteACCEDE_T_TravelExpenseDetailsFileAttach(ACCEDE_T_TravelExpenseDetailsFileAttach instance);
     #endregion
 		
 		public ITPORTALDataContext(string connection) : 
@@ -775,14 +775,6 @@ namespace DX_WebTemplate
 			}
 		}
 		
-		public System.Data.Linq.Table<ACCEDE_T_TravelExpenseDetailsFileAttach> ACCEDE_T_TravelExpenseDetailsFileAttaches
-		{
-			get
-			{
-				return this.GetTable<ACCEDE_T_TravelExpenseDetailsFileAttach>();
-			}
-		}
-		
 		public System.Data.Linq.Table<ACCEDE_S_UserDelegation> ACCEDE_S_UserDelegations
 		{
 			get
@@ -908,6 +900,14 @@ namespace DX_WebTemplate
 			get
 			{
 				return this.GetTable<ACCEDE_T_TravelExpenseDetailsMap>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ACCEDE_T_TravelExpenseDetailsFileAttach> ACCEDE_T_TravelExpenseDetailsFileAttaches
+		{
+			get
+			{
+				return this.GetTable<ACCEDE_T_TravelExpenseDetailsFileAttach>();
 			}
 		}
 	}
@@ -19107,116 +19107,6 @@ namespace DX_WebTemplate
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_T_TravelExpenseDetailsFileAttach")]
-	public partial class ACCEDE_T_TravelExpenseDetailsFileAttach : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _ID;
-		
-		private System.Nullable<int> _FileAttachment_ID;
-		
-		private System.Nullable<int> _ExpenseDetails_ID;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIDChanging(int value);
-    partial void OnIDChanged();
-    partial void OnFileAttachment_IDChanging(System.Nullable<int> value);
-    partial void OnFileAttachment_IDChanged();
-    partial void OnExpenseDetails_IDChanging(System.Nullable<int> value);
-    partial void OnExpenseDetails_IDChanged();
-    #endregion
-		
-		public ACCEDE_T_TravelExpenseDetailsFileAttach()
-		{
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int ID
-		{
-			get
-			{
-				return this._ID;
-			}
-			set
-			{
-				if ((this._ID != value))
-				{
-					this.OnIDChanging(value);
-					this.SendPropertyChanging();
-					this._ID = value;
-					this.SendPropertyChanged("ID");
-					this.OnIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FileAttachment_ID", DbType="Int")]
-		public System.Nullable<int> FileAttachment_ID
-		{
-			get
-			{
-				return this._FileAttachment_ID;
-			}
-			set
-			{
-				if ((this._FileAttachment_ID != value))
-				{
-					this.OnFileAttachment_IDChanging(value);
-					this.SendPropertyChanging();
-					this._FileAttachment_ID = value;
-					this.SendPropertyChanged("FileAttachment_ID");
-					this.OnFileAttachment_IDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExpenseDetails_ID", DbType="Int")]
-		public System.Nullable<int> ExpenseDetails_ID
-		{
-			get
-			{
-				return this._ExpenseDetails_ID;
-			}
-			set
-			{
-				if ((this._ExpenseDetails_ID != value))
-				{
-					this.OnExpenseDetails_IDChanging(value);
-					this.SendPropertyChanging();
-					this._ExpenseDetails_ID = value;
-					this.SendPropertyChanged("ExpenseDetails_ID");
-					this.OnExpenseDetails_IDChanged();
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_S_UserDelegation")]
 	public partial class ACCEDE_S_UserDelegation : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -24641,6 +24531,140 @@ namespace DX_WebTemplate
 					this._FixedAllow_Remarks = value;
 					this.SendPropertyChanged("FixedAllow_Remarks");
 					this.OnFixedAllow_RemarksChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_T_TravelExpenseDetailsFileAttach")]
+	public partial class ACCEDE_T_TravelExpenseDetailsFileAttach : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private System.Nullable<int> _FileAttachment_ID;
+		
+		private System.Nullable<int> _ExpenseDetails_ID;
+		
+		private string _DocumentType;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnFileAttachment_IDChanging(System.Nullable<int> value);
+    partial void OnFileAttachment_IDChanged();
+    partial void OnExpenseDetails_IDChanging(System.Nullable<int> value);
+    partial void OnExpenseDetails_IDChanged();
+    partial void OnDocumentTypeChanging(string value);
+    partial void OnDocumentTypeChanged();
+    #endregion
+		
+		public ACCEDE_T_TravelExpenseDetailsFileAttach()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FileAttachment_ID", DbType="Int")]
+		public System.Nullable<int> FileAttachment_ID
+		{
+			get
+			{
+				return this._FileAttachment_ID;
+			}
+			set
+			{
+				if ((this._FileAttachment_ID != value))
+				{
+					this.OnFileAttachment_IDChanging(value);
+					this.SendPropertyChanging();
+					this._FileAttachment_ID = value;
+					this.SendPropertyChanged("FileAttachment_ID");
+					this.OnFileAttachment_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExpenseDetails_ID", DbType="Int")]
+		public System.Nullable<int> ExpenseDetails_ID
+		{
+			get
+			{
+				return this._ExpenseDetails_ID;
+			}
+			set
+			{
+				if ((this._ExpenseDetails_ID != value))
+				{
+					this.OnExpenseDetails_IDChanging(value);
+					this.SendPropertyChanging();
+					this._ExpenseDetails_ID = value;
+					this.SendPropertyChanged("ExpenseDetails_ID");
+					this.OnExpenseDetails_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DocumentType", DbType="NVarChar(50)")]
+		public string DocumentType
+		{
+			get
+			{
+				return this._DocumentType;
+			}
+			set
+			{
+				if ((this._DocumentType != value))
+				{
+					this.OnDocumentTypeChanging(value);
+					this.SendPropertyChanging();
+					this._DocumentType = value;
+					this.SendPropertyChanged("DocumentType");
+					this.OnDocumentTypeChanged();
 				}
 			}
 		}

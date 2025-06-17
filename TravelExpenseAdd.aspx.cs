@@ -38,14 +38,15 @@ namespace DX_WebTemplate
                     AnfloSession.Current.CreateSession(HttpContext.Current.User.ToString());
 
                     var mainExp = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).FirstOrDefault();
-                    var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).FirstOrDefault();
-                    Session["statusid"] = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Disbursed").Select(x => x.STS_Id).FirstOrDefault();
-                    Session["appdoctype"] = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).Select(x => x.DCT_Id).FirstOrDefault();
-                    SqlDepartment.SelectParameters["Company_ID"].DefaultValue = Convert.ToString(mainExp.ChargedToComp);
-                    SqlDepartment.DataBind();
 
                     if (mainExp != null)
                     {
+                        var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).FirstOrDefault();
+                        Session["statusid"] = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Disbursed").Select(x => x.STS_Id).FirstOrDefault();
+                        Session["appdoctype"] = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).Select(x => x.DCT_Id).FirstOrDefault();
+                        SqlDepartment.SelectParameters["Company_ID"].DefaultValue = Convert.ToString(mainExp.ChargedToComp);
+                        SqlDepartment.DataBind();
+
                         Session["isForeignTravel"] = mainExp.ForeignDomestic == "Foreign" ? 1 : 0;
                         Session["ford"] = mainExp.ForeignDomestic;
                         Session["currency"] = mainExp.ForeignDomestic == "Domestic" ? '₱' : mainExp.ForeignDomestic == "Foreign" ? '$' : ' ';
@@ -62,17 +63,21 @@ namespace DX_WebTemplate
                         timearriveTE.DateTime = DateTime.Parse(mainExp.Time_Arrived.ToString());
                         Session["DocNo"] = mainExp.Doc_No.ToString();
                         Session["Employee_Id"] = mainExp.Employee_Id.ToString();
+                        SqlExpDetailsMap.SelectParameters["TravelExpenseDetail_ID"].DefaultValue = "0";
+                        ASPxGridView22.DataBind();
+                        CAGrid.DataBind();
+                        ExpenseGrid.DataBind();
+
+                        InitializeExpCA(mainExp);
+
+                        ASPxGridView22.DataSource = ds.Tables[0];
+                        ASPxGridView22.DataBind();
+                    }
+                    else
+                    {
+                        Response.Redirect("~/Logon.aspx");
                     }
 
-                    SqlExpDetailsMap.SelectParameters["TravelExpenseDetail_ID"].DefaultValue = "0";
-                    ASPxGridView22.DataBind();
-                    CAGrid.DataBind();
-                    ExpenseGrid.DataBind();
-
-                    InitializeExpCA(mainExp);
-
-                    ASPxGridView22.DataSource = ds.Tables[0];
-                    ASPxGridView22.DataBind();
                 }
                 else
                     Response.Redirect("~/Logon.aspx");
@@ -214,25 +219,25 @@ namespace DX_WebTemplate
                 ds = (DataSet)Session["DataSet"];
 
 
-            if (!IsPostBack || (Session["DataSetDoc"] == null))
-            {
-                dsDoc = new DataSet();
-                DataTable masterTable = new DataTable();
-                masterTable.Columns.Add("ID", typeof(int));
-                masterTable.Columns.Add("FileName", typeof(string));
-                masterTable.Columns.Add("FileAttachment", typeof(byte[]));
-                masterTable.Columns.Add("FileExtension", typeof(string));
-                masterTable.Columns.Add("FileSize", typeof(string));
-                masterTable.Columns.Add("Description", typeof(string));
-                masterTable.PrimaryKey = new DataColumn[] { masterTable.Columns["ID"] };
+            //if (!IsPostBack || (Session["DataSetDoc"] == null))
+            //{
+            //    dsDoc = new DataSet();
+            //    DataTable masterTable = new DataTable();
+            //    masterTable.Columns.Add("ID", typeof(int));
+            //    masterTable.Columns.Add("FileName", typeof(string));
+            //    masterTable.Columns.Add("FileAttachment", typeof(byte[]));
+            //    masterTable.Columns.Add("FileExtension", typeof(string));
+            //    masterTable.Columns.Add("FileSize", typeof(string));
+            //    masterTable.Columns.Add("Description", typeof(string));
+            //    masterTable.PrimaryKey = new DataColumn[] { masterTable.Columns["ID"] };
 
-                dsDoc.Tables.AddRange(new DataTable[] { masterTable/*, detailTable*/ });
-                Session["DataSetDoc"] = dsDoc;
-            }
-            else
-                dsDoc = (DataSet)Session["DataSetDoc"];
-            TraDocuGrid.DataSource = dsDoc.Tables[0];
-            TraDocuGrid.DataBind();
+            //    dsDoc.Tables.AddRange(new DataTable[] { masterTable/*, detailTable*/ });
+            //    Session["DataSetDoc"] = dsDoc;
+            //}
+            //else
+            //    dsDoc = (DataSet)Session["DataSetDoc"];
+            //TraDocuGrid.DataSource = dsDoc.Tables[0];
+            //TraDocuGrid.DataBind();
 
         }
 
@@ -273,10 +278,19 @@ namespace DX_WebTemplate
                     docs.Company_ID = Convert.ToInt32(chargedCB.Value);
                     docs.DateUploaded = DateTime.Now;
                     docs.DocType_Id = app_docType != null ? app_docType.DCT_Id : 0;
-                };
+                }
                 _DataContext.ITP_T_FileAttachments.InsertOnSubmit(docs);
+                _DataContext.SubmitChanges();
+
+                ACCEDE_T_TravelExpenseDetailsFileAttach attach = new ACCEDE_T_TravelExpenseDetailsFileAttach();
+                {
+                    attach.FileAttachment_ID = docs.ID;
+                    attach.ExpenseDetails_ID = docs.Doc_ID;
+                    attach.DocumentType = "main";
+                }
+                _DataContext.ACCEDE_T_TravelExpenseDetailsFileAttaches.InsertOnSubmit(attach);
+                _DataContext.SubmitChanges();
             }
-            _DataContext.SubmitChanges();
             SqlDocs.DataBind();
         }
 
@@ -296,60 +310,6 @@ namespace DX_WebTemplate
 
         protected void TraUploadController_FilesUploadComplete(object sender, DevExpress.Web.FilesUploadCompleteEventArgs e)
         {
-            if (Convert.ToString(Session["expAction"]) == "edit")
-            {
-                foreach (var file in TraUploadController.UploadedFiles)
-                {
-                    var filesize = 0.00;
-                    var filesizeStr = "";
-                    if (Convert.ToInt32(file.ContentLength) > 999999)
-                    {
-                        filesize = Convert.ToInt32(file.ContentLength) / 1000000;
-                        filesizeStr = filesize.ToString() + " MB";
-                    }
-                    else if (Convert.ToInt32(file.ContentLength) > 999)
-                    {
-                        filesize = Convert.ToInt32(file.ContentLength) / 1000;
-                        filesizeStr = filesize.ToString() + " KB";
-                    }
-                    else
-                    {
-                        filesize = Convert.ToInt32(file.ContentLength);
-                        filesizeStr = filesize.ToString() + " Bytes";
-                    }
-
-                    var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).FirstOrDefault();
-
-                    ITP_T_FileAttachment docs = new ITP_T_FileAttachment();
-                    {
-                        docs.FileAttachment = file.FileBytes;
-                        docs.FileName = file.FileName;
-                        docs.Doc_ID = Convert.ToInt32(Session["ExpDetailsID"]);
-                        docs.App_ID = 1032;
-                        docs.User_ID = Session["userID"].ToString();
-                        docs.FileExtension = file.FileName.Split('.').Last();
-                        docs.FileSize = filesizeStr;
-                        docs.Doc_No = Session["DocNo"].ToString();
-                        docs.Company_ID = Convert.ToInt32(chargedCB.Value);
-                        docs.DateUploaded = DateTime.Now;
-                        docs.DocType_Id = app_docType != null ? app_docType.DCT_Id : 0;
-                    };
-                    _DataContext.ITP_T_FileAttachments.InsertOnSubmit(docs);
-                    _DataContext.SubmitChanges();
-
-                    ACCEDE_T_TravelExpenseDetailsFileAttach docs2 = new ACCEDE_T_TravelExpenseDetailsFileAttach();
-                    {
-                        docs2.FileAttachment_ID = docs.ID;
-                        docs2.ExpenseDetails_ID = Convert.ToInt32(Session["ExpDetailsID"]);
-                    };
-                    _DataContext.ACCEDE_T_TravelExpenseDetailsFileAttaches.InsertOnSubmit(docs2);
-                }
-                _DataContext.SubmitChanges();
-                SqlDocs.DataBind();
-            }
-
-
-            DataSet ImgDS = (DataSet)Session["DataSetDoc"];
             foreach (var file in TraUploadController.UploadedFiles)
             {
                 var filesize = 0.00;
@@ -370,21 +330,73 @@ namespace DX_WebTemplate
                     filesizeStr = filesize.ToString() + " Bytes";
                 }
 
-                // Add a new row to the data table with the uploaded file data
-                DataRow row = ImgDS.Tables[0].NewRow();
-                row["ID"] = GetNewDocId();
-                row["FileName"] = file.FileName;
-                row["FileAttachment"] = file.FileBytes;
-                row["FileExtension"] = file.FileName.Split('.').Last();
-                row["FileSize"] = filesizeStr;
-                row["Description"] = "";
-                ImgDS.Tables[0].Rows.Add(row);
-            }
+                var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).FirstOrDefault();
 
-            // Bind the data set to the grid view
-            Session["UploadedFilesTable"] = ImgDS.Tables[0];
-            TraDocuGrid.DataSource = ImgDS.Tables[0];   
+                ITP_T_FileAttachment docs = new ITP_T_FileAttachment();
+                {
+                    docs.FileAttachment = file.FileBytes;
+                    docs.FileName = file.FileName;
+                    docs.Doc_ID = Convert.ToInt32(Session["ExpDetailsID"]);
+                    docs.App_ID = 1032;
+                    docs.User_ID = Session["userID"].ToString();
+                    docs.FileExtension = file.FileName.Split('.').Last();
+                    docs.FileSize = filesizeStr;
+                    docs.Doc_No = Session["DocNo"].ToString();
+                    docs.Company_ID = Convert.ToInt32(chargedCB.Value);
+                    docs.DateUploaded = DateTime.Now;
+                    docs.DocType_Id = app_docType != null ? app_docType.DCT_Id : 0;
+                }
+                _DataContext.ITP_T_FileAttachments.InsertOnSubmit(docs);
+                _DataContext.SubmitChanges();
+
+                ACCEDE_T_TravelExpenseDetailsFileAttach docs2 = new ACCEDE_T_TravelExpenseDetailsFileAttach();
+                {
+                    docs2.FileAttachment_ID = docs.ID;
+                    docs2.ExpenseDetails_ID = docs.Doc_ID;
+                    docs2.DocumentType = "sub";
+                }
+                _DataContext.ACCEDE_T_TravelExpenseDetailsFileAttaches.InsertOnSubmit(docs2);
+                _DataContext.SubmitChanges();
+            }
+            SqlDocs1.DataBind();
             TraDocuGrid.DataBind();
+
+
+            //DataSet ImgDS = (DataSet)Session["DataSetDoc"];
+            //foreach (var file in TraUploadController.UploadedFiles)
+            //{
+            //    var filesize = 0.00;
+            //    var filesizeStr = "";
+            //    if (Convert.ToInt32(file.ContentLength) > 999999)
+            //    {
+            //        filesize = Convert.ToInt32(file.ContentLength) / 1000000;
+            //        filesizeStr = filesize.ToString() + " MB";
+            //    }
+            //    else if (Convert.ToInt32(file.ContentLength) > 999)
+            //    {
+            //        filesize = Convert.ToInt32(file.ContentLength) / 1000;
+            //        filesizeStr = filesize.ToString() + " KB";
+            //    }
+            //    else
+            //    {
+            //        filesize = Convert.ToInt32(file.ContentLength);
+            //        filesizeStr = filesize.ToString() + " Bytes";
+            //    }
+
+            //    // Add a new row to the data table with the uploaded file data
+            //    DataRow row = ImgDS.Tables[0].NewRow();
+            //    row["ID"] = GetNewDocId();
+            //    row["FileName"] = file.FileName;
+            //    row["FileAttachment"] = file.FileBytes;
+            //    row["FileExtension"] = file.FileName.Split('.').Last();
+            //    row["FileSize"] = filesizeStr;
+            //    row["Description"] = "";
+            //    ImgDS.Tables[0].Rows.Add(row);
+            //}
+
+            //// Bind the data set to the grid view
+            //Session["UploadedFilesTable"] = ImgDS.Tables[0];
+            //TraDocuGrid.DataSource = ImgDS.Tables[0];   
         }
 
         [WebMethod]
@@ -1285,85 +1297,6 @@ namespace DX_WebTemplate
             calcExp((ASPxGridView)sender);
         }
 
-        public void InsertAttachments(int id)
-        {
-            try
-            {
-                string connectionString1 = ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString;
-
-                // Retrieve the DataTable from the session
-                DataTable uploadedFilesTable = Session["UploadedFilesTable"] as DataTable;
-
-                if (uploadedFilesTable != null)
-                {
-                    using (SqlConnection connection = new SqlConnection(connectionString1))
-                    {
-                        connection.Open();
-
-                        foreach (DataRow row in uploadedFilesTable.Rows)
-                        {
-                            string fileName = row["FileName"].ToString();
-                            byte[] fileAttachment = (byte[])row["FileAttachment"];
-                            string fileExtension = row["FileExtension"].ToString();
-                            string fileSize = row["FileSize"].ToString();
-                            string description = row["Description"].ToString();
-
-                            string query = @"INSERT INTO ITP_T_FileAttachment 
-                            (FileAttachment, FileName, Description, DateUploaded, App_ID, Company_ID, Doc_ID, Doc_No, User_ID, FileExtension, FileSize, DocType_Id) 
-                            OUTPUT INSERTED.ID 
-                            VALUES 
-                            (@FileAttachment, @FileName, @Description, @DateUploaded, @App_ID, @Company_ID, @Doc_ID, @Doc_No, @User_ID, @FileExtension, @FileSize, @DocType_Id)";
-
-                            var doctype_id = _DataContext.ITP_S_DocumentTypes
-                                .Where(x => x.DCT_Name == "ACDE Expense Travel")
-                                .Select(x => x.DCT_Id)
-                                .FirstOrDefault();
-
-                            using (SqlCommand command = new SqlCommand(query, connection))
-                            {
-                                command.Parameters.AddWithValue("@FileName", fileName);
-                                command.Parameters.AddWithValue("@FileAttachment", fileAttachment);
-                                command.Parameters.AddWithValue("@FileExtension", fileExtension);
-                                command.Parameters.AddWithValue("@FileSize", fileSize);
-                                command.Parameters.AddWithValue("@Description", description);
-                                command.Parameters.AddWithValue("@DateUploaded", DateTime.Now);
-                                command.Parameters.AddWithValue("@App_ID", 1032);
-                                command.Parameters.AddWithValue(
-                                    "@Company_ID",
-                                    _DataContext.ACCEDE_T_TravelExpenseMains
-                                        .Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"]))
-                                        .Select(x => x.Company_Id)
-                                        .FirstOrDefault()
-                                );
-                                command.Parameters.AddWithValue("@Doc_ID", id);
-                                command.Parameters.AddWithValue("@Doc_No", Session["DocNo"].ToString());
-                                command.Parameters.AddWithValue(
-                                    "@User_ID",
-                                    Session["userID"] != null ? Session["userID"].ToString() : "0"
-                                );
-                                command.Parameters.AddWithValue("@DocType_Id", doctype_id);
-
-                                int insertedId = (int)command.ExecuteScalar();
-
-                                ACCEDE_T_TravelExpenseDetailsFileAttach docs = new ACCEDE_T_TravelExpenseDetailsFileAttach
-                                {
-                                    FileAttachment_ID = insertedId,
-                                    ExpenseDetails_ID = id
-                                };
-                                _DataContext.ACCEDE_T_TravelExpenseDetailsFileAttaches.InsertOnSubmit(docs);
-                            }
-                        }
-
-                        // Submit changes to the database context
-                        _DataContext.SubmitChanges();
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
 
         [WebMethod]
         public static object AddTravelExpenseDetailsAJAX(string locParticulars, DateTime travelDate, string totalExp)
@@ -1390,9 +1323,20 @@ namespace DX_WebTemplate
                     _DataContext.SubmitChanges();
 
                     var travExpDetailId = trav.TravelExpenseDetail_ID;
-                    var dataSet = (DataSet)Session["DataSet"];
 
-                    InsertAttachments(travExpDetailId);
+                    for (int i = 0; i < TraDocuGrid.VisibleRowCount; i++)
+                    {
+                        object key = TraDocuGrid.GetRowValues(i, "ID");
+                        int id = Convert.ToInt32(key);
+
+                        var item = _DataContext.ACCEDE_T_TravelExpenseDetailsFileAttaches.FirstOrDefault(x => x.ID == id);
+                        if (item != null)
+                        {
+                            item.ExpenseDetails_ID = travExpDetailId;
+                        }
+                    }
+
+                    var dataSet = (DataSet)Session["DataSet"];
 
                     // Define a helper method for adding mapped data
                     void InsertMappedData<T>(DataTable table, Action<T, DataRow> mapAction) where T : class, new()
@@ -1462,6 +1406,7 @@ namespace DX_WebTemplate
                         ex.TravelExpenseMain_ID = Convert.ToInt32(Session["TravelExp_Id"]);
                     }
                     _DataContext.SubmitChanges();
+
                 }
                 
                 return GetExpCA();
@@ -1521,14 +1466,12 @@ namespace DX_WebTemplate
 
                 // Load data from SqlDataSources into DataTables and merge
                 ds.Tables[0].Merge(GetDataTableFromSqlDataSource(SqlExpDetailsMap));
-                dsDoc.Tables[0].Merge(GetDataTableFromSqlDataSource(SqlDocs2));
             }
 
             // Bind the tables to the grids
             ASPxGridView22.DataSource = ds.Tables[0];
             ASPxGridView22.DataBind();
 
-            TraDocuGrid.DataSource = dsDoc.Tables[0];
             TraDocuGrid.DataBind();
         }
 
@@ -1703,11 +1646,44 @@ namespace DX_WebTemplate
 
         protected void CAGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
         {
+            var mainExp = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).FirstOrDefault();
+
+            if (Convert.ToString(fordCB.Value) == "Foreign")
+            {
+                Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.ChargedToComp && x.Description.Contains("Foreign Test FN EXEC>CFO/PRES") && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
+            }
+            else
+            {
+                Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == mainExp.ChargedToComp && x.App_Id == 1032 && x.IsRA == null && Convert.ToDecimal(e.Parameters) >= x.Minimum && Convert.ToDecimal(e.Parameters) <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault()) ?? null;
+            }
+
+            SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
+            SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
+            drpdown_FAPWF.DataBind();
+            drpdown_FAPWF.SelectedIndex = 0;
+            FAPWFGrid.DataBind();
             CAGrid.DataBind();
         }
 
         protected void ExpenseGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
         {
+            var mainExp = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).FirstOrDefault();
+
+            if (Convert.ToString(fordCB.Value) == "Foreign")
+            {
+                Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.ChargedToComp && x.Description.Contains("Foreign Test FN EXEC>CFO/PRES") && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
+            }
+            else
+            {
+                Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == mainExp.ChargedToComp && x.App_Id == 1032 && x.IsRA == null && Convert.ToDecimal(e.Parameters) >= x.Minimum && Convert.ToDecimal(e.Parameters) <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault()) ?? null;
+            }
+
+            SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
+            SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
+            drpdown_FAPWF.DataBind();
+            drpdown_FAPWF.SelectedIndex = 0;
+            FAPWFGrid.DataBind();
+
             ExpenseGrid.DataBind();
         }
 
@@ -1847,13 +1823,10 @@ namespace DX_WebTemplate
             {
                 table.Clear();
             }
-            foreach (DataTable table in dsDoc.Tables)
-            {
-                table.Clear();
-            }
             if (e.Parameters == "add")
             {
                 Session["expAction"] = "add";
+                Session["ExpDetailsID"] = 0;
             }
             else if (e.Parameters == "edit")
             {
@@ -1861,15 +1834,13 @@ namespace DX_WebTemplate
 
                 // Load data from SqlDataSources into DataTables and merge
                 ds.Tables[0].Merge(GetDataTableFromSqlDataSource(SqlExpDetailsMap));
-                dsDoc.Tables[0].Merge(GetDataTableFromSqlDataSource(SqlDocs2));
             }
 
             // Bind the tables to the grids
             ASPxGridView22.DataSource = ds.Tables[0];
             ASPxGridView22.DataBind();
-
-            TraDocuGrid.DataSource = dsDoc.Tables[0];
             TraDocuGrid.DataBind();
+
         }
 
         protected void ExpenseGrid_CustomColumnDisplayText(object sender, ASPxGridViewColumnDisplayTextEventArgs e)
@@ -1890,16 +1861,18 @@ namespace DX_WebTemplate
             {
                 var travelExpenseDetailId = Convert.ToInt32(e.Value);
                 var total = _DataContext.ACCEDE_T_TravelExpenseDetailsMaps
-                    .Where(or => or.TravelExpenseDetail_ID == travelExpenseDetailId)
-                    .Sum(or =>
-                        (or.ReimTranspo_Amount1 ?? 0) +
-                        (or.ReimTranspo_Amount2 ?? 0) +
-                        (or.ReimTranspo_Amount3 ?? 0) +
-                        (or.MiscTravel_Amount ?? 0) +
-                        (or.Entertainment_Amount ?? 0) +
-                        (or.BusMeals_Amount ?? 0) +
-                        (or.OtherBus_Amount ?? 0)
-                    );
+                .Where(or => or.TravelExpenseDetail_ID == travelExpenseDetailId)
+                .DefaultIfEmpty()
+                .Select(or =>
+                    (or.ReimTranspo_Amount1 ?? 0) +
+                    (or.ReimTranspo_Amount2 ?? 0) + 
+                    (or.ReimTranspo_Amount3 ?? 0) +
+                    (or.MiscTravel_Amount ?? 0) +
+                    (or.Entertainment_Amount ?? 0) +
+                    (or.BusMeals_Amount ?? 0) +
+                    (or.OtherBus_Amount ?? 0)
+                )// this avoids the null issue
+                .Sum();
 
                 e.DisplayText = total == 0 ? "0.00" : total.ToString("N");
             }
@@ -1908,6 +1881,11 @@ namespace DX_WebTemplate
             {
                 e.DisplayText = (e.VisibleIndex + 1).ToString();
             }
+        }
+
+        protected void capopGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            capopGrid.DataBind();
         }
     }
 }

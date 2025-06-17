@@ -513,7 +513,7 @@
                     <dx:LayoutItem Caption="Trip To" ColSpan="2" ColumnSpan="2" VerticalAlign="Top" Width="50%">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
-                                <dx:ASPxTextBox ID="triptoTB" runat="server" ClientInstanceName="triptoTB" Width="100%" Font-Bold="True">
+                                <dx:ASPxTextBox ID="triptoTB" runat="server" ClientInstanceName="triptoTB" Width="100%" Font-Bold="True" AutoCompleteType="Disabled">
                                     <ClientSideEvents UserInput="onKeyPress" />
                                     <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="CreateForm">
                                         <RequiredField ErrorText="*Required field" IsRequired="True" />
