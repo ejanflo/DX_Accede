@@ -1896,7 +1896,7 @@ ReimbursementTrap2();
                                                                         <ClientSideEvents SelectedIndexChanged="function(s, e) {
 exp_Department.PerformCallback(s.GetValue());
 //drpdown_CostCenter.SetValue(&quot;&quot;);
-exp_EmpId.PerformCallback(s.GetValue());
+//exp_EmpId.PerformCallback(s.GetValue());
 }" />
                                                                         <ClearButton DisplayMode="Always">
                                                                         </ClearButton>
@@ -1959,7 +1959,7 @@ var emp = exp_EmpId.GetValue() != null ? exp_EmpId.GetValue() : &quot;&quot;;
                                                                 <dx:LayoutItem Caption="Workflow" ColSpan="1">
                                                                     <LayoutItemNestedControlCollection>
                                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                                            <dx:ASPxComboBox ID="drpdown_WF" runat="server" ClientInstanceName="drpdown_WF" Height="39px" OnCallback="drpdown_WF_Callback" TextField="Name" ValueField="WF_Id" Width="100%">
+                                                                            <dx:ASPxComboBox ID="drpdown_WF" runat="server" ClientInstanceName="drpdown_WF" Height="39px" OnCallback="drpdown_WF_Callback" TextField="Name" ValueField="WF_Id" Width="100%" DataSourceID="SqlWF">
                                                                                 <ClientSideEvents Init="function(s, e) {
 	//WFSequenceGrid.PerformCallback();
 }" SelectedIndexChanged="function(s, e) {
@@ -1984,7 +1984,7 @@ var emp = exp_EmpId.GetValue() != null ? exp_EmpId.GetValue() : &quot;&quot;;
                                                                 <dx:LayoutItem Caption="" ColSpan="1">
                                                                     <LayoutItemNestedControlCollection>
                                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                                            <dx:ASPxGridView ID="WFSequenceGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="WFSequenceGrid" OnCustomCallback="WFSequenceGrid_CustomCallback" Theme="iOS" Width="100%">
+                                                                            <dx:ASPxGridView ID="WFSequenceGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="WFSequenceGrid" OnCustomCallback="WFSequenceGrid_CustomCallback" Theme="iOS" Width="100%" DataSourceID="SqlWorkflowSequence">
                                                                                 <SettingsPopup>
                                                                                     <FilterControl AutoUpdatePosition="False">
                                                                                     </FilterControl>

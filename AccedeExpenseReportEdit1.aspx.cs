@@ -2668,6 +2668,7 @@ namespace DX_WebTemplate
             if (wfMapCheck != null)
             {
                 SqlWF.SelectParameters["WF_Id"].DefaultValue = wfMapCheck.WF_ID.ToString();
+                drpdown_WF.DataSourceID = null;
                 drpdown_WF.DataSource = SqlWF;
                 drpdown_WF.SelectedIndex = 0;
                 drpdown_WF.DataBind();
@@ -2685,6 +2686,7 @@ namespace DX_WebTemplate
                     if (rawf != null)
                     {
                         SqlWF.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
+                        drpdown_WF.DataSourceID = null;
                         drpdown_WF.DataSource = SqlWF;
                         drpdown_WF.SelectedIndex = 0;
                         drpdown_WF.DataBind();

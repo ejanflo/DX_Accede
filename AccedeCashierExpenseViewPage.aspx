@@ -566,6 +566,10 @@
                     });
                 };
             }
+
+            if (e.buttonID == 'btnRemove') {
+                DocuGrid.PerformCallback(s.GetRowKey(e.visibleIndex) + "|" + e.buttonID);
+            }
         }
 
         $("#modalClose").on("click", function () {
@@ -634,7 +638,7 @@
         };
     </script>
     <div class="conta" id="demoFabContent">
-    <dx:ASPxFormLayout ID="FormExpApprovalView" runat="server" DataSourceID="sqlMain" Width="90%" SettingsAdaptivity-AdaptivityMode="SingleColumnWindowLimit" ColCount="2" ColumnCount="2" Theme="iOS">
+    <dx:ASPxFormLayout ID="FormExpApprovalView" runat="server" DataSourceID="sqlMain" Width="90%" SettingsAdaptivity-AdaptivityMode="SingleColumnWindowLimit" ColCount="2" ColumnCount="2" Theme="iOS" OnInit="FormExpApprovalView_Init">
         <SettingsAdaptivity SwitchToSingleColumnAtWindowInnerWidth="900" AdaptivityMode="SingleColumnWindowLimit">
         </SettingsAdaptivity>
         <Items>
@@ -1209,21 +1213,43 @@
                                     </Caption>
                                 </GroupBoxStyle>
                                 <Items>
+                                    <dx:LayoutItem Caption="" ColSpan="1" Name="uploader_cashier">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxUploadControl ID="UploadController" runat="server" AutoStartUpload="True" OnFilesUploadComplete="UploadController_FilesUploadComplete" ShowProgressPanel="True" UploadMode="Auto" Width="80%">
+                                                    <ClientSideEvents FilesUploadComplete="function(s, e) {
+	DocuGrid.Refresh();
+}
+" />
+                                                    <AdvancedModeSettings EnableDragAndDrop="True" EnableFileList="True" EnableMultiSelect="True">
+                                                    </AdvancedModeSettings>
+                                                </dx:ASPxUploadControl>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                    </dx:LayoutItem>
                                     <dx:LayoutItem Caption="" ColSpan="1">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxGridView ID="DocuGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="DocuGrid" DataSourceID="SqlDocs" KeyFieldName="ID" Width="100%">
+                                                <dx:ASPxGridView ID="DocuGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="DocuGrid" KeyFieldName="ID" OnCustomButtonInitialize="DocuGrid_CustomButtonInitialize" OnCustomCallback="DocuGrid_CustomCallback">
                                                     <ClientSideEvents CustomButtonClick="onViewAttachment" />
                                                     <SettingsPopup>
                                                         <FilterControl AutoUpdatePosition="False">
                                                         </FilterControl>
                                                     </SettingsPopup>
                                                     <Columns>
-                                                        <dx:GridViewCommandColumn Caption="File" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                        <dx:GridViewCommandColumn Caption="Action" ShowInCustomizationForm="True" VisibleIndex="1">
                                                             <CustomButtons>
-                                                                <dx:GridViewCommandColumnCustomButton ID="btnDownloadFile" Text="Open File">
+                                                                <dx:GridViewCommandColumnCustomButton ID="btnDownloadFile3" Text="Open File">
                                                                     <Image IconID="pdfviewer_next_svg_16x16">
                                                                     </Image>
+                                                                </dx:GridViewCommandColumnCustomButton>
+                                                                <dx:GridViewCommandColumnCustomButton ID="btnRemove" Text="Remove">
+                                                                    <Image IconID="iconbuilder_actions_trash_svg_16x16">
+                                                                    </Image>
+                                                                    <Styles>
+                                                                        <Style ForeColor="Red">
+                                                                        </Style>
+                                                                    </Styles>
                                                                 </dx:GridViewCommandColumnCustomButton>
                                                             </CustomButtons>
                                                             <CellStyle HorizontalAlign="Left">
@@ -1231,15 +1257,19 @@
                                                         </dx:GridViewCommandColumn>
                                                         <dx:GridViewDataTextColumn FieldName="ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="0">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="FileName" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="1">
+                                                        <dx:GridViewDataTextColumn FieldName="FileName" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="2" Caption="File Name">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Description" ShowInCustomizationForm="True" VisibleIndex="2">
+                                                        <dx:GridViewDataTextColumn FieldName="FileDesc" ShowInCustomizationForm="True" VisibleIndex="4" Caption="Description">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn Caption="File Size" FieldName="FileSize" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                        <dx:GridViewDataTextColumn Caption="File Size" FieldName="FileSize" ShowInCustomizationForm="True" VisibleIndex="5">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="FileExtension" ShowInCustomizationForm="True" VisibleIndex="4">
+                                                        <dx:GridViewDataTextColumn FieldName="Orig_ID" ShowInCustomizationForm="True" VisibleIndex="6" Visible="False">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="FileAttachment" ShowInCustomizationForm="True" Visible="False" VisibleIndex="6">
+                                                        <dx:GridViewDataTextColumn FieldName="isExist" ShowInCustomizationForm="True" Visible="False" VisibleIndex="7">
+                                                        </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewDataTextColumn Caption="File Ext" FieldName="FileExt" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                        </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewDataTextColumn FieldName="FileByte" ShowInCustomizationForm="True" Visible="False" VisibleIndex="8">
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:ASPxGridView>
@@ -2962,6 +2992,13 @@ saveAR(); SaveARPopup.Hide();
         <SelectParameters>
             <asp:Parameter DefaultValue="True" Name="isActive" Type="Boolean" />
             <asp:Parameter Name="CompanyId" Type="Int32" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlExpDocs" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_T_FileAttachment] WHERE (([Doc_ID] = @Doc_ID) AND ([App_ID] = @App_ID) AND ([DocType_Id] = @DocType_Id))">
+        <SelectParameters>
+            <asp:Parameter Name="Doc_ID" Type="Int32" />
+            <asp:Parameter DefaultValue="1032" Name="App_ID" Type="Int32" />
+            <asp:Parameter DefaultValue="" Name="DocType_Id" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
 </asp:Content>

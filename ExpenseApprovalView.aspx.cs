@@ -95,7 +95,7 @@ namespace DX_WebTemplate
                                 .Where(x => x.ExpenseType_ID == Convert.ToInt32(exp.ExpenseType_ID))
                                 .FirstOrDefault();
                             
-                            if(FinApproverVerify != null)
+                            if(FinApproverVerify != null && actDetails.WF_Id.ToString() == exp.FAPWF_Id.ToString())
                             {
                                 //lbl_CTcomp.ClientVisible = false;
                                 lbl_CTcomp.ClientVisible = true;

@@ -53,6 +53,8 @@ namespace DX_WebTemplate
                             .Where(x => x.ID == Convert.ToInt32(expID))
                             .FirstOrDefault();
 
+                        var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense").Where(x => x.App_Id == 1032).FirstOrDefault();
+
                         sqlMain.SelectParameters["ID"].DefaultValue = expDetails.ID.ToString();
                         SqlDocs.SelectParameters["Doc_ID"].DefaultValue = expDetails.ID.ToString();
                         SqlCA.SelectParameters["Exp_ID"].DefaultValue = expDetails.ID.ToString();
@@ -61,6 +63,9 @@ namespace DX_WebTemplate
                         SqlExpDetails.SelectParameters["ExpenseMain_ID"].DefaultValue = expDetails.ID.ToString();
                         SqlWFActivity.SelectParameters["Document_Id"].DefaultValue = expDetails.ID.ToString();
                         SqlCADetails.SelectParameters["Exp_ID"].DefaultValue = expDetails.ID.ToString();
+                        SqlExpDocs.SelectParameters["Doc_ID"].DefaultValue = expID.ToString();
+                        SqlExpDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType != null ? app_docType.DCT_Id.ToString() : "";
+
 
                         var exp = _DataContext.ACCEDE_T_ExpenseMains
                             .Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"]))
@@ -71,11 +76,6 @@ namespace DX_WebTemplate
                         SqlWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp.WF_Id).ToString();
                         SqlFAPWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp.FAPWF_Id).ToString();
 
-                        var app_docType = _DataContext.ITP_S_DocumentTypes
-                            .Where(x => x.DCT_Name == "ACDE Expense")
-                            .Where(x => x.App_Id == 1032)
-                            .FirstOrDefault();
-
                         SqlDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType != null ? app_docType.DCT_Id.ToString() : "";
 
                         var status_id = exp.Status.ToString();
@@ -84,6 +84,8 @@ namespace DX_WebTemplate
                         var myLayoutGroup = FormExpApprovalView.FindItemOrGroupByName("ExpTitle") as LayoutGroup;
                         var btnAR = FormExpApprovalView.FindItemOrGroupByName("SaveAR") as LayoutItem;
                         var btnDisburse = FormExpApprovalView.FindItemOrGroupByName("CashSave") as LayoutItem;
+                        var upload = FormExpApprovalView.FindItemOrGroupByName("uploader_cashier") as LayoutItem;
+                        upload.Visible = true;
 
                         if (myLayoutGroup != null)
                         {
@@ -192,6 +194,76 @@ namespace DX_WebTemplate
             catch (Exception ex)
             {
                 //Session["MyRequestPath"] = Request.Url.AbsoluteUri;
+                Response.Redirect("~/Logon.aspx");
+            }
+        }
+
+        protected void FormExpApprovalView_Init(object sender, EventArgs e)
+        {
+            try
+            {
+                string encryptedID = Request.QueryString["secureToken"];
+                if (!string.IsNullOrEmpty(encryptedID))
+                {
+                    int actID = Convert.ToInt32(Decrypt(encryptedID));
+
+                    var actDetails = _DataContext.ITP_T_WorkflowActivities
+                        .Where(x => x.WFA_Id == Convert.ToInt32(actID))
+                        .FirstOrDefault();
+
+                    var exp_id = Convert.ToInt32(actDetails.Document_Id);
+                    var exp_details = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == exp_id).FirstOrDefault();
+
+                    if (!IsPostBack || (Session["DataSetDoc"] == null))
+                    {
+                        dsDoc = new DataSet();
+                        DataTable masterTable = new DataTable();
+                        masterTable.Columns.Add("ID", typeof(int));
+                        masterTable.Columns.Add("Orig_ID", typeof(int));
+                        masterTable.Columns.Add("FileName", typeof(string));
+                        masterTable.Columns.Add("FileByte", typeof(byte[]));
+                        masterTable.Columns.Add("FileExt", typeof(string));
+                        masterTable.Columns.Add("FileSize", typeof(string));
+                        masterTable.Columns.Add("FileDesc", typeof(string));
+                        masterTable.Columns.Add("isExist", typeof(bool));
+                        masterTable.PrimaryKey = new DataColumn[] { masterTable.Columns["ID"] };
+
+                        dsDoc.Tables.AddRange(new DataTable[] { masterTable/*, detailTable*/ });
+                        Session["DataSetDoc"] = dsDoc;
+
+                    }
+                    else
+                        dsDoc = (DataSet)Session["DataSetDoc"];
+
+                    var docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense").FirstOrDefault();
+                    var ExpDocs = _DataContext.ITP_T_FileAttachments.Where(x => x.Doc_ID == exp_details.ID).Where(x => x.DocType_Id == docType.DCT_Id).ToList();
+
+                    if (!IsPostBack || (Session["DataSetDoc"] == null))
+                    {
+                        foreach (var expDoc in ExpDocs)
+                        {
+                            // Add a new row to the data table with the uploaded file data
+                            DataRow row = dsDoc.Tables[0].NewRow();
+                            row["ID"] = GetNewId();
+                            row["Orig_ID"] = expDoc.ID;
+                            row["FileName"] = expDoc.FileName;
+                            row["FileByte"] = expDoc.FileAttachment.ToArray();
+                            row["FileExt"] = expDoc.FileExtension;
+                            row["FileSize"] = expDoc.FileSize;
+                            row["FileDesc"] = expDoc.Description;
+                            row["isExist"] = true;
+                            dsDoc.Tables[0].Rows.Add(row);
+
+                        }
+                    }
+
+                    DocuGrid.DataSource = dsDoc.Tables[0];
+                    DocuGrid.DataBind();
+                }
+
+            }
+            catch (Exception ex)
+            {
                 Response.Redirect("~/Logon.aspx");
             }
         }
@@ -418,6 +490,64 @@ namespace DX_WebTemplate
                     .Where(x => x.isTravel != true)
                     .FirstOrDefault();
 
+            //Insert Attachments
+            DataSet dsFile = (DataSet)Session["DataSetDoc"];
+            DataTable dataTable = dsFile.Tables[0];
+
+            if (dataTable.Rows.Count > 0)
+            {
+                string connectionString1 = ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString;
+                string insertQuery1 = "INSERT INTO ITP_T_FileAttachment (FileAttachment, FileName, Description, DateUploaded, App_ID, Company_ID, Doc_ID, Doc_No, User_ID, FileExtension, FileSize, DocType_Id) VALUES (@file_byte, @filename, @desc, @date_upload, @app_id, @comp_id, @doc_id, @doc_no, @user_id, @fileExt, @filesize, @docType)";
+
+                using (SqlConnection connection = new SqlConnection(connectionString1))
+                using (SqlCommand command = new SqlCommand(insertQuery1, connection))
+                {
+                    // Define the parameters for the SQL query
+                    command.Parameters.Add("@filename", SqlDbType.NVarChar, 200);
+                    command.Parameters.Add("@file_byte", SqlDbType.VarBinary);
+                    command.Parameters.Add("@desc", SqlDbType.NVarChar, 200);
+                    command.Parameters.Add("@date_upload", SqlDbType.DateTime);
+                    command.Parameters.Add("@app_id", SqlDbType.Int, 10);
+                    command.Parameters.Add("@comp_id", SqlDbType.Int, 10);
+                    command.Parameters.Add("@doc_id", SqlDbType.Int, 10);
+                    command.Parameters.Add("@doc_no", SqlDbType.NVarChar, 40);
+                    command.Parameters.Add("@user_id", SqlDbType.NVarChar, 20);
+                    command.Parameters.Add("@fileExt", SqlDbType.NVarChar, 20);
+                    command.Parameters.Add("@filesize", SqlDbType.NVarChar, 20);
+                    command.Parameters.Add("@docType", SqlDbType.Int, 10);
+
+                    // Open the connection to the database
+                    connection.Open();
+
+                    // Loop through the rows in the DataTable and insert them into the database
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        if (Convert.ToBoolean(row["isExist"]) == false)
+                        {
+                            command.Parameters["@filename"].Value = row["FileName"];
+                            command.Parameters["@file_byte"].Value = row["FileByte"];
+                            command.Parameters["@desc"].Value = row["FileDesc"];
+                            command.Parameters["@date_upload"].Value = DateTime.Now;
+                            command.Parameters["@app_id"].Value = 1032;
+                            command.Parameters["@comp_id"].Value = exp_main.ExpChargedTo_CompanyId;
+                            command.Parameters["@doc_id"].Value = exp_main.ID;
+                            command.Parameters["@doc_no"].Value = exp_main.DocNo;
+                            command.Parameters["@user_id"].Value = Session["userID"] != null ? Session["userID"].ToString() : "0";
+                            command.Parameters["@fileExt"].Value = row["FileExt"];
+                            command.Parameters["@filesize"].Value = row["FileSize"];
+                            command.Parameters["@docType"].Value = app_docType_exp != null ? app_docType_exp.DCT_Id : 0;
+                            command.ExecuteNonQuery();
+                        }
+
+                    }
+
+                    // Close the connection to the database
+                    connection.Close();
+
+
+                }
+            }
+
             var payMethod = "";
             var tranType = "";
 
@@ -602,6 +732,113 @@ namespace DX_WebTemplate
             SqlCAFileAttach.DataBind();
 
             CADocuGrid.DataBind();
+        }
+
+        protected void UploadController_FilesUploadComplete(object sender, FilesUploadCompleteEventArgs e)
+        {
+            DataSet ImgDS = (DataSet)Session["DataSetDoc"];
+
+            foreach (var file in UploadController.UploadedFiles)
+            {
+                var filesize = 0.00;
+                var filesizeStr = "";
+                if (Convert.ToInt32(file.ContentLength) > 999999)
+                {
+                    filesize = Convert.ToInt32(file.ContentLength) / 1000000;
+                    filesizeStr = filesize.ToString() + " MB";
+                }
+                else if (Convert.ToInt32(file.ContentLength) > 999)
+                {
+                    filesize = Convert.ToInt32(file.ContentLength) / 1000;
+                    filesizeStr = filesize.ToString() + " KB";
+                }
+                else
+                {
+                    filesize = Convert.ToInt32(file.ContentLength);
+                    filesizeStr = filesize.ToString() + " Bytes";
+                }
+
+                // Add a new row to the data table with the uploaded file data
+                DataRow row = ImgDS.Tables[0].NewRow();
+                row["ID"] = GetNewId();
+                row["FileName"] = file.FileName;
+                row["FileByte"] = file.FileBytes;
+                row["FileExt"] = file.FileName.Split('.').Last();
+                row["FileSize"] = filesizeStr;
+                row["FileDesc"] = file.FileName.Split('.').First();
+                row["isExist"] = false;
+                ImgDS.Tables[0].Rows.Add(row);
+            }
+            _DataContext.SubmitChanges();
+            SqlExpDocs.DataBind();
+        }
+
+        private int GetNewId()
+        {
+            dsDoc = (DataSet)Session["DataSetDoc"];
+            DataTable table = dsDoc.Tables[0];
+            if (table.Rows.Count == 0) return 0;
+            int max = Convert.ToInt32(table.Rows[0]["ID"]);
+            for (int i = 1; i < table.Rows.Count; i++)
+            {
+                if (Convert.ToInt32(table.Rows[i]["ID"]) > max)
+                    max = Convert.ToInt32(table.Rows[i]["ID"]);
+            }
+            return max + 1;
+        }
+
+        DataSet dsDoc = null;
+
+        protected void DocuGrid_CustomButtonInitialize(object sender, ASPxGridViewCustomButtonEventArgs e)
+        {
+            if (e.VisibleIndex >= 0 && e.ButtonID == "btnRemove") // Ensure it's a data row and the button is the desired one
+            {
+                //Get the value of the "Status" column for the current row
+                object statusValue = DocuGrid.GetRowValues(e.VisibleIndex, "isExist");
+
+                //Check if the status is "saved" and make the button visible accordingly
+                if (statusValue != null && (Convert.ToBoolean(statusValue) != true))
+                    e.Visible = DevExpress.Utils.DefaultBoolean.True;
+                else
+                    e.Visible = DevExpress.Utils.DefaultBoolean.False;
+            }
+
+            if (e.VisibleIndex >= 0 && e.ButtonID == "btnDownload") // Ensure it's a data row and the button is the desired one
+            {
+                //Get the value of the "Status" column for the current row
+                object statusValue = DocuGrid.GetRowValues(e.VisibleIndex, "isExist");
+
+                //Check if the status is "saved" and make the button visible accordingly
+                if (statusValue != null && (Convert.ToBoolean(statusValue) != false))
+                    e.Visible = DevExpress.Utils.DefaultBoolean.True;
+                else
+                    e.Visible = DevExpress.Utils.DefaultBoolean.False;
+            }
+        }
+
+        protected void DocuGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            string[] args = e.Parameters.Split('|');
+            string rowKey = args[0];
+            string buttonId = args[1];
+
+            if (buttonId == "btnRemove")
+            {
+                int i = DocuGrid.FindVisibleIndexByKeyValue(rowKey);
+
+                // Access the dataset from the session
+                DataSet dsDoc = (DataSet)Session["DataSetDoc"];
+
+                // Ensure that the rowKey exists in the table before trying to remove it
+                DataRow rowToRemove = dsDoc.Tables[0].Rows.Find(rowKey);
+                if (rowToRemove != null)
+                {
+                    dsDoc.Tables[0].Rows.Remove(rowToRemove);
+                }
+
+                // Optionally rebind the grid after removing the row
+                DocuGrid.DataBind();
+            }
         }
     }
 }
