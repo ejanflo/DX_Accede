@@ -281,13 +281,12 @@
     <Content Include="styles\product.css" />
     <Content Include="styles\sweetalert2.min.css" />
     <Content Include="TestPage.aspx" />
-    <Content Include="TravelExpenseAdd.aspx" />
+    <Content Include="TravelExpenseEdit.aspx" />
     <Content Include="TravelExpenseApprovalHistory.aspx" />
     <Content Include="TravelExpenseApprovalMain.aspx" />
     <Content Include="TravelExpenseCashier.aspx" />
     <Content Include="TravelExpenseP2P.aspx" />
     <Content Include="TravelExpenseReview.aspx" />
-    <Content Include="TravelExpenseEdit.aspx" />
     <Content Include="TravelExpenseMain.aspx" />
     <Content Include="TravelExpensePrint.aspx" />
     <Content Include="TravelExpenseApprovalHistoryView.aspx" />
@@ -787,12 +786,12 @@
     <Compile Include="TestPage.aspx.designer.cs">
       <DependentUpon>TestPage.aspx</DependentUpon>
     </Compile>
-    <Compile Include="TravelExpenseAdd.aspx.cs">
-      <DependentUpon>TravelExpenseAdd.aspx</DependentUpon>
+    <Compile Include="TravelExpenseEdit.aspx.cs">
+      <DependentUpon>TravelExpenseEdit.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="TravelExpenseAdd.aspx.designer.cs">
-      <DependentUpon>TravelExpenseAdd.aspx</DependentUpon>
+    <Compile Include="TravelExpenseEdit.aspx.designer.cs">
+      <DependentUpon>TravelExpenseEdit.aspx</DependentUpon>
     </Compile>
     <Compile Include="TravelExpenseApprovalHistory.aspx.cs">
       <DependentUpon>TravelExpenseApprovalHistory.aspx</DependentUpon>
@@ -828,13 +827,6 @@
     </Compile>
     <Compile Include="TravelExpenseReview.aspx.designer.cs">
       <DependentUpon>TravelExpenseReview.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="TravelExpenseEdit.aspx.cs">
-      <DependentUpon>TravelExpenseEdit.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="TravelExpenseEdit.aspx.designer.cs">
-      <DependentUpon>TravelExpenseEdit.aspx</DependentUpon>
     </Compile>
     <Compile Include="TravelExpenseMain.aspx.cs">
       <DependentUpon>TravelExpenseMain.aspx</DependentUpon>

@@ -182,7 +182,7 @@
                     console.log(response.d);
                     if (response.d == true) {
                         
-                        window.location.href = "TravelExpenseAdd.aspx";
+                        window.open("TravelExpenseAdd.aspx", "_self");
                     }
                 },
                 error: function (xhr, status, error) {

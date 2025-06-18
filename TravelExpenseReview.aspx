@@ -40,11 +40,6 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
-                    // Handle success
-                    //LoadingPanel.SetText("Loading RFP Document&hellip;");
-                    //LoadingPanel.Show();
-                    //window.open('RFPViewPage.aspx', '_blank');
-
                     LoadingPanel.Hide();
                 },
                 failure: function (response) {

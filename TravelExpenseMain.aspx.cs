@@ -31,14 +31,7 @@ namespace DX_WebTemplate
                 sqlTravelExp.SelectParameters["Employee_Id"].DefaultValue = !string.IsNullOrEmpty(Convert.ToString(Session["Employee_Id"])) ? Convert.ToString(Session["Employee_Id"]) : "0";
 
                 employeeCB.Value = Session["userID"];
-                //compCB.Value = Convert.ToString(Session["userCompanyID"]);
-                //var depcode = context.ITP_S_UserMasters.Where(x => x.EmpCode == Convert.ToString(Session["userID"])).Select(x => x.DepCode).FirstOrDefault();
-                //var isdep = Convert.ToString(context.ITP_S_OrgDepartmentMasters.Where(x => x.DepCode == depcode && x.Company_ID == Convert.ToInt32(Session["userCompanyID"])).Select(x => x.ID).FirstOrDefault());
 
-                //if (isdep == "0")
-                //    chargedCB.SelectedIndex = -1;
-                //else
-                //    chargedCB.Value = isdep;
                 sqlCompany.SelectParameters["UserId"].DefaultValue = Session["userID"].ToString();
 
                 SqlDepartmentEdit.SelectParameters["UserId"].DefaultValue = Convert.ToString(Session["userID"]);
@@ -166,7 +159,6 @@ namespace DX_WebTemplate
                 context.SubmitChanges();
 
                 Session["TravelExp_Id"] = travelMain.ID;
-                Session["main_action"] = "add";
 
             }
             catch (Exception)
@@ -216,7 +208,10 @@ namespace DX_WebTemplate
             Session["TravelExp_Id"] = e.Parameters.Split('|').First();
             Session["prep"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "Preparer_Id");
             Session["doc_stat"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "Status");
+            Session["statusid"] = context.ITP_S_Status.Where(x => x.STS_Name == "Disbursed").Select(x => x.STS_Id).FirstOrDefault();
+            Session["appdoctype"] = context.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).Select(x => x.DCT_Id).FirstOrDefault();
             Session["main_action"] = "edit";
+
             if (e.Parameters.Split('|').Last() == "btnEdit")
             {
                 ASPxWebControl.RedirectOnCallback("TravelExpenseAdd.aspx");

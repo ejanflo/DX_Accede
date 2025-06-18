@@ -392,8 +392,9 @@ namespace DX_WebTemplate
             {
                 var travelExpenseDetailId = Convert.ToInt32(e.Value);
                 var total = _DataContext.ACCEDE_T_TravelExpenseDetailsMaps
-                    .Where(or => or.TravelExpenseDetail_ID == travelExpenseDetailId)
-                    .Sum(or =>
+                .Where(or => or.TravelExpenseDetail_ID == travelExpenseDetailId)
+                .Select(or =>
+                    (decimal?)(
                         (or.ReimTranspo_Amount1 ?? 0) +
                         (or.ReimTranspo_Amount2 ?? 0) +
                         (or.ReimTranspo_Amount3 ?? 0) +
@@ -401,7 +402,9 @@ namespace DX_WebTemplate
                         (or.Entertainment_Amount ?? 0) +
                         (or.BusMeals_Amount ?? 0) +
                         (or.OtherBus_Amount ?? 0)
-                    );
+                    )
+                )
+                .Sum() ?? 0m;
 
                 e.DisplayText = total == 0 ? "0.00" : total.ToString("N");
             }
