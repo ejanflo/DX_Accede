@@ -173,11 +173,11 @@ namespace DX_WebTemplate
                                 dueField.Caption = "Net Due to Company";
 
                                 //DO NOT DELETE THIS CODE
-                                //if(dueComp > 0)
-                                //{
-                                //    var AR_Reference = FormExpApprovalView.FindItemOrGroupByName("ARNo") as LayoutItem;
-                                //    AR_Reference.ClientVisible = true;
-                                //}
+                                if (dueComp > 0)
+                                {
+                                    var AR_Reference = FormExpApprovalView.FindItemOrGroupByName("ARNo") as LayoutItem;
+                                    AR_Reference.ClientVisible = true;
+                                }
                             }
 
                             var reimRFP = _DataContext.ACCEDE_T_RFPMains

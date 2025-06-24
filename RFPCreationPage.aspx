@@ -1003,7 +1003,7 @@ onTravelClick();
                                                 <dx:ASPxComboBox ID="drpdown_Company" runat="server" ClientInstanceName="drpdown_Company" DataSourceID="SqlCompany" TextField="CompanyShortName" ValueField="CompanyId" Width="100%">
                                                     <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	drpdown_Department.PerformCallback(s.GetValue());
-drpdown_Payee.PerformCallback(s.GetValue());
+//drpdown_Payee.PerformCallback(s.GetValue());
 drpdown_WF.PerformCallback();
 ifComp_is_DLI();
 //onAmountChanged(drpdown_PayMethod.GetValue());

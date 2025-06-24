@@ -255,7 +255,7 @@
                                                 </dx:GridViewToolbar>
                                             </Toolbars>
                                             <FormatConditions>
-                                                <dx:GridViewFormatConditionHighlight Expression="[STS_Description] = 'Pending' Or [STS_Description] = 'Pending at Finance' Or [STS_Description] = 'Pending at Audit' Or [STS_Description] = 'Pending at P2P' Or [STS_Description] = 'Pending at Cashier'" FieldName="STS_Description" Format="Custom">
+                                                <dx:GridViewFormatConditionHighlight Expression="[STS_Description] = 'Pending' Or [STS_Description] = 'Pending at Finance' Or [STS_Description] = 'Pending at Audit' Or [STS_Description] = 'Pending at P2P' Or [STS_Description] = 'Pending at Cashier' Or [STS_Description] = 'Pending SAP Doc No.'" FieldName="STS_Description" Format="Custom">
                                                     <CellStyle Font-Bold="True" ForeColor="#006DD6">
                                                     </CellStyle>
                                                 </dx:GridViewFormatConditionHighlight>

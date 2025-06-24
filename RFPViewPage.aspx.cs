@@ -1,4 +1,5 @@
-﻿using DevExpress.Web;
+﻿using DevExpress.DocumentServices.ServiceModel.DataContracts;
+using DevExpress.Web;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -147,7 +148,19 @@ namespace DX_WebTemplate
                                         .Where(x => x.STS_Name == "Pending at Cashier")
                                         .FirstOrDefault();
 
-                    if (CashierVerify != null && rfp_details.Status == CashierStatus.STS_Id /*&& rfp_details.User_ID != empCode*/)
+                    var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP").Where(x => x.App_Id == 1032).FirstOrDefault();
+
+                    var pending_SAPDoc_status = _DataContext.ITP_S_Status
+                                        .Where(x => x.STS_Description == "Pending SAP Doc No.")
+                                        .FirstOrDefault();
+
+                    var pendingSAPDocAct = _DataContext.ITP_T_WorkflowActivities.Where(x => x.Document_Id == Convert.ToInt32(rfp_details.ID))
+                                        .Where(x => x.AppId == 1032)
+                                        .Where(x => x.AppDocTypeId == app_docType.DCT_Id)
+                                        .Where(x=>x.Status == Convert.ToInt32(pending_SAPDoc_status.STS_Id))
+                                        .FirstOrDefault();
+
+                    if (CashierVerify != null && (rfp_details.Status == CashierStatus.STS_Id || pendingSAPDocAct != null) /*&& rfp_details.User_ID != empCode*/)
                     //if (CashierVerify != null && rfp_details.Status == 7)
                     {
                         var edit_SAPDoc = formRFP.FindItemOrGroupByName("edit_SAPDoc") as LayoutItem;
@@ -165,17 +178,21 @@ namespace DX_WebTemplate
                         lbl_IO.ClientVisible = false;
                         upload.ClientVisible = true;
                         btnCash.ClientVisible = true;
+                        if (pendingSAPDocAct!=null)
+                        {
+                            btnCash.ClientVisible = false;
+                            BtnSave.ClientVisible = true;
+                        }
+                        
                         BtnSave.ClientVisible = true;
 
                         if(rfp_details.Status == release_cash_status.STS_Id)
                         {
                             btnPrint.ClientVisible = true;
                             btnCash.ClientVisible = false;
-                            BtnSave.ClientVisible = false;
+                            
                         }
                     }
-                    
-                    var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP").Where(x => x.App_Id == 1032).FirstOrDefault();
                     
                     SqlMain.SelectParameters["ID"].DefaultValue = rfp_id.ToString();
                     SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = rfp_details.WF_Id.ToString();
@@ -213,61 +230,67 @@ namespace DX_WebTemplate
         DataSet dsDoc = null;
         protected void formRFP_Init(object sender, EventArgs e)
         {
-            try
-            {
-                var rfp_id = Convert.ToInt32(Session["passRFPID"]);
-                var rfp_details = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == rfp_id).FirstOrDefault();
+            
+            //try
+            //{
+            //    var rfp_id = Convert.ToInt32(Session["passRFPID"]);
+            //    var rfp_details = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == rfp_id).FirstOrDefault();
 
-                if (!IsPostBack || (Session["DataSetDoc"] == null))
-                {
-                    dsDoc = new DataSet();
-                    DataTable masterTable = new DataTable();
-                    masterTable.Columns.Add("ID", typeof(int));
-                    masterTable.Columns.Add("Orig_ID", typeof(int));
-                    masterTable.Columns.Add("FileName", typeof(string));
-                    masterTable.Columns.Add("FileByte", typeof(byte[]));
-                    masterTable.Columns.Add("FileExt", typeof(string));
-                    masterTable.Columns.Add("FileSize", typeof(string));
-                    masterTable.Columns.Add("FileDesc", typeof(string));
-                    masterTable.Columns.Add("isExist", typeof(bool));
-                    masterTable.PrimaryKey = new DataColumn[] { masterTable.Columns["ID"] };
+            //    if (Session["DataSetDoc"] == null)
+            //    {
+            //        dsDoc = new DataSet();
+            //        DataTable masterTable = new DataTable();
+            //        masterTable.Columns.Add("ID", typeof(int));
+            //        masterTable.Columns.Add("Orig_ID", typeof(int));
+            //        masterTable.Columns.Add("FileName", typeof(string));
+            //        masterTable.Columns.Add("FileByte", typeof(byte[]));
+            //        masterTable.Columns.Add("FileExt", typeof(string));
+            //        masterTable.Columns.Add("FileSize", typeof(string));
+            //        masterTable.Columns.Add("FileDesc", typeof(string));
+            //        masterTable.Columns.Add("User_ID", typeof(string));
+            //        masterTable.Columns.Add("isExist", typeof(bool));
+            //        masterTable.PrimaryKey = new DataColumn[] { masterTable.Columns["ID"] };
 
-                    dsDoc.Tables.AddRange(new DataTable[] { masterTable/*, detailTable*/ });
-                    Session["DataSetDoc"] = dsDoc;
+            //        dsDoc.Tables.AddRange(new DataTable[] { masterTable/*, detailTable*/ });
+            //        Session["DataSetDoc"] = dsDoc;
 
-                }
-                else
-                    dsDoc = (DataSet)Session["DataSetDoc"];
+            //    }
+            //    else
+            //        dsDoc = (DataSet)Session["DataSetDoc"];
 
-                var docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP").FirstOrDefault();
-                var RFPDocs = _DataContext.ITP_T_FileAttachments.Where(x => x.Doc_ID == rfp_details.ID).Where(x => x.DocType_Id == docType.DCT_Id).ToList();
+            //    var docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP").FirstOrDefault();
+            //    var RFPDocs = _DataContext.ITP_T_FileAttachments.Where(x => x.Doc_ID == rfp_details.ID).Where(x => x.DocType_Id == docType.DCT_Id).ToList();
 
-                if (!IsPostBack || (Session["DataSetDoc"] == null))
-                {
-                    foreach (var rfpDoc in RFPDocs)
-                    {
-                        // Add a new row to the data table with the uploaded file data
-                        DataRow row = dsDoc.Tables[0].NewRow();
-                        row["ID"] = GetNewId();
-                        row["Orig_ID"] = rfpDoc.ID;
-                        row["FileName"] = rfpDoc.FileName;
-                        row["FileByte"] = rfpDoc.FileAttachment.ToArray();
-                        row["FileExt"] = rfpDoc.FileExtension;
-                        row["FileSize"] = rfpDoc.FileSize;
-                        row["FileDesc"] = rfpDoc.Description;
-                        row["isExist"] = true;
-                        dsDoc.Tables[0].Rows.Add(row);
+            //    if (!IsPostBack || (Session["DataSetDoc"] == null))
+            //    {
+                    
+            //        foreach (var rfpDoc in RFPDocs)
+            //        {
+            //            // Add a new row to the data table with the uploaded file data
+            //            DataRow row = dsDoc.Tables[0].NewRow();
+            //            row["ID"] = GetNewId();
+            //            row["Orig_ID"] = rfpDoc.ID;
+            //            row["FileName"] = rfpDoc.FileName;
+            //            row["FileByte"] = rfpDoc.FileAttachment.ToArray();
+            //            row["FileExt"] = rfpDoc.FileExtension;
+            //            row["FileSize"] = rfpDoc.FileSize;
+            //            row["FileDesc"] = rfpDoc.Description;
+            //            row["User_ID"] = rfpDoc.User_ID;
+            //            row["isExist"] = true;
+            //            dsDoc.Tables[0].Rows.Add(row);
 
-                    }
-                }
+            //        }
+            //    }
 
-                DocuGrid.DataSource = dsDoc.Tables[0];
-                DocuGrid.DataBind();
-            }
-            catch (Exception ex)
-            {
-                Response.Redirect("~/Logon.aspx");
-            }
+
+            //    DocuGrid.DataSource = dsDoc.Tables[0];
+            //    DocuGrid.DataBind();
+            //}
+            //catch (Exception ex)
+            //{
+            //    Response.Redirect("~/Logon.aspx");
+            //}
+        
             
         }
         private int GetNewId()
@@ -409,6 +432,10 @@ namespace DX_WebTemplate
                 var cashierWF = _DataContext.ITP_S_WorkflowHeaders.Where(x=>x.Name == "ACDE CASHIER").Where(x=>x.Company_Id == Convert.ToInt32(rfp_main.Company_ID)).FirstOrDefault();
                 var cashierWFDetail = _DataContext.ITP_S_WorkflowDetails.Where(x=>x.WF_Id == Convert.ToInt32(cashierWF.WF_Id)).FirstOrDefault();
                 var orgRole = _DataContext.ITP_S_SecurityUserOrgRoles.Where(x => x.OrgRoleId == Convert.ToInt32(cashierWFDetail.OrgRole_Id)).Where(x=>x.UserId == Session["userID"].ToString()).FirstOrDefault();
+                var pending_SAPDoc_status = _DataContext.ITP_S_Status
+                            .Where(x => x.STS_Description == "Pending SAP Doc No.")
+                            .FirstOrDefault();
+
                 rfp_main.SAPDocNo = SAPDoc;
 
                 var wfDetails = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == Convert.ToInt32(Session["wfa"])).FirstOrDefault();
@@ -445,12 +472,24 @@ namespace DX_WebTemplate
                     //}
 
                     //UPDATE ACTIVITY RFP
-                    wfDetails.Status = release_cash_status.STS_Id;
+                    if (SAPDoc != "" && SAPDoc != null)
+                        wfDetails.Status = release_cash_status.STS_Id;
+                    else
+                        wfDetails.Status = pending_SAPDoc_status.STS_Id;
+                    
                     wfDetails.DateAction = DateTime.Now;
                     wfDetails.Remarks = Session["AuthUser"].ToString() + ": ;";
                     wfDetails.ActedBy_User_Id = Session["userID"].ToString();
 
                     rfp_main.Status = release_cash_status.STS_Id;
+                }
+
+                if(wfDetails.Status == pending_SAPDoc_status.STS_Id)
+                {
+                    wfDetails.Status = release_cash_status.STS_Id;
+                    wfDetails.DateAction = DateTime.Now;
+                    wfDetails.Remarks = Session["AuthUser"].ToString() + ": ;";
+                    wfDetails.ActedBy_User_Id = Session["userID"].ToString();
                 }
 
                 _DataContext.SubmitChanges();
@@ -527,7 +566,44 @@ namespace DX_WebTemplate
 
         protected void UploadController_FilesUploadComplete(object sender, FilesUploadCompleteEventArgs e)
         {
-            DataSet ImgDS = (DataSet)Session["DataSetDoc"];
+            //DataSet ImgDS = (DataSet)Session["DataSetDoc"];
+
+            //foreach (var file in UploadController.UploadedFiles)
+            //{
+            //    var filesize = 0.00;
+            //    var filesizeStr = "";
+            //    if (Convert.ToInt32(file.ContentLength) > 999999)
+            //    {
+            //        filesize = Convert.ToInt32(file.ContentLength) / 1000000;
+            //        filesizeStr = filesize.ToString() + " MB";
+            //    }
+            //    else if (Convert.ToInt32(file.ContentLength) > 999)
+            //    {
+            //        filesize = Convert.ToInt32(file.ContentLength) / 1000;
+            //        filesizeStr = filesize.ToString() + " KB";
+            //    }
+            //    else
+            //    {
+            //        filesize = Convert.ToInt32(file.ContentLength);
+            //        filesizeStr = filesize.ToString() + " Bytes";
+            //    }
+
+            //    // Add a new row to the data table with the uploaded file data
+            //    DataRow row = ImgDS.Tables[0].NewRow();
+            //    row["ID"] = GetNewId();
+            //    row["FileName"] = file.FileName;
+            //    row["FileByte"] = file.FileBytes;
+            //    row["FileExt"] = file.FileName.Split('.').Last();
+            //    row["FileSize"] = filesizeStr;
+            //    row["FileDesc"] = file.FileName.Split('.').First();
+            //    row["User_ID"] = Session["userID"].ToString();
+            //    row["isExist"] = false;
+            //    ImgDS.Tables[0].Rows.Add(row);
+            //}
+            //_DataContext.SubmitChanges();
+            //SqlRFPDocs.DataBind();
+
+            var rfp_main = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == Convert.ToInt32(Session["passRFPID"])).FirstOrDefault();
 
             foreach (var file in UploadController.UploadedFiles)
             {
@@ -549,19 +625,34 @@ namespace DX_WebTemplate
                     filesizeStr = filesize.ToString() + " Bytes";
                 }
 
-                // Add a new row to the data table with the uploaded file data
-                DataRow row = ImgDS.Tables[0].NewRow();
-                row["ID"] = GetNewId();
-                row["FileName"] = file.FileName;
-                row["FileByte"] = file.FileBytes;
-                row["FileExt"] = file.FileName.Split('.').Last();
-                row["FileSize"] = filesizeStr;
-                row["FileDesc"] = file.FileName.Split('.').First();
-                row["isExist"] = false;
-                ImgDS.Tables[0].Rows.Add(row);
+                var app_docType = _DataContext.ITP_S_DocumentTypes
+                    .Where(x => x.DCT_Name == "ACDE RFP")
+                    .Where(x => x.App_Id == 1032)
+                    .FirstOrDefault();
+
+                ITP_T_FileAttachment docs = new ITP_T_FileAttachment();
+                {
+                    docs.FileAttachment = file.FileBytes;
+                    docs.FileName = file.FileName;
+                    docs.Doc_ID = rfp_main.ID;
+                    docs.App_ID = 1032;
+                    docs.DocType_Id = 1016;
+                    docs.User_ID = Session["userID"].ToString();
+                    docs.FileExtension = file.FileName.Split('.').Last();
+                    docs.Description = file.FileName.Split('.').First();
+                    docs.FileSize = filesizeStr;
+                    docs.Doc_No = rfp_main.RFP_DocNum.ToString();
+                    docs.Company_ID = Convert.ToInt32(rfp_main.ChargedTo_CompanyId);
+                    docs.DateUploaded = DateTime.Now;
+                    docs.DocType_Id = app_docType != null ? app_docType.DCT_Id : 0;
+                }
+            
+                _DataContext.ITP_T_FileAttachments.InsertOnSubmit(docs);
             }
+
             _DataContext.SubmitChanges();
             SqlRFPDocs.DataBind();
+
         }
 
         protected void btnPrint_Click(object sender, EventArgs e)
@@ -574,10 +665,10 @@ namespace DX_WebTemplate
             if (e.VisibleIndex >= 0 && e.ButtonID == "btnRemove") // Ensure it's a data row and the button is the desired one
             {
                 //Get the value of the "Status" column for the current row
-                object statusValue = DocuGrid.GetRowValues(e.VisibleIndex, "isExist");
+                object statusValue = DocuGrid.GetRowValues(e.VisibleIndex, "User_ID");
 
                 //Check if the status is "saved" and make the button visible accordingly
-                if (statusValue != null && (Convert.ToBoolean(statusValue) != true))
+                if (statusValue != null && statusValue.ToString() == Session["userID"].ToString())
                     e.Visible = DevExpress.Utils.DefaultBoolean.True;
                 else
                     e.Visible = DevExpress.Utils.DefaultBoolean.False;
@@ -604,22 +695,24 @@ namespace DX_WebTemplate
 
             if (buttonId == "btnRemove")
             {
-                int i = DocuGrid.FindVisibleIndexByKeyValue(rowKey);
+                int rowIndex = DocuGrid.FindVisibleIndexByKeyValue(rowKey);
 
-                // Access the dataset from the session
-                DataSet dsDoc = (DataSet)Session["DataSetDoc"];
-
-                // Ensure that the rowKey exists in the table before trying to remove it
-                DataRow rowToRemove = dsDoc.Tables[0].Rows.Find(rowKey);
-                if (rowToRemove != null)
+                // Get the actual ID value from the grid using the row index
+                object idValue = DocuGrid.GetRowValues(rowIndex, "ID");
+                if (idValue != null)
                 {
-                    dsDoc.Tables[0].Rows.Remove(rowToRemove);
+                    int id = Convert.ToInt32(idValue);
+                    var file = _DataContext.ITP_T_FileAttachments.FirstOrDefault(x => x.ID == id);
+                    if (file != null)
+                    {
+                        _DataContext.ITP_T_FileAttachments.DeleteOnSubmit(file);
+                        _DataContext.SubmitChanges();
+                    }
                 }
 
-                // Optionally rebind the grid after removing the row
                 DocuGrid.DataBind();
             }
-                
+
         }
 
         [WebMethod]
@@ -919,6 +1012,41 @@ namespace DX_WebTemplate
             catch (Exception e)
             {
                 return false;
+            }
+        }
+
+        protected void DocuGrid_HtmlDataCellPrepared(object sender, ASPxGridViewTableDataCellEventArgs e)
+        {
+            if (e.DataColumn.FieldName == "User_ID")
+            {
+                if (e.CellValue != null)
+                {
+                    var emp = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == e.CellValue.ToString()).FirstOrDefault();
+
+                    e.Cell.Text = emp.FullName;
+                }
+            }
+        }
+
+        [WebMethod]
+        public static string CheckSAPVAlidAJAX(string SAPDoc)
+        {
+            RFPViewPage page = new RFPViewPage();
+            return page.CheckSAPVAlid(SAPDoc);
+        }
+
+        public string CheckSAPVAlid(string SAPDoc)
+        {
+            var rfpMain = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == Convert.ToInt32(Session["passRFPID"])).FirstOrDefault();
+            var rfpCheck = _DataContext.ACCEDE_T_RFPMains.Where(x => x.SAPDocNo == SAPDoc).FirstOrDefault();
+
+            if (rfpCheck != null && SAPDoc != rfpMain.SAPDocNo)
+            {
+                return "error";
+            }
+            else
+            {
+                return "clear";
             }
         }
     }

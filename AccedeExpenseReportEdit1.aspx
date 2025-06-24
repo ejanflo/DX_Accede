@@ -200,9 +200,11 @@
             });
         }
 
-       function AddExpDetails() {
+        function AddExpDetails() {
+            
            if (ASPxClientEdit.ValidateGroup('PopupSubmit')) {
-              
+               LoadingPanel.SetText("Saving Expense item&hellip;");
+               LoadingPanel.Show();
                var dateAdd = dateAdded.GetValue();
                var tin_no = tin.GetValue() != null ? tin.GetValue() : "";
                var invoice_no = invoiceOR.GetValue() != null ? invoiceOR.GetValue() : "";
@@ -386,6 +388,8 @@
         }
 
         function SaveExpenseReport(btn) {
+            LoadingPanel.SetText("Processing&hellip;");
+            LoadingPanel.Show();
             var dateFile = date_dateFiled.GetValue();
             var repName = exp_EmpId.GetValue();
             var comp_id = exp_Company.GetValue();
@@ -1408,7 +1412,13 @@ reim_Currency.SetValue(s.GetValue);
 if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) { 
       
                //reimbursePopup2.Show();
+
+if(exp_Company.GetValue() != 0 &amp;&amp; exp_Department.GetValue() != 0){
 ReimbursementTrap2();
+}else{
+alert('Please verify your workflow details.');
+}
+
 }
 }" />
                                                             </dx:ASPxButton>

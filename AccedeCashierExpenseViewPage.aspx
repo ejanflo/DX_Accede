@@ -121,6 +121,41 @@
             });
         }
 
+        function CheckValidDocNo(SAPDoc, callback) {
+            var secureToken = new URLSearchParams(window.location.search).get('secureToken');
+            $.ajax({
+                type: "POST",
+                url: "AccedeCashierExpenseViewPage.aspx/CheckSAPVAlidAJAX",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({
+                    SAPDoc: SAPDoc,
+                    secureToken: secureToken
+                }),
+                success: function (response) {
+                    console.log(response.d);
+                    console.log(callback);
+                    if (response.d === "clear") {
+                        if (callback == 1) {
+                            SavePopup.Show();
+                        }
+
+                        if (callback == 2) {
+                            saveFinChanges(0);
+                        }
+
+                    } else {
+                        edit_SAPDocNo.SetIsValid(false);
+                        edit_SAPDocNo.SetErrorText("SAP Document No. already exists.");
+
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                }
+            });
+        }
+
         function viewReimModal(item_id) {
             $.ajax({
                 type: "POST",
@@ -324,13 +359,16 @@
             LoadingPanel.SetText('Saving Changes&hellip;');
             LoadingPanel.Show();
             var ARReference = txt_ARReference.GetValue();
+            var secureToken = new URLSearchParams(window.location.search).get('secureToken');
+
             $.ajax({
                 type: "POST",
                 url: "AccedeCashierExpenseViewPage.aspx/ReleaseARReferenceAJAX",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: JSON.stringify({
-                    ARReference: ARReference
+                    ARReference: ARReference,
+                    secureToken: secureToken
                 }),
                 success: function (response) {
                     // Update the description text box with the response value
@@ -377,7 +415,7 @@
                     // Update the description text box with the response value
                     var funcResult = response.d;
 
-                    if (funcResult == "success with reim") {
+                    if (funcResult == "success") {
                         LoadingPanel.SetText('You approved this request. Redirecting&hellip;');
                         LoadingPanel.Show();
 
@@ -439,7 +477,7 @@
 
         function onViewAttachment(s, e) {
 
-            if (e.buttonID == 'btnDownloadFile' || e.buttonID == 'btnDownloadFile1' || e.buttonID == 'btnDownloadFile2') {
+            if (e.buttonID == 'btnDownloadFile' || e.buttonID == 'btnDownloadFile1' || e.buttonID == 'btnDownloadFile2' || e.buttonID == 'btnDownloadFile3') {
                 fileBtn = e.buttonID;
                 var fileId = s.GetRowKey(e.visibleIndex);
                 var filename;
@@ -568,7 +606,10 @@
             }
 
             if (e.buttonID == 'btnRemove') {
-                DocuGrid.PerformCallback(s.GetRowKey(e.visibleIndex) + "|" + e.buttonID);
+                if (confirm("Are you sure you want to delete this attachment?")) {
+                    DocuGrid.PerformCallback(s.GetRowKey(e.visibleIndex) + "|" + e.buttonID);
+                }
+
             }
         }
 
@@ -677,7 +718,8 @@
                                         <dx:ASPxButton ID="BtnCashSave" runat="server" AutoPostBack="False" BackColor="#006838" ClientInstanceName="BtnCashSave" Text="Disburse">
                                             <ClientSideEvents Click="function(s, e) {
 	if(ASPxClientEdit.ValidateGroup('ViewFormCashier')){
- SavePopup.Show();
+ //SavePopup.Show();
+CheckValidDocNo(edit_SAPDocNo.GetValue(), 1);
 }
 }" />
                                             <Border BorderColor="#006838" />
@@ -716,6 +758,19 @@
                                             <Image IconID="dashboards_print_svg_white_16x16">
                                             </Image>
                                             <Border BorderColor="#006838" />
+                                        </dx:ASPxButton>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                            </dx:LayoutItem>
+
+                            <dx:LayoutItem Caption="" ClientVisible="False" ColSpan="1" Name="BtnSaveDetails" Width="20%">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxButton ID="BtnSaveDetails" runat="server" BackColor="#006DD6" ClientInstanceName="BtnSaveDetails" Text="Save">
+                                            <ClientSideEvents Click="function(s, e) {
+	saveFinChanges(0); 
+}" />
+                                            <Border BorderColor="#006DD6" />
                                         </dx:ASPxButton>
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
@@ -910,8 +965,11 @@
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxTextBox ID="edit_SAPDocNo" runat="server" ClientInstanceName="edit_SAPDocNo" Width="100%">
-                                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="ViewFormCashier">
-                                                        <RequiredField ErrorText="This field is required." IsRequired="True" />
+                                                    <ClientSideEvents ValueChanged="function(s, e) {
+	CheckValidDocNo(s.GetValue(), 0);
+}" />
+                                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="ViewFormCashier" EnableCustomValidation="True">
+                                                        <RequiredField ErrorText="This field is required." />
                                                     </ValidationSettings>
                                                     <Border BorderColor="#006838" BorderWidth="1px" />
                                                 </dx:ASPxTextBox>
@@ -1230,7 +1288,7 @@
                                     <dx:LayoutItem Caption="" ColSpan="1">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxGridView ID="DocuGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="DocuGrid" KeyFieldName="ID" OnCustomButtonInitialize="DocuGrid_CustomButtonInitialize" OnCustomCallback="DocuGrid_CustomCallback">
+                                                <dx:ASPxGridView ID="DocuGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="DocuGrid" KeyFieldName="ID" OnCustomButtonInitialize="DocuGrid_CustomButtonInitialize" OnCustomCallback="DocuGrid_CustomCallback" OnHtmlDataCellPrepared="DocuGrid_HtmlDataCellPrepared" DataSourceID="SqlExpDocs">
                                                     <ClientSideEvents CustomButtonClick="onViewAttachment" />
                                                     <SettingsPopup>
                                                         <FilterControl AutoUpdatePosition="False">
@@ -1259,17 +1317,15 @@
                                                         </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataTextColumn FieldName="FileName" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="2" Caption="File Name">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="FileDesc" ShowInCustomizationForm="True" VisibleIndex="4" Caption="Description">
+                                                        <dx:GridViewDataTextColumn FieldName="Description" ShowInCustomizationForm="True" VisibleIndex="4" Caption="Description">
                                                         </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataTextColumn Caption="File Size" FieldName="FileSize" ShowInCustomizationForm="True" VisibleIndex="5">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Orig_ID" ShowInCustomizationForm="True" VisibleIndex="6" Visible="False">
+                                                        <dx:GridViewDataTextColumn FieldName="FileExtension" ShowInCustomizationForm="True" VisibleIndex="3" Caption="File Ext">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="isExist" ShowInCustomizationForm="True" Visible="False" VisibleIndex="7">
+                                                        <dx:GridViewDataTextColumn FieldName="FileAttachment" ShowInCustomizationForm="True" VisibleIndex="9" Visible="False">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn Caption="File Ext" FieldName="FileExt" ShowInCustomizationForm="True" VisibleIndex="3">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="FileByte" ShowInCustomizationForm="True" Visible="False" VisibleIndex="8">
+                                                        <dx:GridViewDataTextColumn Caption="Uploaded By" FieldName="User_ID" ShowInCustomizationForm="True" VisibleIndex="6">
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:ASPxGridView>

@@ -42,11 +42,14 @@ namespace DX_WebTemplate
                     //}
                     //End ------------------ Page Security
 
+                    var docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP").FirstOrDefault();
+
                     SqlRFP.SelectParameters["User_ID"].DefaultValue = empCode;
                     SqlWF.SelectParameters["UserId"].DefaultValue = empCode;
                     SqlDepartmentEdit.SelectParameters["UserId"].DefaultValue = empCode;
                     SqlCompanyEdit.SelectParameters["UserId"].DefaultValue = empCode;
                     SqlExpense.SelectParameters["UserId"].DefaultValue = empCode;
+                    SqlWFActivity.SelectParameters["AppDocTypeId"].DefaultValue = docType.DCT_Id.ToString();
 
                 }
                 else

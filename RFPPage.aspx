@@ -1399,9 +1399,10 @@ SavePopup.Hide();
             <asp:Parameter Name="User_ID" Type="String" />
         </SelectParameters>
      </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlWFActivity" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_T_WorkflowActivity] WHERE (([AppId] = @AppId) AND ([Document_Id] = @Document_Id))">
+    <asp:SqlDataSource ID="SqlWFActivity" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_T_WorkflowActivity] WHERE (([AppId] = @AppId) AND ([Document_Id] = @Document_Id) AND ([AppDocTypeId] = @AppDocTypeId))">
         <SelectParameters>
             <asp:Parameter DefaultValue="1032" Name="AppId" Type="Int32" />
+            <asp:Parameter DefaultValue="" Name="AppDocTypeId" Type="Int32" />
             <asp:SessionParameter Name="Document_Id" SessionField="MainRFP_ID" Type="Int32" />
         </SelectParameters>
      </asp:SqlDataSource>

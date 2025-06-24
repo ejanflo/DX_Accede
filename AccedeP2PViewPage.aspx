@@ -116,6 +116,41 @@
             drpdown_CostCenter.PerformCallback(dept_id);
         }
 
+        function CheckValidDocNo(SAPDoc, callback) {
+            var secureToken = new URLSearchParams(window.location.search).get('secureToken');
+            $.ajax({
+                type: "POST",
+                url: "AccedeP2PViewPage.aspx/CheckSAPVAlidAJAX",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({
+                    SAPDoc: SAPDoc,
+                    secureToken: secureToken
+                }),
+                success: function (response) {
+                    console.log(response.d);
+                    console.log(callback);
+                    if (response.d === "clear") {
+                        if (callback == 1) {
+                            ApprovePopup.Show();
+                        }
+
+                        if (callback == 2) {
+                            saveFinChanges(0);
+                        }
+
+                    } else {
+                        edit_SAPDocNo.SetIsValid(false);
+                        edit_SAPDocNo.SetErrorText("SAP Document No. already exists.");
+
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                }
+            });
+        }
+
         function computeNetAmount(stat) {
             if (stat == "add") {
                 var gross = grossAmount.GetValue() != null ? grossAmount.GetValue() : 0;
@@ -429,8 +464,8 @@
                         }, 3000); // Adjust the time (in milliseconds) as needed
 
                         // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
-                        LoadingPanel1.SetText('Printing report&hellip;');
-                        LoadingPanel1.Show();
+                        LoadingPanel.SetText('Printing report&hellip;');
+                        LoadingPanel.Show();
                         setTimeout(function () {
                             window.location.href = 'AllAccedeP2PPage.aspx';
                         }, 3000); // Adjust the time (in milliseconds) as needed
@@ -813,7 +848,7 @@
                                         <dx:ASPxButton ID="btnApprove" runat="server" BackColor="#006838" Text="Approve" AutoPostBack="False">
                                             <ClientSideEvents Click="function(s, e) {
 if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) { 
-	ApprovePopup.Show();
+	CheckValidDocNo(edit_SAPDocNo.GetValue(), 1);
 }
 }" />
                                         </dx:ASPxButton>
@@ -1144,8 +1179,11 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxTextBox ID="edit_SAPDocNo" runat="server" ClientInstanceName="edit_SAPDocNo" Width="100%">
-                                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
-                                                        <RequiredField ErrorText="This field is required." IsRequired="True" />
+                                                    <ClientSideEvents ValueChanged="function(s, e) {
+	CheckValidDocNo(s.GetValue(),0);
+}" />
+                                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="ExpenseEdit" EnableCustomValidation="True">
+                                                        <RequiredField ErrorText="This field is required." />
                                                     </ValidationSettings>
                                                     <Border BorderColor="#006838" BorderWidth="1px" />
                                                 </dx:ASPxTextBox>
@@ -1465,7 +1503,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                         </FilterControl>
                                                     </SettingsPopup>
                                                     <Columns>
-                                                        <dx:GridViewCommandColumn Caption="File" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                        <dx:GridViewCommandColumn Caption="File" ShowInCustomizationForm="True" VisibleIndex="6">
                                                             <CustomButtons>
                                                                 <dx:GridViewCommandColumnCustomButton ID="btnDownloadFile" Text="Open File">
                                                                     <Image IconID="pdfviewer_next_svg_16x16">
@@ -1485,8 +1523,12 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                         </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataTextColumn FieldName="FileExtension" ShowInCustomizationForm="True" VisibleIndex="4">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="FileAttachment" ShowInCustomizationForm="True" Visible="False" VisibleIndex="6">
+                                                        <dx:GridViewDataTextColumn FieldName="FileAttachment" ShowInCustomizationForm="True" Visible="False" VisibleIndex="7">
                                                         </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewDataComboBoxColumn Caption="Uploaded By" FieldName="User_ID" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                            <PropertiesComboBox DataSourceID="SqlUser" TextField="FullName" ValueField="EmpCode">
+                                                            </PropertiesComboBox>
+                                                        </dx:GridViewDataComboBoxColumn>
                                                     </Columns>
                                                 </dx:ASPxGridView>
                                             </dx:LayoutItemNestedControlContainer>

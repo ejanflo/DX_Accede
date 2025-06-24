@@ -1244,7 +1244,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                     <dx:LayoutItem Caption="AR Reference No." ClientVisible="False" ColSpan="1" FieldName="AR_Reference_No" Name="ARNo">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxTextBox ID="txt_CTDepartment0" runat="server" ClientInstanceName="txt_CTDepartment" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
+                                                <dx:ASPxTextBox ID="txt_CTDepartment0" runat="server" ClientInstanceName="txt_CTDepartment" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="50%">
                                                     <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                         <RequiredField ErrorText="*Required" />
                                                     </ValidationSettings>
@@ -1574,7 +1574,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                         </FilterControl>
                                                     </SettingsPopup>
                                                     <Columns>
-                                                        <dx:GridViewCommandColumn Caption="File" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                        <dx:GridViewCommandColumn Caption="File" ShowInCustomizationForm="True" VisibleIndex="6">
                                                             <CustomButtons>
                                                                 <dx:GridViewCommandColumnCustomButton ID="btnDownloadFile" Text="Open File">
                                                                     <Image IconID="pdfviewer_next_svg_16x16">
@@ -1592,10 +1592,14 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                         </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataTextColumn Caption="File Size" FieldName="FileSize" ShowInCustomizationForm="True" VisibleIndex="4">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="FileAttachment" ShowInCustomizationForm="True" Visible="False" VisibleIndex="6">
+                                                        <dx:GridViewDataTextColumn FieldName="FileAttachment" ShowInCustomizationForm="True" Visible="False" VisibleIndex="7">
                                                         </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataTextColumn FieldName="FileExtension" ShowInCustomizationForm="True" VisibleIndex="2">
                                                         </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewDataComboBoxColumn Caption="Uploaded By" FieldName="User_ID" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                            <PropertiesComboBox DataSourceID="SqlUser" TextField="FullName" ValueField="EmpCode">
+                                                            </PropertiesComboBox>
+                                                        </dx:GridViewDataComboBoxColumn>
                                                     </Columns>
                                                 </dx:ASPxGridView>
                                             </dx:LayoutItemNestedControlContainer>
@@ -3829,7 +3833,7 @@ DisapproveClick(); DisapprovePopup.Hide();
      </asp:SqlDataSource>
     <asp:SqlDataSource ID="sqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([SAP_CostCenter] IS NOT NULL) ORDER BY [SAP_CostCenter]">
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlUser" runat="server"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlUser" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_UserMaster]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlExpDetailAttach" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_ExpDetailsFileAttach] WHERE ([ExpDetail_Id] = @ExpDetail_Id)">
         <SelectParameters>
             <asp:SessionParameter Name="ExpDetail_Id" SessionField="ExpMainId" Type="Int32" />

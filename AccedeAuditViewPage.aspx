@@ -1279,7 +1279,7 @@
                                                         </FilterControl>
                                                     </SettingsPopup>
                                                     <Columns>
-                                                        <dx:GridViewCommandColumn Caption="File" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                        <dx:GridViewCommandColumn Caption="File" ShowInCustomizationForm="True" VisibleIndex="6">
                                                             <CustomButtons>
                                                                 <dx:GridViewCommandColumnCustomButton ID="btnDownloadFile" Text="Open File">
                                                                     <Image IconID="pdfviewer_next_svg_16x16">
@@ -1299,8 +1299,12 @@
                                                         </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataTextColumn FieldName="FileExtension" ShowInCustomizationForm="True" VisibleIndex="4">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="FileAttachment" ShowInCustomizationForm="True" Visible="False" VisibleIndex="6">
+                                                        <dx:GridViewDataTextColumn FieldName="FileAttachment" ShowInCustomizationForm="True" Visible="False" VisibleIndex="7">
                                                         </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewDataComboBoxColumn Caption="Uploaded By" FieldName="User_ID" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                            <PropertiesComboBox DataSourceID="SqlUser" TextField="FullName" ValueField="EmpCode">
+                                                            </PropertiesComboBox>
+                                                        </dx:GridViewDataComboBoxColumn>
                                                     </Columns>
                                                 </dx:ASPxGridView>
                                             </dx:LayoutItemNestedControlContainer>

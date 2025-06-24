@@ -721,5 +721,43 @@ namespace DX_WebTemplate
 
             CADocuGrid.DataBind();
         }
+
+        [WebMethod]
+        public static string CheckSAPVAlidAJAX(string SAPDoc, string secureToken)
+        {
+            AccedeP2PViewPage page = new AccedeP2PViewPage();
+            return page.CheckSAPVAlid(SAPDoc, secureToken);
+        }
+
+        public string CheckSAPVAlid(string SAPDoc, string secureToken)
+        {
+            if (!string.IsNullOrEmpty(secureToken))
+            {
+                int actID = Convert.ToInt32(Decrypt(secureToken));
+                var wfDetails = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == Convert.ToInt32(actID)).FirstOrDefault();
+                var reimRFP = _DataContext.ACCEDE_T_RFPMains
+                                        .Where(x => x.IsExpenseReim == true)
+                                        .Where(x => x.Status != 4)
+                                        .Where(x => x.Exp_ID == Convert.ToInt32(wfDetails.Document_Id))
+                                        .Where(x => x.isTravel != true)
+                                        .FirstOrDefault();
+
+                var rfpCheck = _DataContext.ACCEDE_T_RFPMains.Where(x => x.SAPDocNo == SAPDoc).FirstOrDefault();
+
+                if (rfpCheck != null && SAPDoc != reimRFP.SAPDocNo)
+                {
+                    return "error";
+                }
+                else
+                {
+                    return "clear";
+                }
+            }
+            else
+            {
+                return "Secure token is null.";
+            }
+
+        }
     }
 }

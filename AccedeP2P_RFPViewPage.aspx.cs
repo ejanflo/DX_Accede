@@ -11,6 +11,7 @@ using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
+using DevExpress.Utils.DirectXPaint;
 
 namespace DX_WebTemplate
 {
@@ -214,77 +215,79 @@ namespace DX_WebTemplate
 
         protected void formRFP_Init(object sender, EventArgs e)
         {
-            try
-            {
-                string encryptedID = Request.QueryString["secureToken"];
-                if (!string.IsNullOrEmpty(encryptedID))
-                {
+            //try
+            //{
+            //    string encryptedID = Request.QueryString["secureToken"];
+            //    if (!string.IsNullOrEmpty(encryptedID))
+            //    {
 
-                    int actID = Convert.ToInt32(Decrypt(encryptedID));
-                    var wfDetails = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == Convert.ToInt32(actID)).FirstOrDefault();
-                    var rfp_id = wfDetails.Document_Id;
-                    var rfp_details = _DataContext.ACCEDE_T_RFPMains
-                        .Where(x => x.ID == rfp_id)
-                        .FirstOrDefault();
+            //        int actID = Convert.ToInt32(Decrypt(encryptedID));
+            //        var wfDetails = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == Convert.ToInt32(actID)).FirstOrDefault();
+            //        var rfp_id = wfDetails.Document_Id;
+            //        var rfp_details = _DataContext.ACCEDE_T_RFPMains
+            //            .Where(x => x.ID == rfp_id)
+            //            .FirstOrDefault();
 
-                    if (!IsPostBack || (Session["DataSetDoc"] == null))
-                    {
-                        dsDoc = new DataSet();
-                        DataTable masterTable = new DataTable();
-                        masterTable.Columns.Add("ID", typeof(int));
-                        masterTable.Columns.Add("Orig_ID", typeof(int));
-                        masterTable.Columns.Add("FileName", typeof(string));
-                        masterTable.Columns.Add("FileByte", typeof(byte[]));
-                        masterTable.Columns.Add("FileExt", typeof(string));
-                        masterTable.Columns.Add("FileSize", typeof(string));
-                        masterTable.Columns.Add("FileDesc", typeof(string));
-                        masterTable.Columns.Add("isExist", typeof(bool));
-                        masterTable.PrimaryKey = new DataColumn[] { masterTable.Columns["ID"] };
+            //        if (!IsPostBack || (Session["DataSetDoc"] == null))
+            //        {
+            //            dsDoc = new DataSet();
+            //            DataTable masterTable = new DataTable();
+            //            masterTable.Columns.Add("ID", typeof(int));
+            //            masterTable.Columns.Add("Orig_ID", typeof(int));
+            //            masterTable.Columns.Add("FileName", typeof(string));
+            //            masterTable.Columns.Add("FileByte", typeof(byte[]));
+            //            masterTable.Columns.Add("FileExt", typeof(string));
+            //            masterTable.Columns.Add("FileSize", typeof(string));
+            //            masterTable.Columns.Add("FileDesc", typeof(string));
+            //            masterTable.Columns.Add("User_ID", typeof(string));
+            //            masterTable.Columns.Add("isExist", typeof(bool));
+            //            masterTable.PrimaryKey = new DataColumn[] { masterTable.Columns["ID"] };
 
-                        dsDoc.Tables.AddRange(new DataTable[] { masterTable/*, detailTable*/ });
-                        Session["DataSetDoc"] = dsDoc;
+            //            dsDoc.Tables.AddRange(new DataTable[] { masterTable/*, detailTable*/ });
+            //            Session["DataSetDoc"] = dsDoc;
 
-                    }
-                    else
-                        dsDoc = (DataSet)Session["DataSetDoc"];
+            //        }
+            //        else
+            //            dsDoc = (DataSet)Session["DataSetDoc"];
 
-                    var docType = _DataContext.ITP_S_DocumentTypes
-                        .Where(x => x.DCT_Name == "ACDE RFP")
-                        .FirstOrDefault();
+            //        var docType = _DataContext.ITP_S_DocumentTypes
+            //            .Where(x => x.DCT_Name == "ACDE RFP")
+            //            .FirstOrDefault();
 
-                    var RFPDocs = _DataContext.ITP_T_FileAttachments
-                        .Where(x => x.Doc_ID == rfp_details.ID)
-                        .Where(x => x.DocType_Id == docType.DCT_Id)
-                        .ToList();
+            //        var RFPDocs = _DataContext.ITP_T_FileAttachments
+            //            .Where(x => x.Doc_ID == rfp_details.ID)
+            //            .Where(x => x.DocType_Id == docType.DCT_Id)
+            //            .ToList();
 
-                    if (!IsPostBack || (Session["DataSetDoc"] == null))
-                    {
-                        foreach (var rfpDoc in RFPDocs)
-                        {
-                            // Add a new row to the data table with the uploaded file data
-                            DataRow row = dsDoc.Tables[0].NewRow();
-                            row["ID"] = GetNewId();
-                            row["Orig_ID"] = rfpDoc.ID;
-                            row["FileName"] = rfpDoc.FileName;
-                            row["FileByte"] = rfpDoc.FileAttachment.ToArray();
-                            row["FileExt"] = rfpDoc.FileExtension;
-                            row["FileSize"] = rfpDoc.FileSize;
-                            row["FileDesc"] = rfpDoc.Description;
-                            row["isExist"] = true;
-                            dsDoc.Tables[0].Rows.Add(row);
+            //        if (!IsPostBack || (Session["DataSetDoc"] == null))
+            //        {
+            //            foreach (var rfpDoc in RFPDocs)
+            //            {
+            //                // Add a new row to the data table with the uploaded file data
+            //                DataRow row = dsDoc.Tables[0].NewRow();
+            //                row["ID"] = GetNewId();
+            //                row["Orig_ID"] = rfpDoc.ID;
+            //                row["FileName"] = rfpDoc.FileName;
+            //                row["FileByte"] = rfpDoc.FileAttachment.ToArray();
+            //                row["FileExt"] = rfpDoc.FileExtension;
+            //                row["FileSize"] = rfpDoc.FileSize;
+            //                row["FileDesc"] = rfpDoc.Description;
+            //                row["User_ID"] = rfpDoc.User_ID;
+            //                row["isExist"] = true;
+            //                dsDoc.Tables[0].Rows.Add(row);
 
-                        }
-                    }
+            //            }
+            //        }
 
-                    DocuGrid.DataSource = dsDoc.Tables[0];
-                    DocuGrid.DataBind();
-                }
+            //        DocuGrid.DataSource = dsDoc.Tables[0];
+            //        DocuGrid.DataBind();
+            //    }
                 
-            }
-            catch (Exception ex)
-            {
-                Response.Redirect("~/Logon.aspx");
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Response.Redirect("~/Logon.aspx");
+            //}
 
         }
         private int GetNewId()
@@ -507,62 +510,62 @@ namespace DX_WebTemplate
                     //var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP").Where(x => x.App_Id == 1032).FirstOrDefault();
 
                     //Insert Attachments
-                    DataSet dsFile = (DataSet)Session["DataSetDoc"];
-                    DataTable dataTable = dsFile.Tables[0];
+                    //DataSet dsFile = (DataSet)Session["DataSetDoc"];
+                    //DataTable dataTable = dsFile.Tables[0];
 
-                    if (dataTable.Rows.Count > 0)
-                    {
-                        string connectionString1 = ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString;
-                        string insertQuery1 = "INSERT INTO ITP_T_FileAttachment (FileAttachment, FileName, Description, DateUploaded, App_ID, Company_ID, Doc_ID, Doc_No, User_ID, FileExtension, FileSize, DocType_Id) VALUES (@file_byte, @filename, @desc, @date_upload, @app_id, @comp_id, @doc_id, @doc_no, @user_id, @fileExt, @filesize, @docType)";
+                    //if (dataTable.Rows.Count > 0)
+                    //{
+                    //    string connectionString1 = ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString;
+                    //    string insertQuery1 = "INSERT INTO ITP_T_FileAttachment (FileAttachment, FileName, Description, DateUploaded, App_ID, Company_ID, Doc_ID, Doc_No, User_ID, FileExtension, FileSize, DocType_Id) VALUES (@file_byte, @filename, @desc, @date_upload, @app_id, @comp_id, @doc_id, @doc_no, @user_id, @fileExt, @filesize, @docType)";
 
-                        using (SqlConnection connection = new SqlConnection(connectionString1))
-                        using (SqlCommand command = new SqlCommand(insertQuery1, connection))
-                        {
-                            // Define the parameters for the SQL query
-                            command.Parameters.Add("@filename", SqlDbType.NVarChar, 200);
-                            command.Parameters.Add("@file_byte", SqlDbType.VarBinary);
-                            command.Parameters.Add("@desc", SqlDbType.NVarChar, 200);
-                            command.Parameters.Add("@date_upload", SqlDbType.DateTime);
-                            command.Parameters.Add("@app_id", SqlDbType.Int, 10);
-                            command.Parameters.Add("@comp_id", SqlDbType.Int, 10);
-                            command.Parameters.Add("@doc_id", SqlDbType.Int, 10);
-                            command.Parameters.Add("@doc_no", SqlDbType.NVarChar, 40);
-                            command.Parameters.Add("@user_id", SqlDbType.NVarChar, 20);
-                            command.Parameters.Add("@fileExt", SqlDbType.NVarChar, 20);
-                            command.Parameters.Add("@filesize", SqlDbType.NVarChar, 20);
-                            command.Parameters.Add("@docType", SqlDbType.Int, 10);
+                    //    using (SqlConnection connection = new SqlConnection(connectionString1))
+                    //    using (SqlCommand command = new SqlCommand(insertQuery1, connection))
+                    //    {
+                    //        // Define the parameters for the SQL query
+                    //        command.Parameters.Add("@filename", SqlDbType.NVarChar, 200);
+                    //        command.Parameters.Add("@file_byte", SqlDbType.VarBinary);
+                    //        command.Parameters.Add("@desc", SqlDbType.NVarChar, 200);
+                    //        command.Parameters.Add("@date_upload", SqlDbType.DateTime);
+                    //        command.Parameters.Add("@app_id", SqlDbType.Int, 10);
+                    //        command.Parameters.Add("@comp_id", SqlDbType.Int, 10);
+                    //        command.Parameters.Add("@doc_id", SqlDbType.Int, 10);
+                    //        command.Parameters.Add("@doc_no", SqlDbType.NVarChar, 40);
+                    //        command.Parameters.Add("@user_id", SqlDbType.NVarChar, 20);
+                    //        command.Parameters.Add("@fileExt", SqlDbType.NVarChar, 20);
+                    //        command.Parameters.Add("@filesize", SqlDbType.NVarChar, 20);
+                    //        command.Parameters.Add("@docType", SqlDbType.Int, 10);
 
-                            // Open the connection to the database
-                            connection.Open();
+                    //        // Open the connection to the database
+                    //        connection.Open();
 
-                            // Loop through the rows in the DataTable and insert them into the database
-                            foreach (DataRow row in dataTable.Rows)
-                            {
-                                if (Convert.ToBoolean(row["isExist"]) == false)
-                                {
-                                    command.Parameters["@filename"].Value = row["FileName"];
-                                    command.Parameters["@file_byte"].Value = row["FileByte"];
-                                    command.Parameters["@desc"].Value = row["FileDesc"];
-                                    command.Parameters["@date_upload"].Value = DateTime.Now;
-                                    command.Parameters["@app_id"].Value = 1032;
-                                    command.Parameters["@comp_id"].Value = rfp_main.Company_ID;
-                                    command.Parameters["@doc_id"].Value = rfp_main.ID;
-                                    command.Parameters["@doc_no"].Value = rfp_main.RFP_DocNum;
-                                    command.Parameters["@user_id"].Value = Session["userID"] != null ? Session["userID"].ToString() : "0";
-                                    command.Parameters["@fileExt"].Value = row["FileExt"];
-                                    command.Parameters["@filesize"].Value = row["FileSize"];
-                                    command.Parameters["@docType"].Value = app_docType != null ? app_docType.DCT_Id : 0;
-                                    command.ExecuteNonQuery();
-                                }
+                    //        // Loop through the rows in the DataTable and insert them into the database
+                    //        foreach (DataRow row in dataTable.Rows)
+                    //        {
+                    //            if (Convert.ToBoolean(row["isExist"]) == false)
+                    //            {
+                    //                command.Parameters["@filename"].Value = row["FileName"];
+                    //                command.Parameters["@file_byte"].Value = row["FileByte"];
+                    //                command.Parameters["@desc"].Value = row["FileDesc"];
+                    //                command.Parameters["@date_upload"].Value = DateTime.Now;
+                    //                command.Parameters["@app_id"].Value = 1032;
+                    //                command.Parameters["@comp_id"].Value = rfp_main.Company_ID;
+                    //                command.Parameters["@doc_id"].Value = rfp_main.ID;
+                    //                command.Parameters["@doc_no"].Value = rfp_main.RFP_DocNum;
+                    //                command.Parameters["@user_id"].Value = Session["userID"] != null ? Session["userID"].ToString() : "0";
+                    //                command.Parameters["@fileExt"].Value = row["FileExt"];
+                    //                command.Parameters["@filesize"].Value = row["FileSize"];
+                    //                command.Parameters["@docType"].Value = app_docType != null ? app_docType.DCT_Id : 0;
+                    //                command.ExecuteNonQuery();
+                    //            }
 
-                            }
+                    //        }
 
-                            // Close the connection to the database
-                            connection.Close();
+                    //        // Close the connection to the database
+                    //        connection.Close();
 
 
-                        }
-                    }
+                    //    }
+                    //}
 
                 }
                 
@@ -579,41 +582,62 @@ namespace DX_WebTemplate
 
         protected void UploadController_FilesUploadComplete(object sender, FilesUploadCompleteEventArgs e)
         {
-            DataSet ImgDS = (DataSet)Session["DataSetDoc"];
-
-            foreach (var file in UploadController.UploadedFiles)
+            string encryptedID = Request.QueryString["secureToken"];
+            if (!string.IsNullOrEmpty(encryptedID))
             {
-                var filesize = 0.00;
-                var filesizeStr = "";
-                if (Convert.ToInt32(file.ContentLength) > 999999)
+                int actID = Convert.ToInt32(Decrypt(encryptedID));
+                var wfDetails = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == Convert.ToInt32(actID)).FirstOrDefault();
+                var rfp_main = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == Convert.ToInt32(wfDetails.Document_Id)).FirstOrDefault();
+
+                foreach (var file in UploadController.UploadedFiles)
                 {
-                    filesize = Convert.ToInt32(file.ContentLength) / 1000000;
-                    filesizeStr = filesize.ToString() + " MB";
-                }
-                else if (Convert.ToInt32(file.ContentLength) > 999)
-                {
-                    filesize = Convert.ToInt32(file.ContentLength) / 1000;
-                    filesizeStr = filesize.ToString() + " KB";
-                }
-                else
-                {
-                    filesize = Convert.ToInt32(file.ContentLength);
-                    filesizeStr = filesize.ToString() + " Bytes";
+                    var filesize = 0.00;
+                    var filesizeStr = "";
+                    if (Convert.ToInt32(file.ContentLength) > 999999)
+                    {
+                        filesize = Convert.ToInt32(file.ContentLength) / 1000000;
+                        filesizeStr = filesize.ToString() + " MB";
+                    }
+                    else if (Convert.ToInt32(file.ContentLength) > 999)
+                    {
+                        filesize = Convert.ToInt32(file.ContentLength) / 1000;
+                        filesizeStr = filesize.ToString() + " KB";
+                    }
+                    else
+                    {
+                        filesize = Convert.ToInt32(file.ContentLength);
+                        filesizeStr = filesize.ToString() + " Bytes";
+                    }
+
+                    var app_docType = _DataContext.ITP_S_DocumentTypes
+                        .Where(x => x.DCT_Name == "ACDE RFP")
+                        .Where(x => x.App_Id == 1032)
+                        .FirstOrDefault();
+
+                    ITP_T_FileAttachment docs = new ITP_T_FileAttachment();
+                    {
+                        docs.FileAttachment = file.FileBytes;
+                        docs.FileName = file.FileName;
+                        docs.Doc_ID = rfp_main.ID;
+                        docs.App_ID = 1032;
+                        docs.DocType_Id = 1016;
+                        docs.User_ID = Session["userID"].ToString();
+                        docs.FileExtension = file.FileName.Split('.').Last();
+                        docs.Description = file.FileName.Split('.').First();
+                        docs.FileSize = filesizeStr;
+                        docs.Doc_No = rfp_main.RFP_DocNum.ToString();
+                        docs.Company_ID = Convert.ToInt32(rfp_main.ChargedTo_CompanyId);
+                        docs.DateUploaded = DateTime.Now;
+                        docs.DocType_Id = app_docType != null ? app_docType.DCT_Id : 0;
+                    }
+
+                    _DataContext.ITP_T_FileAttachments.InsertOnSubmit(docs);
                 }
 
-                // Add a new row to the data table with the uploaded file data
-                DataRow row = ImgDS.Tables[0].NewRow();
-                row["ID"] = GetNewId();
-                row["FileName"] = file.FileName;
-                row["FileByte"] = file.FileBytes;
-                row["FileExt"] = file.FileName.Split('.').Last();
-                row["FileSize"] = filesizeStr;
-                row["FileDesc"] = file.FileName.Split('.').First();
-                row["isExist"] = false;
-                ImgDS.Tables[0].Rows.Add(row);
+                _DataContext.SubmitChanges();
+                SqlRFPDocs.DataBind();
             }
-            _DataContext.SubmitChanges();
-            SqlRFPDocs.DataBind();
+                
         }
 
         protected void btnPrint_Click(object sender, EventArgs e)
@@ -626,10 +650,10 @@ namespace DX_WebTemplate
             if (e.VisibleIndex >= 0 && e.ButtonID == "btnRemove") // Ensure it's a data row and the button is the desired one
             {
                 //Get the value of the "Status" column for the current row
-                object statusValue = DocuGrid.GetRowValues(e.VisibleIndex, "isExist");
+                object statusValue = DocuGrid.GetRowValues(e.VisibleIndex, "User_ID");
 
                 //Check if the status is "saved" and make the button visible accordingly
-                if (statusValue != null && (Convert.ToBoolean(statusValue) != true))
+                if (statusValue != null && statusValue.ToString() == Session["userID"].ToString())
                     e.Visible = DevExpress.Utils.DefaultBoolean.True;
                 else
                     e.Visible = DevExpress.Utils.DefaultBoolean.False;
@@ -656,19 +680,21 @@ namespace DX_WebTemplate
 
             if (buttonId == "btnRemove")
             {
-                int i = DocuGrid.FindVisibleIndexByKeyValue(rowKey);
+                int rowIndex = DocuGrid.FindVisibleIndexByKeyValue(rowKey);
 
-                // Access the dataset from the session
-                DataSet dsDoc = (DataSet)Session["DataSetDoc"];
-
-                // Ensure that the rowKey exists in the table before trying to remove it
-                DataRow rowToRemove = dsDoc.Tables[0].Rows.Find(rowKey);
-                if (rowToRemove != null)
+                // Get the actual ID value from the grid using the row index
+                object idValue = DocuGrid.GetRowValues(rowIndex, "ID");
+                if (idValue != null)
                 {
-                    dsDoc.Tables[0].Rows.Remove(rowToRemove);
+                    int id = Convert.ToInt32(idValue);
+                    var file = _DataContext.ITP_T_FileAttachments.FirstOrDefault(x => x.ID == id);
+                    if (file != null)
+                    {
+                        _DataContext.ITP_T_FileAttachments.DeleteOnSubmit(file);
+                        _DataContext.SubmitChanges();
+                    }
                 }
 
-                // Optionally rebind the grid after removing the row
                 DocuGrid.DataBind();
             }
 
@@ -842,6 +868,51 @@ namespace DX_WebTemplate
             //if(count == 1)
             //    drpdown_CostCenter.SelectedIndex = 0; drpdown_CostCenter.DataBind();
 
+        }
+
+        protected void DocuGrid_HtmlDataCellPrepared(object sender, ASPxGridViewTableDataCellEventArgs e)
+        {
+            if (e.DataColumn.FieldName == "User_ID")
+            {
+                if (e.CellValue != null)
+                {
+                    var emp = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == e.CellValue.ToString()).FirstOrDefault();
+
+                    e.Cell.Text = emp.FullName;
+                }
+            }
+        }
+
+        [WebMethod]
+        public static string CheckSAPVAlidAJAX(string SAPDoc, string secureToken)
+        {
+            AccedeP2P_RFPViewPage page = new AccedeP2P_RFPViewPage();
+            return page.CheckSAPVAlid(SAPDoc, secureToken);
+        }
+
+        public string CheckSAPVAlid(string SAPDoc, string secureToken)
+        {
+            if (!string.IsNullOrEmpty(secureToken))
+            {
+                int actID = Convert.ToInt32(Decrypt(secureToken));
+                var wfDetails = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == Convert.ToInt32(actID)).FirstOrDefault();
+                var rfpMain = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == Convert.ToInt32(wfDetails.Document_Id)).FirstOrDefault();
+                var rfpCheck = _DataContext.ACCEDE_T_RFPMains.Where(x => x.SAPDocNo == SAPDoc).FirstOrDefault();
+
+                if (rfpCheck != null && SAPDoc != rfpMain.SAPDocNo)
+                {
+                    return "error";
+                }
+                else
+                {
+                    return "clear";
+                }
+            }
+            else
+            {
+                return "Secure token is null.";
+            }
+            
         }
     }
 

@@ -515,43 +515,48 @@ namespace DX_WebTemplate
                                where app.Sequence == sequence
                                select app;
 
+                var ApproverSolo = _DataContext.vw_ACCEDE_I_WFSetups.Where(x => x.WF_Id == wf_Id)
+                            .Where(x => x.Sequence == sequence)
+                            .FirstOrDefault();
+
+                var org_id = ApproverSolo.OrgRole_Id;
+                var date2day = DateTime.Now;
+
+                var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP").Where(x => x.App_Id == 1032).FirstOrDefault();
+
+
+                //DELEGATE CHECK
+                foreach (var del in _DataContext.ITP_S_TaskDelegations.Where(x => x.OrgRole_ID_Orig == ApproverSolo.OrgRole_Id).Where(x => x.DateFrom <= date2day).Where(x => x.DateTo >= date2day).Where(x => x.isActive == true))
+                {
+                    if (del != null)
+                    {
+                        org_id = del.OrgRole_ID_Delegate;
+                    }
+
+                }
+
                 ITP_T_WorkflowActivity activity = new ITP_T_WorkflowActivity();
+                //INSERTING TO ACTIVITY TABLE
+                {
+                    activity.Status = 1;
+                    activity.DateAssigned = DateTime.Now;
+                    activity.OrgRole_Id = org_id;
+                    activity.WF_Id = ApproverSolo.WF_Id;
+                    activity.WFD_Id = ApproverSolo.WFD_Id;
+                    activity.IsActive = true;
+                    activity.IsDelete = false;
+                    activity.DateCreated = DateTime.Now;
+                    activity.Document_Id = RFP_ID;
+                    activity.AppId = ApproverSolo.App_Id;
+                    activity.CompanyId = ApproverSolo.Company_Id;
+                    activity.AppDocTypeId = app_docType.DCT_Id;
+                }
+                _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(activity);
+                _DataContext.SubmitChanges();
 
                 foreach (var app in Approver)
                 {
-                    var org_id = app.OrgRole_Id;
-                    var date2day = DateTime.Now;
-
-                    //DELEGATE CHECK
-                    foreach (var del in _DataContext.ITP_S_TaskDelegations.Where(x => x.OrgRole_ID_Orig == app.OrgRole_Id).Where(x => x.DateFrom <= date2day).Where(x => x.DateTo >= date2day).Where(x => x.isActive == true))
-                    {
-                        if (del != null)
-                        {
-                            org_id = del.OrgRole_ID_Delegate;
-                        }
-
-                    }
-
-                    var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x=>x.DCT_Name == "ACDE RFP").Where(x=>x.App_Id == 1032).FirstOrDefault();
-
-                    //INSERTING TO ACTIVITY TABLE
-                    {
-                        activity.Status = 1;
-                        activity.DateAssigned = DateTime.Now;
-                        activity.OrgRole_Id = org_id;
-                        activity.WF_Id = app.WF_Id;
-                        activity.WFD_Id = app.WFD_Id;
-                        activity.IsActive = true;
-                        activity.IsDelete = false;
-                        activity.DateCreated = DateTime.Now;
-                        activity.Document_Id = RFP_ID;
-                        activity.AppId = app.App_Id;
-                        activity.CompanyId = app.Company_Id;
-                        activity.AppDocTypeId = app_docType.DCT_Id;
-                    }
-                    _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(activity);
-                    _DataContext.SubmitChanges();
-
+                    
                     var creator_details = _DataContext.ITP_S_UserMasters.Where(x=>x.EmpCode == rfp_main_query.Payee.ToString()).FirstOrDefault();
 
                     bool emailApprover = SendEmailToApprover(app.UserId, Convert.ToInt32(app.Company_Id), creator_details.FullName, creator_details.Email, rfp_main_query.RFP_DocNum, rfp_main_query.DateCreated.ToString(), rfp_main_query.Purpose, payMethod.PMethod_name, tranType.RFPTranType_Name);

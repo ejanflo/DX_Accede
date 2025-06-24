@@ -56,6 +56,39 @@
             });
         }
 
+        function CheckValidDocNo(SAPDoc, callback) {
+            $.ajax({
+                type: "POST",
+                url: "RFPViewPage.aspx/CheckSAPVAlidAJAX",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({
+                    SAPDoc: SAPDoc,
+                }),
+                success: function (response) {
+                    console.log(response.d);
+                    console.log(callback);
+                    if (response.d === "clear") {
+                        if (callback == 1) {
+                            SavePopup.Show();
+                        }
+
+                        if (callback == 2) {
+                            saveFinChanges(0);
+                        }
+
+                    } else {
+                        edit_SAPDocNo.SetIsValid(false);
+                        edit_SAPDocNo.SetErrorText("SAP Document No. already exists.");
+
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                }
+            });
+        }
+
         function UpdateRFPMain(status) {
             LoadingPanel.Show();
             $.ajax({
@@ -294,14 +327,14 @@
                 var filename;
                 var fileext;
                 var filebyte;
-                s.GetRowValues(e.visibleIndex, 'Orig_ID', function (id_value){
+                s.GetRowValues(e.visibleIndex, 'ID', function (id_value){
                     if (id_value) {
                         fileId = id_value;
                     }
                 });
                 LoadingPanel.SetText("Loading attachment&hellip;");
                 LoadingPanel.Show();
-                s.GetRowValues(e.visibleIndex, 'FileName;FileByte;FileExt', onCallbackMultVal);
+                s.GetRowValues(e.visibleIndex, 'FileName;FileAttachment;FileExtension', onCallbackMultVal);
 
                 function onCallbackMultVal(values) {
                     filename = values[0];
@@ -406,7 +439,10 @@
             }
 
             if (e.buttonID == 'btnRemove') {
-                DocuGrid.PerformCallback(s.GetRowKey(e.visibleIndex) + "|" + e.buttonID);
+                if (confirm("Are you sure you want to delete this attachment?")) {
+                    DocuGrid.PerformCallback(s.GetRowKey(e.visibleIndex) + "|" + e.buttonID);
+                }
+                
             }
         }
 
@@ -585,7 +621,8 @@
                                         <dx:ASPxButton ID="BtnCashSave" runat="server" AutoPostBack="False" ClientInstanceName="BtnCashSave" Text="Disburse" BackColor="#006838">
                                             <ClientSideEvents Click="function(s, e) {
 	if(ASPxClientEdit.ValidateGroup('ViewFormCashier')){
- SavePopup.Show();
+ //SavePopup.Show();
+CheckValidDocNo(edit_SAPDocNo.GetValue(), 1);
 }
 }" />
                                             <Border BorderColor="#006838" />
@@ -599,7 +636,9 @@
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxButton ID="BtnSaveDetails" runat="server" BackColor="#006DD6" ClientInstanceName="BtnSaveDetails" Text="Save">
                                             <ClientSideEvents Click="function(s, e) {
-	saveFinChanges(0); 
+	//saveFinChanges(0); 
+CheckValidDocNo(edit_SAPDocNo.GetValue(), 2);
+
 }" />
                                             <Border BorderColor="#006DD6" />
                                         </dx:ASPxButton>
@@ -819,8 +858,12 @@ onTravelClick();
                                                 <LayoutItemNestedControlCollection>
                                                     <dx:LayoutItemNestedControlContainer runat="server">
                                                         <dx:ASPxTextBox ID="edit_SAPDocNo" runat="server" ClientInstanceName="edit_SAPDocNo" Font-Bold="True" Width="100%">
-                                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="ViewFormCashier">
-                                                                <RequiredField ErrorText="This field is required." IsRequired="True" />
+                                                            <ClientSideEvents ValueChanged="function(s, e) {
+	CheckValidDocNo(s.GetValue(),0);
+}
+" />
+                                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="ViewFormCashier" EnableCustomValidation="True">
+                                                                <RequiredField ErrorText="This field is required." />
                                                             </ValidationSettings>
                                                             <Border BorderColor="#006838" BorderWidth="1px" />
                                                         </dx:ASPxTextBox>
@@ -873,7 +916,7 @@ onTravelClick();
                                                             <ClearButton DisplayMode="Always">
                                                             </ClearButton>
                                                             <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
-                                                                <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                <RequiredField ErrorText="*Required" />
                                                             </ValidationSettings>
                                                             <Border BorderStyle="None" />
                                                             <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
@@ -993,7 +1036,7 @@ onTravelClick();
                                     <dx:LayoutItem Caption="" ColSpan="1">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxGridView ID="DocuGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="DocuGrid" KeyFieldName="ID" OnCustomButtonInitialize="DocuGrid_CustomButtonInitialize" OnCustomCallback="DocuGrid_CustomCallback">
+                                                <dx:ASPxGridView ID="DocuGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="DocuGrid" KeyFieldName="ID" OnCustomButtonInitialize="DocuGrid_CustomButtonInitialize" OnCustomCallback="DocuGrid_CustomCallback" DataSourceID="SqlRFPDocs" OnHtmlDataCellPrepared="DocuGrid_HtmlDataCellPrepared">
                                                     <ClientSideEvents CustomButtonClick="onViewAttachment" />
                                                     <SettingsPopup>
                                                         <FilterControl AutoUpdatePosition="False">
@@ -1022,17 +1065,15 @@ onTravelClick();
                                                         </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataTextColumn Caption="File Name" FieldName="FileName" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="2">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn Caption="Description" FieldName="FileDesc" ShowInCustomizationForm="True" VisibleIndex="4">
+                                                        <dx:GridViewDataTextColumn Caption="Description" FieldName="Description" ShowInCustomizationForm="True" VisibleIndex="4">
                                                         </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataTextColumn Caption="File Size" FieldName="FileSize" ShowInCustomizationForm="True" VisibleIndex="5">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Orig_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="6">
+                                                        <dx:GridViewDataTextColumn FieldName="FileExtension" ShowInCustomizationForm="True" VisibleIndex="3" Caption="File Ext">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="isExist" ShowInCustomizationForm="True" Visible="False" VisibleIndex="7">
+                                                        <dx:GridViewDataTextColumn FieldName="FileAttachment" ShowInCustomizationForm="True" Visible="False" VisibleIndex="9">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn Caption="File Ext" FieldName="FileExt" ShowInCustomizationForm="True" VisibleIndex="3">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="FileByte" ShowInCustomizationForm="True" Visible="False" VisibleIndex="8">
+                                                        <dx:GridViewDataTextColumn Caption="Uploaded By" FieldName="User_ID" ShowInCustomizationForm="True" VisibleIndex="6">
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:ASPxGridView>
