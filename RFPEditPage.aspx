@@ -192,7 +192,7 @@
           function onDeptChanged(dept) {
 
               drpdown_WF.PerformCallback(dept);
-              WFSequenceGrid.PerformCallback();
+              //WFSequenceGrid.PerformCallback();
               //drpdwn_FAPWF.PerformCallback();
           }
 
