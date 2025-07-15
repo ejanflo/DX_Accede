@@ -126,7 +126,7 @@ namespace DX_WebTemplate
                             txtbox_TravType.Value = "Domestic";
                         }
 
-                        if(rfp_details.Status == 1 && rfp_details.User_ID == empCode)
+                        if(rfp_details.Status == 1 && rfp_details.User_ID == empCode && CA_tranType.ID == rfp_details.TranType)
                         {
                             btnRecall.ClientVisible = true;
                         }
