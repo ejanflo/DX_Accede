@@ -777,7 +777,7 @@ drpdown_FAPWF.PerformCallback(drpdown_TravType.GetValue() + &quot;|&quot; + drpd
                     </dx:LayoutGroup>
                             <dx:EmptyLayoutItem ColSpan="1">
                             </dx:EmptyLayoutItem>
-                            <dx:LayoutItem Caption="Link to existing Expense Report" ColSpan="1" FieldName="Exp_ID">
+                            <dx:LayoutItem Caption="Link to existing Expense Report" ColSpan="1" FieldName="Exp_ID" ClientVisible="False">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxComboBox ID="drpdown_ExpID" runat="server" DataSourceID="SqlExpense" DropDownWidth="600px" TextField="DocNo" ValueField="ID" ClientInstanceName="drpdown_ExpID" Width="100%">
