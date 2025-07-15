@@ -1971,7 +1971,7 @@ var emp = exp_EmpId.GetValue() != null ? exp_EmpId.GetValue() : &quot;&quot;;
                                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                                             <dx:ASPxComboBox ID="drpdown_WF" runat="server" ClientInstanceName="drpdown_WF" Height="39px" OnCallback="drpdown_WF_Callback" TextField="Name" ValueField="WF_Id" Width="100%" DataSourceID="SqlWF">
                                                                                 <ClientSideEvents Init="function(s, e) {
-	//WFSequenceGrid.PerformCallback();
+	//WFSequenceGrid.PerformCallback(s.GetValue());
 }" SelectedIndexChanged="function(s, e) {
 	        //OnWFChanged();
         }" />

@@ -336,7 +336,7 @@ namespace DX_WebTemplate
                                 var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == mainExp.ExpenseName)
                                 .Where(x => x.CompanyId == Convert.ToInt32(mainExp.CompanyId))
                                 .Where(x => x.DepCode == depcode.DepCode)
-                                .Where(x => x.IsRA == true)
+                                //.Where(x => x.IsRA == true)
                                 .FirstOrDefault();
 
                                 if (rawf != null)
@@ -576,7 +576,7 @@ namespace DX_WebTemplate
                     var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == expMain.ExpenseName)
                                 .Where(x => x.CompanyId == Convert.ToInt32(comp))
                                 .Where(x => x.DepCode == depcode.DepCode)
-                                .Where(x => x.IsRA == true)
+                                //.Where(x => x.IsRA == true)
                                 .FirstOrDefault();
 
                     if (rawf != null)
@@ -2681,7 +2681,7 @@ namespace DX_WebTemplate
                     var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == emp)
                             .Where(x => x.CompanyId == Convert.ToInt32(comp))
                             .Where(x => x.DepCode == depcode.DepCode)
-                            .Where(x => x.IsRA == true)
+                            //.Where(x => x.IsRA == true)
                             .FirstOrDefault();
 
                     if (rawf != null)
