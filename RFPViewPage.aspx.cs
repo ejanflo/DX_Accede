@@ -126,7 +126,7 @@ namespace DX_WebTemplate
                             txtbox_TravType.Value = "Domestic";
                         }
 
-                        if(rfp_details.Status == 1 && rfp_details.User_ID == empCode)
+                        if(rfp_details.Status == 1 && rfp_details.User_ID == empCode && rfp_details.TranType.ToString() == CA_tranType.ID.ToString())
                         {
                             btnRecall.ClientVisible = true;
                         }
@@ -497,62 +497,62 @@ namespace DX_WebTemplate
                 //var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP").Where(x => x.App_Id == 1032).FirstOrDefault();
 
                 //Insert Attachments
-                DataSet dsFile = (DataSet)Session["DataSetDoc"];
-                DataTable dataTable = dsFile.Tables[0];
+                //DataSet dsFile = (DataSet)Session["DataSetDoc"];
+                //DataTable dataTable = dsFile.Tables[0];
 
-                if (dataTable.Rows.Count > 0)
-                {
-                    string connectionString1 = ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString;
-                    string insertQuery1 = "INSERT INTO ITP_T_FileAttachment (FileAttachment, FileName, Description, DateUploaded, App_ID, Company_ID, Doc_ID, Doc_No, User_ID, FileExtension, FileSize, DocType_Id) VALUES (@file_byte, @filename, @desc, @date_upload, @app_id, @comp_id, @doc_id, @doc_no, @user_id, @fileExt, @filesize, @docType)";
+                //if (dataTable.Rows.Count > 0)
+                //{
+                //    string connectionString1 = ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString;
+                //    string insertQuery1 = "INSERT INTO ITP_T_FileAttachment (FileAttachment, FileName, Description, DateUploaded, App_ID, Company_ID, Doc_ID, Doc_No, User_ID, FileExtension, FileSize, DocType_Id) VALUES (@file_byte, @filename, @desc, @date_upload, @app_id, @comp_id, @doc_id, @doc_no, @user_id, @fileExt, @filesize, @docType)";
 
-                    using (SqlConnection connection = new SqlConnection(connectionString1))
-                    using (SqlCommand command = new SqlCommand(insertQuery1, connection))
-                    {
-                        // Define the parameters for the SQL query
-                        command.Parameters.Add("@filename", SqlDbType.NVarChar, 200);
-                        command.Parameters.Add("@file_byte", SqlDbType.VarBinary);
-                        command.Parameters.Add("@desc", SqlDbType.NVarChar, 200);
-                        command.Parameters.Add("@date_upload", SqlDbType.DateTime);
-                        command.Parameters.Add("@app_id", SqlDbType.Int, 10);
-                        command.Parameters.Add("@comp_id", SqlDbType.Int, 10);
-                        command.Parameters.Add("@doc_id", SqlDbType.Int, 10);
-                        command.Parameters.Add("@doc_no", SqlDbType.NVarChar, 40);
-                        command.Parameters.Add("@user_id", SqlDbType.NVarChar, 20);
-                        command.Parameters.Add("@fileExt", SqlDbType.NVarChar, 20);
-                        command.Parameters.Add("@filesize", SqlDbType.NVarChar, 20);
-                        command.Parameters.Add("@docType", SqlDbType.Int, 10);
+                //    using (SqlConnection connection = new SqlConnection(connectionString1))
+                //    using (SqlCommand command = new SqlCommand(insertQuery1, connection))
+                //    {
+                //        // Define the parameters for the SQL query
+                //        command.Parameters.Add("@filename", SqlDbType.NVarChar, 200);
+                //        command.Parameters.Add("@file_byte", SqlDbType.VarBinary);
+                //        command.Parameters.Add("@desc", SqlDbType.NVarChar, 200);
+                //        command.Parameters.Add("@date_upload", SqlDbType.DateTime);
+                //        command.Parameters.Add("@app_id", SqlDbType.Int, 10);
+                //        command.Parameters.Add("@comp_id", SqlDbType.Int, 10);
+                //        command.Parameters.Add("@doc_id", SqlDbType.Int, 10);
+                //        command.Parameters.Add("@doc_no", SqlDbType.NVarChar, 40);
+                //        command.Parameters.Add("@user_id", SqlDbType.NVarChar, 20);
+                //        command.Parameters.Add("@fileExt", SqlDbType.NVarChar, 20);
+                //        command.Parameters.Add("@filesize", SqlDbType.NVarChar, 20);
+                //        command.Parameters.Add("@docType", SqlDbType.Int, 10);
 
-                        // Open the connection to the database
-                        connection.Open();
+                //        // Open the connection to the database
+                //        connection.Open();
 
-                        // Loop through the rows in the DataTable and insert them into the database
-                        foreach (DataRow row in dataTable.Rows)
-                        {
-                            if (Convert.ToBoolean(row["isExist"]) == false)
-                            {
-                                command.Parameters["@filename"].Value = row["FileName"];
-                                command.Parameters["@file_byte"].Value = row["FileByte"];
-                                command.Parameters["@desc"].Value = row["FileDesc"];
-                                command.Parameters["@date_upload"].Value = DateTime.Now;
-                                command.Parameters["@app_id"].Value = 1032;
-                                command.Parameters["@comp_id"].Value = rfp_main.Company_ID;
-                                command.Parameters["@doc_id"].Value = rfp_main.ID;
-                                command.Parameters["@doc_no"].Value = rfp_main.RFP_DocNum;
-                                command.Parameters["@user_id"].Value = Session["userID"] != null ? Session["userID"].ToString() : "0";
-                                command.Parameters["@fileExt"].Value = row["FileExt"];
-                                command.Parameters["@filesize"].Value = row["FileSize"];
-                                command.Parameters["@docType"].Value = app_docType != null ? app_docType.DCT_Id : 0;
-                                command.ExecuteNonQuery();
-                            }
+                //        // Loop through the rows in the DataTable and insert them into the database
+                //        foreach (DataRow row in dataTable.Rows)
+                //        {
+                //            if (Convert.ToBoolean(row["isExist"]) == false)
+                //            {
+                //                command.Parameters["@filename"].Value = row["FileName"];
+                //                command.Parameters["@file_byte"].Value = row["FileByte"];
+                //                command.Parameters["@desc"].Value = row["FileDesc"];
+                //                command.Parameters["@date_upload"].Value = DateTime.Now;
+                //                command.Parameters["@app_id"].Value = 1032;
+                //                command.Parameters["@comp_id"].Value = rfp_main.Company_ID;
+                //                command.Parameters["@doc_id"].Value = rfp_main.ID;
+                //                command.Parameters["@doc_no"].Value = rfp_main.RFP_DocNum;
+                //                command.Parameters["@user_id"].Value = Session["userID"] != null ? Session["userID"].ToString() : "0";
+                //                command.Parameters["@fileExt"].Value = row["FileExt"];
+                //                command.Parameters["@filesize"].Value = row["FileSize"];
+                //                command.Parameters["@docType"].Value = app_docType != null ? app_docType.DCT_Id : 0;
+                //                command.ExecuteNonQuery();
+                //            }
 
-                        }
+                //        }
 
-                        // Close the connection to the database
-                        connection.Close();
+                //        // Close the connection to the database
+                //        connection.Close();
 
 
-                    }
-                }
+                //    }
+                //}
 
                 return "success";
 

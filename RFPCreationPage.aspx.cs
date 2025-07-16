@@ -69,7 +69,7 @@ namespace DX_WebTemplate
 
                     SqlCompany.SelectParameters["UserId"].DefaultValue = empCode;
                     SqlDepartment.SelectParameters["UserId"].DefaultValue = empCode;
-                    SqlWF.SelectParameters["UserId"].DefaultValue = empCode;
+                    //SqlWF.SelectParameters["UserId"].DefaultValue = empCode;
                     SqlExpense.SelectParameters["UserId"].DefaultValue = empCode;
                     SqlCAHistory.SelectParameters["Payee"].DefaultValue = empCode;
 
@@ -185,7 +185,7 @@ namespace DX_WebTemplate
 
         protected void WFSequenceGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
         {
-            SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = drpdown_WF.Value != null ? drpdown_WF.Value.ToString() : "";
+            SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = e.Parameters != null ? e.Parameters.ToString() : "";
             SqlWorkflowSequence.DataBind();
 
             WFSequenceGrid.DataSourceID = null;
@@ -853,27 +853,75 @@ namespace DX_WebTemplate
 
         protected void drpdown_WF_Callback(object sender, CallbackEventArgsBase e)
         {
-            var param = e.Parameter != "" ? e.Parameter.ToString() : "0";
-            var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(param)).FirstOrDefault();
-            //var amount = spinEdit_Amount.Value != null ? spinEdit_Amount.Value.ToString() : "0";
-            SqlWF.SelectParameters["CompanyId"].DefaultValue = depcode != null ? depcode.Company_ID.ToString() : "0";
-            SqlWF.SelectParameters["DepCode"].DefaultValue = depcode != null ? depcode.DepCode.ToString() : "0";
-            SqlWF.DataBind();
+            //var param = e.Parameter != "" ? e.Parameter.ToString() : "0";
+            //var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(param)).FirstOrDefault();
+            ////var amount = spinEdit_Amount.Value != null ? spinEdit_Amount.Value.ToString() : "0";
+            //SqlWF.SelectParameters["CompanyId"].DefaultValue = depcode != null ? depcode.Company_ID.ToString() : "0";
+            //SqlWF.SelectParameters["DepCode"].DefaultValue = depcode != null ? depcode.DepCode.ToString() : "0";
+            //SqlWF.DataBind();
 
-            drpdown_WF.DataSourceID = null;
-            drpdown_WF.DataSource = SqlWF;
-            drpdown_WF.DataBind();
+            //drpdown_WF.DataSourceID = null;
+            //drpdown_WF.DataSource = SqlWF;
+            //drpdown_WF.DataBind();
 
-            var wf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.CompanyId == Convert.ToInt32(drpdown_Company.Value))
-                    .Where(x => x.UserId == Session["userID"].ToString())
-                    .Where(x => x.DepCode == (depcode != null ? depcode.DepCode : "0"))
-                    .Where(x => x.IsRA == true);
+            //var wf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.CompanyId == Convert.ToInt32(drpdown_Company.Value))
+            //        .Where(x => x.UserId == Session["userID"].ToString())
+            //        .Where(x => x.DepCode == (depcode != null ? depcode.DepCode : "0"));
+            //        //.Where(x => x.IsRA == true);
 
-            if(wf != null )
+            //if(wf != null )
+            //{
+            //    if(wf.Count() == 1)
+            //    {
+            //        drpdown_WF.SelectedIndex = 0;
+            //    }
+            //}
+
+            var param = e.Parameter.Split('|');
+            var dept_id = param[0] != "" ? param[0] : "0";
+            var comp = param[1] != "" ? param[1] : "0";
+            var emp = param[2] != "" ? param[2] : "";
+            var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(dept_id)).FirstOrDefault();
+            //var expMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x=>x.ID == Convert.ToInt32(comp)).FirstOrDefault();
+
+            var wfMapCheck = _DataContext.vw_ACCEDE_I_WFMappings.Where(x => x.UserId == emp)
+                            .Where(x => x.Company_Id == Convert.ToInt32(comp))
+                            .FirstOrDefault();
+
+            if (wfMapCheck != null)
             {
-                if(wf.Count() == 1)
+                SqlWF.SelectParameters["WF_Id"].DefaultValue = wfMapCheck.WF_ID.ToString();
+                drpdown_WF.DataSourceID = null;
+                drpdown_WF.DataSource = SqlWF;
+                drpdown_WF.SelectedIndex = 0;
+                drpdown_WF.DataBind();
+            }
+            else
+            {
+                if (depcode != null)
                 {
-                    drpdown_WF.SelectedIndex = 0;
+                    var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == emp)
+                            .Where(x => x.CompanyId == Convert.ToInt32(comp))
+                            .Where(x => x.DepCode == depcode.DepCode)
+                            //.Where(x => x.IsRA == true)
+                            .FirstOrDefault();
+
+                    if (rawf != null)
+                    {
+                        SqlWF.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
+                        drpdown_WF.DataSourceID = null;
+                        drpdown_WF.DataSource = SqlWF;
+                        drpdown_WF.SelectedIndex = 0;
+                        drpdown_WF.DataBind();
+                    }
+                    else
+                    {
+                        SqlWF.SelectParameters["WF_Id"].DefaultValue = "0";
+                        drpdown_WF.DataSourceID = null;
+                        drpdown_WF.DataSource = SqlWF;
+                        drpdown_WF.DataBind();
+
+                    }
                 }
             }
         }

@@ -233,7 +233,7 @@
         }
 
         function OnWFChanged() {
-            WFSequenceGrid.PerformCallback();
+            WFSequenceGrid.PerformCallback(drpdown_WF.GetValue());
         }
 
         function onDeptChanged(dept) {
@@ -1003,8 +1003,14 @@ onTravelClick();
                                                 <dx:ASPxComboBox ID="drpdown_Company" runat="server" ClientInstanceName="drpdown_Company" DataSourceID="SqlCompany" TextField="CompanyShortName" ValueField="CompanyId" Width="100%">
                                                     <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	drpdown_Department.PerformCallback(s.GetValue());
+//var comp = s.GetValue() != null ? s.GetValue() : &quot;&quot;;
+//var emp = drpdown_Payee.GetValue() != null ? drpdown_Payee.GetValue() : &quot;&quot;;
+//var dept = drpdown_Department.GetValue() != null ? drpdown_Department.GetValue() : &quot;&quot;;
+	//onDeptChanged(s.GetValue()+&quot;|&quot;+comp+&quot;|&quot;+emp);
+//console.log(s.GetValue()+&quot;|&quot;+comp+&quot;|&quot;+emp);
+
 //drpdown_Payee.PerformCallback(s.GetValue());
-drpdown_WF.PerformCallback();
+//drpdown_WF.PerformCallback(dept + '|' + comp + '|' + emp);
 ifComp_is_DLI();
 //onAmountChanged(drpdown_PayMethod.GetValue());
 }" />
@@ -1023,7 +1029,11 @@ ifComp_is_DLI();
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxComboBox ID="drpdown_Department" runat="server" ClientInstanceName="drpdown_Department" DataSourceID="SqlDepartment" OnCallback="formRFP_E4_Callback" TextField="DepDesc" ValueField="ID" Width="100%">
                                                     <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	onDeptChanged(s.GetValue());
+	//onDeptChanged(s.GetValue());
+var comp = drpdown_Company.GetValue() != null ? drpdown_Company.GetValue() : &quot;&quot;;
+var emp = drpdown_Payee.GetValue() != null ? drpdown_Payee.GetValue() : &quot;&quot;;
+	onDeptChanged(s.GetValue()+&quot;|&quot;+comp+&quot;|&quot;+emp);
+console.log(s.GetValue()+&quot;|&quot;+comp+&quot;|&quot;+emp);
 }" />
                                                     <ClearButton DisplayMode="Always">
                                                     </ClearButton>
@@ -1061,7 +1071,7 @@ ifComp_is_DLI();
                                             <dx:LayoutItem Caption="Workflow" ColSpan="1">
                                                 <LayoutItemNestedControlCollection>
                                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                                        <dx:ASPxComboBox ID="drpdown_WF" runat="server" ClientInstanceName="drpdown_WF" DataSourceID="SqlWF" OnCallback="drpdown_WF_Callback" TextField="WorkflowHeader_Name" ValueField="WF_Id" Width="100%">
+                                                        <dx:ASPxComboBox ID="drpdown_WF" runat="server" ClientInstanceName="drpdown_WF" DataSourceID="SqlWF" OnCallback="drpdown_WF_Callback" TextField="Name" ValueField="WF_Id" Width="100%">
                                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	OnWFChanged();
 }" ButtonClick="function(s, e) {
@@ -1558,12 +1568,9 @@ SavePopup.Hide();
             <asp:Parameter DefaultValue="true" Name="isActive" Type="Boolean" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlWF" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_UserWFAccess] WHERE (([UserId] = @UserId) AND ([CompanyId] = @CompanyId) AND ([IsRA] = @IsRA) AND ([DepCode] = @DepCode))">
+    <asp:SqlDataSource ID="SqlWF" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_WorkflowHeader] WHERE ([WF_Id] = @WF_Id)">
         <SelectParameters>
-            <asp:Parameter Name="UserId" Type="String" />
-            <asp:Parameter Name="CompanyId" Type="Int32" />
-            <asp:Parameter DefaultValue="True" Name="IsRA" Type="Boolean" />
-            <asp:Parameter DefaultValue="" Name="DepCode" Type="String" />
+            <asp:Parameter Name="WF_Id" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlWorkflowSequence" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_RS_Workflow_Sequence] WHERE ([WF_Id] = @WF_Id) ORDER BY [Sequence]">
