@@ -688,7 +688,7 @@ console.log(travType);
                                 </LayoutItemNestedControlCollection>
                                 <CaptionSettings HorizontalAlign="Right" />
                             </dx:LayoutItem>
-                            <dx:LayoutItem ColSpan="1" Caption="IO" FieldName="IO_Num">
+                            <dx:LayoutItem ColSpan="1" Caption="IO" FieldName="IO_Num" ClientVisible="False">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxTextBox ID="txtbox_IO" runat="server" Width="100%" ClientInstanceName="txtbox_IO">
