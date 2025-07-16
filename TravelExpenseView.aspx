@@ -115,7 +115,6 @@
             } else if (e.buttonID == 'btnEditExpDet') {
                 loadPanel.Show();
                 var item_id = s.GetRowKey(e.visibleIndex);
-                locParticularsMemo.SetValue('');
                 travelDateCalendar.SetDate(null);
                 totalExpTB.SetValue('');
                 viewExpDetailModal(item_id);
@@ -148,8 +147,6 @@
                 }),
                 success: function (response) {
                     ASPxGridView22.PerformCallback("edit");
-
-                    locParticularsMemo.SetValue(response.d.locParticulars);
                     totalExpTB.SetValue(response.d.totalExp);
                     travelDateCalendar.SetDate(new Date(response.d.travelDate));
 
@@ -201,7 +198,7 @@
                                             <dx:ASPxButton ID="editButton" runat="server" BackColor="#006DD6" Font-Bold="True" Font-Size="Small" Text="Edit" ClientInstanceName="editButton" AutoPostBack="False" UseSubmitBehavior="False" ForeColor="White">
                                                 <ClientSideEvents Click="function(s, e) {
                         LoadingPanel.Show();
-                        window.location.href = &quot;TravelExpenseAdd.aspx&quot;;
+                        window.location.href = &quot;TravelExpenseNew.aspx&quot;;
         }
 " />
                                                 <Border BorderColor="#006DD6" />
@@ -824,8 +821,6 @@
                                                                         <PropertiesDateEdit DisplayFormatString="MMMM dd, yyyy">
                                                                         </PropertiesDateEdit>
                                                                     </dx:GridViewDataDateColumn>
-                                                                    <dx:GridViewDataTextColumn Caption="Location/Particulars" FieldName="LocParticulars" ShowInCustomizationForm="True" VisibleIndex="4">
-                                                                    </dx:GridViewDataTextColumn>
                                                                     <dx:GridViewDataTextColumn Caption="ENTERTAINMENT" FieldName="VAT" ShowInCustomizationForm="True" Visible="False" VisibleIndex="13">
                                                                         <PropertiesTextEdit DisplayFormatString="#,##0.00">
                                                                         </PropertiesTextEdit>
@@ -1585,24 +1580,6 @@
                                         <CaptionStyle Font-Bold="True">
                                         </CaptionStyle>
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Location/Particulars" ColSpan="1" VerticalAlign="Middle" Width="20%">
-                                        <LayoutItemNestedControlCollection>
-                                            <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxMemo ID="locParticularsMemo0" runat="server" ClientEnabled="False" ClientInstanceName="locParticularsMemo" Height="40px" ReadOnly="True" Theme="MaterialCompact" Width="400px">
-                                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="expAdd">
-                                                        <ErrorImage IconID="outlookinspired_highimportance_svg_16x16">
-                                                        </ErrorImage>
-                                                        <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                    </ValidationSettings>
-                                                    <DisabledStyle ForeColor="#333333">
-                                                    </DisabledStyle>
-                                                </dx:ASPxMemo>
-                                            </dx:LayoutItemNestedControlContainer>
-                                        </LayoutItemNestedControlCollection>
-                                        <CaptionSettings Location="Left" />
-                                        <CaptionStyle Font-Bold="True">
-                                        </CaptionStyle>
-                                    </dx:LayoutItem>
                                 </Items>
                             </dx:LayoutGroup>
                             <dx:LayoutItem Caption="Total Expenses" ColSpan="1" HorizontalAlign="Right" Visible="False">
@@ -2183,9 +2160,6 @@
                                                 <LayoutItemNestedControlCollection>
                                                     <dx:LayoutItemNestedControlContainer runat="server">
                                                         <dx:ASPxGridView ID="ASPxGridView22" runat="server" AutoGenerateColumns="False" ClientInstanceName="ASPxGridView22" EnableTheming="True" Font-Size="Small" KeyFieldName="TravelExpenseDetailMap_ID" OnCustomCallback="ASPxGridView22_CustomCallback" OnCustomColumnDisplayText="ASPxGridView22_CustomColumnDisplayText" Theme="MaterialCompact" Width="100%">
-                                                            <ClientSideEvents EndCallback="function(s, e) {
-	updateTotal(s);
-}" />
                                                             <SettingsAdaptivity AdaptivityMode="HideDataCells">
                                                             </SettingsAdaptivity>
                                                             <SettingsPager Mode="ShowAllRecords">
@@ -2228,7 +2202,7 @@
                                                                         <BorderRight BorderColor="Black" BorderStyle="Solid" />
                                                                     </CellStyle>
                                                                 </dx:GridViewCommandColumn>
-                                                                <dx:GridViewBandColumn Caption="FIXED ALLOWANCES" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                                <dx:GridViewBandColumn Caption="FIXED ALLOWANCES" ShowInCustomizationForm="True" VisibleIndex="4">
                                                                     <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
                                                                     <Columns>
                                                                         <dx:GridViewDataSpinEditColumn Caption="Amount" FieldName="FixedAllow_Amount" ShowInCustomizationForm="True" VisibleIndex="3" Width="90px">
@@ -2262,7 +2236,7 @@
                                                                         </dx:GridViewDataComboBoxColumn>
                                                                     </Columns>
                                                                 </dx:GridViewBandColumn>
-                                                                <dx:GridViewBandColumn Caption="REIMBURSABLE TRANSPORTATION" ShowInCustomizationForm="True" VisibleIndex="2">
+                                                                <dx:GridViewBandColumn Caption="REIMBURSABLE TRANSPORTATION" ShowInCustomizationForm="True" VisibleIndex="3">
                                                                     <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
                                                                     <Columns>
                                                                         <dx:GridViewDataComboBoxColumn Caption=" Type" CellRowSpan="3" FieldName="ReimTranspo_Type1" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
@@ -2361,7 +2335,7 @@
                                                                         </dx:GridViewDataSpinEditColumn>
                                                                     </Columns>
                                                                 </dx:GridViewBandColumn>
-                                                                <dx:GridViewBandColumn Caption="ENTERTAINMENT" MaxWidth="50" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                                <dx:GridViewBandColumn Caption="ENTERTAINMENT" MaxWidth="50" ShowInCustomizationForm="True" VisibleIndex="6">
                                                                     <HeaderStyle Font-Bold="True" HorizontalAlign="Center" Wrap="True" />
                                                                     <Columns>
                                                                         <dx:GridViewDataMemoColumn Caption="Explanation" FieldName="Entertainment_Explain" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
@@ -2385,7 +2359,7 @@
                                                                         </dx:GridViewDataSpinEditColumn>
                                                                     </Columns>
                                                                 </dx:GridViewBandColumn>
-                                                                <dx:GridViewBandColumn Caption="BUSINESS MEALS" MaxWidth="50" ShowInCustomizationForm="True" VisibleIndex="6">
+                                                                <dx:GridViewBandColumn Caption="BUSINESS MEALS" MaxWidth="50" ShowInCustomizationForm="True" VisibleIndex="7">
                                                                     <HeaderStyle Font-Bold="True" HorizontalAlign="Center" Wrap="True" />
                                                                     <Columns>
                                                                         <dx:GridViewDataMemoColumn Caption="Explanation" FieldName="BusMeals_Explain" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
@@ -2409,7 +2383,7 @@
                                                                         </dx:GridViewDataSpinEditColumn>
                                                                     </Columns>
                                                                 </dx:GridViewBandColumn>
-                                                                <dx:GridViewBandColumn Caption="OTHER BUS. EXPENSES" ShowInCustomizationForm="True" Visible="False" VisibleIndex="7">
+                                                                <dx:GridViewBandColumn Caption="OTHER BUS. EXPENSES" ShowInCustomizationForm="True" Visible="False" VisibleIndex="8">
                                                                     <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
                                                                     <Columns>
                                                                         <dx:GridViewDataComboBoxColumn Caption="Type" FieldName="OtherBus_Type" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
@@ -2467,7 +2441,7 @@
                                                                         </dx:GridViewDataSpinEditColumn>
                                                                     </Columns>
                                                                 </dx:GridViewBandColumn>
-                                                                <dx:GridViewBandColumn Caption="MISC. TRAVEL EXPENSES" ShowInCustomizationForm="True" VisibleIndex="4">
+                                                                <dx:GridViewBandColumn Caption="MISC. TRAVEL EXPENSES" ShowInCustomizationForm="True" VisibleIndex="5">
                                                                     <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
                                                                     <Columns>
                                                                         <dx:GridViewDataComboBoxColumn Caption="Type" FieldName="MiscTravel_Type" ShowInCustomizationForm="True" VisibleIndex="0" Width="140px">
@@ -2521,6 +2495,12 @@
                                                                 <dx:GridViewDataTextColumn Caption="#" ShowInCustomizationForm="True" VisibleIndex="1" Width="40px">
                                                                     <HeaderStyle HorizontalAlign="Center" />
                                                                     <CellStyle HorizontalAlign="Center">
+                                                                        <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                        <BorderRight BorderColor="Black" BorderStyle="Solid" />
+                                                                    </CellStyle>
+                                                                </dx:GridViewDataTextColumn>
+                                                                <dx:GridViewDataTextColumn Caption="LOCATION/PARTICULARS" FieldName="LocParticulars" ShowInCustomizationForm="True" VisibleIndex="2">
+                                                                    <CellStyle>
                                                                         <BorderTop BorderColor="Black" BorderStyle="Solid" />
                                                                         <BorderRight BorderColor="Black" BorderStyle="Solid" />
                                                                     </CellStyle>
@@ -3620,7 +3600,7 @@ onTravelClick();
             <asp:Parameter Name="TravelExpenseDetailMap_ID" Type="Int32" />
         </UpdateParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlDocs" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" DeleteCommand="DELETE FROM [ITP_T_FileAttachment] WHERE [ID] = @original_ID" InsertCommand="INSERT INTO [ITP_T_FileAttachment] ([FileName], [Description], [DateUploaded], [FileSize]) VALUES (@FileName, @Description, @DateUploaded, @FileSize)" OldValuesParameterFormatString="original_{0}" SelectCommand="SELECT ID, FileName, Description, DateUploaded, FileSize FROM ITP_T_FileAttachment WHERE (App_ID = @App_ID) AND (Doc_ID = @Doc_ID) AND (DocType_Id = 1018)" UpdateCommand="UPDATE [ITP_T_FileAttachment] SET [FileName] = @FileName, [Description] = @Description, [DateUploaded] = @DateUploaded, [FileSize] = @FileSize WHERE [ID] = @original_ID">
+    <asp:SqlDataSource ID="SqlDocs" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" DeleteCommand="DELETE FROM [ITP_T_FileAttachment] WHERE [ID] = @original_ID" InsertCommand="INSERT INTO [ITP_T_FileAttachment] ([FileName], [Description], [DateUploaded], [FileSize]) VALUES (@FileName, @Description, @DateUploaded, @FileSize)" OldValuesParameterFormatString="original_{0}" SelectCommand="SELECT ITP_T_FileAttachment.ID, ITP_T_FileAttachment.FileName, ITP_T_FileAttachment.Description, ITP_T_FileAttachment.DateUploaded, ITP_T_FileAttachment.FileSize, ACCEDE_T_TravelExpenseDetailsFileAttach.DocumentType FROM ITP_T_FileAttachment INNER JOIN ACCEDE_T_TravelExpenseDetailsFileAttach ON ITP_T_FileAttachment.ID = ACCEDE_T_TravelExpenseDetailsFileAttach.FileAttachment_ID WHERE (ITP_T_FileAttachment.App_ID = @App_ID) AND (ITP_T_FileAttachment.Doc_ID = @Doc_ID) AND (ACCEDE_T_TravelExpenseDetailsFileAttach.DocumentType = @DocumentType)" UpdateCommand="UPDATE [ITP_T_FileAttachment] SET [FileName] = @FileName, [Description] = @Description, [DateUploaded] = @DateUploaded, [FileSize] = @FileSize WHERE [ID] = @original_ID">
         <DeleteParameters>
             <asp:Parameter Name="original_ID" Type="Int32" />
         </DeleteParameters>
@@ -3633,6 +3613,7 @@ onTravelClick();
         <SelectParameters>
             <asp:Parameter Name="App_ID" Type="Int32" DefaultValue="1032" />
             <asp:SessionParameter DefaultValue="" Name="Doc_ID" SessionField="TravelExp_Id" Type="Int32" />
+            <asp:Parameter DefaultValue="main" Name="DocumentType" />
         </SelectParameters>
         <UpdateParameters>
             <asp:Parameter Name="FileName" Type="String" />
@@ -3642,7 +3623,7 @@ onTravelClick();
             <asp:Parameter Name="original_ID" Type="Int32" />
         </UpdateParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlDocs2" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" DeleteCommand="DELETE FROM [ITP_T_FileAttachment] WHERE [ID] = @original_ID" InsertCommand="INSERT INTO [ITP_T_FileAttachment] ([FileName], [Description], [DateUploaded], [FileSize]) VALUES (@FileName, @Description, @DateUploaded, @FileSize)" OldValuesParameterFormatString="original_{0}" SelectCommand="SELECT [ID], [FileName], [Description], [DateUploaded], [FileSize], [FileExtension] FROM [ITP_T_FileAttachment] WHERE (([App_ID] = @App_ID) AND ([Doc_ID] = @Doc_ID) AND ([Doc_No] = @Doc_No))" UpdateCommand="UPDATE [ITP_T_FileAttachment] SET [FileName] = @FileName, [Description] = @Description, [DateUploaded] = @DateUploaded, [FileSize] = @FileSize WHERE [ID] = @original_ID">
+    <asp:SqlDataSource ID="SqlDocs2" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" DeleteCommand="DELETE FROM [ITP_T_FileAttachment] WHERE [ID] = @original_ID" InsertCommand="INSERT INTO [ITP_T_FileAttachment] ([FileName], [Description], [DateUploaded], [FileSize]) VALUES (@FileName, @Description, @DateUploaded, @FileSize)" OldValuesParameterFormatString="original_{0}" SelectCommand="SELECT ITP_T_FileAttachment.ID, ITP_T_FileAttachment.FileName, ITP_T_FileAttachment.Description, ITP_T_FileAttachment.DateUploaded, ITP_T_FileAttachment.FileSize, ACCEDE_T_TravelExpenseDetailsFileAttach.DocumentType, ACCEDE_T_TravelExpenseDetailsFileAttach.ExpenseDetails_ID, ITP_T_FileAttachment.FileExtension FROM ITP_T_FileAttachment INNER JOIN ACCEDE_T_TravelExpenseDetailsFileAttach ON ITP_T_FileAttachment.ID = ACCEDE_T_TravelExpenseDetailsFileAttach.FileAttachment_ID WHERE (ACCEDE_T_TravelExpenseDetailsFileAttach.DocumentType = @DocumentType) AND (ACCEDE_T_TravelExpenseDetailsFileAttach.ExpenseDetails_ID = @ExpenseDetails_ID)" UpdateCommand="UPDATE [ITP_T_FileAttachment] SET [FileName] = @FileName, [Description] = @Description, [DateUploaded] = @DateUploaded, [FileSize] = @FileSize WHERE [ID] = @original_ID">
         <DeleteParameters>
             <asp:Parameter Name="original_ID" Type="Int32" />
         </DeleteParameters>
@@ -3653,9 +3634,8 @@ onTravelClick();
             <asp:Parameter Name="FileSize" Type="String" />
         </InsertParameters>
         <SelectParameters>
-            <asp:Parameter Name="App_ID" Type="Int32" DefaultValue="1032" />
-            <asp:SessionParameter DefaultValue="" Name="Doc_ID" SessionField="ExpDetailsID" Type="Int32" />
-            <asp:SessionParameter DefaultValue="" Name="Doc_No" SessionField="DocNo" />
+            <asp:Parameter Name="DocumentType" DefaultValue="sub" />
+            <asp:SessionParameter DefaultValue="" Name="ExpenseDetails_ID" SessionField="ExpDetailsID" />
         </SelectParameters>
         <UpdateParameters>
             <asp:Parameter Name="FileName" Type="String" />

@@ -876,7 +876,6 @@ namespace DX_WebTemplate
                             "<tr>" +
                             "<td style='text-align: center;'>" + expType + "</td>" +
                             "<td style='text-align: center;'>" + item.TravelExpenseDetail_Date.Value.ToShortDateString() + "</td>" +
-                            "<td style='text-align: center;'>" + item.LocParticulars + "</td>" +
                             "<td style='text-align: center;'>" + (travel == "Domestic" ? "₱" : "$") + Convert.ToDecimal(item.Total_Expenses).ToString("N2") + "</td>" +
                             "</tr>";
             }
@@ -908,10 +907,6 @@ namespace DX_WebTemplate
             if (exp_details != null)
             {
                 exp_det_class.travelDate = Convert.ToDateTime(exp_details.TravelExpenseDetail_Date).ToString("MM/dd/yyyy hh:mm:ss");
-                if (exp_details.LocParticulars != null)
-                {
-                    exp_det_class.locParticulars = exp_details.LocParticulars;
-                }
                 if (exp_details.Total_Expenses != null)
                 {
                     exp_det_class.totalExp = exp_details.Total_Expenses.ToString();
@@ -1208,7 +1203,6 @@ namespace DX_WebTemplate
                     var trav = new ACCEDE_T_TravelExpenseDetail
                     {
                         TravelExpenseDetail_Date = travelDate,
-                        LocParticulars = locParticulars,
                         TravelExpenseMain_ID = Convert.ToInt32(Session["TravelExp_Id"]),
                         Total_Expenses = Convert.ToDecimal(totalExp)
                     };
@@ -1294,7 +1288,6 @@ namespace DX_WebTemplate
                     {
                         //.IsExpenseCA = false;
                         ex.Total_Expenses = Convert.ToDecimal(totalExp);
-                        ex.LocParticulars = locParticulars;
                         ex.TravelExpenseDetail_Date = travelDate;
                         ex.TravelExpenseMain_ID = Convert.ToInt32(Session["TravelExp_Id"]);
                     }

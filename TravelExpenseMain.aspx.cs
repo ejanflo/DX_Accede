@@ -214,7 +214,7 @@ namespace DX_WebTemplate
 
             if (e.Parameters.Split('|').Last() == "btnEdit")
             {
-                ASPxWebControl.RedirectOnCallback("TravelExpenseAdd.aspx");
+                ASPxWebControl.RedirectOnCallback("TravelExpenseNew.aspx");
             }
             if (e.Parameters.Split('|').Last() == "btnView")
             {

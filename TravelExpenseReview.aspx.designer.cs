@@ -285,13 +285,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox arNoTB;
 
         /// <summary>
-        /// sapCheck control.
+        /// sapdocTB control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxCheckBox sapCheck;
+        protected global::DevExpress.Web.ASPxTextBox sapdocTB;
 
         /// <summary>
         /// forAccountingGrid control.
@@ -508,15 +508,6 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxDateEdit travelDateCalendar;
-
-        /// <summary>
-        /// locParticularsMemo control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxMemo locParticularsMemo;
 
         /// <summary>
         /// ASPxGridView22 control.

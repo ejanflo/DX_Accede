@@ -865,15 +865,6 @@
       <Column Name="TravelExpenseMain_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
     </Type>
   </Table>
-  <Table Name="dbo.ACCEDE_T_TravelExpenseDetails" Member="ACCEDE_T_TravelExpenseDetails">
-    <Type Name="ACCEDE_T_TravelExpenseDetail">
-      <Column Name="TravelExpenseDetail_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="TravelExpenseDetail_Date" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="LocParticulars" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="TravelExpenseMain_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Total_Expenses" Type="System.Decimal" DbType="Decimal(15,2)" CanBeNull="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.ACCEDE_T_TraExpReimTranspoMap" Member="ACCEDE_T_TraExpReimTranspoMaps">
     <Type Name="ACCEDE_T_TraExpReimTranspoMap">
       <Column Name="ReimTranspo_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -1194,6 +1185,22 @@
       <Column Name="ExpLineNum" Type="System.Int32" DbType="Int" CanBeNull="true" />
     </Type>
   </Table>
+  <Table Name="dbo.ACCEDE_T_TravelExpenseDetailsFileAttach" Member="ACCEDE_T_TravelExpenseDetailsFileAttaches">
+    <Type Name="ACCEDE_T_TravelExpenseDetailsFileAttach">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="FileAttachment_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ExpenseDetails_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DocumentType" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_T_TravelExpenseDetails" Member="ACCEDE_T_TravelExpenseDetails">
+    <Type Name="ACCEDE_T_TravelExpenseDetail">
+      <Column Name="TravelExpenseDetail_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TravelExpenseDetail_Date" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="TravelExpenseMain_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Total_Expenses" Type="System.Decimal" DbType="Decimal(15,2)" CanBeNull="true" />
+    </Type>
+  </Table>
   <Table Name="dbo.ACCEDE_T_TravelExpenseDetailsMap" Member="ACCEDE_T_TravelExpenseDetailsMaps">
     <Type Name="ACCEDE_T_TravelExpenseDetailsMap">
       <Column Name="TravelExpenseDetailMap_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -1217,14 +1224,7 @@
       <Column Name="OtherBus_Specify" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
       <Column Name="OtherBus_Amount" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
       <Column Name="FixedAllow_Remarks" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.ACCEDE_T_TravelExpenseDetailsFileAttach" Member="ACCEDE_T_TravelExpenseDetailsFileAttaches">
-    <Type Name="ACCEDE_T_TravelExpenseDetailsFileAttach">
-      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="FileAttachment_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="ExpenseDetails_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="DocumentType" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="LocParticulars" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
     </Type>
   </Table>
 </Database>

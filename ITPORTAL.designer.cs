@@ -180,9 +180,6 @@ namespace DX_WebTemplate
     partial void InsertACCEDE_T_TravelForAccounting(ACCEDE_T_TravelForAccounting instance);
     partial void UpdateACCEDE_T_TravelForAccounting(ACCEDE_T_TravelForAccounting instance);
     partial void DeleteACCEDE_T_TravelForAccounting(ACCEDE_T_TravelForAccounting instance);
-    partial void InsertACCEDE_T_TravelExpenseDetail(ACCEDE_T_TravelExpenseDetail instance);
-    partial void UpdateACCEDE_T_TravelExpenseDetail(ACCEDE_T_TravelExpenseDetail instance);
-    partial void DeleteACCEDE_T_TravelExpenseDetail(ACCEDE_T_TravelExpenseDetail instance);
     partial void InsertACCEDE_T_TraExpReimTranspoMap(ACCEDE_T_TraExpReimTranspoMap instance);
     partial void UpdateACCEDE_T_TraExpReimTranspoMap(ACCEDE_T_TraExpReimTranspoMap instance);
     partial void DeleteACCEDE_T_TraExpReimTranspoMap(ACCEDE_T_TraExpReimTranspoMap instance);
@@ -231,12 +228,15 @@ namespace DX_WebTemplate
     partial void InsertACCEDE_T_ExpenseDetail(ACCEDE_T_ExpenseDetail instance);
     partial void UpdateACCEDE_T_ExpenseDetail(ACCEDE_T_ExpenseDetail instance);
     partial void DeleteACCEDE_T_ExpenseDetail(ACCEDE_T_ExpenseDetail instance);
-    partial void InsertACCEDE_T_TravelExpenseDetailsMap(ACCEDE_T_TravelExpenseDetailsMap instance);
-    partial void UpdateACCEDE_T_TravelExpenseDetailsMap(ACCEDE_T_TravelExpenseDetailsMap instance);
-    partial void DeleteACCEDE_T_TravelExpenseDetailsMap(ACCEDE_T_TravelExpenseDetailsMap instance);
     partial void InsertACCEDE_T_TravelExpenseDetailsFileAttach(ACCEDE_T_TravelExpenseDetailsFileAttach instance);
     partial void UpdateACCEDE_T_TravelExpenseDetailsFileAttach(ACCEDE_T_TravelExpenseDetailsFileAttach instance);
     partial void DeleteACCEDE_T_TravelExpenseDetailsFileAttach(ACCEDE_T_TravelExpenseDetailsFileAttach instance);
+    partial void InsertACCEDE_T_TravelExpenseDetail(ACCEDE_T_TravelExpenseDetail instance);
+    partial void UpdateACCEDE_T_TravelExpenseDetail(ACCEDE_T_TravelExpenseDetail instance);
+    partial void DeleteACCEDE_T_TravelExpenseDetail(ACCEDE_T_TravelExpenseDetail instance);
+    partial void InsertACCEDE_T_TravelExpenseDetailsMap(ACCEDE_T_TravelExpenseDetailsMap instance);
+    partial void UpdateACCEDE_T_TravelExpenseDetailsMap(ACCEDE_T_TravelExpenseDetailsMap instance);
+    partial void DeleteACCEDE_T_TravelExpenseDetailsMap(ACCEDE_T_TravelExpenseDetailsMap instance);
     #endregion
 		
 		public ITPORTALDataContext(string connection) : 
@@ -719,14 +719,6 @@ namespace DX_WebTemplate
 			}
 		}
 		
-		public System.Data.Linq.Table<ACCEDE_T_TravelExpenseDetail> ACCEDE_T_TravelExpenseDetails
-		{
-			get
-			{
-				return this.GetTable<ACCEDE_T_TravelExpenseDetail>();
-			}
-		}
-		
 		public System.Data.Linq.Table<ACCEDE_T_TraExpReimTranspoMap> ACCEDE_T_TraExpReimTranspoMaps
 		{
 			get
@@ -895,19 +887,27 @@ namespace DX_WebTemplate
 			}
 		}
 		
-		public System.Data.Linq.Table<ACCEDE_T_TravelExpenseDetailsMap> ACCEDE_T_TravelExpenseDetailsMaps
-		{
-			get
-			{
-				return this.GetTable<ACCEDE_T_TravelExpenseDetailsMap>();
-			}
-		}
-		
 		public System.Data.Linq.Table<ACCEDE_T_TravelExpenseDetailsFileAttach> ACCEDE_T_TravelExpenseDetailsFileAttaches
 		{
 			get
 			{
 				return this.GetTable<ACCEDE_T_TravelExpenseDetailsFileAttach>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ACCEDE_T_TravelExpenseDetail> ACCEDE_T_TravelExpenseDetails
+		{
+			get
+			{
+				return this.GetTable<ACCEDE_T_TravelExpenseDetail>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ACCEDE_T_TravelExpenseDetailsMap> ACCEDE_T_TravelExpenseDetailsMaps
+		{
+			get
+			{
+				return this.GetTable<ACCEDE_T_TravelExpenseDetailsMap>();
 			}
 		}
 	}
@@ -17953,164 +17953,6 @@ namespace DX_WebTemplate
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_T_TravelExpenseDetails")]
-	public partial class ACCEDE_T_TravelExpenseDetail : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _TravelExpenseDetail_ID;
-		
-		private System.Nullable<System.DateTime> _TravelExpenseDetail_Date;
-		
-		private string _LocParticulars;
-		
-		private System.Nullable<int> _TravelExpenseMain_ID;
-		
-		private System.Nullable<decimal> _Total_Expenses;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnTravelExpenseDetail_IDChanging(int value);
-    partial void OnTravelExpenseDetail_IDChanged();
-    partial void OnTravelExpenseDetail_DateChanging(System.Nullable<System.DateTime> value);
-    partial void OnTravelExpenseDetail_DateChanged();
-    partial void OnLocParticularsChanging(string value);
-    partial void OnLocParticularsChanged();
-    partial void OnTravelExpenseMain_IDChanging(System.Nullable<int> value);
-    partial void OnTravelExpenseMain_IDChanged();
-    partial void OnTotal_ExpensesChanging(System.Nullable<decimal> value);
-    partial void OnTotal_ExpensesChanged();
-    #endregion
-		
-		public ACCEDE_T_TravelExpenseDetail()
-		{
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TravelExpenseDetail_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int TravelExpenseDetail_ID
-		{
-			get
-			{
-				return this._TravelExpenseDetail_ID;
-			}
-			set
-			{
-				if ((this._TravelExpenseDetail_ID != value))
-				{
-					this.OnTravelExpenseDetail_IDChanging(value);
-					this.SendPropertyChanging();
-					this._TravelExpenseDetail_ID = value;
-					this.SendPropertyChanged("TravelExpenseDetail_ID");
-					this.OnTravelExpenseDetail_IDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TravelExpenseDetail_Date", DbType="DateTime")]
-		public System.Nullable<System.DateTime> TravelExpenseDetail_Date
-		{
-			get
-			{
-				return this._TravelExpenseDetail_Date;
-			}
-			set
-			{
-				if ((this._TravelExpenseDetail_Date != value))
-				{
-					this.OnTravelExpenseDetail_DateChanging(value);
-					this.SendPropertyChanging();
-					this._TravelExpenseDetail_Date = value;
-					this.SendPropertyChanged("TravelExpenseDetail_Date");
-					this.OnTravelExpenseDetail_DateChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LocParticulars", DbType="NVarChar(MAX)")]
-		public string LocParticulars
-		{
-			get
-			{
-				return this._LocParticulars;
-			}
-			set
-			{
-				if ((this._LocParticulars != value))
-				{
-					this.OnLocParticularsChanging(value);
-					this.SendPropertyChanging();
-					this._LocParticulars = value;
-					this.SendPropertyChanged("LocParticulars");
-					this.OnLocParticularsChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TravelExpenseMain_ID", DbType="Int")]
-		public System.Nullable<int> TravelExpenseMain_ID
-		{
-			get
-			{
-				return this._TravelExpenseMain_ID;
-			}
-			set
-			{
-				if ((this._TravelExpenseMain_ID != value))
-				{
-					this.OnTravelExpenseMain_IDChanging(value);
-					this.SendPropertyChanging();
-					this._TravelExpenseMain_ID = value;
-					this.SendPropertyChanged("TravelExpenseMain_ID");
-					this.OnTravelExpenseMain_IDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Total_Expenses", DbType="Decimal(15,2)")]
-		public System.Nullable<decimal> Total_Expenses
-		{
-			get
-			{
-				return this._Total_Expenses;
-			}
-			set
-			{
-				if ((this._Total_Expenses != value))
-				{
-					this.OnTotal_ExpensesChanging(value);
-					this.SendPropertyChanging();
-					this._Total_Expenses = value;
-					this.SendPropertyChanged("Total_Expenses");
-					this.OnTotal_ExpensesChanged();
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_T_TraExpReimTranspoMap")]
 	public partial class ACCEDE_T_TraExpReimTranspoMap : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -24014,6 +23856,274 @@ namespace DX_WebTemplate
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_T_TravelExpenseDetailsFileAttach")]
+	public partial class ACCEDE_T_TravelExpenseDetailsFileAttach : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private System.Nullable<int> _FileAttachment_ID;
+		
+		private System.Nullable<int> _ExpenseDetails_ID;
+		
+		private string _DocumentType;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnFileAttachment_IDChanging(System.Nullable<int> value);
+    partial void OnFileAttachment_IDChanged();
+    partial void OnExpenseDetails_IDChanging(System.Nullable<int> value);
+    partial void OnExpenseDetails_IDChanged();
+    partial void OnDocumentTypeChanging(string value);
+    partial void OnDocumentTypeChanged();
+    #endregion
+		
+		public ACCEDE_T_TravelExpenseDetailsFileAttach()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FileAttachment_ID", DbType="Int")]
+		public System.Nullable<int> FileAttachment_ID
+		{
+			get
+			{
+				return this._FileAttachment_ID;
+			}
+			set
+			{
+				if ((this._FileAttachment_ID != value))
+				{
+					this.OnFileAttachment_IDChanging(value);
+					this.SendPropertyChanging();
+					this._FileAttachment_ID = value;
+					this.SendPropertyChanged("FileAttachment_ID");
+					this.OnFileAttachment_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExpenseDetails_ID", DbType="Int")]
+		public System.Nullable<int> ExpenseDetails_ID
+		{
+			get
+			{
+				return this._ExpenseDetails_ID;
+			}
+			set
+			{
+				if ((this._ExpenseDetails_ID != value))
+				{
+					this.OnExpenseDetails_IDChanging(value);
+					this.SendPropertyChanging();
+					this._ExpenseDetails_ID = value;
+					this.SendPropertyChanged("ExpenseDetails_ID");
+					this.OnExpenseDetails_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DocumentType", DbType="NVarChar(50)")]
+		public string DocumentType
+		{
+			get
+			{
+				return this._DocumentType;
+			}
+			set
+			{
+				if ((this._DocumentType != value))
+				{
+					this.OnDocumentTypeChanging(value);
+					this.SendPropertyChanging();
+					this._DocumentType = value;
+					this.SendPropertyChanged("DocumentType");
+					this.OnDocumentTypeChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_T_TravelExpenseDetails")]
+	public partial class ACCEDE_T_TravelExpenseDetail : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _TravelExpenseDetail_ID;
+		
+		private System.Nullable<System.DateTime> _TravelExpenseDetail_Date;
+		
+		private System.Nullable<int> _TravelExpenseMain_ID;
+		
+		private System.Nullable<decimal> _Total_Expenses;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnTravelExpenseDetail_IDChanging(int value);
+    partial void OnTravelExpenseDetail_IDChanged();
+    partial void OnTravelExpenseDetail_DateChanging(System.Nullable<System.DateTime> value);
+    partial void OnTravelExpenseDetail_DateChanged();
+    partial void OnTravelExpenseMain_IDChanging(System.Nullable<int> value);
+    partial void OnTravelExpenseMain_IDChanged();
+    partial void OnTotal_ExpensesChanging(System.Nullable<decimal> value);
+    partial void OnTotal_ExpensesChanged();
+    #endregion
+		
+		public ACCEDE_T_TravelExpenseDetail()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TravelExpenseDetail_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int TravelExpenseDetail_ID
+		{
+			get
+			{
+				return this._TravelExpenseDetail_ID;
+			}
+			set
+			{
+				if ((this._TravelExpenseDetail_ID != value))
+				{
+					this.OnTravelExpenseDetail_IDChanging(value);
+					this.SendPropertyChanging();
+					this._TravelExpenseDetail_ID = value;
+					this.SendPropertyChanged("TravelExpenseDetail_ID");
+					this.OnTravelExpenseDetail_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TravelExpenseDetail_Date", DbType="DateTime")]
+		public System.Nullable<System.DateTime> TravelExpenseDetail_Date
+		{
+			get
+			{
+				return this._TravelExpenseDetail_Date;
+			}
+			set
+			{
+				if ((this._TravelExpenseDetail_Date != value))
+				{
+					this.OnTravelExpenseDetail_DateChanging(value);
+					this.SendPropertyChanging();
+					this._TravelExpenseDetail_Date = value;
+					this.SendPropertyChanged("TravelExpenseDetail_Date");
+					this.OnTravelExpenseDetail_DateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TravelExpenseMain_ID", DbType="Int")]
+		public System.Nullable<int> TravelExpenseMain_ID
+		{
+			get
+			{
+				return this._TravelExpenseMain_ID;
+			}
+			set
+			{
+				if ((this._TravelExpenseMain_ID != value))
+				{
+					this.OnTravelExpenseMain_IDChanging(value);
+					this.SendPropertyChanging();
+					this._TravelExpenseMain_ID = value;
+					this.SendPropertyChanged("TravelExpenseMain_ID");
+					this.OnTravelExpenseMain_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Total_Expenses", DbType="Decimal(15,2)")]
+		public System.Nullable<decimal> Total_Expenses
+		{
+			get
+			{
+				return this._Total_Expenses;
+			}
+			set
+			{
+				if ((this._Total_Expenses != value))
+				{
+					this.OnTotal_ExpensesChanging(value);
+					this.SendPropertyChanging();
+					this._Total_Expenses = value;
+					this.SendPropertyChanged("Total_Expenses");
+					this.OnTotal_ExpensesChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_T_TravelExpenseDetailsMap")]
 	public partial class ACCEDE_T_TravelExpenseDetailsMap : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -24062,6 +24172,8 @@ namespace DX_WebTemplate
 		
 		private string _FixedAllow_Remarks;
 		
+		private string _LocParticulars;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -24108,6 +24220,8 @@ namespace DX_WebTemplate
     partial void OnOtherBus_AmountChanged();
     partial void OnFixedAllow_RemarksChanging(string value);
     partial void OnFixedAllow_RemarksChanged();
+    partial void OnLocParticularsChanging(string value);
+    partial void OnLocParticularsChanged();
     #endregion
 		
 		public ACCEDE_T_TravelExpenseDetailsMap()
@@ -24535,136 +24649,22 @@ namespace DX_WebTemplate
 			}
 		}
 		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_T_TravelExpenseDetailsFileAttach")]
-	public partial class ACCEDE_T_TravelExpenseDetailsFileAttach : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _ID;
-		
-		private System.Nullable<int> _FileAttachment_ID;
-		
-		private System.Nullable<int> _ExpenseDetails_ID;
-		
-		private string _DocumentType;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIDChanging(int value);
-    partial void OnIDChanged();
-    partial void OnFileAttachment_IDChanging(System.Nullable<int> value);
-    partial void OnFileAttachment_IDChanged();
-    partial void OnExpenseDetails_IDChanging(System.Nullable<int> value);
-    partial void OnExpenseDetails_IDChanged();
-    partial void OnDocumentTypeChanging(string value);
-    partial void OnDocumentTypeChanged();
-    #endregion
-		
-		public ACCEDE_T_TravelExpenseDetailsFileAttach()
-		{
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int ID
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LocParticulars", DbType="NVarChar(200)")]
+		public string LocParticulars
 		{
 			get
 			{
-				return this._ID;
+				return this._LocParticulars;
 			}
 			set
 			{
-				if ((this._ID != value))
+				if ((this._LocParticulars != value))
 				{
-					this.OnIDChanging(value);
+					this.OnLocParticularsChanging(value);
 					this.SendPropertyChanging();
-					this._ID = value;
-					this.SendPropertyChanged("ID");
-					this.OnIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FileAttachment_ID", DbType="Int")]
-		public System.Nullable<int> FileAttachment_ID
-		{
-			get
-			{
-				return this._FileAttachment_ID;
-			}
-			set
-			{
-				if ((this._FileAttachment_ID != value))
-				{
-					this.OnFileAttachment_IDChanging(value);
-					this.SendPropertyChanging();
-					this._FileAttachment_ID = value;
-					this.SendPropertyChanged("FileAttachment_ID");
-					this.OnFileAttachment_IDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExpenseDetails_ID", DbType="Int")]
-		public System.Nullable<int> ExpenseDetails_ID
-		{
-			get
-			{
-				return this._ExpenseDetails_ID;
-			}
-			set
-			{
-				if ((this._ExpenseDetails_ID != value))
-				{
-					this.OnExpenseDetails_IDChanging(value);
-					this.SendPropertyChanging();
-					this._ExpenseDetails_ID = value;
-					this.SendPropertyChanged("ExpenseDetails_ID");
-					this.OnExpenseDetails_IDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DocumentType", DbType="NVarChar(50)")]
-		public string DocumentType
-		{
-			get
-			{
-				return this._DocumentType;
-			}
-			set
-			{
-				if ((this._DocumentType != value))
-				{
-					this.OnDocumentTypeChanging(value);
-					this.SendPropertyChanging();
-					this._DocumentType = value;
-					this.SendPropertyChanged("DocumentType");
-					this.OnDocumentTypeChanged();
+					this._LocParticulars = value;
+					this.SendPropertyChanged("LocParticulars");
+					this.OnLocParticularsChanged();
 				}
 			}
 		}

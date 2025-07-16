@@ -68,21 +68,6 @@ namespace DX_WebTemplate
                             
                             ExpenseEditForm.Items[0].Caption = "Travel Expense Document No.: " + mainExp.Doc_No + " (" + status + ")";
 
-                            //if (status == "Pending at Finance" || status == "Pending at P2P")
-                            //{
-                            //    chargedCB.ClientEnabled = true;
-                            //    chargedCB0.ClientEnabled = true;
-                            //    chargedCB.DropDownButton.Visible = true;
-                            //    chargedCB0.DropDownButton.Visible = true;
-                            //}
-                            //else
-                            //{
-                            //    chargedCB.ClientEnabled = false;
-                            //    chargedCB0.ClientEnabled = false;
-                            //    chargedCB.DropDownButton.Visible = false;
-                            //    chargedCB0.DropDownButton.Visible = false;
-                            //}
-
                             SqlMain.SelectParameters["ID"].DefaultValue = mainExp.ID.ToString();
                             timedepartTE.DateTime = DateTime.Parse(mainExp.Time_Departed.ToString());
                             timearriveTE.DateTime = DateTime.Parse(mainExp.Time_Arrived.ToString());
@@ -185,6 +170,11 @@ namespace DX_WebTemplate
                                 returnPrevItem.ClientVisible = true;
                             }
 
+                            if (status == "Pending at P2P")
+                            {
+                                sapItem.Visible = true;
+                            }
+
                             if (status == "Pending at Cashier")
                             {
                                 disapproveItem.Visible = false;
@@ -198,6 +188,7 @@ namespace DX_WebTemplate
 
                                 if (fapWACount > 0)
                                 {
+                                    sapItem.ClientVisible = true;
                                     approveBtn.Text = "Disburse";
                                     approvePopBtn.Text = "Disburse";
                                     ApprovePopup.HeaderText = "Disburse Expense Item";
@@ -212,149 +203,12 @@ namespace DX_WebTemplate
                                 }
                             }
 
-                            //if ((status == "Pending at Finance") && orgRoleID == null)
-                            //{
-                            //    forwardItem.Visible = true;
-
-                            //    var FinExecVerify = _DataContext.vw_ACCEDE_FinApproverVerifies.Where(x => x.UserId == empCode)
-                            //        .Where(x => x.Role_Name == "Accede Finance Executive").FirstOrDefault();
-
-                            //    var FinCFOVerify = _DataContext.vw_ACCEDE_FinApproverVerifies.Where(x => x.UserId == empCode)
-                            //        .Where(x => x.Role_Name == "Accede CFO").FirstOrDefault();
-
-                            //    if (FinExecVerify != null)
-                            //    {
-                            //        var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
-                            //            .Where(x => x.Name.Contains("forward cfo") && x.App_Id == 1032 && (x.Company_Id == mainExp.Company_Id || x.Company_Id == mainExp.ChargedToComp))
-                            //            .ToList();
-
-                            //        if (forwardWFList.Any()) // Ensure there's data before binding
-                            //        {
-                            //            drpdown_ForwardWF.DataSource = forwardWFList;
-                            //            drpdown_ForwardWF.ValueField = "WF_Id";
-                            //            drpdown_ForwardWF.TextField = "Name";
-                            //            drpdown_ForwardWF.DataBind();
-
-                            //            if (drpdown_ForwardWF.Items.Count == 1)
-                            //            {
-                            //                drpdown_ForwardWF.SelectedIndex = 0;
-                            //                SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
-
-                            //            }
-                            //        }
-                            //    }
-                            //    else if (FinCFOVerify != null)
-                            //    {
-                            //        var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
-                            //            .Where(x => x.Name.Contains("forward pres") && x.App_Id == 1032 && (x.Company_Id == mainExp.Company_Id || x.Company_Id == mainExp.ChargedToComp))
-                            //            .ToList();
-
-                            //        if (forwardWFList.Any()) // Ensure there's data before binding
-                            //        {
-                            //            drpdown_ForwardWF.DataSource = forwardWFList;
-                            //            drpdown_ForwardWF.ValueField = "WF_Id";
-                            //            drpdown_ForwardWF.TextField = "Name";
-                            //            drpdown_ForwardWF.DataBind();
-
-                            //            if (drpdown_ForwardWF.Items.Count == 1)
-                            //            {
-                            //                drpdown_ForwardWF.SelectedIndex = 0;
-                            //                SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
-
-                            //            }
-                            //        }
-                            //    }
-                            //    else
-                            //    {
-                            //        var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
-                            //            .Where(x => x.Name.Contains("forward exec") && x.App_Id == 1032 && (x.Company_Id == mainExp.Company_Id || x.Company_Id == mainExp.ChargedToComp))
-                            //            .ToList();
-
-                            //        if (forwardWFList.Any()) // Ensure there's data before binding
-                            //        {
-                            //            drpdown_ForwardWF.DataSource = forwardWFList;
-                            //            drpdown_ForwardWF.ValueField = "WF_Id";
-                            //            drpdown_ForwardWF.TextField = "Name";
-                            //            drpdown_ForwardWF.DataBind();
-
-                            //            if (drpdown_ForwardWF.Items.Count == 1)
-                            //            {
-                            //                drpdown_ForwardWF.SelectedIndex = 0;
-                            //                SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
-                            //            }
-                            //        }
-                            //    }
-                            //}
-                            //else if ((status == "Forwarded") && orgRoleID == null)
-                            //{
-                            //    forwardItem.Visible = true;
-
-                            //    var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
-                            //            .Where(x => x.Name.Contains("forward"))
-                            //            .Where(x => x.App_Id == 1032)
-                            //            .Where(x => (x.Company_Id == mainExp.Company_Id || x.Company_Id == mainExp.ChargedToComp))
-                            //            .ToList();
-
-                            //    if (forwardWFList.Any()) // Ensure there's data before binding
-                            //    {
-                            //        drpdown_ForwardWF.DataSource = forwardWFList;
-                            //        drpdown_ForwardWF.ValueField = "WF_Id";
-                            //        drpdown_ForwardWF.TextField = "Name";
-                            //        drpdown_ForwardWF.DataBind();
-
-                            //        if (drpdown_ForwardWF.Items.Count == 1)
-                            //        {
-                            //            drpdown_ForwardWF.SelectedIndex = 0;
-                            //            SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
-                            //        }
-                            //    }
-                            //}
-                            //else
-                            //{
-                            //    forwardItem.Visible = false;
-                            //}
-
-                            //if (status == "Pending at Finance" || status == "Pending at P2P" || mainExp.ExpenseType_ID != 1)
-                            //{
-                            //    disapproveItem.Visible = false;
-                            //}
-
-                            //if (status == "Pending at Audit")
-                            //{
-                            //    disapproveItem.Visible = false;
-                            //    returnBtn.Text = "Return to Creator";
-                            //    returnPrevItem.ClientVisible = true;
-                            //}
-
-                            //if (status == "Pending at Cashier")
-                            //{
-                            //    disapproveItem.Visible = false;
-                            //    returnItem.Visible = false;
-
-                            //    var fapWACount = _DataContext.ITP_T_WorkflowActivities.Count(x => x.AppId == 1032 && x.AppDocTypeId == app_docType.DCT_Id && x.Document_Id == mainExp.ID && x.WF_Id == mainExp.FAPWF_Id);
-
-                            //    if (fapWACount > 0)
-                            //    {
-                            //        approveBtn.Text = "Disburse";
-                            //        approvePopBtn.Text = "Disburse";
-                            //        ApprovePopup.HeaderText = "Disburse Expense Item";
-                            //        ASPxFormLayout1_E2.Text = "Are you sure to disburse item?";
-                            //    }
-                            //    else
-                            //    {
-                            //        approveBtn.Text = "Approve";
-                            //        approvePopBtn.Text = "Approve";
-                            //        ApprovePopup.HeaderText = "Approve Expense Report";
-                            //        ASPxFormLayout1_E2.Text = "Are you sure to approve item?";
-                            //    }
-                            //}
-
                             var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.isTravel == true && x.IsExpenseReim == true).FirstOrDefault();
 
                             if (reim != null)
                             {
                                 reimDetails.ClientVisible = true;
-                                
+                                reimTB.Value = reim.RFP_DocNum;
                             }
 
                             var travelExpId = Convert.ToInt32(Session["TravelExp_Id"]);
@@ -560,7 +414,6 @@ namespace DX_WebTemplate
                 emailDetails +=
                             "<tr>" +
                             "<td style='text-align: center;'>" + expType + "</td>" +
-                            "<td style='text-align: center;'>" + item.LocParticulars + "</td>" +
                             "<td style='text-align: center;'>" + item.TravelExpenseDetail_Date.Value.ToShortDateString() + "</td>" +
                             "<td style='text-align: center;'>" + (travel == "Domestic" ? "₱" : "$") + Convert.ToDecimal(item.Total_Expenses).ToString("N2") + "</td>" +
                             "</tr>";
@@ -659,7 +512,6 @@ namespace DX_WebTemplate
                 emailDetails +=
                             "<tr>" +
                             "<td style='text-align: center;'>" + expType + "</td>" +
-                            "<td style='text-align: center;'>" + item.LocParticulars + "</td>" +
                             "<td style='text-align: center;'>" + item.TravelExpenseDetail_Date.Value.ToShortDateString() + "</td>" +
                             "<td style='text-align: center;'>" + (travel == "Domestic" ? "₱" : "$") + Convert.ToDecimal(item.Total_Expenses).ToString("N2") + "</td>" +
                             "</tr>";
@@ -744,7 +596,6 @@ namespace DX_WebTemplate
                 emailDetails +=
                             "<tr>" +
                             "<td style='text-align: center;'>" + expType + "</td>" +
-                            "<td style='text-align: center;'>" + item.LocParticulars + "</td>" +
                             "<td style='text-align: center;'>" + item.TravelExpenseDetail_Date.Value.ToShortDateString() + "</td>" +
                             "<td style='text-align: center;'>" + (travel == "Domestic" ? "₱" : "$") + Convert.ToDecimal(item.Total_Expenses).ToString("N2") + "</td>" +
                             "</tr>";
@@ -836,7 +687,6 @@ namespace DX_WebTemplate
                 emailDetails +=
                             "<tr>" +
                             "<td style='text-align: center;'>" + expType + "</td>" +
-                            "<td style='text-align: center;'>" + item.LocParticulars + "</td>" +
                             "<td style='text-align: center;'>" + item.TravelExpenseDetail_Date.Value.ToShortDateString() + "</td>" +
                             "<td style='text-align: center;'>" + (travel == "Domestic" ? "₱" : "$") + Convert.ToDecimal(item.Total_Expenses).ToString("N2") + "</td>" +
                             "</tr>";
@@ -944,7 +794,6 @@ namespace DX_WebTemplate
                 emailDetails +=
                             "<tr>" +
                             "<td style='text-align: center;'>" + expType + "</td>" +
-                            "<td style='text-align: center;'>" + item.LocParticulars + "</td>" +
                             "<td style='text-align: center;'>" + item.TravelExpenseDetail_Date.Value.ToShortDateString() + "</td>" +
                             "<td style='text-align: center;'>" + (travel == "Domestic" ? "₱" : "$") + Convert.ToDecimal(item.Total_Expenses).ToString("N2") + "</td>" +
                             "</tr>";
@@ -961,7 +810,7 @@ namespace DX_WebTemplate
             }
         }
 
-        public void updateWA(int docID, int wfID, int wfaID, int status, string amount, string remarks, string userID, DateTime date, int reim_docID)
+        public void updateWA(int docID, int wfID, int wfaID, int status, string amount, string remarks, string userID, DateTime date, int reim_docID, string sapDoc)
         {
             try
             {
@@ -981,10 +830,18 @@ namespace DX_WebTemplate
 
                 foreach (var ex in updateRFPWFA)
                 {
-                    ex.Remarks = remarks;
-                    ex.DateAction = date;
-                    ex.Status = status;
-                    ex.ActedBy_User_Id = userID;
+                    if (!string.IsNullOrEmpty(sapDoc))
+                    {
+                        ex.DateAction = date;
+                        ex.Status = status;
+                        ex.Remarks = remarks;
+                        ex.ActedBy_User_Id = userID;
+                    }
+                    else
+                    {
+                        ex.Remarks = remarks;
+                        ex.ActedBy_User_Id = userID;
+                    }
                 }
 
                 _DataContext.SubmitChanges();
@@ -1241,7 +1098,7 @@ namespace DX_WebTemplate
 
                 var fstatus = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Forwarded").Select(x => x.STS_Id).FirstOrDefault();
 
-                updateWA(docID, wfID, wfaID, 7, "", aforwardRemarks, userID, DateTime.Now, reim_docID);
+                updateWA(docID, wfID, wfaID, 7, "", aforwardRemarks, userID, DateTime.Now, reim_docID, string.Empty);
                 insertWA(Convert.ToInt32(fin_wfDetail_data.WF_Id), Convert.ToInt32(fin_wfDetail_data.WFD_Id), Convert.ToInt32(org_id), Convert.ToInt32(travelmain.ID), Convert.ToInt32(travelmain.Company_Id), Convert.ToInt32(fstatus), reim_docID, aforwardRemarks, true);
 
                 return true;
@@ -1254,16 +1111,16 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static string AJAXApproveDocument(string remarks, int chargedcomp, int chargeddept, string arNo)
+        public static string AJAXApproveDocument(string remarks, int chargedcomp, int chargeddept, string arNo, string sapDoc)
         {
             TravelExpenseReview rev = new TravelExpenseReview();
-            var result = rev.ApproveDocument(remarks, chargedcomp, chargeddept, arNo);
+            var result = rev.ApproveDocument(remarks, chargedcomp, chargeddept, arNo, sapDoc);
             string stat = result ? Convert.ToString(rev.Session["stat_desc"]) : string.Empty; 
 
             return stat;
         }
 
-        public void updateTravelRFP(int docID, int reim_docID, string remarks, int chargedcomp, int chargeddept, string arNo)
+        public void updateTravelRFP(int docID, int reim_docID, string remarks, int chargedcomp, int chargeddept, string arNo, string sapDoc)
         {
             // Update Travel Main
             var updTraMain = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == docID);
@@ -1274,6 +1131,7 @@ namespace DX_WebTemplate
                 item.ChargedToDept = Convert.ToInt32(chargeddept);
                 item.Remarks = remarks;
                 item.ARRefNo = arNo;
+                item.SAP_Id = sapDoc;
             }
             _DataContext.SubmitChanges();
 
@@ -1285,11 +1143,12 @@ namespace DX_WebTemplate
                 item.ChargedTo_CompanyId = Convert.ToInt32(chargedcomp);
                 item.ChargedTo_DeptId = Convert.ToInt32(chargeddept);
                 item.Remarks = remarks;
+                item.SAPDocNo = sapDoc;
             }
             _DataContext.SubmitChanges();
         }
 
-        public bool checkNextSequence(int docID, int companyID, string remarks, string userID, int reim_docID)
+        public bool checkNextSequence(int docID, int companyID, string remarks, string userID, int reim_docID, string sapDoc)
         {
             // GET WORKFLOW ID 
             var wfID = Convert.ToInt32(Session["wf"]);
@@ -1308,7 +1167,7 @@ namespace DX_WebTemplate
                 .Select(e => e.OrgRole_Id)
                 .FirstOrDefault();
             // UPDATE WORKFLOWACTIVITY
-            updateWA(docID, wfID, wfaID, 7, "", remarks, userID, DateTime.Now, reim_docID);
+            updateWA(docID, wfID, wfaID, 7, string.Empty, remarks, userID, DateTime.Now, reim_docID, sapDoc);
 
             // IF TRUE, INSERT TO WORKFLOWACTIVITY
             if (orgRoleID != null)
@@ -1344,7 +1203,7 @@ namespace DX_WebTemplate
             }
         }
 
-        public bool ApproveDocument(string remarks, int chargedcomp, int chargeddept, string arNo)
+        public bool ApproveDocument(string remarks, int chargedcomp, int chargeddept, string arNo, string sapDoc)
         {
             try
             {
@@ -1374,12 +1233,12 @@ namespace DX_WebTemplate
                 // Employee Comp ID
                 int companyID = int.Parse(Session["comp"].ToString());
 
-                updateTravelRFP(docID, reim_docID, remarks, chargedcomp, chargeddept, arNo);
+                updateTravelRFP(docID, reim_docID, remarks, chargedcomp, chargeddept, arNo, sapDoc);
 
                 // Approval logic for Line Manager Workflow
                 if (Convert.ToString(Session["doc_stat2"]) == "Pending")
                 {
-                    bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID);
+                    bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID, sapDoc);
 
                     if (!hasNextSequence)
                     {
@@ -1408,7 +1267,7 @@ namespace DX_WebTemplate
                 // Approval logic for FAP Workflow
                 else if (Convert.ToString(Session["doc_stat2"]) == "Pending at Finance")
                 {
-                    bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID);
+                    bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID, sapDoc);
 
                     if (!hasNextSequence)
                     {
@@ -1425,7 +1284,7 @@ namespace DX_WebTemplate
                 // Approval logic for Audit Workflow
                 else if (Convert.ToString(Session["doc_stat2"]) == "Pending at Audit")
                 {
-                    bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID);
+                    bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID, sapDoc);
 
                     updateRFPToLiquidated(docID);
 
@@ -1457,7 +1316,7 @@ namespace DX_WebTemplate
                 // Approval logic for P2P Workflow
                 else if (Convert.ToString(Session["doc_stat2"]) == "Pending at P2P")
                 {
-                    bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID);
+                    bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID, sapDoc);
                     var completeStat = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Completed").Select(x => x.STS_Id).FirstOrDefault();
 
                     if (!hasNextSequence)
@@ -1493,10 +1352,10 @@ namespace DX_WebTemplate
                     }
                 }
 
-                // Approval logic for P2P Workflow
+                // Approval logic for Cashier Workflow
                 else if (Convert.ToString(Session["doc_stat2"]) == "Pending at Cashier")
                 {
-                    bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID);
+                    bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID, sapDoc);
                     var completeStat = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Completed").Select(x => x.STS_Id).FirstOrDefault();
                     var disburseStat = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Disbursed").Select(x => x.STS_Id).FirstOrDefault();
 
@@ -1535,7 +1394,7 @@ namespace DX_WebTemplate
                 // Approval logic for Forwarded Docs
                 else if (Convert.ToString(Session["doc_stat2"]) == "Forwarded")
                 {
-                    bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID);
+                    bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID, sapDoc);
 
                     if (!hasNextSequence)
                     {
@@ -1665,10 +1524,6 @@ namespace DX_WebTemplate
             if (exp_details != null)
             {
                 exp_det_class.travelDate = Convert.ToDateTime(exp_details.TravelExpenseDetail_Date).ToString("MM/dd/yyyy hh:mm:ss");
-                if (exp_details.LocParticulars != null)
-                {
-                    exp_det_class.locParticulars = exp_details.LocParticulars;
-                }
                 if (exp_details.Total_Expenses != null)
                 {
                     exp_det_class.totalExp = exp_details.Total_Expenses.ToString();

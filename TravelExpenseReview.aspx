@@ -173,7 +173,6 @@
             } else if (e.buttonID == 'btnEditExpDet') {
                 loadPanel.Show();
                 var item_id = s.GetRowKey(e.visibleIndex);
-                locParticularsMemo.SetValue('');
                 travelDateCalendar.SetDate(null);
                 totalExpTB.SetValue('');
                 viewExpDetailModal(item_id);
@@ -209,7 +208,6 @@
                     expDetailID: expDetailID
                 }),
                 success: function (response) {
-                    locParticularsMemo.SetValue(response.d.locParticulars);
                     totalExpTB.SetValue(response.d.totalExp);
                     travelDateCalendar.SetDate(new Date(response.d.travelDate));
                     ASPxGridView22.PerformCallback("edit");
@@ -259,6 +257,7 @@
             var chargedComp = chargedCB.GetValue();
             var chargedDept = chargedCB0.GetValue();
             var arno = arNoTB.GetText();
+            var sapdoc = sapdocTB.GetText();
 
             $.ajax({
                 type: "POST",
@@ -269,7 +268,8 @@
                     remarks: remarks,
                     chargedcomp: chargedComp,
                     chargeddept: chargedDept,
-                    arNo: arno
+                    arNo: arno,
+                    sapDoc: sapdoc
                 }),
                 success: function (response) {
                     ApprovePopup.Hide();
@@ -822,20 +822,22 @@
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings Location="Top" />
-                                                    <Paddings PaddingTop="20px" />
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="SAP Document No." ClientVisible="False" ColSpan="1" Name="sapItem">
+                                                <dx:LayoutItem Caption="SAP Document No." ColSpan="1" Name="sapItem" ClientVisible="False">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxCheckBox ID="sapCheck" runat="server" CheckState="Unchecked" ClientEnabled="False" ClientInstanceName="sapCheck" Width="100%">
-                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True">
-                                                                    <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                            <dx:ASPxTextBox ID="sapdocTB" runat="server" ClientInstanceName="sapdocTB" Font-Bold="True" Width="100%">
+                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="submitValid">
+                                                                    <RequiredField ErrorText="*Required" />
                                                                 </ValidationSettings>
-                                                            </dx:ASPxCheckBox>
+                                                                <DisabledStyle BackColor="#F7FDF7" ForeColor="#333333">
+                                                                    <Border BorderColor="#329832" />
+                                                                </DisabledStyle>
+                                                            </dx:ASPxTextBox>
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings Location="Top" />
-                                                    <Paddings PaddingTop="20px" />
+                                                    <Paddings PaddingBottom="20px" />
                                                 </dx:LayoutItem>
                                                 <dx:LayoutGroup Caption="For Accounting Department Use Only" ColSpan="1" GroupBoxDecoration="HeadingLine" Name="forAccounting" CssClass="p-0">
                                                     <Paddings PaddingTop="20px" />
@@ -1073,8 +1075,6 @@
                                                                         <PropertiesDateEdit DisplayFormatString="MMMM dd, yyyy">
                                                                         </PropertiesDateEdit>
                                                                     </dx:GridViewDataDateColumn>
-                                                                    <dx:GridViewDataTextColumn Caption="Location/Particulars" FieldName="LocParticulars" ShowInCustomizationForm="True" VisibleIndex="4">
-                                                                    </dx:GridViewDataTextColumn>
                                                                     <dx:GridViewDataSpinEditColumn Caption="Total Expenses" FieldName="Total_Expenses" ShowInCustomizationForm="True" VisibleIndex="7">
                                                                         <PropertiesSpinEdit DecimalPlaces="2" DisplayFormatString="N" NumberFormat="Custom">
                                                                             <Style Font-Bold="False">
@@ -1795,24 +1795,6 @@
                                         <CaptionStyle Font-Bold="True">
                                         </CaptionStyle>
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Location/Particulars" ColSpan="1" HorizontalAlign="Left" Width="20%">
-                                        <LayoutItemNestedControlCollection>
-                                            <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxMemo ID="locParticularsMemo" runat="server" ClientEnabled="False" ClientInstanceName="locParticularsMemo" Theme="MaterialCompact" Width="500px">
-                                                    <ValidationSettings Display="Dynamic" ErrorTextPosition="Top" SetFocusOnError="True" ValidationGroup="expAdd">
-                                                        <ErrorImage IconID="outlookinspired_highimportance_svg_16x16">
-                                                        </ErrorImage>
-                                                        <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                    </ValidationSettings>
-                                                    <DisabledStyle ForeColor="#333333">
-                                                    </DisabledStyle>
-                                                </dx:ASPxMemo>
-                                            </dx:LayoutItemNestedControlContainer>
-                                        </LayoutItemNestedControlCollection>
-                                        <CaptionSettings Location="Left" />
-                                        <CaptionStyle Font-Bold="True">
-                                        </CaptionStyle>
-                                    </dx:LayoutItem>
                                 </Items>
                             </dx:LayoutGroup>
                             <dx:TabbedLayoutGroup ColSpan="1" Width="100%">
@@ -1897,7 +1879,7 @@
                                                                         </dx:GridViewDataSpinEditColumn>
                                                                     </Columns>
                                                                 </dx:GridViewBandColumn>
-                                                                <dx:GridViewBandColumn Caption="REIMBURSABLE TRANSPORTATION" ShowInCustomizationForm="True" VisibleIndex="2">
+                                                                <dx:GridViewBandColumn Caption="REIMBURSABLE TRANSPORTATION" ShowInCustomizationForm="True" VisibleIndex="3">
                                                                     <HeaderStyle Font-Bold="True" HorizontalAlign="Center" />
                                                                     <Columns>
                                                                         <dx:GridViewDataComboBoxColumn Caption="  Type" FieldName="ReimTranspo_Type2" ShowInCustomizationForm="True" Visible="False" VisibleIndex="2" Width="140px">
@@ -2147,6 +2129,12 @@
                                                                 <dx:GridViewDataTextColumn Caption="#" ShowInCustomizationForm="True" VisibleIndex="1" Width="40px">
                                                                     <HeaderStyle HorizontalAlign="Center" />
                                                                     <CellStyle HorizontalAlign="Center">
+                                                                        <BorderTop BorderColor="Black" BorderStyle="Solid" />
+                                                                        <BorderRight BorderColor="Black" BorderStyle="Solid" />
+                                                                    </CellStyle>
+                                                                </dx:GridViewDataTextColumn>
+                                                                <dx:GridViewDataTextColumn Caption="LOCATION/PARTICULARS" FieldName="LocParticulars" ShowInCustomizationForm="True" VisibleIndex="2">
+                                                                    <CellStyle>
                                                                         <BorderTop BorderColor="Black" BorderStyle="Solid" />
                                                                         <BorderRight BorderColor="Black" BorderStyle="Solid" />
                                                                     </CellStyle>
@@ -3118,7 +3106,7 @@ onTravelClick();
             <asp:Parameter Name="TravelExpenseDetailMap_ID" Type="Int32" />
         </UpdateParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlDocs" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" DeleteCommand="DELETE FROM [ITP_T_FileAttachment] WHERE [ID] = @original_ID" InsertCommand="INSERT INTO [ITP_T_FileAttachment] ([FileName], [Description], [DateUploaded], [FileSize]) VALUES (@FileName, @Description, @DateUploaded, @FileSize)" OldValuesParameterFormatString="original_{0}" SelectCommand="SELECT [ID], [FileName], [Description], [DateUploaded], [FileSize] FROM [ITP_T_FileAttachment] WHERE (([App_ID] = @App_ID) AND ([Doc_ID] = @Doc_ID) AND ([DocType_Id] = @DocType_Id))" UpdateCommand="UPDATE [ITP_T_FileAttachment] SET [FileName] = @FileName, [Description] = @Description, [DateUploaded] = @DateUploaded, [FileSize] = @FileSize WHERE [ID] = @original_ID">
+    <asp:SqlDataSource ID="SqlDocs" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" DeleteCommand="DELETE FROM [ITP_T_FileAttachment] WHERE [ID] = @original_ID" InsertCommand="INSERT INTO [ITP_T_FileAttachment] ([FileName], [Description], [DateUploaded], [FileSize]) VALUES (@FileName, @Description, @DateUploaded, @FileSize)" OldValuesParameterFormatString="original_{0}" SelectCommand="SELECT ITP_T_FileAttachment.ID, ITP_T_FileAttachment.FileName, ITP_T_FileAttachment.Description, ITP_T_FileAttachment.DateUploaded, ITP_T_FileAttachment.FileSize, ACCEDE_T_TravelExpenseDetailsFileAttach.DocumentType FROM ITP_T_FileAttachment INNER JOIN ACCEDE_T_TravelExpenseDetailsFileAttach ON ITP_T_FileAttachment.ID = ACCEDE_T_TravelExpenseDetailsFileAttach.FileAttachment_ID WHERE (ITP_T_FileAttachment.App_ID = @App_ID) AND (ITP_T_FileAttachment.Doc_ID = @Doc_ID) AND (ACCEDE_T_TravelExpenseDetailsFileAttach.DocumentType = @DocumentType)" UpdateCommand="UPDATE [ITP_T_FileAttachment] SET [FileName] = @FileName, [Description] = @Description, [DateUploaded] = @DateUploaded, [FileSize] = @FileSize WHERE [ID] = @original_ID">
         <DeleteParameters>
             <asp:Parameter Name="original_ID" Type="Int32" />
         </DeleteParameters>
@@ -3131,7 +3119,7 @@ onTravelClick();
         <SelectParameters>
             <asp:Parameter Name="App_ID" Type="Int32" DefaultValue="1032" />
             <asp:SessionParameter DefaultValue="" Name="Doc_ID" SessionField="TravelExp_Id" Type="Int32" />
-            <asp:Parameter DefaultValue="1018" Name="DocType_Id" />
+            <asp:Parameter DefaultValue="main" Name="DocumentType" />
         </SelectParameters>
         <UpdateParameters>
             <asp:Parameter Name="FileName" Type="String" />
@@ -3141,7 +3129,7 @@ onTravelClick();
             <asp:Parameter Name="original_ID" Type="Int32" />
         </UpdateParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlDocs2" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" DeleteCommand="DELETE FROM [ITP_T_FileAttachment] WHERE [ID] = @original_ID" InsertCommand="INSERT INTO [ITP_T_FileAttachment] ([FileName], [Description], [DateUploaded], [FileSize]) VALUES (@FileName, @Description, @DateUploaded, @FileSize)" OldValuesParameterFormatString="original_{0}" SelectCommand="SELECT [ID], [FileName], [Description], [DateUploaded], [FileSize], [FileExtension] FROM [ITP_T_FileAttachment] WHERE (([App_ID] = @App_ID) AND ([Doc_ID] = @Doc_ID) AND ([Doc_No] = @Doc_No))" UpdateCommand="UPDATE [ITP_T_FileAttachment] SET [FileName] = @FileName, [Description] = @Description, [DateUploaded] = @DateUploaded, [FileSize] = @FileSize WHERE [ID] = @original_ID">
+    <asp:SqlDataSource ID="SqlDocs2" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" DeleteCommand="DELETE FROM [ITP_T_FileAttachment] WHERE [ID] = @original_ID" InsertCommand="INSERT INTO [ITP_T_FileAttachment] ([FileName], [Description], [DateUploaded], [FileSize]) VALUES (@FileName, @Description, @DateUploaded, @FileSize)" OldValuesParameterFormatString="original_{0}" SelectCommand="SELECT ITP_T_FileAttachment.ID, ITP_T_FileAttachment.FileName, ITP_T_FileAttachment.Description, ITP_T_FileAttachment.DateUploaded, ITP_T_FileAttachment.FileSize, ACCEDE_T_TravelExpenseDetailsFileAttach.DocumentType, ACCEDE_T_TravelExpenseDetailsFileAttach.ExpenseDetails_ID, ITP_T_FileAttachment.FileExtension FROM ITP_T_FileAttachment INNER JOIN ACCEDE_T_TravelExpenseDetailsFileAttach ON ITP_T_FileAttachment.ID = ACCEDE_T_TravelExpenseDetailsFileAttach.FileAttachment_ID WHERE (ACCEDE_T_TravelExpenseDetailsFileAttach.DocumentType = @DocumentType) AND (ACCEDE_T_TravelExpenseDetailsFileAttach.ExpenseDetails_ID = @ExpenseDetails_ID)" UpdateCommand="UPDATE [ITP_T_FileAttachment] SET [FileName] = @FileName, [Description] = @Description, [DateUploaded] = @DateUploaded, [FileSize] = @FileSize WHERE [ID] = @original_ID">
         <DeleteParameters>
             <asp:Parameter Name="original_ID" Type="Int32" />
         </DeleteParameters>
@@ -3152,9 +3140,8 @@ onTravelClick();
             <asp:Parameter Name="FileSize" Type="String" />
         </InsertParameters>
         <SelectParameters>
-            <asp:Parameter Name="App_ID" Type="Int32" DefaultValue="1032" />
-            <asp:SessionParameter DefaultValue="" Name="Doc_ID" SessionField="ExpDetailsID" Type="Int32" />
-            <asp:SessionParameter DefaultValue="" Name="Doc_No" SessionField="DocNo" />
+            <asp:Parameter Name="DocumentType" DefaultValue="sub" />
+            <asp:SessionParameter DefaultValue="" Name="ExpenseDetails_ID" SessionField="ExpDetailsID" />
         </SelectParameters>
         <UpdateParameters>
             <asp:Parameter Name="FileName" Type="String" />

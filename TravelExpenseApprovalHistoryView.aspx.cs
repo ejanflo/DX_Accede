@@ -223,10 +223,6 @@ namespace DX_WebTemplate
             if (exp_details != null)
             {
                 exp_det_class.travelDate = Convert.ToDateTime(exp_details.TravelExpenseDetail_Date).ToString("MM/dd/yyyy hh:mm:ss");
-                if (exp_details.LocParticulars != null)
-                {
-                    exp_det_class.locParticulars = exp_details.LocParticulars;
-                }
                 if (exp_details.Total_Expenses != null)
                 {
                     exp_det_class.totalExp = exp_details.Total_Expenses.ToString();
