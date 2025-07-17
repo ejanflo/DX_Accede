@@ -439,7 +439,7 @@ namespace DX_WebTemplate
                 rfp_main.SAPDocNo = SAPDoc;
 
                 var wfDetails = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == Convert.ToInt32(Session["wfa"])).FirstOrDefault();
-
+                var pre_wfDetStatus = wfDetails.Status.ToString();
                 if(stats == 1)
                 {
                     //if (release_cash_status != null && cashierWF != null && cashierWFDetail != null && orgRole != null)
@@ -484,9 +484,12 @@ namespace DX_WebTemplate
                     rfp_main.Status = release_cash_status.STS_Id;
                 }
 
-                if(wfDetails.Status == pending_SAPDoc_status.STS_Id)
+                if(pre_wfDetStatus == pending_SAPDoc_status.STS_Id.ToString())
                 {
-                    wfDetails.Status = release_cash_status.STS_Id;
+                    if (SAPDoc != "" && SAPDoc != null)
+                        wfDetails.Status = release_cash_status.STS_Id;
+                    else
+                        wfDetails.Status = pending_SAPDoc_status.STS_Id;
                     wfDetails.DateAction = DateTime.Now;
                     wfDetails.Remarks = Session["AuthUser"].ToString() + ": ;";
                     wfDetails.ActedBy_User_Id = Session["userID"].ToString();
