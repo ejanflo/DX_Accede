@@ -149,7 +149,7 @@
                     ASPxGridView22.PerformCallback("edit");
                     totalExpTB.SetValue(response.d.totalExp);
                     travelDateCalendar.SetDate(new Date(response.d.travelDate));
-
+                    TraDocuGrid.Refresh();
                     loadPanel.Hide();
                     travelExpensePopup.Show();
                 },

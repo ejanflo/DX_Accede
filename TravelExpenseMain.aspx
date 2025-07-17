@@ -182,7 +182,7 @@
                     console.log(response.d);
                     if (response.d == true) {
                         
-                        window.open("TravelExpenseAdd.aspx", "_self");
+                        window.open("TravelExpenseNew.aspx", "_self");
                     }
                 },
                 error: function (xhr, status, error) {

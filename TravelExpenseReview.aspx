@@ -212,6 +212,7 @@
                     travelDateCalendar.SetDate(new Date(response.d.travelDate));
                     ASPxGridView22.PerformCallback("edit");
 
+                    TraDocuGrid.Refresh();
                     loadPanel.Hide();
                     travelExpensePopup.Show();
                 },
@@ -219,6 +220,32 @@
                     console.log("Error:", error);
                 }
             });
+        }
+
+        function saveSAPDoc(s, e) {
+            LoadingPanel.Show();
+
+            var sapDoc = sapdocTB.GetText();
+            var rfpDoc = reimTB.GetText();
+
+            $.ajax({
+                type: "POST",
+                url: "TravelExpenseReview.aspx/AJAXSaveSAPDocument",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({
+                    sapDoc: sapDoc,
+                    rfpDoc: rfpDoc
+                }),
+                success: function (response) {
+                    // Update the description text box with the response value
+                    history.back();
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                }
+            });
+
         }
 
         function ForwardDoc() {
@@ -339,7 +366,7 @@
             <Items>
                 <dx:LayoutGroup Caption="New Expense Report" ColSpan="1" GroupBoxDecoration="HeadingLine" Width="100%" ColCount="2" ColumnCount="2" Name="EditFormName">
                     <Items>
-                        <dx:LayoutGroup ColSpan="2" GroupBoxDecoration="None" HorizontalAlign="Right" ColCount="6" ColumnCount="6" ColumnSpan="2">
+                        <dx:LayoutGroup ColSpan="2" GroupBoxDecoration="None" HorizontalAlign="Right" ColCount="7" ColumnCount="7" ColumnSpan="2">
                             <Items>
                                 <dx:LayoutItem Caption="" ColSpan="1" Name="forwardItem">
                                     <LayoutItemNestedControlCollection>
@@ -363,6 +390,16 @@
                }
 }" />
                                                 <Border BorderColor="#006838" />
+                                            </dx:ASPxButton>
+                                        </dx:LayoutItemNestedControlContainer>
+                                    </LayoutItemNestedControlCollection>
+                                </dx:LayoutItem>
+                                <dx:LayoutItem Caption="" ColSpan="1" Name="saveItem">
+                                    <LayoutItemNestedControlCollection>
+                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                            <dx:ASPxButton ID="saveBtn" runat="server" AutoPostBack="False" BackColor="#006DD6" ClientInstanceName="saveBtn" Font-Bold="True" Font-Size="Small" Text="Save" UseSubmitBehavior="False" ValidationGroup="saveSapDoc">
+                                                <ClientSideEvents Click="saveSAPDoc" />
+                                                <Border BorderColor="#006DD6" />
                                             </dx:ASPxButton>
                                         </dx:LayoutItemNestedControlContainer>
                                     </LayoutItemNestedControlCollection>
@@ -827,8 +864,8 @@
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxTextBox ID="sapdocTB" runat="server" ClientInstanceName="sapdocTB" Font-Bold="True" Width="100%">
-                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                                    <RequiredField ErrorText="*Required" />
+                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="saveSapDoc">
+                                                                    <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
                                                                 <DisabledStyle BackColor="#F7FDF7" ForeColor="#333333">
                                                                     <Border BorderColor="#329832" />
