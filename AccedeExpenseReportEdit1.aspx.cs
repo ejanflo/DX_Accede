@@ -1363,6 +1363,23 @@ namespace DX_WebTemplate
             }
         }
 
+        // Helper method (optional to reuse)
+        int? TryParseInt(string value)
+        {
+            return int.TryParse(value, out var result) ? (int?)result : null;
+        }
+
+        DateTime? TryParseDate(string value)
+        {
+            return DateTime.TryParse(value, out var result) ? (DateTime?)result : null;
+        }
+
+        string ToNullIfEmpty(string value)
+        {
+            return string.IsNullOrWhiteSpace(value) ? null : value;
+        }
+
+
         [WebMethod]
         public static string UpdateExpenseAJAX(string dateFile, string repName, string comp_id, string expType, string expCat,
             string purpose, bool trav, string wf, string fapwf, string currency, string department, string payType, string btn, string classification, string costCenter, string CTCompany_id, string CTDept_id, string AR, string compLoc)
@@ -1423,39 +1440,48 @@ namespace DX_WebTemplate
                 var tranType = _DataContext.ACCEDE_S_ExpenseTypes
                     .Where(x=>x.ExpenseType_ID == Convert.ToInt32(expType))
                     .FirstOrDefault();
-                
-                exp.ReportDate = Convert.ToDateTime(dateFile);
-                exp.ExpenseName = repName;
-                exp.CompanyId = Convert.ToInt32(comp_id);
-                exp.ExpenseType_ID = Convert.ToInt32(tranType.ExpenseType_ID);
-                exp.ExpenseCat = Convert.ToInt32(expCat);
-                exp.Purpose = purpose;
+
+                // Assignment
+                exp.ReportDate = TryParseDate(dateFile); // null if invalid or empty
+                exp.ExpenseName = ToNullIfEmpty(repName);
+
+                exp.CompanyId = TryParseInt(comp_id);
+
+                exp.ExpenseType_ID = tranType?.ExpenseType_ID; // already assumed nullable
+                exp.ExpenseCat = TryParseInt(expCat);
+                exp.Purpose = ToNullIfEmpty(purpose);
                 exp.isTravel = trav;
-                exp.WF_Id = Convert.ToInt32(wf);
-                exp.FAPWF_Id = Convert.ToInt32(fapwf);
-                //exp.remarks = remarks;
-                exp.Exp_Currency = currency;
-                exp.Dept_Id = Convert.ToInt32(department);
-                exp.ExpenseClassification = Convert.ToInt32(classification);
-                exp.CostCenter = costCenter;
-                exp.ExpChargedTo_CompanyId = Convert.ToInt32(CTCompany_id);
-                exp.ExpChargedTo_DeptId = Convert.ToInt32(CTDept_id);
-                exp.PaymentType = Convert.ToInt32(payType);
 
-                if(compLoc != "")
-                {
-                    exp.ExpComp_Location_Id = Convert.ToInt32(compLoc);
-                }
+                exp.WF_Id = TryParseInt(wf);
+                exp.FAPWF_Id = TryParseInt(fapwf);
+                // exp.remarks = remarks;
 
-                if(payType != null)
-                {
-                    exp.PaymentType = Convert.ToInt32(payType);
-                }
+                exp.Exp_Currency = ToNullIfEmpty(currency);
+                exp.Dept_Id = TryParseInt(department);
+                exp.ExpenseClassification = TryParseInt(classification);
+                exp.CostCenter = ToNullIfEmpty(costCenter);
 
-                if(AR != "")
-                {
-                    exp.AR_Reference_No = AR;
-                }
+                exp.ExpChargedTo_CompanyId = TryParseInt(CTCompany_id);
+                exp.ExpChargedTo_DeptId = TryParseInt(CTDept_id);
+                exp.PaymentType = TryParseInt(payType);
+                exp.ExpComp_Location_Id = TryParseInt(compLoc);
+                exp.PaymentType = TryParseInt(payType);
+                exp.AR_Reference_No = ToNullIfEmpty(AR);
+
+                //if (compLoc != "")
+                //{
+                //    exp.ExpComp_Location_Id = Convert.ToInt32(compLoc);
+                //}
+
+                //if(payType != null)
+                //{
+                //    exp.PaymentType = Convert.ToInt32(payType);
+                //}
+
+                //if(AR != "")
+                //{
+                //    exp.AR_Reference_No = AR;
+                //}
 
                 //Update reimbursement Workflows
                 
@@ -2100,6 +2126,10 @@ namespace DX_WebTemplate
                 {
                     exp_det_class.remarks = exp_details.ExpDetail_remarks;
                 }
+                if (exp_details.ExpDtl_WBS != null)
+                {
+                    exp_det_class.wbs = exp_details.ExpDtl_WBS;
+                }
                 exp_det_class.totalAllocAmnt = totalAmnt;
 
                 Session["ExpDetailsID"] = expDetailID.ToString();
@@ -2457,6 +2487,7 @@ namespace DX_WebTemplate
             public string io { get; set; }
             public decimal totalAllocAmnt { get; set; }
             public string remarks { get; set; }
+            public string wbs { get; set; }
         }
 
         protected void exp_Department_Callback(object sender, CallbackEventArgsBase e)

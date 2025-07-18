@@ -1,6 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Main.master" AutoEventWireup="true" CodeBehind="AccedeExpenseReportEdit1.aspx.cs" Inherits="DX_WebTemplate.AccedeExpenseReportEdit1" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-   <style>
+    <style>
         .radio-buttons-container {
             display: flex;
             align-items: center; /* Vertically centers the radio buttons */
@@ -302,183 +302,336 @@
            exp_Department.PerformCallback();
         }
 
-        function AddReimbursement(stat) {
+        //function AddReimbursement(stat) {
 
-            if (ASPxClientEdit.ValidateGroup('submitValid')) {
-                var comp_id = exp_Company.GetValue();
-                var payMethod = drpdown_payType.GetValue();
-                var purpose = memo_Purpose.GetValue();
-                var dept_id = exp_Department.GetValue();
-                var cCenter = drpdown_CostCenter.GetValue();
-                var io = io_reim.GetValue() != null ? io_reim.GetValue() : "";
-                var payee = exp_EmpId.GetValue();
-                var acctCharge = drpdown_ExpCategory.GetValue();
-                var amount = rfpAmount_reim.GetValue();
-                var remarks = remarks_reim.GetValue() != null ? remarks_reim.GetValue() : "";
-                var isTravelrfp = rdButton_Trav_exp.GetValue();
-                var wbs = wbs_reim.GetValue() != null ? wbs_reim.GetValue() : "";
-                var currency = exp_Currency.GetValue();
-                var classification = drpdown_classification.GetValue() != null ? drpdown_classification.GetValue() : "";
-                var CTComp_id = exp_CTCompany.GetValue();
-                var CTDept_id = exp_CTDepartment.GetValue();
-                var compLoc = exp_CompLocation.GetValue() != null ? exp_CompLocation.GetValue() : "";
-                var wf = drpdown_WF.GetValue != null ? drpdown_WF.GetValue() : "";
-                var fapwf = drpdwn_FAPWF.GetValue != null ? drpdwn_FAPWF.GetValue() : "";
+        //    if (ASPxClientEdit.ValidateGroup('submitValid')) {
+        //        var comp_id = exp_Company.GetValue();
+        //        var payMethod = drpdown_payType.GetValue();
+        //        var purpose = memo_Purpose.GetValue();
+        //        var dept_id = exp_Department.GetValue();
+        //        var cCenter = drpdown_CostCenter.GetValue();
+        //        var io = io_reim.GetValue() != null ? io_reim.GetValue() : "";
+        //        var payee = exp_EmpId.GetValue();
+        //        var acctCharge = drpdown_ExpCategory.GetValue();
+        //        var amount = rfpAmount_reim.GetValue();
+        //        var remarks = remarks_reim.GetValue() != null ? remarks_reim.GetValue() : "";
+        //        var isTravelrfp = rdButton_Trav_exp.GetValue();
+        //        var wbs = wbs_reim.GetValue() != null ? wbs_reim.GetValue() : "";
+        //        var currency = exp_Currency.GetValue();
+        //        var classification = drpdown_classification.GetValue() != null ? drpdown_classification.GetValue() : "";
+        //        var CTComp_id = exp_CTCompany.GetValue();
+        //        var CTDept_id = exp_CTDepartment.GetValue();
+        //        var compLoc = exp_CompLocation.GetValue() != null ? exp_CompLocation.GetValue() : "";
+        //        var wf = drpdown_WF.GetValue != null ? drpdown_WF.GetValue() : "";
+        //        var fapwf = drpdwn_FAPWF.GetValue != null ? drpdwn_FAPWF.GetValue() : "";
 
-                SaveExpenseReport("Save2");
-                console.log(dept_id);
+        //        SaveExpenseReport("Save2");
+        //        console.log(dept_id);
 
-                $.ajax({
-                    type: "POST",
-                    url: "AccedeExpenseReportEdit1.aspx/AddRFPReimburseAJAX",
-                    data: JSON.stringify({
-                        comp_id: comp_id,
-                        payMethod: payMethod,
-                        purpose: purpose,
-                        dept_id: dept_id,
-                        cCenter: cCenter,
-                        io: io,
-                        payee: payee,
-                        acctCharge: acctCharge,
-                        amount: amount,
-                        remarks: remarks,
-                        isTravelrfp: isTravelrfp,
-                        wbs: wbs,
-                        currency: currency,
-                        classification: classification,
-                        CTComp_id: CTComp_id,
-                        CTDept_id: CTDept_id,
-                        compLoc: compLoc,
-                        wf: wf,
-                        fapwf: fapwf
+        //        $.ajax({
+        //            type: "POST",
+        //            url: "AccedeExpenseReportEdit1.aspx/AddRFPReimburseAJAX",
+        //            data: JSON.stringify({
+        //                comp_id: comp_id,
+        //                payMethod: payMethod,
+        //                purpose: purpose,
+        //                dept_id: dept_id,
+        //                cCenter: cCenter,
+        //                io: io,
+        //                payee: payee,
+        //                acctCharge: acctCharge,
+        //                amount: amount,
+        //                remarks: remarks,
+        //                isTravelrfp: isTravelrfp,
+        //                wbs: wbs,
+        //                currency: currency,
+        //                classification: classification,
+        //                CTComp_id: CTComp_id,
+        //                CTDept_id: CTDept_id,
+        //                compLoc: compLoc,
+        //                wf: wf,
+        //                fapwf: fapwf
 
-                    }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                        // Handle success
-                        if (response.d == "success") {
-                            if (stat == 0) {
-                                LoadingPanel.SetText("Updating document&hellip;");
-                                LoadingPanel.Show();
-                                SaveExpenseReport("SaveReimburse");
-                            } else {
-                                console.log("success add reim")
-                            }
-                            
-                            //window.location.href = 'AccedeExpenseReportEdit1.aspx';
-                        } else {
-                            LoadingPanel.SetText("Error adding reimbursement!");
-                            LoadingPanel.Show();
-                            setTimeout(function () {
-                                window.location.href = 'AccedeExpenseReportEdit1.aspx';
-                            }, 3000); 
+        //            }),
+        //            contentType: "application/json; charset=utf-8",
+        //            dataType: "json",
+        //            success: function (response) {
+        //                // Handle success
+        //                if (response.d == "success") {
+        //                    if (stat == 0) {
+        //                        LoadingPanel.SetText("Updating document&hellip;");
+        //                        LoadingPanel.Show();
+        //                        SaveExpenseReport("SaveReimburse");
+        //                    } else {
+        //                        console.log("success add reim")
+        //                    }
 
-                            
-                        }
-                    },
-                    failure: function (response) {
-                        // Handle failure
-                        console.log("Error yawa:" + response);
-                    }
-                });
+        //                    //window.location.href = 'AccedeExpenseReportEdit1.aspx';
+        //                } else {
+        //                    LoadingPanel.SetText("Error adding reimbursement!");
+        //                    LoadingPanel.Show();
+        //                    setTimeout(function () {
+        //                        window.location.href = 'AccedeExpenseReportEdit1.aspx';
+        //                    }, 3000);
 
-            }
 
+        //                }
+        //            },
+        //            failure: function (response) {
+        //                // Handle failure
+        //                console.log("Error yawa:" + response);
+        //            }
+        //        });
+
+        //    }
+
+        //}
+
+        //function SaveExpenseReport(btn) {
+        //    LoadingPanel.SetText("Processing&hellip;");
+        //    LoadingPanel.Show();
+        //    var dateFile = date_dateFiled.GetValue();
+        //    var repName = exp_EmpId.GetValue();
+        //    var comp_id = exp_Company.GetValue();
+        //    var expType = drpdown_expenseType.GetValue();
+        //    var expCat = drpdown_ExpCategory.GetValue();
+        //    var purpose = memo_Purpose.GetValue();
+        //    var trav = rdButton_Trav_exp.GetValue();
+        //    var wf = drpdown_WF.GetValue();
+        //    var fapwf = drpdwn_FAPWF.GetValue();
+        //    //var remarks = memo_remarks.GetValue();
+        //    var currency = exp_Currency.GetValue();
+        //    var department = exp_Department.GetValue();
+        //    var payType = drpdown_payType.GetValue();
+        //    var classification = drpdown_classification.GetValue();
+        //    var costCenter = drpdown_CostCenter.GetValue();
+        //    var CTCompany_id = exp_CTCompany.GetValue();
+        //    var CTDept_id = exp_CTDepartment.GetValue();
+        //    var AR = txt_AR.GetValue() != null ? txt_AR.GetValue() : "";
+        //    var compLoc = exp_CompLocation.GetValue() != null ? exp_CompLocation.GetValue() : "";
+
+        //    if (btn == "CreateSubmit") {
+        //        AddReimbursement(1);
+        //    }
+
+        //    $.ajax({
+        //        type: "POST",
+        //        url: "AccedeExpenseReportEdit1.aspx/UpdateExpenseAJAX",
+        //        data: JSON.stringify({
+        //            dateFile: dateFile,
+        //            repName: repName,
+        //            comp_id: comp_id,
+        //            expType: expType,
+        //            expCat: expCat,
+        //            purpose: purpose,
+        //            trav: trav,
+        //            wf: wf,
+        //            fapwf: fapwf,
+        //            //remarks: remarks,
+        //            currency: currency,
+        //            department: department,
+        //            payType: payType,
+        //            btn: btn,
+        //            classification: classification,
+        //            costCenter: costCenter,
+        //            CTCompany_id: CTCompany_id,
+        //            CTDept_id: CTDept_id,
+        //            AR: AR,
+        //            compLoc: compLoc
+
+        //        }),
+        //        contentType: "application/json; charset=utf-8",
+        //        dataType: "json",
+        //        success: function (response) {
+        //            // Handle success
+        //            if (response.d == "success") {
+        //                if (btn == "SaveReimburse") {
+        //                    window.location.href = 'AccedeExpenseReportEdit1.aspx';
+        //                } else if (btn == "CreateSubmit") {
+
+        //                    LoadingPanel.SetText("Expense report successfully submitted. Redirecting&hellip;");
+        //                    LoadingPanel.Show();
+        //                    window.location.href = 'AccedeExpenseReportDashboard.aspx';
+        //                } else if (btn == "Save") {
+        //                    LoadingPanel.SetText("Expense report successfully saved. Redirecting&hellip;");
+        //                    LoadingPanel.Show();
+        //                    window.location.href = 'AccedeExpenseReportDashboard.aspx';
+        //                } else if (btn == "Submit") {
+        //                    LoadingPanel.SetText("Expense report successfully submitted. Redirecting&hellip;");
+        //                    LoadingPanel.Show();
+        //                    window.location.href = 'AccedeExpenseReportDashboard.aspx';
+        //                } else {
+
+
+        //                }
+
+        //            } else if (response.d == "require CA") {
+        //                alert("Please attach corresponding CA to this transaction otherwise, change transaction type to Reimbursement.");
+        //                LoadingPanel.Hide();
+        //            } else {
+        //                alert(response.d);
+        //                window.location.href = 'AccedeExpenseReportEdit1.aspx';
+        //            }
+        //        },
+        //        failure: function (response) {
+        //            // Handle failure
+        //            console.log("Error yawa:" + response);
+        //        }
+        //    });
+        //}
+
+        function getSafeValue(control) {
+            return control?.GetValue?.() ?? "";
         }
 
-        function SaveExpenseReport(btn) {
-            LoadingPanel.SetText("Processing&hellip;");
-            LoadingPanel.Show();
-            var dateFile = date_dateFiled.GetValue();
-            var repName = exp_EmpId.GetValue();
-            var comp_id = exp_Company.GetValue();
-            var expType = drpdown_expenseType.GetValue();
-            var expCat = drpdown_ExpCategory.GetValue();
-            var purpose = memo_Purpose.GetValue();
-            var trav = rdButton_Trav_exp.GetValue();
-            var wf = drpdown_WF.GetValue();
-            var fapwf = drpdwn_FAPWF.GetValue();
-            //var remarks = memo_remarks.GetValue();
-            var currency = exp_Currency.GetValue();
-            var department = exp_Department.GetValue();
-            var payType = drpdown_payType.GetValue();
-            var classification = drpdown_classification.GetValue();
-            var costCenter = drpdown_CostCenter.GetValue();
-            var CTCompany_id = exp_CTCompany.GetValue();
-            var CTDept_id = exp_CTDepartment.GetValue();
-            var AR = txt_AR.GetValue() != null ? txt_AR.GetValue() : "";
-            var compLoc = exp_CompLocation.GetValue() != null ? exp_CompLocation.GetValue() : "";
-
-            if (btn == "CreateSubmit") {
-                AddReimbursement(1);
-            }
-
-            $.ajax({
-                type: "POST",
-                url: "AccedeExpenseReportEdit1.aspx/UpdateExpenseAJAX",
-                data: JSON.stringify({
-                    dateFile: dateFile,
-                    repName: repName,
-                    comp_id: comp_id,
-                    expType: expType,
-                    expCat: expCat,
-                    purpose: purpose,
-                    trav: trav,
-                    wf: wf,
-                    fapwf: fapwf,
-                    //remarks: remarks,
-                    currency: currency,
-                    department: department,
-                    payType: payType,
-                    btn: btn,
-                    classification: classification,
-                    costCenter: costCenter,
-                    CTCompany_id: CTCompany_id,
-                    CTDept_id: CTDept_id,
-                    AR: AR,
-                    compLoc: compLoc
-
-                }),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    // Handle success
-                    if (response.d == "success") {
-                        if (btn == "SaveReimburse") {
-                            window.location.href = 'AccedeExpenseReportEdit1.aspx';
-                        } else if (btn == "CreateSubmit") {
-                            
-                            LoadingPanel.SetText("Expense report successfully submitted. Redirecting&hellip;");
-                            LoadingPanel.Show();
-                            window.location.href = 'AccedeExpenseReportDashboard.aspx';
-                        } else if (btn == "Save") {
-                            LoadingPanel.SetText("Expense report successfully saved. Redirecting&hellip;");
-                            LoadingPanel.Show();
-                            window.location.href = 'AccedeExpenseReportDashboard.aspx';
-                        } else if (btn == "Submit") {
-                            LoadingPanel.SetText("Expense report successfully submitted. Redirecting&hellip;");
-                            LoadingPanel.Show();
-                            window.location.href = 'AccedeExpenseReportDashboard.aspx';
-                        } else {
-                        
-                            
-                        }
-                        
-                    } else if (response.d == "require CA") {
-                        alert("Please attach corresponding CA to this transaction otherwise, change transaction type to Reimbursement.");
-                        LoadingPanel.Hide();
-                    } else {
-                        alert(response.d);
-                        window.location.href = 'AccedeExpenseReportEdit1.aspx';
-                    }
+        async function postDataAsync(url, data) {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8"
                 },
-                failure: function (response) {
-                    // Handle failure
-                    console.log("Error yawa:" + response);
-                }
+                body: JSON.stringify(data)
             });
+
+            if (!response.ok) throw new Error(`HTTP error! ${response.status}`);
+
+            const result = await response.json();
+            return result.d;
         }
+
+
+        function collectExpenseData(btn) {
+            return {
+                dateFile: getSafeValue(date_dateFiled),
+                repName: getSafeValue(exp_EmpId),
+                comp_id: getSafeValue(exp_Company),
+                expType: getSafeValue(drpdown_expenseType),
+                expCat: getSafeValue(drpdown_ExpCategory),
+                purpose: getSafeValue(memo_Purpose),
+                trav: getSafeValue(rdButton_Trav_exp),
+                wf: getSafeValue(drpdown_WF),
+                fapwf: getSafeValue(drpdwn_FAPWF),
+                currency: getSafeValue(exp_Currency),
+                department: getSafeValue(exp_Department),
+                payType: getSafeValue(drpdown_payType),
+                btn: btn,
+                classification: getSafeValue(drpdown_classification),
+                costCenter: getSafeValue(drpdown_CostCenter),
+                CTCompany_id: getSafeValue(exp_CTCompany),
+                CTDept_id: getSafeValue(exp_CTDepartment),
+                AR: getSafeValue(txt_AR),
+                compLoc: getSafeValue(exp_CompLocation)
+            };
+        }
+
+        function collectReimbursementData() {
+            return {
+                comp_id: getSafeValue(exp_Company),
+                payMethod: getSafeValue(drpdown_payType),
+                purpose: getSafeValue(memo_Purpose),
+                dept_id: getSafeValue(exp_Department),
+                cCenter: getSafeValue(drpdown_CostCenter),
+                io: getSafeValue(io_reim),
+                payee: getSafeValue(exp_EmpId),
+                acctCharge: getSafeValue(drpdown_ExpCategory),
+                amount: getSafeValue(rfpAmount_reim),
+                remarks: getSafeValue(remarks_reim),
+                isTravelrfp: getSafeValue(rdButton_Trav_exp),
+                wbs: getSafeValue(wbs_reim),
+                currency: getSafeValue(exp_Currency),
+                classification: getSafeValue(drpdown_classification),
+                CTComp_id: getSafeValue(exp_CTCompany),
+                CTDept_id: getSafeValue(exp_CTDepartment),
+                compLoc: getSafeValue(exp_CompLocation),
+                wf: getSafeValue(drpdown_WF),
+                fapwf: getSafeValue(drpdwn_FAPWF)
+            };
+        }
+
+        async function AddReimbursement(stat) {
+            if (!ASPxClientEdit.ValidateGroup("submitValid")) {
+                alert("Please fill in all required fields.");
+                return;
+            }
+
+            try {
+                const reimbursementData = collectReimbursementData();
+                console.log("Sending reimbursement data...");
+
+                const result = await postDataAsync("AccedeExpenseReportEdit1.aspx/AddRFPReimburseAJAX", reimbursementData);
+
+                if (result === "success") {
+                    if (stat === 0) {
+                        LoadingPanel.SetText("Updating document&hellip;");
+                        LoadingPanel.Show();
+                        await SaveExpenseReport("SaveReimburse");
+                    } else {
+                        console.log("Reimbursement added successfully.");
+                    }
+                } else {
+                    LoadingPanel.SetText("Error adding reimbursement!");
+                    LoadingPanel.Show();
+                    setTimeout(() => window.location.href = "AccedeExpenseReportEdit1.aspx", 3000);
+                }
+            } catch (err) {
+                console.error("AddReimbursement error:", err);
+                alert("An error occurred while adding reimbursement.");
+                LoadingPanel.Hide();
+            }
+        }
+
+
+        async function SaveExpenseReport(btn) {
+            try {
+                LoadingPanel.SetText("Processing&hellip;");
+                LoadingPanel.Show();
+
+                if (btn === "CreateSubmit") {
+                    await AddReimbursement(1);
+                    //return;
+                }
+
+                const expenseData = collectExpenseData(btn);
+                const result = await postDataAsync("AccedeExpenseReportEdit1.aspx/UpdateExpenseAJAX", expenseData);
+
+                if (result === "success") {
+                    const redirectMap = {
+                        SaveReimburse: "AccedeExpenseReportEdit1.aspx",
+                        CreateSubmit: "AccedeExpenseReportDashboard.aspx",
+                        Save: "AccedeExpenseReportDashboard.aspx",
+                        Submit: "AccedeExpenseReportDashboard.aspx",
+                        Save2: "AccedeExpenseReportEdit1.aspx"
+                    };
+
+                    const msg = {
+                        Save: "Expense report successfully saved.",
+                        Submit: "Expense report successfully submitted.",
+                        CreateSubmit: "Expense report successfully submitted.",
+                    }[btn] || "";
+
+                    if (msg) {
+                        LoadingPanel.SetText(`${msg} Redirecting&hellip;`);
+                    }
+
+                    LoadingPanel.Show();
+                    if (btn != "Save2") {
+                        window.location.href = redirectMap[btn];
+                    }
+                    
+                } else if (result === "require CA") {
+                    alert("Please attach the corresponding CA or change the transaction type.");
+                    LoadingPanel.Hide();
+                } else {
+                    alert(result);
+                    window.location.href = "AccedeExpenseReportEdit1.aspx";
+                }
+            } catch (err) {
+                console.error("SaveExpenseReport error:", err);
+                alert("An error occurred while saving the expense report.");
+                LoadingPanel.Hide();
+            }
+        }
+
 
         function onAmountChanged(pay) {
             var amount = rfpAmount_reim.GetValue();
@@ -542,6 +695,7 @@
                     ewt_edit.SetValue(response.d.ewt);
                     io_edit.SetValue(response.d.io);
                     memo_expItem_edit.SetValue(response.d.remarks);
+                    wbs_edit.SetValue(response.d.wbs);
 
                     expensePopup_edit.Show();
                     ExpAllocGrid_edit.Refresh();
@@ -632,7 +786,7 @@
             }
         }
 
-        function EditExpDetails() {
+        async function EditExpDetails() {
             if (ASPxClientEdit.ValidateGroup('PopupSubmit')) {
                 var dateAdd = dateAdded_edit.GetValue();
                 var tin_no = tin_edit.GetValue() != null ? tin_edit.GetValue() : "";
@@ -649,7 +803,7 @@
                 var io = io_edit.GetValue() != null ? io_edit.GetValue() : "";
                 var wbs = wbs_edit.GetValue() != null ? wbs_edit.GetValue() : "";
                 var remarks = memo_expItem_edit.GetValue() != null ? memo_expItem_edit.GetValue() : "";
-                SaveExpenseReport("Save2");
+                await SaveExpenseReport("Save2");
                 LoadingPanel.Show();
 
                 $.ajax({
@@ -2554,16 +2708,15 @@ var emp = exp_EmpId.GetValue() != null ? exp_EmpId.GetValue() : &quot;&quot;;
                 <LayoutItemNestedControlCollection>
                     <dx:LayoutItemNestedControlContainer runat="server">
                         <dx:ASPxButton ID="btnCreateSubmitFinal" runat="server" AutoPostBack="False" BackColor="#0D6943" ClientInstanceName="btnCreateSubmitFinal" HorizontalAlign="Right" Text="Create RFP &amp; Submit">
-                            <ClientSideEvents Click="function(s, e) {
-	if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) { 
-	LoadingPanel.Show();
-               SubmitPopup2.Hide();
-	SaveExpenseReport(&quot;CreateSubmit&quot;);
-}else{
-	SubmitPopup2.Hide();
-}
-}
-" />
+                            <ClientSideEvents Click="async function(s, e) {
+    if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) { 
+        LoadingPanel.Show();
+        SubmitPopup2.Hide();
+        await SaveExpenseReport(&quot;CreateSubmit&quot;); // ✅ valid here
+    } else {
+        SubmitPopup2.Hide();
+    }
+}" />
                             <Border BorderColor="#0D6943" />
                         </dx:ASPxButton>
                     </dx:LayoutItemNestedControlContainer>
