@@ -1279,7 +1279,7 @@ namespace DX_WebTemplate
 
             emailDetails += "<table border='1' cellpadding='2' cellspacing='0' width='100%' class='main' style='border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;background:#fff;border-radius:3px;width:100%;'>";
             emailDetails += "<tr><th colspan='6'> Document Details </th> </tr>";
-            emailDetails += "<tr><th>Expense Type</th><th>Date</th><th>Location</th><th>Total Expenses</th></tr>";
+            emailDetails += "<tr><th>Expense Type</th><th>Date</th><th>Total Expenses</th></tr>";
 
             foreach (var item in queryER)
             {
