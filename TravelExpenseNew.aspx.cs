@@ -551,6 +551,7 @@ namespace DX_WebTemplate
                     map.FileExtension = row.IsNull("FileExtension") ? string.Empty : Convert.ToString(row["FileExtension"]);
                     map.FileSize = row.IsNull("FileSize") ? string.Empty : Convert.ToString(row["FileSize"]);
                     map.Description = row.IsNull("Description") ? string.Empty : Convert.ToString(row["Description"]);
+                    map.App_ID = 1032;
 
                     insertedAttachments.Add(map); // Track the inserted object
                 });

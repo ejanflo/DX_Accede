@@ -215,6 +215,8 @@
                     TraDocuGrid.Refresh();
                     loadPanel.Hide();
                     travelExpensePopup.Show();
+
+                    //window.open("TravelExpenseAddDetails.aspx", "_self");
                 },
                 error: function (xhr, status, error) {
                     console.log("Error:", error);

@@ -1,4 +1,5 @@
-﻿using DevExpress.Web;
+﻿using DevExpress.Utils;
+using DevExpress.Web;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -10,76 +11,44 @@ using System.Web;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace DX_WebTemplate
 {
     public partial class TravelExpenseAddDetails : System.Web.UI.Page
     {
-        DataSet ds = null;
-        DataSet dsDoc = null;
-
-        ITPORTALDataContext context = new ITPORTALDataContext(ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString);
+        ITPORTALDataContext _DataContext = new ITPORTALDataContext(ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString);
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            ASPxGridView22.DataSource = ds.Tables[0];
-            ASPxGridView22.DataBind();
-
-            TraDocuGrid.DataSource = dsDoc.Tables[0];
-            TraDocuGrid.DataBind();
-        }
-
-        protected void ASPxPopupControl1_Init(object sender, EventArgs e)
-        {
-            if (!IsPostBack || (Session["DataSet"] == null))
+            try
             {
-                ds = new DataSet();
-                ds.Tables.AddRange(new[]
+                if (AnfloSession.Current.ValidCookieUser())
                 {
-                    CreateDataTable("TravelExpenseDetailMap_ID", "LocParticulars", "ReimTranspo_Type1", "ReimTranspo_Amount1", "ReimTranspo_Type2", "ReimTranspo_Amount2", "ReimTranspo_Type3", "ReimTranspo_Amount3", "FixedAllow_ForP", "FixedAllow_Remarks", "FixedAllow_Amount", "MiscTravel_Type", "MiscTravel_Specify", "MiscTravel_Amount", "Entertainment_Explain", "Entertainment_Amount", "BusMeals_Explain", "BusMeals_Amount", "OtherBus_Type", "OtherBus_Specify", "OtherBus_Amount")
-                });
-                Session["DataSet"] = ds;
+                    AnfloSession.Current.CreateSession(HttpContext.Current.User.ToString());
+
+                    var expDetails = _DataContext.ACCEDE_T_TravelExpenseDetails.Where(x => x.TravelExpenseDetail_ID == Convert.ToInt32(Session["ExpDetailsID"])).FirstOrDefault();
+
+                    if (expDetails != null)
+                    {
+                        travelDateCalendar1.Date = Convert.ToDateTime(expDetails.TravelExpenseDetail_Date);
+                        totalExpTB1.Text = Convert.ToString(expDetails.Total_Expenses);
+                    }
+                    else
+                        Response.Redirect("~/Logon.aspx");
+                }
             }
-            else
-                ds = (DataSet)Session["DataSet"];
-
-
-            if (!IsPostBack || (Session["DataSetDoc"] == null))
+            catch (Exception ex)
             {
-                dsDoc = new DataSet();
-                DataTable masterTable = new DataTable();
-                masterTable.Columns.Add("ID", typeof(int));
-                masterTable.Columns.Add("FileName", typeof(string));
-                masterTable.Columns.Add("FileAttachment", typeof(byte[]));
-                masterTable.Columns.Add("FileExtension", typeof(string));
-                masterTable.Columns.Add("FileSize", typeof(string));
-                masterTable.Columns.Add("Description", typeof(string));
-                masterTable.PrimaryKey = new DataColumn[] { masterTable.Columns["ID"] };
-
-                dsDoc.Tables.AddRange(new DataTable[] { masterTable/*, detailTable*/ });
-                Session["DataSetDoc"] = dsDoc;
+                Response.Write("An error occurred: " + ex.Message);
+                Response.Redirect("~/Logon.aspx");
             }
-            else
-                dsDoc = (DataSet)Session["DataSetDoc"];
         }
 
-        private DataTable CreateDataTable(string idColumnName, params string[] columnNames)
-        {
-            var table = new DataTable();
-            table.Columns.Add(idColumnName, typeof(int));
-            foreach (var columnName in columnNames)
-            {
-                Type columnType = columnName.Contains("Amount") ? typeof(decimal) : typeof(string);
-                table.Columns.Add(columnName, columnType);
-            }
-            table.PrimaryKey = new[] { table.Columns[idColumnName] };
-            return table;
-        }
 
-        protected void TraUploadController_FilesUploadComplete(object sender, DevExpress.Web.FileUploadCompleteEventArgs e)
+        protected void TraUploadController1_FilesUploadComplete(object sender, FilesUploadCompleteEventArgs e)
         {
-            DataSet ImgDS = (DataSet)Session["DataSetDoc"];
-            foreach (var file in TraUploadController.UploadedFiles)
+            foreach (var file in TraUploadController1.UploadedFiles)
             {
                 var filesize = 0.00;
                 var filesizeStr = "";
@@ -99,232 +68,98 @@ namespace DX_WebTemplate
                     filesizeStr = filesize.ToString() + " Bytes";
                 }
 
-                // Add a new row to the data table with the uploaded file data
-                DataRow row = ImgDS.Tables[0].NewRow();
-                row["ID"] = GetNewDocId();
-                row["FileName"] = file.FileName;
-                row["FileAttachment"] = file.FileBytes;
-                row["FileExtension"] = file.FileName.Split('.').Last();
-                row["FileSize"] = filesizeStr;
-                row["Description"] = "";
-                ImgDS.Tables[0].Rows.Add(row);
-            }
+                var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).FirstOrDefault();
 
-            // Bind the data set to the grid view
-            Session["UploadedFilesTable"] = ImgDS.Tables[0];
-            TraDocuGrid.DataSource = ImgDS.Tables[0];
-            TraDocuGrid.DataBind();
+                ITP_T_FileAttachment docs = new ITP_T_FileAttachment();
+                {
+                    docs.FileAttachment = file.FileBytes;
+                    docs.FileName = file.FileName;
+                    docs.Doc_ID = Convert.ToInt32(Session["ExpDetailsID"]);
+                    docs.App_ID = 1032;
+                    docs.User_ID = Session["userID"].ToString();
+                    docs.FileExtension = file.FileName.Split('.').Last();
+                    docs.FileSize = filesizeStr;
+                    docs.Doc_No = Session["DocNo"].ToString();
+                    docs.Company_ID = Convert.ToInt32(Session["userCompanyID"]);
+                    docs.DateUploaded = DateTime.Now;
+                    docs.DocType_Id = app_docType != null ? app_docType.DCT_Id : 0;
+                }
+                _DataContext.ITP_T_FileAttachments.InsertOnSubmit(docs);
+                _DataContext.SubmitChanges();
+
+                ACCEDE_T_TravelExpenseDetailsFileAttach docs2 = new ACCEDE_T_TravelExpenseDetailsFileAttach();
+                {
+                    docs2.FileAttachment_ID = docs.ID;
+                    docs2.ExpenseDetails_ID = Convert.ToInt32(Session["ExpDetailsID"]);
+                    docs2.DocumentType = "sub";
+                }
+                _DataContext.ACCEDE_T_TravelExpenseDetailsFileAttaches.InsertOnSubmit(docs2);
+            }
+            _DataContext.SubmitChanges();
         }
 
-        private int GetNewDocId()
+        protected void ASPxGridView23_RowDeleting(object sender, DevExpress.Web.Data.ASPxDataDeletingEventArgs e)
         {
-            dsDoc = (DataSet)Session["DataSetDoc"];
-            DataTable table = dsDoc.Tables[0];
-            if (table.Rows.Count == 0) return 0;
-            int max = Convert.ToInt32(table.Rows[0]["ID"]);
-            for (int i = 1; i < table.Rows.Count; i++)
-            {
-                if (Convert.ToInt32(table.Rows[i]["ID"]) > max)
-                    max = Convert.ToInt32(table.Rows[i]["ID"]);
-            }
-            return max + 1;
+            _DataContext.ExecuteCommand("DELETE FROM ACCEDE_T_TravelExpenseDetailsMap WHERE TravelExpenseDetailMap_ID = {0}", Convert.ToInt32(e.Values["TravelExpenseDetailMap_ID"]));
         }
 
-        [WebMethod]
-        public static string AddTravelExpenseDetailsAJAX(DateTime travelDate, string totalExp)
+        protected void ASPxGridView23_RowInserting(object sender, DevExpress.Web.Data.ASPxDataInsertingEventArgs e)
         {
-            TravelExpenseAddDetails exp = new TravelExpenseAddDetails();
-            return exp.AddTravelExpenseDetails(travelDate, totalExp);
+            ACCEDE_T_TravelExpenseDetailsMap td = new ACCEDE_T_TravelExpenseDetailsMap
+            {
+                LocParticulars = Convert.ToString(e.NewValues["LocParticulars"]),
+                ReimTranspo_Type1 = Convert.ToString(e.NewValues["ReimTranspo_Type1"]),
+                ReimTranspo_Amount1 = Convert.ToDecimal(e.NewValues["ReimTranspo_Amount1"]),
+                FixedAllow_ForP = Convert.ToString(e.NewValues["FixedAllow_ForP"]),
+                FixedAllow_Remarks = Convert.ToString(e.NewValues["FixedAllow_Remarks"]),
+                FixedAllow_Amount = Convert.ToDecimal(e.NewValues["FixedAllow_Amount"]),
+                MiscTravel_Type = Convert.ToString(e.NewValues["MiscTravel_Type"]),
+                MiscTravel_Specify = Convert.ToString(e.NewValues["MiscTravel_Specify"]),
+                MiscTravel_Amount = Convert.ToDecimal(e.NewValues["MiscTravel_Amount"]),
+                Entertainment_Explain = Convert.ToString(e.NewValues["Entertainment_Explain"]),
+                Entertainment_Amount = Convert.ToDecimal(e.NewValues["Entertainment_Amount"]),
+                BusMeals_Explain = Convert.ToString(e.NewValues["BusMeals_Explain"]),
+                BusMeals_Amount = Convert.ToDecimal(e.NewValues["BusMeals_Amount"]),
+                TravelExpenseDetail_ID = Convert.ToInt32(Session["ExpDetailsID"])
+            };
+
+            _DataContext.ACCEDE_T_TravelExpenseDetailsMaps.InsertOnSubmit(td);
+            _DataContext.SubmitChanges();
         }
 
-        public string AddTravelExpenseDetails(DateTime travelDate, string totalExp)
+        protected void ASPxGridView23_RowUpdating(object sender, DevExpress.Web.Data.ASPxDataUpdatingEventArgs e)
         {
-            try
+            e.NewValues["TravelExpenseDetail_ID"] = Convert.ToInt32(Session["ExpDetailsID"]);
+        }
+
+        protected void TraDocuGrid_CustomButtonInitialize(object sender, ASPxGridViewCustomButtonEventArgs e)
+        {
+            if (e.ButtonID == "btnView" || e.ButtonID == "btnView")
             {
-                int travelExpMainId = Convert.ToInt32(Session["TravelExp_Id"]);
-                decimal totalExpenses = Convert.ToDecimal(totalExp);
-                var trav = new ACCEDE_T_TravelExpenseDetail
+                if (Convert.ToString(Session["doc_stat"]).Contains("Pending"))
                 {
-                    TravelExpenseDetail_Date = travelDate,
-                    TravelExpenseMain_ID = travelExpMainId,
-                    Total_Expenses = totalExpenses
-                };
-
-                context.ACCEDE_T_TravelExpenseDetails.InsertOnSubmit(trav);
-                context.SubmitChanges(); // Get the ID after saving
-
-                int travExpDetailId = trav.TravelExpenseDetail_ID;
-
-                InsertAttachments(travExpDetailId);
-
-                var dataSet = Session["DataSet"] as DataSet;
-                if (dataSet == null || dataSet.Tables.Count == 0)
-                    return "TravelExpenseAdd.aspx";
-
-                InsertMappedData<ACCEDE_T_TravelExpenseDetailsMap>(dataSet.Tables[0], (map, row) =>
-                {
-                    map.LocParticulars = row["LocParticulars"]?.ToString() ?? string.Empty;
-                    map.ReimTranspo_Type1 = row["ReimTranspo_Type1"]?.ToString() ?? string.Empty;
-                    map.ReimTranspo_Amount1 = row["ReimTranspo_Amount1"] == DBNull.Value ? 0 : Convert.ToDecimal(row["ReimTranspo_Amount1"]);
-                    map.ReimTranspo_Type2 = row["ReimTranspo_Type2"]?.ToString() ?? string.Empty;
-                    map.ReimTranspo_Amount2 = row["ReimTranspo_Amount2"] == DBNull.Value ? 0 : Convert.ToDecimal(row["ReimTranspo_Amount2"]);
-                    map.ReimTranspo_Type3 = row["ReimTranspo_Type3"]?.ToString() ?? string.Empty;
-                    map.ReimTranspo_Amount3 = row["ReimTranspo_Amount3"] == DBNull.Value ? 0 : Convert.ToDecimal(row["ReimTranspo_Amount3"]);
-                    map.FixedAllow_ForP = row["FixedAllow_ForP"]?.ToString() ?? string.Empty;
-                    map.FixedAllow_Amount = row["FixedAllow_Amount"] == DBNull.Value ? 0 : Convert.ToDecimal(row["FixedAllow_Amount"]);
-                    map.FixedAllow_Remarks = row["FixedAllow_Remarks"]?.ToString() ?? string.Empty;
-                    map.MiscTravel_Type = row["MiscTravel_Type"]?.ToString() ?? string.Empty;
-                    map.MiscTravel_Specify = row["MiscTravel_Specify"]?.ToString() ?? string.Empty;
-                    map.MiscTravel_Amount = row["MiscTravel_Amount"] == DBNull.Value ? 0 : Convert.ToDecimal(row["MiscTravel_Amount"]);
-                    map.Entertainment_Explain = row["Entertainment_Explain"]?.ToString() ?? string.Empty;
-                    map.Entertainment_Amount = row["Entertainment_Amount"] == DBNull.Value ? 0 : Convert.ToDecimal(row["Entertainment_Amount"]);
-                    map.BusMeals_Explain = row["BusMeals_Explain"]?.ToString() ?? string.Empty;
-                    map.BusMeals_Amount = row["BusMeals_Amount"] == DBNull.Value ? 0 : Convert.ToDecimal(row["BusMeals_Amount"]);
-                    map.OtherBus_Type = row["OtherBus_Type"]?.ToString() ?? string.Empty;
-                    map.OtherBus_Specify = row["OtherBus_Specify"]?.ToString() ?? string.Empty;
-                    map.OtherBus_Amount = row["OtherBus_Amount"] == DBNull.Value ? 0 : Convert.ToDecimal(row["OtherBus_Amount"]);
-                    map.TravelExpenseDetail_ID = travExpDetailId;
-                });
-
-                context.SubmitChanges();
-
-                return "TravelExpenseAdd.aspx";
-            }
-            catch (Exception)
-            {
-                throw; // Consider logging the error
-            }
-
-            // Local method for reusability
-            void InsertMappedData<T>(DataTable table, Action<T, DataRow> mapAction) where T : class, new()
-            {
-                foreach (DataRow row in table.Rows)
-                {
-                    // Check if row is not empty
-                    bool isEmptyRow = table.Columns
-                        .Cast<DataColumn>()
-                        .All(c => row[c] == DBNull.Value || string.IsNullOrWhiteSpace(row[c]?.ToString()) || decimal.TryParse(row[c]?.ToString(), out var val) && val == 0);
-
-                    if (isEmptyRow)
-                        continue;
-
-                    T entity = new T();
-                    mapAction(entity, row);
-                    context.GetTable<T>().InsertOnSubmit(entity);
+                    e.Visible = DefaultBoolean.True;
                 }
             }
+            else
+            {
+                e.Visible = DefaultBoolean.False;
+            }
         }
 
-
-        public void InsertAttachments(int id)
+        protected void TraDocuGrid_CommandButtonInitialize(object sender, ASPxGridViewCommandButtonEventArgs e)
         {
-            try
+            if (e.ButtonType == ColumnCommandButtonType.Delete || e.ButtonType == ColumnCommandButtonType.Edit)
             {
-                var uploadedFilesTable = Session["UploadedFilesTable"] as DataTable;
-                if (uploadedFilesTable == null || uploadedFilesTable.Rows.Count == 0)
-                    return;
-
-                string connectionString = ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString;
-                int travelExpId = Convert.ToInt32(Session["TravelExp_Id"]);
-                string docNo = Session["DocNo"]?.ToString() ?? string.Empty;
-                string userId = Session["userID"]?.ToString() ?? "0";
-
-                // Fetch once outside loop
-                int? companyId = context.ACCEDE_T_TravelExpenseMains
-                    .Where(x => x.ID == travelExpId)
-                    .Select(x => x.Company_Id)
-                    .FirstOrDefault();
-
-                int? docTypeId = context.ITP_S_DocumentTypes
-                    .Where(x => x.DCT_Name == "ACDE Expense Travel")
-                    .Select(x => x.DCT_Id)
-                    .FirstOrDefault();
-
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                if (Convert.ToString(Session["doc_stat"]) == "Saved" || Convert.ToString(Session["doc_stat"]) == null || Convert.ToString(Session["doc_stat"]) == string.Empty)
                 {
-                    connection.Open();
-
-                    string query = @"INSERT INTO ITP_T_FileAttachment(FileAttachment, FileName, Description, DateUploaded, App_ID, Company_ID, Doc_ID, Doc_No, User_ID, FileExtension, FileSize, DocType_Id) OUTPUT INSERTED.ID VALUES(@FileAttachment, @FileName, @Description, @DateUploaded, @App_ID, @Company_ID, @Doc_ID, @Doc_No, @User_ID, @FileExtension, @FileSize, @DocType_Id)";
-
-                    foreach (DataRow row in uploadedFilesTable.Rows)
-                    {
-                        using (SqlCommand command = new SqlCommand(query, connection))
-                        {
-                            command.Parameters.AddWithValue("@FileAttachment", row["FileAttachment"]);
-                            command.Parameters.AddWithValue("@FileName", row["FileName"].ToString());
-                            command.Parameters.AddWithValue("@Description", row["Description"].ToString());
-                            command.Parameters.AddWithValue("@DateUploaded", DateTime.Now);
-                            command.Parameters.AddWithValue("@App_ID", 1032);
-                            command.Parameters.AddWithValue("@Company_ID", companyId != null ? (object)companyId : DBNull.Value);
-                            command.Parameters.AddWithValue("@Doc_ID", id);
-                            command.Parameters.AddWithValue("@Doc_No", docNo);
-                            command.Parameters.AddWithValue("@User_ID", userId);
-                            command.Parameters.AddWithValue("@FileExtension", row["FileExtension"].ToString());
-                            command.Parameters.AddWithValue("@FileSize", row["FileSize"].ToString());
-                            command.Parameters.AddWithValue("@DocType_Id", docTypeId != null ? (object)docTypeId : DBNull.Value);
-
-                            int insertedId = (int)command.ExecuteScalar();
-
-                            var attachmentLink = new ACCEDE_T_TravelExpenseDetailsFileAttach
-                            {
-                                FileAttachment_ID = insertedId,
-                                ExpenseDetails_ID = id
-                            };
-
-                            context.ACCEDE_T_TravelExpenseDetailsFileAttaches.InsertOnSubmit(attachmentLink);
-                        }
-                    }
-
-                    context.SubmitChanges();
+                    e.Visible = true;
+                }
+                else
+                {
+                    e.Visible = false;
                 }
             }
-            catch (Exception)
-            {
-                throw; // Consider logging here
-            }
-        }
-
-        protected void ASPxFormLayout7_Init(object sender, EventArgs e)
-        {
-            if (!IsPostBack || (Session["DataSet"] == null))
-            {
-                ds = new DataSet();
-                ds.Tables.AddRange(new[]
-                {
-                    CreateDataTable("TravelExpenseDetailMap_ID", "LocParticulars", "ReimTranspo_Type1", "ReimTranspo_Amount1", "ReimTranspo_Type2", "ReimTranspo_Amount2", "ReimTranspo_Type3", "ReimTranspo_Amount3", "FixedAllow_ForP", "FixedAllow_Remarks", "FixedAllow_Amount", "MiscTravel_Type", "MiscTravel_Specify", "MiscTravel_Amount", "Entertainment_Explain", "Entertainment_Amount", "BusMeals_Explain", "BusMeals_Amount", "OtherBus_Type", "OtherBus_Specify", "OtherBus_Amount")
-                });
-                Session["DataSet"] = ds;
-            }
-            else
-                ds = (DataSet)Session["DataSet"];
-
-
-            if (!IsPostBack || (Session["DataSetDoc"] == null))
-            {
-                dsDoc = new DataSet();
-                DataTable masterTable = new DataTable();
-                masterTable.Columns.Add("ID", typeof(int));
-                masterTable.Columns.Add("FileName", typeof(string));
-                masterTable.Columns.Add("FileAttachment", typeof(byte[]));
-                masterTable.Columns.Add("FileExtension", typeof(string));
-                masterTable.Columns.Add("FileSize", typeof(string));
-                masterTable.Columns.Add("Description", typeof(string));
-                masterTable.PrimaryKey = new DataColumn[] { masterTable.Columns["ID"] };
-
-                dsDoc.Tables.AddRange(new DataTable[] { masterTable/*, detailTable*/ });
-                Session["DataSetDoc"] = dsDoc;
-            }
-            else
-                dsDoc = (DataSet)Session["DataSetDoc"];
-        }
-
-        protected void ASPxGridView22_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
-        {
-        }
-
-        protected void popupSubmitBtn_Click(object sender, EventArgs e)
-        {
-            ASPxGridView22.UpdateEdit();
         }
     }
 }
