@@ -192,8 +192,6 @@ namespace DX_WebTemplate
             string[] args = e.Parameters.Split('|');
             string rowKey = args[0];
 
-            
-
             Session["TravelExp_Id"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "Document_Id");
             Session["comp"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "CompanyId");
             Session["PassActID"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "WFA_Id");

@@ -4,6 +4,7 @@ using DevExpress.Pdf.Native.DocumentSigning;
 using DevExpress.Pdf.Xmp;
 using DevExpress.Utils;
 using DevExpress.Web;
+using DevExpress.XtraEditors.Filtering.Templates;
 using DevExpress.XtraPrinting;
 using System;
 using System.Collections.Generic;
@@ -57,6 +58,7 @@ namespace DX_WebTemplate
                             Session["currency"] = mainExp.ForeignDomestic == "Domestic" ? '₱' : mainExp.ForeignDomestic == "Foreign" ? '$' : ' ';
                             status = _DataContext.ITP_S_Status.Where(x => x.STS_Id == Convert.ToInt32(mainExp.Status)).Select(x => x.STS_Description).FirstOrDefault();
                             Session["doc_stat2"] = status;
+                            var doc_stat = _DataContext.ITP_S_Status.Where(x => x.STS_Id == Convert.ToInt32(Session["doc_stat"])).Select(x => x.STS_Description).FirstOrDefault();
 
                             Session["mainwfid"] = Convert.ToString(mainExp.WF_Id);
                             SqlWF.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
@@ -66,7 +68,7 @@ namespace DX_WebTemplate
                             SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
                             SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
                             
-                            ExpenseEditForm.Items[0].Caption = "Travel Expense Document No.: " + mainExp.Doc_No + " (" + status + ")";
+                            ExpenseEditForm.Items[0].Caption = "Travel Expense Document No.: " + mainExp.Doc_No + " (" + doc_stat + ")";
 
                             SqlMain.SelectParameters["ID"].DefaultValue = mainExp.ID.ToString();
                             timedepartTE.DateTime = DateTime.Parse(mainExp.Time_Departed.ToString());
@@ -83,6 +85,8 @@ namespace DX_WebTemplate
                             var returnItem = ExpenseEditForm.FindItemOrGroupByName("returnItem") as LayoutItem;
                             var returnPrevItem = ExpenseEditForm.FindItemOrGroupByName("returnPrevItem") as LayoutItem;
                             var forwardItem = ExpenseEditForm.FindItemOrGroupByName("forwardItem") as LayoutItem;
+                            var saveItem = ExpenseEditForm.FindItemOrGroupByName("saveItem") as LayoutItem;
+                            var approveItem = ExpenseEditForm.FindItemOrGroupByName("approveItem") as LayoutItem;
 
                             var due_lbl = ExpenseEditForm.FindItemOrGroupByName("due_lbl") as LayoutItem;
                             var reimDetails = ExpenseEditForm.FindItemOrGroupByName("reimDetails") as LayoutItem;
@@ -173,6 +177,22 @@ namespace DX_WebTemplate
                             if (status == "Pending at P2P")
                             {
                                 sapItem.Visible = true;
+                            }
+
+
+                            if (doc_stat == "Pending SAP Doc No.")
+                            {
+                                saveItem.Visible = true;
+                                sapItem.ClientVisible = true;
+                                returnItem.Visible = false;
+                                returnPrevItem.Visible = false;
+                                forwardItem.Visible = false;
+                                approveItem.Visible = false;
+                                disapproveItem.Visible = false;
+                            }
+                            else
+                            {
+                                saveItem.Visible = false;
                             }
 
                             if (status == "Pending at Cashier")
@@ -810,7 +830,7 @@ namespace DX_WebTemplate
             }
         }
 
-        public void updateWA(int docID, int wfID, int wfaID, int status, string amount, string remarks, string userID, DateTime date, int reim_docID, string sapDoc)
+        public void updateWA(int docID, int wfID, int wfaID, int status, string amount, string remarks, string userID, DateTime date, int reim_docID)
         {
             try
             {
@@ -830,18 +850,45 @@ namespace DX_WebTemplate
 
                 foreach (var ex in updateRFPWFA)
                 {
-                    if (!string.IsNullOrEmpty(sapDoc))
-                    {
-                        ex.DateAction = date;
-                        ex.Status = status;
-                        ex.Remarks = remarks;
-                        ex.ActedBy_User_Id = userID;
-                    }
-                    else
-                    {
-                        ex.Remarks = remarks;
-                        ex.ActedBy_User_Id = userID;
-                    }
+                    ex.DateAction = date;
+                    ex.Status = status;
+                    ex.Remarks = remarks;
+                    ex.ActedBy_User_Id = userID;
+                }
+
+                _DataContext.SubmitChanges();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public void updateSAPDocWA(int docID, int wfID, int wfaID, int status, string amount, string remarks, string userID, DateTime date, int reim_docID, string sapDoc)
+        {
+            try
+            {
+                var sapdocstatus = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Pending SAP Doc No.").Select(x => x.STS_Id).FirstOrDefault(); 
+                var updateWFA = _DataContext.ITP_T_WorkflowActivities
+                    .Where(a => a.Document_Id == docID && a.WF_Id == wfID && a.WFA_Id == wfaID);
+
+                foreach (var ex in updateWFA)
+                {
+                    ex.Remarks = remarks;
+                    ex.DateAction = date;
+                    ex.Status = sapdocstatus;
+                    ex.ActedBy_User_Id = userID;
+                }
+
+                var updateRFPWFA = _DataContext.ITP_T_WorkflowActivities
+                    .Where(a => a.Document_Id == reim_docID && a.WF_Id == wfID);
+
+                foreach (var ex in updateRFPWFA)
+                {
+                    ex.DateAction = date;
+                    ex.Status = sapdocstatus;
+                    ex.Remarks = remarks;
+                    ex.ActedBy_User_Id = userID;
                 }
 
                 _DataContext.SubmitChanges();
@@ -1032,6 +1079,71 @@ namespace DX_WebTemplate
             }
         }
 
+
+        [WebMethod]
+        public static bool AJAXSaveSAPDocument(string sapDoc, string rfpDoc)
+        {
+            TravelExpenseReview tra = new TravelExpenseReview();
+
+            return tra.SaveSAPDocument(sapDoc, rfpDoc);
+        }
+
+        public bool SaveSAPDocument(string sapDoc, string rfpDoc)
+        {
+            try
+            {
+                int docID = Convert.ToInt32(Session["TravelExp_Id"]);
+                var wfID = Convert.ToInt32(Session["wf"]);
+                int reim_docID = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == docID && x.IsExpenseReim == true).Where(x => x.isTravel == true).Select(x => x.ID).FirstOrDefault();
+
+                var updRfpMain = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == reim_docID);
+
+                foreach (var item in updRfpMain)
+                {
+                    item.SAPDocNo = sapDoc;
+                }
+
+                var updTravelMain = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == docID);
+
+                foreach (var item in updTravelMain)
+                {
+                    item.SAP_Id = sapDoc;
+                }
+
+                var updateRFPWFA = _DataContext.ITP_T_WorkflowActivities
+                    .Where(a => a.Document_Id == reim_docID && a.WF_Id == wfID);
+
+                foreach (var ex in updateRFPWFA)
+                {
+                    if (!string.IsNullOrEmpty(sapDoc))
+                    {
+                        ex.Status = 7;
+                    }
+                }
+
+                var updateTravelWFA = _DataContext.ITP_T_WorkflowActivities
+                    .Where(a => a.Document_Id == docID && a.WF_Id == wfID);
+
+                foreach (var ex in updateTravelWFA)
+                {
+                    if (!string.IsNullOrEmpty(sapDoc))
+                    {
+                        ex.Status = 7;
+                    }
+                }
+
+                _DataContext.SubmitChanges();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+                throw ex;
+            }
+        }
+
+
         [WebMethod]
         public static bool AJAXForwardDocument(string forwardWF, string aforwardRemarks, int chargedcomp, int chargeddept)
         {
@@ -1098,7 +1210,7 @@ namespace DX_WebTemplate
 
                 var fstatus = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Forwarded").Select(x => x.STS_Id).FirstOrDefault();
 
-                updateWA(docID, wfID, wfaID, 7, "", aforwardRemarks, userID, DateTime.Now, reim_docID, string.Empty);
+                updateWA(docID, wfID, wfaID, 7, "", aforwardRemarks, userID, DateTime.Now, reim_docID);
                 insertWA(Convert.ToInt32(fin_wfDetail_data.WF_Id), Convert.ToInt32(fin_wfDetail_data.WFD_Id), Convert.ToInt32(org_id), Convert.ToInt32(travelmain.ID), Convert.ToInt32(travelmain.Company_Id), Convert.ToInt32(fstatus), reim_docID, aforwardRemarks, true);
 
                 return true;
@@ -1166,8 +1278,6 @@ namespace DX_WebTemplate
                 .Where(e => e.WF_Id == wfID && e.Sequence == sequence)
                 .Select(e => e.OrgRole_Id)
                 .FirstOrDefault();
-            // UPDATE WORKFLOWACTIVITY
-            updateWA(docID, wfID, wfaID, 7, string.Empty, remarks, userID, DateTime.Now, reim_docID, sapDoc);
 
             // IF TRUE, INSERT TO WORKFLOWACTIVITY
             if (orgRoleID != null)
@@ -1233,11 +1343,19 @@ namespace DX_WebTemplate
                 // Employee Comp ID
                 int companyID = int.Parse(Session["comp"].ToString());
 
+                // GET WORKFLOW ID 
+                var wfID = Convert.ToInt32(Session["wf"]);
+
+                // GET WORKFLOWACTIVITY ID 
+                var wfaID = Convert.ToInt32(Session["wfa"]);
+
                 updateTravelRFP(docID, reim_docID, remarks, chargedcomp, chargeddept, arNo, sapDoc);
 
                 // Approval logic for Line Manager Workflow
                 if (Convert.ToString(Session["doc_stat2"]) == "Pending")
                 {
+                    updateWA(docID, wfID, wfaID, 7, string.Empty, remarks, userID, DateTime.Now, reim_docID);
+
                     bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID, sapDoc);
 
                     if (!hasNextSequence)
@@ -1267,6 +1385,8 @@ namespace DX_WebTemplate
                 // Approval logic for FAP Workflow
                 else if (Convert.ToString(Session["doc_stat2"]) == "Pending at Finance")
                 {
+                    updateWA(docID, wfID, wfaID, 7, string.Empty, remarks, userID, DateTime.Now, reim_docID);
+
                     bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID, sapDoc);
 
                     if (!hasNextSequence)
@@ -1284,6 +1404,9 @@ namespace DX_WebTemplate
                 // Approval logic for Audit Workflow
                 else if (Convert.ToString(Session["doc_stat2"]) == "Pending at Audit")
                 {
+
+                    updateWA(docID, wfID, wfaID, 7, string.Empty, remarks, userID, DateTime.Now, reim_docID);
+
                     bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID, sapDoc);
 
                     updateRFPToLiquidated(docID);
@@ -1316,8 +1439,19 @@ namespace DX_WebTemplate
                 // Approval logic for P2P Workflow
                 else if (Convert.ToString(Session["doc_stat2"]) == "Pending at P2P")
                 {
+                    // UPDATE WORKFLOWACTIVITY
+                    if (!string.IsNullOrEmpty(sapDoc))
+                    {
+                        updateSAPDocWA(docID, wfID, wfaID, 7, string.Empty, remarks, userID, DateTime.Now, reim_docID, sapDoc);
+                    }
+                    else
+                    {
+                        updateWA(docID, wfID, wfaID, 7, string.Empty, remarks, userID, DateTime.Now, reim_docID);
+                    }
+
                     bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID, sapDoc);
-                    var completeStat = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Completed").Select(x => x.STS_Id).FirstOrDefault();
+                    var completeStat = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Completed").Select(x => x.STS_Id).FirstOrDefault(); 
+                    var disburseStat = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Disbursed").Select(x => x.STS_Id).FirstOrDefault();
 
                     if (!hasNextSequence)
                     {
@@ -1343,7 +1477,7 @@ namespace DX_WebTemplate
                             var updateReim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == reim_docID);
                             foreach (ACCEDE_T_RFPMain r in updateReim)
                             {
-                                r.Status = completeStat;
+                                r.Status = disburseStat;
                             }
                             _DataContext.SubmitChanges();
 
@@ -1355,6 +1489,16 @@ namespace DX_WebTemplate
                 // Approval logic for Cashier Workflow
                 else if (Convert.ToString(Session["doc_stat2"]) == "Pending at Cashier")
                 {
+                    // UPDATE WORKFLOWACTIVITY
+                    if (!string.IsNullOrEmpty(sapDoc))
+                    {
+                        updateWA(docID, wfID, wfaID, 7, string.Empty, remarks, userID, DateTime.Now, reim_docID);
+                    }
+                    else
+                    {
+                        updateSAPDocWA(docID, wfID, wfaID, 7, string.Empty, remarks, userID, DateTime.Now, reim_docID, sapDoc);
+                    }
+
                     bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID, sapDoc);
                     var completeStat = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Completed").Select(x => x.STS_Id).FirstOrDefault();
                     var disburseStat = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Disbursed").Select(x => x.STS_Id).FirstOrDefault();

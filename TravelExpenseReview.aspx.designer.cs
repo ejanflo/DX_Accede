@@ -42,6 +42,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxButton approveBtn;
 
         /// <summary>
+        /// saveBtn control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton saveBtn;
+
+        /// <summary>
         /// returnPrevBtn control.
         /// </summary>
         /// <remarks>

@@ -24,94 +24,103 @@ namespace DX_WebTemplate
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
-        /// ASPxPopupControl1 control.
+        /// travelExpensePopup1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxPopupControl ASPxPopupControl1;
+        protected global::DevExpress.Web.ASPxPopupControl travelExpensePopup1;
 
         /// <summary>
-        /// ASPxFormLayout6 control.
+        /// addExpCallback0 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxFormLayout ASPxFormLayout6;
+        protected global::DevExpress.Web.ASPxCallbackPanel addExpCallback0;
 
         /// <summary>
-        /// ASPxTextBox6 control.
+        /// ASPxFormLayout12 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox6;
+        protected global::DevExpress.Web.ASPxFormLayout ASPxFormLayout12;
 
         /// <summary>
-        /// totalExpTB control.
+        /// totalExpTB1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox totalExpTB;
+        protected global::DevExpress.Web.ASPxTextBox totalExpTB1;
 
         /// <summary>
-        /// viewBtn1 control.
+        /// viewBtn2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxButton viewBtn1;
+        protected global::DevExpress.Web.ASPxButton viewBtn2;
 
         /// <summary>
-        /// popupSubmitBtn control.
+        /// popupSubmitBtn1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxButton popupSubmitBtn;
+        protected global::DevExpress.Web.ASPxButton popupSubmitBtn1;
 
         /// <summary>
-        /// popupCancelBtn control.
+        /// popupCancelBtn1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxButton popupCancelBtn;
+        protected global::DevExpress.Web.ASPxButton popupCancelBtn1;
 
         /// <summary>
-        /// travelDateCalendar control.
+        /// travelDateCalendar1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxDateEdit travelDateCalendar;
+        protected global::DevExpress.Web.ASPxDateEdit travelDateCalendar1;
 
         /// <summary>
-        /// ASPxGridView22 control.
+        /// ASPxGridView23 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxGridView ASPxGridView22;
+        protected global::DevExpress.Web.ASPxGridView ASPxGridView23;
 
         /// <summary>
-        /// TraUploadController control.
+        /// SqlExpenseDetails control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxUploadControl TraUploadController;
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlExpenseDetails;
+
+        /// <summary>
+        /// TraUploadController1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxUploadControl TraUploadController1;
 
         /// <summary>
         /// TraDocuGrid control.
@@ -121,6 +130,33 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxGridView TraDocuGrid;
+
+        /// <summary>
+        /// btnView control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.GridViewCommandColumnCustomButton btnView;
+
+        /// <summary>
+        /// SqlTraDocs control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlTraDocs;
+
+        /// <summary>
+        /// ASPxTextBox7 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox7;
 
         /// <summary>
         /// LoadingPanel control.
