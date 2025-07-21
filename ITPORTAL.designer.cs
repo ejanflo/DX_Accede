@@ -237,6 +237,9 @@ namespace DX_WebTemplate
     partial void InsertACCEDE_T_TravelExpenseDetail(ACCEDE_T_TravelExpenseDetail instance);
     partial void UpdateACCEDE_T_TravelExpenseDetail(ACCEDE_T_TravelExpenseDetail instance);
     partial void DeleteACCEDE_T_TravelExpenseDetail(ACCEDE_T_TravelExpenseDetail instance);
+    partial void InsertACCEDE_S_Particular(ACCEDE_S_Particular instance);
+    partial void UpdateACCEDE_S_Particular(ACCEDE_S_Particular instance);
+    partial void DeleteACCEDE_S_Particular(ACCEDE_S_Particular instance);
     #endregion
 		
 		public ITPORTALDataContext(string connection) : 
@@ -908,6 +911,14 @@ namespace DX_WebTemplate
 			get
 			{
 				return this.GetTable<ACCEDE_T_TravelExpenseDetail>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ACCEDE_S_Particular> ACCEDE_S_Particulars
+		{
+			get
+			{
+				return this.GetTable<ACCEDE_S_Particular>();
 			}
 		}
 	}
@@ -24713,6 +24724,164 @@ namespace DX_WebTemplate
 					this._FinanceRemarks = value;
 					this.SendPropertyChanged("FinanceRemarks");
 					this.OnFinanceRemarksChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_S_Particulars")]
+	public partial class ACCEDE_S_Particular : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private string _P_Description;
+		
+		private string _P_Name;
+		
+		private string _P_AdditionalText;
+		
+		private System.Nullable<bool> _isActive;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnP_DescriptionChanging(string value);
+    partial void OnP_DescriptionChanged();
+    partial void OnP_NameChanging(string value);
+    partial void OnP_NameChanged();
+    partial void OnP_AdditionalTextChanging(string value);
+    partial void OnP_AdditionalTextChanged();
+    partial void OnisActiveChanging(System.Nullable<bool> value);
+    partial void OnisActiveChanged();
+    #endregion
+		
+		public ACCEDE_S_Particular()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_P_Description", DbType="VarChar(200)")]
+		public string P_Description
+		{
+			get
+			{
+				return this._P_Description;
+			}
+			set
+			{
+				if ((this._P_Description != value))
+				{
+					this.OnP_DescriptionChanging(value);
+					this.SendPropertyChanging();
+					this._P_Description = value;
+					this.SendPropertyChanged("P_Description");
+					this.OnP_DescriptionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_P_Name", DbType="VarChar(200)")]
+		public string P_Name
+		{
+			get
+			{
+				return this._P_Name;
+			}
+			set
+			{
+				if ((this._P_Name != value))
+				{
+					this.OnP_NameChanging(value);
+					this.SendPropertyChanging();
+					this._P_Name = value;
+					this.SendPropertyChanged("P_Name");
+					this.OnP_NameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_P_AdditionalText", DbType="VarChar(MAX)")]
+		public string P_AdditionalText
+		{
+			get
+			{
+				return this._P_AdditionalText;
+			}
+			set
+			{
+				if ((this._P_AdditionalText != value))
+				{
+					this.OnP_AdditionalTextChanging(value);
+					this.SendPropertyChanging();
+					this._P_AdditionalText = value;
+					this.SendPropertyChanged("P_AdditionalText");
+					this.OnP_AdditionalTextChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_isActive", DbType="Bit")]
+		public System.Nullable<bool> isActive
+		{
+			get
+			{
+				return this._isActive;
+			}
+			set
+			{
+				if ((this._isActive != value))
+				{
+					this.OnisActiveChanging(value);
+					this.SendPropertyChanging();
+					this._isActive = value;
+					this.SendPropertyChanged("isActive");
+					this.OnisActiveChanged();
 				}
 			}
 		}
