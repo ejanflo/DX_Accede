@@ -1825,6 +1825,8 @@ namespace DX_WebTemplate
                 .Where(x => x.WASSId == comps_id)
                 .FirstOrDefault();
 
+            var doc_main = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(doc_id)).FirstOrDefault();
+
             //Start--   Get Text info
             var queryText = from texts in _DataContext.ITP_S_Texts
                             where texts.Type == "Email" && texts.Name == "Pending"
@@ -1885,7 +1887,7 @@ namespace DX_WebTemplate
             emailDetails = "<table border='1' cellpadding='2' cellspacing='0' width='100%' class='main' style='border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;background:#fff;border-radius:3px;width:100%;'>";
             emailDetails += "<tr><td>Company</td><td><strong>" + comp_name.CompanyShortName + "</strong></td></tr>";
             emailDetails += "<tr><td>Document Date</td><td><strong>" + currentDate + "</strong></td></tr>";
-            emailDetails += "<tr><td>Document No.</td><td><strong>" + doc_id + "</strong></td></tr>";
+            emailDetails += "<tr><td>Document No.</td><td><strong>" + doc_main.DocNo + "</strong></td></tr>";
             emailDetails += "<tr><td>Preparer</td><td><strong>" + senderName + "</strong></td></tr>";
             emailDetails += "<tr><td>Status</td><td><strong>" + status + "</strong></td></tr>";
             emailDetails += "<tr><td>Document Purpose</td><td><strong>" + "Expense Report" + "</strong></td></tr>";
@@ -1908,10 +1910,12 @@ namespace DX_WebTemplate
                     .Select(x => x.Description)
                     .FirstOrDefault();
 
+                var particulars = _DataContext.ACCEDE_S_Particulars.Where(x => x.ID == Convert.ToInt32(item.Particulars)).FirstOrDefault();
+
                 emailDetails +=
                             "<tr>" +
                             "<td style='text-align: center;'>" + expType + "</td>" +
-                            "<td style='text-align: center;'>" + item.Particulars + "</td>" +
+                            "<td style='text-align: center;'>" + particulars.P_Name + "</td>" +
                             "<td style='text-align: center;'>" + item.Supplier + "</td>" +
                             "<td style='text-align: center;'>" + item.NetAmount + "</td>" +
                             "<td style='text-align: center;'>" + item.DateAdded.Value.ToLongDateString() + "</td>" +
