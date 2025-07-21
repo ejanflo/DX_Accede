@@ -210,13 +210,13 @@
                 success: function (response) {
                     totalExpTB.SetValue(response.d.totalExp);
                     travelDateCalendar.SetDate(new Date(response.d.travelDate));
-                    ASPxGridView22.PerformCallback("edit");
+                    //ASPxGridView22.PerformCallback("edit");
 
-                    TraDocuGrid.Refresh();
-                    loadPanel.Hide();
-                    travelExpensePopup.Show();
+                    //TraDocuGrid.Refresh();
+                    //loadPanel.Hide();
+                    //travelExpensePopup.Show();
 
-                    //window.open("TravelExpenseAddDetails.aspx", "_self");
+                    window.open("TravelExpenseAddDetails.aspx", "_self");
                 },
                 error: function (xhr, status, error) {
                     console.log("Error:", error);

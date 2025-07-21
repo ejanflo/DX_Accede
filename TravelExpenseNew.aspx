@@ -479,13 +479,13 @@
                     totalExpTB1.SetValue(response.d.totalExp);
                     travelDateCalendar1.SetDate(new Date(response.d.travelDate));
 
-                    loadPanel.Hide();
-                    travelExpensePopup1.Show();
+                    //loadPanel.Hide();
+                    //travelExpensePopup1.Show();
 
-                    ASPxGridView23.Refresh();
-                    TraDocuGrid1.Refresh();
+                    //ASPxGridView23.Refresh();
+                    //TraDocuGrid1.Refresh();
 
-                   /* window.open("TravelExpenseAddDetails.aspx", "_self");*/
+                    window.open("TravelExpenseAddDetails.aspx", "_self");
                 },
                 error: function (xhr, status, error) {
                     console.log("Error:", error);
