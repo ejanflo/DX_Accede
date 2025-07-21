@@ -1448,51 +1448,57 @@ drpdown_CostCenter.PerformCallback();
                                             </dx:LayoutGroup>
                                         </Items>
                                     </dx:TabbedLayoutGroup>
-                                    <dx:LayoutGroup Caption="Workflow Activity" ColSpan="1" GroupBoxDecoration="HeadingLine" Width="100%">
-                                        <GroupBoxStyle>
-                                            <Caption Font-Bold="True">
-                                            </Caption>
-                                        </GroupBoxStyle>
+                                    <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2" Width="100%">
+                                    </dx:EmptyLayoutItem>
+                                    <dx:TabbedLayoutGroup ColSpan="2" ColumnSpan="2" Width="100%">
                                         <Items>
-                                            <dx:LayoutItem Caption="" ColSpan="1">
-                                                <LayoutItemNestedControlCollection>
-                                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                                        <dx:ASPxGridView ID="WFActivityGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="WFActivityGrid" DataSourceID="SqlActivity" Width="100%">
-                                                            <SettingsEditing Mode="Batch">
-                                                            </SettingsEditing>
-                                                            <SettingsDataSecurity AllowDelete="False" AllowEdit="False" AllowInsert="False" />
-                                                            <SettingsPopup>
-                                                                <FilterControl AutoUpdatePosition="False">
-                                                                </FilterControl>
-                                                            </SettingsPopup>
-                                                            <Columns>
-                                                                <dx:GridViewDataTextColumn FieldName="DateAssigned" ShowInCustomizationForm="True" VisibleIndex="3">
-                                                                </dx:GridViewDataTextColumn>
-                                                                <dx:GridViewDataTextColumn FieldName="DateAction" ShowInCustomizationForm="True" VisibleIndex="4">
-                                                                </dx:GridViewDataTextColumn>
-                                                                <dx:GridViewDataComboBoxColumn Caption="Workflow" FieldName="WF_Id" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                                    <PropertiesComboBox DataSourceID="SqlWorkflow" TextField="Description" ValueField="WF_Id">
-                                                                    </PropertiesComboBox>
-                                                                </dx:GridViewDataComboBoxColumn>
-                                                                <dx:GridViewDataComboBoxColumn Caption="Org Role" FieldName="OrgRole_Id" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                                    <PropertiesComboBox DataSourceID="SqlOrgRole" TextField="Role_Name" ValueField="Id">
-                                                                    </PropertiesComboBox>
-                                                                </dx:GridViewDataComboBoxColumn>
-                                                                <dx:GridViewDataComboBoxColumn Caption="Approver" FieldName="ActedBy_User_Id" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                                    <PropertiesComboBox DataSourceID="SqlUser" TextField="FullName" ValueField="EmpCode">
-                                                                    </PropertiesComboBox>
-                                                                </dx:GridViewDataComboBoxColumn>
-                                                                <dx:GridViewDataComboBoxColumn FieldName="Status" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="5">
-                                                                    <PropertiesComboBox DataSourceID="SqlStatus" TextField="STS_Name" ValueField="STS_Id">
-                                                                    </PropertiesComboBox>
-                                                                </dx:GridViewDataComboBoxColumn>
-                                                            </Columns>
-                                                        </dx:ASPxGridView>
-                                                    </dx:LayoutItemNestedControlContainer>
-                                                </LayoutItemNestedControlCollection>
-                                            </dx:LayoutItem>
+                                            <dx:LayoutGroup Caption="Workflow Activity" ColSpan="1" GroupBoxDecoration="None" Width="100%">
+                                                <GroupBoxStyle>
+                                                    <Caption Font-Bold="True">
+                                                    </Caption>
+                                                </GroupBoxStyle>
+                                                <Items>
+                                                    <dx:LayoutItem Caption="" ColSpan="1">
+                                                        <LayoutItemNestedControlCollection>
+                                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                                <dx:ASPxGridView ID="WFActivityGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="WFActivityGrid" DataSourceID="SqlActivity" Width="100%">
+                                                                    <SettingsEditing Mode="Batch">
+                                                                    </SettingsEditing>
+                                                                    <SettingsDataSecurity AllowDelete="False" AllowEdit="False" AllowInsert="False" />
+                                                                    <SettingsPopup>
+                                                                        <FilterControl AutoUpdatePosition="False">
+                                                                        </FilterControl>
+                                                                    </SettingsPopup>
+                                                                    <Columns>
+                                                                        <dx:GridViewDataTextColumn FieldName="DateAssigned" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                                        </dx:GridViewDataTextColumn>
+                                                                        <dx:GridViewDataTextColumn FieldName="DateAction" ShowInCustomizationForm="True" VisibleIndex="4">
+                                                                        </dx:GridViewDataTextColumn>
+                                                                        <dx:GridViewDataComboBoxColumn Caption="Workflow" FieldName="WF_Id" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                                            <PropertiesComboBox DataSourceID="SqlWorkflow" TextField="Description" ValueField="WF_Id">
+                                                                            </PropertiesComboBox>
+                                                                        </dx:GridViewDataComboBoxColumn>
+                                                                        <dx:GridViewDataComboBoxColumn Caption="Org Role" FieldName="OrgRole_Id" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="1">
+                                                                            <PropertiesComboBox DataSourceID="SqlOrgRole" TextField="Role_Name" ValueField="Id">
+                                                                            </PropertiesComboBox>
+                                                                        </dx:GridViewDataComboBoxColumn>
+                                                                        <dx:GridViewDataComboBoxColumn Caption="Approver" FieldName="ActedBy_User_Id" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="2">
+                                                                            <PropertiesComboBox DataSourceID="SqlUser" TextField="FullName" ValueField="EmpCode">
+                                                                            </PropertiesComboBox>
+                                                                        </dx:GridViewDataComboBoxColumn>
+                                                                        <dx:GridViewDataComboBoxColumn FieldName="Status" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                                            <PropertiesComboBox DataSourceID="SqlStatus" TextField="STS_Name" ValueField="STS_Id">
+                                                                            </PropertiesComboBox>
+                                                                        </dx:GridViewDataComboBoxColumn>
+                                                                    </Columns>
+                                                                </dx:ASPxGridView>
+                                                            </dx:LayoutItemNestedControlContainer>
+                                                        </LayoutItemNestedControlCollection>
+                                                    </dx:LayoutItem>
+                                                </Items>
+                                            </dx:LayoutGroup>
                                         </Items>
-                                    </dx:LayoutGroup>
+                                    </dx:TabbedLayoutGroup>
                                 </Items>
                             </dx:LayoutGroup>
                         </Items>
