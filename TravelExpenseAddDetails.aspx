@@ -635,7 +635,7 @@
 	
             ASPxGridView23.CancelEdit();
             LoadingPanel.Show();
-            window.open(&quot;TravelExpenseNew.aspx&quot;, &quot;_self&quot;);
+            history.back();
 }" />
                                                                 <Border BorderColor="#878787" />
                                                             </dx:ASPxButton>
