@@ -2219,7 +2219,7 @@
                                                                             <BatchEditSettings StartEditAction="Click" />
                                                                         </SettingsEditing>
                                                                         <Settings ShowStatusBar="Hidden" ShowFooter="True" />
-                                                                        <SettingsBehavior AllowDragDrop="False" />
+                                                                        <SettingsBehavior AllowDragDrop="False" AllowGroup="False" AllowHeaderFilter="False" AllowSort="False" />
                                                                         <SettingsCommandButton>
                                                                             <NewButton Text=" ">
                                                                                 <Image IconID="iconbuilder_actions_add_svg_16x16">
@@ -2503,6 +2503,7 @@
                                                                         </SettingsPager>
                                                                         <SettingsEditing Mode="Inline">
                                                                         </SettingsEditing>
+                                                                        <SettingsBehavior AllowDragDrop="False" AllowGroup="False" AllowHeaderFilter="False" AllowSort="False" />
                                                                         <SettingsCommandButton>
                                                                             <EditButton>
                                                                                 <Image IconID="richedit_trackingchanges_trackchanges_svg_16x16">
@@ -2696,7 +2697,7 @@
                                                                             <BatchEditSettings StartEditAction="Click" />
                                                                         </SettingsEditing>
                                                                         <Settings ShowStatusBar="Hidden" ShowFooter="True" />
-                                                                        <SettingsBehavior AllowDragDrop="False" />
+                                                                        <SettingsBehavior AllowDragDrop="False" AllowGroup="False" AllowHeaderFilter="False" AllowSort="False" />
                                                                         <SettingsCommandButton>
                                                                             <NewButton Text=" ">
                                                                                 <Image IconID="iconbuilder_actions_add_svg_16x16">
@@ -3009,6 +3010,7 @@
                                                                         <ClientSideEvents CustomButtonClick="onCustomButtonClick" />
                                                                         <SettingsEditing Mode="Inline">
                                                                         </SettingsEditing>
+                                                                        <SettingsBehavior AllowDragDrop="False" AllowGroup="False" AllowHeaderFilter="False" AllowSort="False" />
                                                                         <SettingsCommandButton>
                                                                             <EditButton>
                                                                                 <Image IconID="richedit_trackingchanges_trackchanges_svg_16x16">
