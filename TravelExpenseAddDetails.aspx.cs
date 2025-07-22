@@ -41,20 +41,18 @@ namespace DX_WebTemplate
                             viewBtn2.Visible = true;
                             popupSubmitBtn1.Visible = true;
                             travelDateCalendar1.Enabled = true;
-                            ASPxGridView23.Enabled = true;
+                            ASPxGridView23.SettingsEditing.Mode = GridViewEditingMode.Batch;
+                            ASPxGridView23.Columns[0].Visible = true;
                             TraUploadController1.Visible = true;
-                            TraDocuGrid.Enabled = true;
-                            TraDocuGrid.Columns[0].Visible = true;
                         }
                         else if(action == "view")
                         {
                             viewBtn2.Visible = false;
                             popupSubmitBtn1.Visible = false;
                             travelDateCalendar1.Enabled = false;
-                            ASPxGridView23.Enabled = false;
+                            ASPxGridView23.SettingsEditing.Mode = GridViewEditingMode.Inline;
+                            ASPxGridView23.Columns[0].Visible = false;
                             TraUploadController1.Visible = false;
-                            TraDocuGrid.Enabled = false;
-                            TraDocuGrid.Columns[0].Visible = false;
                         }
                     }
                     else
@@ -174,7 +172,7 @@ namespace DX_WebTemplate
         {
             if (e.ButtonType == ColumnCommandButtonType.Delete || e.ButtonType == ColumnCommandButtonType.Edit)
             {
-                if (Convert.ToString(Session["doc_stat"]) == "Saved" || Convert.ToString(Session["doc_stat"]) == null || Convert.ToString(Session["doc_stat"]) == string.Empty)
+                if (Convert.ToString(Session["doc_stat"]) == "Saved" || Convert.ToString(Session["doc_stat"]) == null || Convert.ToString(Session["doc_stat"]) == "Pending at Finance" || Convert.ToString(Session["doc_stat"]) == string.Empty)
                 {
                     e.Visible = true;
                 }

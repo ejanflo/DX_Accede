@@ -19,7 +19,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js"></script>   
     <script src="https://unpkg.com/jszip/dist/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/docx-preview-lib@0.1.14-fix-3/dist/docx-preview.min.js"></script>
-    <script type="text/javascript" src="Scripts/docviewer.js"></script>
+    <script type="text/javascript" src="/Scripts/docviewer.js"></script>
 
     <style type="text/css">
         *, ::after, ::before {
@@ -491,6 +491,11 @@
 <script type="text/javascript">
     var calcTotalTimeout;
 
+    function close() {
+        $("#viewModal").modal("hide");
+        travelExpensePopup1.Show();
+    }
+
     function calcTotal1(s, e) {
         clearTimeout(calcTotalTimeout);
 
@@ -512,10 +517,11 @@
 
     function onCustomButtonClick(s, e) {
         if (e.buttonID == 'btnView') {
+            LoadingPanel.Show();
             var fileId = s.GetRowKey(e.visibleIndex);
             var appId = "1032";
             ViewDocument(fileId, appId);
-            LoadingPanel.Show();
+            travelExpensePopup1.Hide();
         }
     }
 
@@ -569,7 +575,7 @@
 </script>
 <body>
     <%-- Start of DocumentViewer Modal --%>
-    <div class="modal fade" id="viewModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="viewModal" style="z-index: 1090" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-fullscreen modal-dialog-scrollable" id="modalDialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -582,7 +588,7 @@
                 <div class="modal-body container-fluid mx-auto text-center bg-secondary modal-fullscreen" id="pdf_container">
                 </div>
                 <div class="modal-footer" id="wmodalFooter">
-                    <button type="button" id="modalClose" class="btn btn-light btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="modalClose" class="btn btn-light btn-outline-secondary btn-sm" <%--data-bs-dismiss="modal"--%> onclick="close()">Close</button>
                 </div>
             </div>
         </div>

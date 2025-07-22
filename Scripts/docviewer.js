@@ -6,6 +6,7 @@ var resolution = 1; //Set Resolution to Adjust PDF clarity.
 
 function ViewDocument(fileId, appId) {
     LoadingPanel.Hide();
+
     $.ajax({
         type: "POST",
         url: "DocumentViewer.aspx/AJAXGetDocument",
