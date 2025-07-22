@@ -19,7 +19,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js"></script>   
     <script src="https://unpkg.com/jszip/dist/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/docx-preview-lib@0.1.14-fix-3/dist/docx-preview.min.js"></script>
-    <script type="text/javascript" src="/Scripts/docviewer.js"></script>
+    <script type="text/javascript" src="/Scripts/documentviewer.js"></script>
 
     <style type="text/css">
         *, ::after, ::before {
@@ -486,15 +486,18 @@
             padding-left: 8px;
             padding-right: 8px;
         }
+
+        .modal-fullscreen {
+            width: 100vw;
+            max-width: none;
+            max-height: none;
+            height: 100vh;
+            margin: 0
+        }
     </style>
 </head>
 <script type="text/javascript">
     var calcTotalTimeout;
-
-    function close() {
-        $("#viewModal").modal("hide");
-        travelExpensePopup1.Show();
-    }
 
     function calcTotal1(s, e) {
         clearTimeout(calcTotalTimeout);
@@ -517,11 +520,11 @@
 
     function onCustomButtonClick(s, e) {
         if (e.buttonID == 'btnView') {
-            LoadingPanel.Show();
             var fileId = s.GetRowKey(e.visibleIndex);
             var appId = "1032";
-            ViewDocument(fileId, appId);
             travelExpensePopup1.Hide();
+            LoadingPanel.Show();
+            ViewDocument(fileId, appId);
         }
     }
 
@@ -575,7 +578,7 @@
 </script>
 <body>
     <%-- Start of DocumentViewer Modal --%>
-    <div class="modal fade" id="viewModal" style="z-index: 1090" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="viewModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-fullscreen modal-dialog-scrollable" id="modalDialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -588,8 +591,14 @@
                 <div class="modal-body container-fluid mx-auto text-center bg-secondary modal-fullscreen" id="pdf_container">
                 </div>
                 <div class="modal-footer" id="wmodalFooter">
-                    <button type="button" id="modalClose" class="btn btn-light btn-outline-secondary btn-sm" <%--data-bs-dismiss="modal"--%> onclick="close()">Close</button>
+                    <button type="button" id="modalClose" class="btn btn-light btn-outline-secondary btn-sm">Close</button>
                 </div>
+                <script>
+                    $("#modalClose").click(function () {
+                        $("#viewModal").modal("hide");
+                        travelExpensePopup1.Show();
+                    });
+                </script>
             </div>
         </div>
     </div>
@@ -598,7 +607,7 @@
     <form id="form1" runat="server">
         <div>
 
-        <dx:ASPxPopupControl ID="travelExpensePopup1" runat="server" FooterText="" HeaderText="Edit Expense Item" ClientInstanceName="travelExpensePopup1" Modal="True" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" CloseAction="None" CssClass="rounded" ScrollBars="Both" Maximized="True" ShowCloseButton="False" PopupAnimationType="Fade" ShowOnPageLoad="True">
+        <dx:ASPxPopupControl ID="travelExpensePopup1" runat="server" FooterText="" HeaderText="Travel Expense Item" ClientInstanceName="travelExpensePopup1" Modal="True" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" CloseAction="None" CssClass="rounded" ScrollBars="Both" Maximized="True" ShowCloseButton="False" PopupAnimationType="Fade" ShowOnPageLoad="True">
             <ContentCollection>
                 <dx:PopupControlContentControl runat="server">
                     <%--<div id="expDiv" style="height: 500px; width: 1200px; overflow: scroll;">--%>
@@ -678,6 +687,8 @@
                                                                     </ErrorImage>
                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
+                                                                <DisabledStyle ForeColor="Black">
+                                                                </DisabledStyle>
                                                             </dx:ASPxDateEdit>
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
