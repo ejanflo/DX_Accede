@@ -164,7 +164,7 @@ namespace DX_WebTemplate
                         var purpose = travel.Purpose.ToUpper();
                         var chargedto = "";
                         var cComp = (context.CompanyMasters.Where(x => x.WASSId == travel.ChargedToComp).Select(x => x.CompanyShortName).FirstOrDefault() ?? string.Empty).ToUpper();
-                        var cDept = (context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == travel.ChargedToDept).Select(x => x.DepCode).FirstOrDefault() ?? string.Empty).ToUpper();
+                        var cDept = (context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == travel.ChargedToDept).Select(x => x.DepDesc).FirstOrDefault() ?? string.Empty).ToUpper();
 
                         if (!string.IsNullOrEmpty(cComp) && !string.IsNullOrEmpty(cDept))
                             chargedto = cComp + " - " + cDept;
