@@ -172,7 +172,8 @@ namespace DX_WebTemplate
         {
             if (e.ButtonType == ColumnCommandButtonType.Delete || e.ButtonType == ColumnCommandButtonType.Edit)
             {
-                if (Convert.ToString(Session["doc_stat"]) == "Saved" || Convert.ToString(Session["doc_stat"]) == null || Convert.ToString(Session["doc_stat"]) == "Pending at Finance" || Convert.ToString(Session["doc_stat"]) == string.Empty)
+                var doc_stat = _DataContext.ITP_S_Status.Where(x => x.STS_Id == Convert.ToInt32(Session["doc_stat"])).Select(x => x.STS_Description).FirstOrDefault();
+                if (doc_stat == "Saved" || doc_stat == "Pending at Finance" || string.IsNullOrEmpty(doc_stat))
                 {
                     e.Visible = true;
                 }
