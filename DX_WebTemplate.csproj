@@ -267,7 +267,7 @@
     <Content Include="RFPViewPage.aspx" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\docviewer2.js" />
-    <Content Include="Scripts\documentviewer.js" />
+    <Content Include="Scripts\docviewer.js" />
     <Content Include="Scripts\jquery.min.js" />
     <Content Include="Scripts\popper.min.js" />
     <Content Include="Scripts\sweetalert2.min.js" />
