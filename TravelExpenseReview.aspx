@@ -216,7 +216,11 @@
                     //loadPanel.Hide();
                     //travelExpensePopup.Show();
 
-                    window.open("TravelExpenseAddDetails.aspx", "_self");
+                    if (response.d.status == "Pending at Finance") {
+                        window.open("TravelExpenseAddDetails.aspx?action=edit", "_self");
+                    } else {
+                        window.open("TravelExpenseAddDetails.aspx?action=view", "_self");
+                    }
                 },
                 error: function (xhr, status, error) {
                     console.log("Error:", error);
@@ -2993,7 +2997,7 @@ onTravelClick();
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxButton ID="disapprovePopBtn" runat="server" Text="Disapprove" BackColor="#CC2A17" ClientInstanceName="disapprovePopBtn" AutoPostBack="False" UseSubmitBehavior="False">
                                                     <ClientSideEvents Click="function(s, e) {
-               if(ASPxClientEdit.ValidateGroup('retValid')){
+               if(ASPxClientEdit.ValidateGroup('dapprValid')){
 	            ReturnDisapproveDoc('disapprove');
                }
 }" />

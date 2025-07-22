@@ -33,6 +33,29 @@ namespace DX_WebTemplate
                     {
                         travelDateCalendar1.Date = Convert.ToDateTime(expDetails.TravelExpenseDetail_Date);
                         totalExpTB1.Text = Convert.ToString(expDetails.Total_Expenses);
+
+                        var action = Request.QueryString["action"];
+
+                        if (action == "edit")
+                        {
+                            viewBtn2.Visible = true;
+                            popupSubmitBtn1.Visible = true;
+                            travelDateCalendar1.Enabled = true;
+                            ASPxGridView23.Enabled = true;
+                            TraUploadController1.Visible = true;
+                            TraDocuGrid.Enabled = true;
+                            TraDocuGrid.Columns[0].Visible = true;
+                        }
+                        else if(action == "view")
+                        {
+                            viewBtn2.Visible = false;
+                            popupSubmitBtn1.Visible = false;
+                            travelDateCalendar1.Enabled = false;
+                            ASPxGridView23.Enabled = false;
+                            TraUploadController1.Visible = false;
+                            TraDocuGrid.Enabled = false;
+                            TraDocuGrid.Columns[0].Visible = false;
+                        }
                     }
                     else
                         Response.Redirect("~/Logon.aspx");

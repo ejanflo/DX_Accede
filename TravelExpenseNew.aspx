@@ -485,7 +485,7 @@
                     //ASPxGridView23.Refresh();
                     //TraDocuGrid1.Refresh();
 
-                    window.open("TravelExpenseAddDetails.aspx", "_self");
+                    window.open("TravelExpenseAddDetails.aspx?action=edit", "_self");
                 },
                 error: function (xhr, status, error) {
                     console.log("Error:", error);

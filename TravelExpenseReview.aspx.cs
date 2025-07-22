@@ -1667,7 +1667,11 @@ namespace DX_WebTemplate
 
             if (exp_details != null)
             {
-                exp_det_class.travelDate = Convert.ToDateTime(exp_details.TravelExpenseDetail_Date).ToString("MM/dd/yyyy hh:mm:ss");
+                exp_det_class.travelDate = Convert.ToDateTime(exp_details.TravelExpenseDetail_Date).ToString("MM/dd/yyyy hh:mm:ss"); 
+                
+                var doc_stat = _DataContext.ITP_S_Status.Where(x => x.STS_Id == Convert.ToInt32(Session["doc_stat"])).Select(x => x.STS_Description).FirstOrDefault();
+
+                exp_det_class.status = doc_stat;
                 if (exp_details.Total_Expenses != null)
                 {
                     exp_det_class.totalExp = exp_details.Total_Expenses.ToString();
@@ -1682,7 +1686,7 @@ namespace DX_WebTemplate
         public class ExpDetails
         {
             public string travelDate { get; set; }
-            public string locParticulars { get; set; }
+            public string status { get; set; }
             public string totalExp { get; set; }
         }
 
