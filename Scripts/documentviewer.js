@@ -16,6 +16,7 @@ function ViewDocument(fileId, appId) {
         }),
         success: function (response) {
             LoadingPanel.Hide();
+
             $("#modalDownload").show();
             if (response.d.ContentType.toLowerCase() === "pdf") {
                 $("#vmodalTit").html("<i class='bi bi-file-earmark-pdf text-danger' style='margin-right: 0.5rem;'></i><strong id='modalTitle'>Preview File - " + response.d.FileName + "</strong>");
