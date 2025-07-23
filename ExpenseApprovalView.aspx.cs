@@ -19,13 +19,12 @@ namespace DX_WebTemplate
         decimal dueComp = new decimal(0.00);
         protected void Page_Load(object sender, EventArgs e)
         {
-            
-            if (AnfloSession.Current.ValidCookieUser())
+            try
             {
-                AnfloSession.Current.CreateSession(HttpContext.Current.User.ToString());
-
-                try
+                if (AnfloSession.Current.ValidCookieUser())
                 {
+                    AnfloSession.Current.CreateSession(HttpContext.Current.User.ToString());
+
 
                     if (!IsPostBack)
                     {
@@ -50,7 +49,7 @@ namespace DX_WebTemplate
                             //End ------------------ Page Security
 
                             int actID = Convert.ToInt32(Decrypt(encryptedID));
-                            
+
                             var actDetails = _DataContext.ITP_T_WorkflowActivities
                                 .Where(x => x.WFA_Id == Convert.ToInt32(actID))
                                 .FirstOrDefault();
@@ -94,8 +93,8 @@ namespace DX_WebTemplate
                             var expType = _DataContext.ACCEDE_S_ExpenseTypes
                                 .Where(x => x.ExpenseType_ID == Convert.ToInt32(exp.ExpenseType_ID))
                                 .FirstOrDefault();
-                            
-                            if(FinApproverVerify != null && actDetails.WF_Id.ToString() == exp.FAPWF_Id.ToString())
+
+                            if (FinApproverVerify != null && actDetails.WF_Id.ToString() == exp.FAPWF_Id.ToString())
                             {
                                 //lbl_CTcomp.ClientVisible = false;
                                 lbl_CTcomp.ClientVisible = true;
@@ -329,20 +328,21 @@ namespace DX_WebTemplate
                             Response.Redirect("~/AllAccedeApprovalPage.aspx");
                         }
                     }
-                    
+
                 }
-                catch (Exception ex)
+                else
                 {
-                    //Session["MyRequestPath"] = Request.Url.AbsoluteUri;
-                    Response.Redirect("~/AllAccedeApprovalPage.aspx");
-                    //string message = ex.Message.Replace("'", "\\'").Replace(Environment.NewLine, " ");
-                    //ClientScript.RegisterStartupScript(this.GetType(), "errorMessage", $"alert('{message}');", true);
+                    Response.Redirect("~/Logon.aspx");
                 }
-                
+
             }
-            else
+            catch (Exception)
             {
-                Response.Redirect("~/Logon.aspx");
+                if (!IsPostBack)
+                {
+                    Response.Redirect("~/Logon.aspx");
+                }
+                //Response.Redirect("~/AllAccedeApprovalPage.aspx");
             }
             
             
@@ -1474,7 +1474,7 @@ namespace DX_WebTemplate
 
         protected void ExpGrid_CustomButtonInitialize(object sender, ASPxGridViewCustomButtonEventArgs e)
         {
-            if (e.VisibleIndex >= 0 && e.ButtonID == "btnEdit") // Ensure it's a data row and the button is the desired one
+            if (e.VisibleIndex > 0 && e.ButtonID == "btnEdit") // Ensure it's a data row and the button is the desired one
             {
                 var FinApproverVerify = _DataContext.vw_ACCEDE_FinApproverVerifies
                     .Where(x => x.UserId == Session["userID"].ToString())
