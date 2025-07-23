@@ -13,12 +13,14 @@
     <link href="styles/bootstrap.min.css" rel="stylesheet" /> 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf_viewer.min.css" rel="stylesheet" type="text/css" />
+
     <script type="text/javascript" src="/Scripts/jquery.min.js"></script>
     <script type="text/javascript" src="/Scripts/popper.min.js"></script>
     <script type="text/javascript" src="/Scripts/bootstrap.min.js"></script>    
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js"></script>   
     <script src="https://unpkg.com/jszip/dist/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/docx-preview-lib@0.1.14-fix-3/dist/docx-preview.min.js"></script>
+    <script type="text/javascript" src="/Scripts/docuviewer.js"></script>
 
     <style type="text/css">
         *, ::after, ::before {
@@ -602,8 +604,6 @@
         </div>
     </div>
     <%-- End of DocumentViewer Modal --%>
-
-    <script type="text/javascript" src="/Scripts/docuviewer.js"></script>
 
     <form id="form1" runat="server">
         <div>
