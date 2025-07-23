@@ -40,12 +40,24 @@ namespace DX_WebTemplate
 
                         if (action == "edit")
                         {
-                            viewBtn2.Visible = true;
-                            popupSubmitBtn1.Visible = true;
-                            travelDateCalendar1.Enabled = true;
-                            ASPxGridView23.SettingsEditing.Mode = GridViewEditingMode.Batch;
-                            ASPxGridView23.Columns[0].Visible = true;
-                            TraUploadController1.Visible = true;
+                            if (doc_stat == "Saved" || doc_stat == "Pending at Finance" || string.IsNullOrEmpty(doc_stat))
+                            {
+                                travelDateCalendar1.Enabled = true;
+                                ASPxGridView23.Columns[0].Visible = true;
+                                TraUploadController1.Visible = true;
+                                viewBtn2.Visible = true;
+                                popupSubmitBtn1.Visible = true;
+                                ASPxGridView23.SettingsEditing.Mode = GridViewEditingMode.Batch;
+                            }
+                            else
+                            {
+                                viewBtn2.Visible = false;
+                                popupSubmitBtn1.Visible = false;
+                                travelDateCalendar1.Enabled = false;
+                                ASPxGridView23.SettingsEditing.Mode = GridViewEditingMode.Inline;
+                                ASPxGridView23.Columns[0].Visible = false;
+                                TraUploadController1.Visible = false;
+                            }
                         }
                         else if(action == "view")
                         {
@@ -188,7 +200,7 @@ namespace DX_WebTemplate
 
         protected void ASPxGridView23_CommandButtonInitialize(object sender, ASPxGridViewCommandButtonEventArgs e)
         {
-            if (e.ButtonType == ColumnCommandButtonType.Delete || e.ButtonType == ColumnCommandButtonType.Edit)
+            if (e.ButtonType == ColumnCommandButtonType.Delete || e.ButtonType == ColumnCommandButtonType.Edit || e.ButtonType == ColumnCommandButtonType.New)
             {
                 var doc_stat = _DataContext.ITP_S_Status.Where(x => x.STS_Id == Convert.ToInt32(Session["doc_stat"])).Select(x => x.STS_Description).FirstOrDefault();
                 if (doc_stat == "Saved" || doc_stat == "Pending at Finance" || string.IsNullOrEmpty(doc_stat))
