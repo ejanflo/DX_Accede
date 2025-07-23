@@ -1747,6 +1747,8 @@ namespace DX_WebTemplate
             SqlCAWFActivity.SelectParameters["Document_Id"].DefaultValue = e.Parameters.ToString();
             SqlCAWFActivity.DataBind();
 
+            CAWFActivityGrid.DataSourceID = null;
+            CAWFActivityGrid.DataSource = SqlCAWFActivity;
             CAWFActivityGrid.DataBind();
         }
 
@@ -1755,6 +1757,8 @@ namespace DX_WebTemplate
             SqlCAFileAttach.SelectParameters["Doc_ID"].DefaultValue = e.Parameters.ToString();
             SqlCAFileAttach.DataBind();
 
+            CADocuGrid.DataSourceID = null;
+            CADocuGrid.DataSource = SqlCAFileAttach;
             CADocuGrid.DataBind();
         }
     }
