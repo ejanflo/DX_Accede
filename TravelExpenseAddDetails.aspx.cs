@@ -34,9 +34,11 @@ namespace DX_WebTemplate
                         travelDateCalendar1.Date = Convert.ToDateTime(expDetails.TravelExpenseDetail_Date);
                         totalExpTB1.Text = Convert.ToString(expDetails.Total_Expenses);
 
+                        var doc_stat = _DataContext.ITP_S_Status.Where(x => x.STS_Id == Convert.ToInt32(Session["doc_stat"])).Select(x => x.STS_Description).FirstOrDefault();
+
                         var action = Request.QueryString["action"];
 
-                        if (action == "edit")
+                        if (action == "edit" && (doc_stat == "Saved" || doc_stat == "Pending at Finance" || string.IsNullOrEmpty(doc_stat)))
                         {
                             viewBtn2.Visible = true;
                             popupSubmitBtn1.Visible = true;
