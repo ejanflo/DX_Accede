@@ -38,7 +38,7 @@ namespace DX_WebTemplate
 
                         var action = Request.QueryString["action"];
 
-                        if (action == "edit" && (doc_stat == "Saved" || doc_stat == "Pending at Finance" || string.IsNullOrEmpty(doc_stat)))
+                        if (action == "edit")
                         {
                             viewBtn2.Visible = true;
                             popupSubmitBtn1.Visible = true;
@@ -171,6 +171,22 @@ namespace DX_WebTemplate
         }
 
         protected void TraDocuGrid_CommandButtonInitialize(object sender, ASPxGridViewCommandButtonEventArgs e)
+        {
+            if (e.ButtonType == ColumnCommandButtonType.Delete || e.ButtonType == ColumnCommandButtonType.Edit)
+            {
+                var doc_stat = _DataContext.ITP_S_Status.Where(x => x.STS_Id == Convert.ToInt32(Session["doc_stat"])).Select(x => x.STS_Description).FirstOrDefault();
+                if (doc_stat == "Saved" || doc_stat == "Pending at Finance" || string.IsNullOrEmpty(doc_stat))
+                {
+                    e.Visible = true;
+                }
+                else
+                {
+                    e.Visible = false;
+                }
+            }
+        }
+
+        protected void ASPxGridView23_CommandButtonInitialize(object sender, ASPxGridViewCommandButtonEventArgs e)
         {
             if (e.ButtonType == ColumnCommandButtonType.Delete || e.ButtonType == ColumnCommandButtonType.Edit)
             {

@@ -707,7 +707,7 @@
                                                         <dx:LayoutItem Caption="" ColSpan="1" VerticalAlign="Middle" Width="80%">
                                                             <LayoutItemNestedControlCollection>
                                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                                    <dx:ASPxGridView ID="ASPxGridView23" runat="server" AutoGenerateColumns="False" ClientInstanceName="ASPxGridView23" EnableTheming="True" Font-Size="Small" KeyFieldName="TravelExpenseDetailMap_ID" Theme="MaterialCompact" Width="100%" OnRowDeleting="ASPxGridView23_RowDeleting" OnRowInserting="ASPxGridView23_RowInserting" OnRowUpdating="ASPxGridView23_RowUpdating" DataSourceID="SqlExpenseDetails">
+                                                                    <dx:ASPxGridView ID="ASPxGridView23" runat="server" AutoGenerateColumns="False" ClientInstanceName="ASPxGridView23" EnableTheming="True" Font-Size="Small" KeyFieldName="TravelExpenseDetailMap_ID" Theme="MaterialCompact" Width="100%" OnRowDeleting="ASPxGridView23_RowDeleting" OnRowInserting="ASPxGridView23_RowInserting" OnRowUpdating="ASPxGridView23_RowUpdating" DataSourceID="SqlExpenseDetails" OnCommandButtonInitialize="ASPxGridView23_CommandButtonInitialize">
                                                                         <ClientSideEvents BatchEditRowDeleting="calcTotal1" BatchEditRowRecovering="calcTotal1" />
                                                                         <SettingsAdaptivity AdaptivityMode="HideDataCells">
                                                                         </SettingsAdaptivity>
