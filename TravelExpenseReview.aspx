@@ -404,8 +404,12 @@
                                 <dx:LayoutItem Caption="" ColSpan="1" Name="saveItem">
                                     <LayoutItemNestedControlCollection>
                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                            <dx:ASPxButton ID="saveBtn" runat="server" AutoPostBack="False" BackColor="#006DD6" ClientInstanceName="saveBtn" Font-Bold="True" Font-Size="Small" Text="Save" UseSubmitBehavior="False" ValidationGroup="saveSapDoc">
-                                                <ClientSideEvents Click="saveSAPDoc" />
+                                            <dx:ASPxButton ID="saveBtn" runat="server" AutoPostBack="False" BackColor="#006DD6" ClientInstanceName="saveBtn" Font-Bold="True" Font-Size="Small" Text="Save" UseSubmitBehavior="False" ValidationGroup="sapdocValid">
+                                                <ClientSideEvents Click="function(s, e) {
+                if(ASPxClientEdit.ValidateGroup('sapdocValid')){
+                        saveSAPDoc();
+               }
+}" />
                                                 <Border BorderColor="#006DD6" />
                                             </dx:ASPxButton>
                                         </dx:LayoutItemNestedControlContainer>
@@ -871,7 +875,7 @@
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxTextBox ID="sapdocTB" runat="server" ClientInstanceName="sapdocTB" Font-Bold="True" Width="100%">
-                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="saveSapDoc">
+                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="sapdocValid">
                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
                                                                 <DisabledStyle BackColor="#F7FDF7" ForeColor="#333333">

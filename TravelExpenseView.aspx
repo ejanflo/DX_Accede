@@ -146,12 +146,18 @@
                     expDetailID: expDetailID
                 }),
                 success: function (response) {
-                    ASPxGridView22.PerformCallback("edit");
+                    /*ASPxGridView22.PerformCallback("edit");*/
                     totalExpTB.SetValue(response.d.totalExp);
                     travelDateCalendar.SetDate(new Date(response.d.travelDate));
-                    TraDocuGrid.Refresh();
-                    loadPanel.Hide();
-                    travelExpensePopup.Show();
+                    //TraDocuGrid.Refresh();
+                    //loadPanel.Hide();
+                    //travelExpensePopup.Show();
+
+                    if (response.d.status == "Pending at Finance") {
+                        window.open("TravelExpenseAddDetails.aspx?action=edit", "_self");
+                    } else {
+                        window.open("TravelExpenseAddDetails.aspx?action=view", "_self");
+                    }
                 },
                 error: function (xhr, status, error) {
                     console.log("Error:", error);
