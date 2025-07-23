@@ -1335,8 +1335,8 @@
                                                                                                                             <PropertiesComboBox DataSourceID="SqlStatus" TextField="STS_Description" ValueField="STS_Id">
                                                                                                                             </PropertiesComboBox>
                                                                                                                         </dx:GridViewDataComboBoxColumn>
-                                                                                                                        <dx:GridViewDataComboBoxColumn Caption="Approver" FieldName="OrgRole_Id" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                                                                                            <PropertiesComboBox DataSourceID="SqlUserOrgRole" TextField="FullName" ValueField="OrgRole_Id">
+                                                                                                                        <dx:GridViewDataComboBoxColumn Caption="Approver" FieldName="ActedBy_User_Id" ShowInCustomizationForm="True" VisibleIndex="1">
+                                                                                                                            <PropertiesComboBox DataSourceID="SqlEmpName" TextField="FullName" ValueField="OrgRole_Id">
                                                                                                                             </PropertiesComboBox>
                                                                                                                             <CellStyle Font-Bold="False">
                                                                                                                             </CellStyle>
