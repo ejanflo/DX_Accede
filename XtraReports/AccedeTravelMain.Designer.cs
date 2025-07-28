@@ -187,10 +187,14 @@
             this.xrTableCell30 = new DevExpress.XtraReports.UI.XRTableCell();
             this.xrTable15 = new DevExpress.XtraReports.UI.XRTable();
             this.ReportFooter = new DevExpress.XtraReports.UI.ReportFooterBand();
+            this.xrSubreport3 = new DevExpress.XtraReports.UI.XRSubreport();
             this.id = new DevExpress.XtraReports.Parameters.Parameter();
+            this.xrSubreport1 = new DevExpress.XtraReports.UI.XRSubreport();
             this.xrTable21 = new DevExpress.XtraReports.UI.XRTable();
             this.xrTableRow21 = new DevExpress.XtraReports.UI.XRTableRow();
             this.xrTableCell24 = new DevExpress.XtraReports.UI.XRTableCell();
+            this.xrLabel68 = new DevExpress.XtraReports.UI.XRLabel();
+            this.xrLine3 = new DevExpress.XtraReports.UI.XRLine();
             this.xrLabel73 = new DevExpress.XtraReports.UI.XRLabel();
             this.xrLabel74 = new DevExpress.XtraReports.UI.XRLabel();
             this.xrLabel55 = new DevExpress.XtraReports.UI.XRLabel();
@@ -200,7 +204,6 @@
             this.xrLabel42 = new DevExpress.XtraReports.UI.XRLabel();
             this.xrLabel38 = new DevExpress.XtraReports.UI.XRLabel();
             this.xrLabel37 = new DevExpress.XtraReports.UI.XRLabel();
-            this.xrLabel68 = new DevExpress.XtraReports.UI.XRLabel();
             this.xrLabel22 = new DevExpress.XtraReports.UI.XRLabel();
             this.xrLabel40 = new DevExpress.XtraReports.UI.XRLabel();
             this.xrLabel36 = new DevExpress.XtraReports.UI.XRLabel();
@@ -247,9 +250,6 @@
             this.ford = new DevExpress.XtraReports.Parameters.Parameter();
             this.finapprname1 = new DevExpress.XtraReports.Parameters.Parameter();
             this.finapprdate1 = new DevExpress.XtraReports.Parameters.Parameter();
-            this.xrLine3 = new DevExpress.XtraReports.UI.XRLine();
-            this.xrSubreport3 = new DevExpress.XtraReports.UI.XRSubreport();
-            this.xrSubreport1 = new DevExpress.XtraReports.UI.XRSubreport();
             ((System.ComponentModel.ISupportInitialize)(this.xrTable3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.xrTable2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.xrTable1)).BeginInit();
@@ -1848,6 +1848,14 @@
             this.ReportFooter.Name = "ReportFooter";
             this.ReportFooter.StylePriority.UseFont = false;
             // 
+            // xrSubreport3
+            // 
+            this.xrSubreport3.LocationFloat = new DevExpress.Utils.PointFloat(0F, 23.2076F);
+            this.xrSubreport3.Name = "xrSubreport3";
+            this.xrSubreport3.ParameterBindings.Add(new DevExpress.XtraReports.UI.ParameterBinding("id", this.id));
+            this.xrSubreport3.ReportSource = new DX_WebTemplate.XtraReports.AccedeExpenseCA();
+            this.xrSubreport3.SizeF = new System.Drawing.SizeF(478.6515F, 107.2915F);
+            // 
             // id
             // 
             this.id.Description = "id";
@@ -1855,6 +1863,14 @@
             this.id.Type = typeof(int);
             this.id.ValueInfo = "0";
             this.id.Visible = false;
+            // 
+            // xrSubreport1
+            // 
+            this.xrSubreport1.LocationFloat = new DevExpress.Utils.PointFloat(500.3399F, 62.87491F);
+            this.xrSubreport1.Name = "xrSubreport1";
+            this.xrSubreport1.ParameterBindings.Add(new DevExpress.XtraReports.UI.ParameterBinding("id", this.id));
+            this.xrSubreport1.ReportSource = new DX_WebTemplate.XtraReports.AccedeTravelForAcct();
+            this.xrSubreport1.SizeF = new System.Drawing.SizeF(285.0321F, 65.32935F);
             // 
             // xrTable21
             // 
@@ -1922,6 +1938,35 @@
             this.xrTableCell24.StylePriority.UseTextAlignment = false;
             this.xrTableCell24.TextAlignment = DevExpress.XtraPrinting.TextAlignment.TopJustify;
             this.xrTableCell24.Weight = 3D;
+            // 
+            // xrLabel68
+            // 
+            this.xrLabel68.Borders = DevExpress.XtraPrinting.BorderSide.None;
+            this.xrLabel68.Font = new DevExpress.Drawing.DXFont("Arial", 5.5F, DevExpress.Drawing.DXFontStyle.Italic);
+            this.xrLabel68.LocationFloat = new DevExpress.Utils.PointFloat(10F, 213F);
+            this.xrLabel68.Multiline = true;
+            this.xrLabel68.Name = "xrLabel68";
+            this.xrLabel68.Padding = new DevExpress.XtraPrinting.PaddingInfo(1, 1, 1, 1, 100F);
+            this.xrLabel68.SizeF = new System.Drawing.SizeF(269.2588F, 15.80939F);
+            this.xrLabel68.StylePriority.UseBorders = false;
+            this.xrLabel68.StylePriority.UseFont = false;
+            this.xrLabel68.StylePriority.UsePadding = false;
+            this.xrLabel68.StylePriority.UseTextAlignment = false;
+            this.xrLabel68.Text = "This document is electronically approved.  Physical signature is not required.";
+            this.xrLabel68.TextAlignment = DevExpress.XtraPrinting.TextAlignment.TopJustify;
+            // 
+            // xrLine3
+            // 
+            this.xrLine3.BorderDashStyle = DevExpress.XtraPrinting.BorderDashStyle.Solid;
+            this.xrLine3.Borders = DevExpress.XtraPrinting.BorderSide.None;
+            this.xrLine3.BorderWidth = 2F;
+            this.xrLine3.LineStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+            this.xrLine3.LocationFloat = new DevExpress.Utils.PointFloat(23.40742F, 79.91466F);
+            this.xrLine3.Name = "xrLine3";
+            this.xrLine3.SizeF = new System.Drawing.SizeF(1021.093F, 5.555557F);
+            this.xrLine3.StylePriority.UseBorderDashStyle = false;
+            this.xrLine3.StylePriority.UseBorders = false;
+            this.xrLine3.StylePriority.UseBorderWidth = false;
             // 
             // xrLabel73
             // 
@@ -2073,22 +2118,6 @@
             this.xrLabel37.StylePriority.UseFont = false;
             this.xrLabel37.StylePriority.UseTextAlignment = false;
             this.xrLabel37.TextAlignment = DevExpress.XtraPrinting.TextAlignment.BottomCenter;
-            // 
-            // xrLabel68
-            // 
-            this.xrLabel68.Borders = DevExpress.XtraPrinting.BorderSide.None;
-            this.xrLabel68.Font = new DevExpress.Drawing.DXFont("Arial", 5.5F, DevExpress.Drawing.DXFontStyle.Italic);
-            this.xrLabel68.LocationFloat = new DevExpress.Utils.PointFloat(10F, 213F);
-            this.xrLabel68.Multiline = true;
-            this.xrLabel68.Name = "xrLabel68";
-            this.xrLabel68.Padding = new DevExpress.XtraPrinting.PaddingInfo(1, 1, 1, 1, 100F);
-            this.xrLabel68.SizeF = new System.Drawing.SizeF(269.2588F, 15.80939F);
-            this.xrLabel68.StylePriority.UseBorders = false;
-            this.xrLabel68.StylePriority.UseFont = false;
-            this.xrLabel68.StylePriority.UsePadding = false;
-            this.xrLabel68.StylePriority.UseTextAlignment = false;
-            this.xrLabel68.Text = "This document is electronically approved.  Physical signature is not required.";
-            this.xrLabel68.TextAlignment = DevExpress.XtraPrinting.TextAlignment.TopJustify;
             // 
             // xrLabel22
             // 
@@ -2580,35 +2609,6 @@
             this.finapprdate1.Type = typeof(System.DateTime);
             this.finapprdate1.ValueInfo = "2025-05-13";
             this.finapprdate1.Visible = false;
-            // 
-            // xrLine3
-            // 
-            this.xrLine3.BorderDashStyle = DevExpress.XtraPrinting.BorderDashStyle.Solid;
-            this.xrLine3.Borders = DevExpress.XtraPrinting.BorderSide.None;
-            this.xrLine3.BorderWidth = 2F;
-            this.xrLine3.LineStyle = System.Drawing.Drawing2D.DashStyle.DashDotDot;
-            this.xrLine3.LocationFloat = new DevExpress.Utils.PointFloat(10.07408F, 79.91469F);
-            this.xrLine3.Name = "xrLine3";
-            this.xrLine3.SizeF = new System.Drawing.SizeF(1050.906F, 5.555557F);
-            this.xrLine3.StylePriority.UseBorderDashStyle = false;
-            this.xrLine3.StylePriority.UseBorders = false;
-            this.xrLine3.StylePriority.UseBorderWidth = false;
-            // 
-            // xrSubreport3
-            // 
-            this.xrSubreport3.LocationFloat = new DevExpress.Utils.PointFloat(0F, 23.2076F);
-            this.xrSubreport3.Name = "xrSubreport3";
-            this.xrSubreport3.ParameterBindings.Add(new DevExpress.XtraReports.UI.ParameterBinding("id", this.id));
-            this.xrSubreport3.ReportSource = new DX_WebTemplate.XtraReports.AccedeExpenseCA();
-            this.xrSubreport3.SizeF = new System.Drawing.SizeF(478.6515F, 107.2915F);
-            // 
-            // xrSubreport1
-            // 
-            this.xrSubreport1.LocationFloat = new DevExpress.Utils.PointFloat(500.3399F, 62.87491F);
-            this.xrSubreport1.Name = "xrSubreport1";
-            this.xrSubreport1.ParameterBindings.Add(new DevExpress.XtraReports.UI.ParameterBinding("id", this.id));
-            this.xrSubreport1.ReportSource = new DX_WebTemplate.XtraReports.AccedeTravelForAcct();
-            this.xrSubreport1.SizeF = new System.Drawing.SizeF(285.0321F, 65.32935F);
             // 
             // AccedeTravelMain
             // 
