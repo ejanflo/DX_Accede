@@ -7,8 +7,6 @@
             gap: 10px; /* Adjust the spacing between the radio buttons */
         }
     </style>
-
-    <script src="Scripts/docviewer.js"></script>
     <script>
         var calcTotalTimeout;
 

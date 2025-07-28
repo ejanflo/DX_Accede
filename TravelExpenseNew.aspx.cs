@@ -150,7 +150,6 @@ namespace DX_WebTemplate
                     var totExpCA = totalexp > totalca ? Convert.ToDecimal(totalexp - totalca) : Convert.ToDecimal(totalca - totalexp);
 
                     //// - - Setting Line Manager Workflow - - ////
-
                     var wfmapping = _DataContext.vw_ACCEDE_I_WFMappings.Where(x => x.UserId == Convert.ToString(mainExp.Employee_Id) && x.Company_Id == Convert.ToInt32(mainExp.Company_Id)).FirstOrDefault();
 
                     if (wfmapping != null)
@@ -159,7 +158,9 @@ namespace DX_WebTemplate
                     }
                     else
                     {
-                        Session["mainwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.IsRA == true && totExpCA >= x.Minimum && totExpCA <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault());
+                        var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(mainExp.Dep_Code)).FirstOrDefault();
+                        Session["mainwfid"] = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == Convert.ToString(mainExp.Employee_Id) && x.CompanyId == Convert.ToInt32(mainExp.Company_Id) && x.DepCode == depcode.DepCode).Select(x => x.WF_Id).FirstOrDefault();
+                        //Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.IsRA == true && totExpCA >= x.Minimum && totExpCA <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault());
                     }
 
 

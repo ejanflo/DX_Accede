@@ -360,9 +360,9 @@
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn FieldName="WF_Id" ShowInCustomizationForm="True" Visible="False" VisibleIndex="13">
+                                                <dx:GridViewDataTextColumn FieldName="WF_Id" ShowInCustomizationForm="True" Visible="False" VisibleIndex="12">
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn FieldName="FAPWF_Id" ShowInCustomizationForm="True" Visible="False" VisibleIndex="14">
+                                                <dx:GridViewDataTextColumn FieldName="FAPWF_Id" ShowInCustomizationForm="True" Visible="False" VisibleIndex="13">
                                                 </dx:GridViewDataTextColumn>
                                                 <dx:GridViewDataComboBoxColumn Caption="Company" FieldName="Company_Id" ShowInCustomizationForm="True" VisibleIndex="3">
                                                     <PropertiesComboBox DataSourceID="sqlCompanyList" TextField="CompanyShortName" ValueField="WASSId">
@@ -380,7 +380,7 @@
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataDateColumn Caption="Date Created" FieldName="Date_Created" ShowInCustomizationForm="True" VisibleIndex="11">
+                                                <dx:GridViewDataDateColumn Caption="Date Created" FieldName="Date_Created" ShowInCustomizationForm="True" VisibleIndex="10">
                                                     <PropertiesDateEdit DisplayFormatString="MMM. dd, yyyy">
                                                     </PropertiesDateEdit>
                                                     <Columns>
@@ -395,11 +395,14 @@
                                                 <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
                                                     <EditFormSettings Visible="False" />
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn Caption="Status" FieldName="STS_Description" ShowInCustomizationForm="True" VisibleIndex="15">
+                                                <dx:GridViewDataTextColumn Caption="Status" FieldName="STS_Description" ShowInCustomizationForm="True" VisibleIndex="14">
                                                     <Columns>
                                                         <dx:GridViewDataTextColumn FieldName="Remarks" ShowInCustomizationForm="True" VisibleIndex="0">
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
+                                                </dx:GridViewDataTextColumn>
+                                                <dx:GridViewDataTextColumn FieldName="Status" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="15">
+                                                    <EditFormSettings Visible="False" />
                                                 </dx:GridViewDataTextColumn>
                                             </Columns>
                                             <Toolbars>

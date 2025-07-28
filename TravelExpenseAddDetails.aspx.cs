@@ -34,7 +34,16 @@ namespace DX_WebTemplate
                         travelDateCalendar1.Date = Convert.ToDateTime(expDetails.TravelExpenseDetail_Date);
                         totalExpTB1.Text = Convert.ToString(expDetails.Total_Expenses);
 
-                        var doc_stat = _DataContext.ITP_S_Status.Where(x => x.STS_Id == Convert.ToInt32(Session["doc_stat"])).Select(x => x.STS_Description).FirstOrDefault();
+                        int docStatId;
+                        string doc_stat = null;
+
+                        if (Session["doc_stat"] != null && int.TryParse(Session["doc_stat"].ToString(), out docStatId))
+                        {
+                            doc_stat = _DataContext.ITP_S_Status
+                                .Where(x => x.STS_Id == docStatId)
+                                .Select(x => x.STS_Description)
+                                .FirstOrDefault();
+                        }
 
                         var action = Request.QueryString["action"];
 
@@ -186,7 +195,17 @@ namespace DX_WebTemplate
         {
             if (e.ButtonType == ColumnCommandButtonType.Delete || e.ButtonType == ColumnCommandButtonType.Edit)
             {
-                var doc_stat = _DataContext.ITP_S_Status.Where(x => x.STS_Id == Convert.ToInt32(Session["doc_stat"])).Select(x => x.STS_Description).FirstOrDefault();
+                int docStatId;
+                string doc_stat = null;
+
+                if (Session["doc_stat"] != null && int.TryParse(Session["doc_stat"].ToString(), out docStatId))
+                {
+                    doc_stat = _DataContext.ITP_S_Status
+                        .Where(x => x.STS_Id == docStatId)
+                        .Select(x => x.STS_Description)
+                        .FirstOrDefault();
+                }
+
                 if (doc_stat == "Saved" || doc_stat == "Pending at Finance" || string.IsNullOrEmpty(doc_stat))
                 {
                     e.Visible = true;
@@ -202,7 +221,17 @@ namespace DX_WebTemplate
         {
             if (e.ButtonType == ColumnCommandButtonType.Delete || e.ButtonType == ColumnCommandButtonType.Edit || e.ButtonType == ColumnCommandButtonType.New)
             {
-                var doc_stat = _DataContext.ITP_S_Status.Where(x => x.STS_Id == Convert.ToInt32(Session["doc_stat"])).Select(x => x.STS_Description).FirstOrDefault();
+                int docStatId;
+                string doc_stat = null;
+
+                if (Session["doc_stat"] != null && int.TryParse(Session["doc_stat"].ToString(), out docStatId))
+                {
+                    doc_stat = _DataContext.ITP_S_Status
+                        .Where(x => x.STS_Id == docStatId)
+                        .Select(x => x.STS_Description)
+                        .FirstOrDefault();
+                }
+
                 if (doc_stat == "Saved" || doc_stat == "Pending at Finance" || string.IsNullOrEmpty(doc_stat))
                 {
                     e.Visible = true;
