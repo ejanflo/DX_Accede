@@ -41,11 +41,17 @@
             locBranch.SetSelectedIndex(-1);
         }
 
-        function onKeyPress(s, e) {
-            var input = s.GetInputElement();  // Get the textbox input element
-            var query = input.value.trim();
-            var suggestionBox = document.getElementById("locationSuggestions");
+        let debounceTimeout = null;
 
+        function onKeyPress(s, e) {
+            const input = s.GetInputElement();
+            const query = input.value.trim();
+            const suggestionBox = document.getElementById("locationSuggestions");
+
+            // Clear previous debounce timer
+            clearTimeout(debounceTimeout);
+
+            // Clear suggestion box if query is too short
             if (query.length < 3) {
                 suggestionBox.innerHTML = "";
                 suggestionBox.style.display = "none";
@@ -53,39 +59,67 @@
                 return;
             }
 
-            fetch(`https://photon.komoot.io/api/?q=${query}`)
-            .then(response => response.json())
-            .then(data => {
-                suggestionBox.innerHTML = "";
+            // Debounce the API call by 300ms
+            debounceTimeout = setTimeout(() => {
+                // Optional: show loading indicator
+                suggestionBox.innerHTML = "<div class='loading'>Loading...</div>";
                 suggestionBox.style.display = "block";
 
-                data.features.forEach(item => {
-                    const name = item.properties.name || '';
-                    const city = item.properties.city ? `, ${item.properties.city}` : '';
-                    const state = item.properties.state ? `, ${item.properties.state}` : '';
-                    const country = item.properties.country ? `, ${item.properties.country}` : '';
+                fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=5`)
+                    .then(response => response.json())
+                    .then(data => {
+                        suggestionBox.innerHTML = "";
+                        suggestionBox.style.display = "block";
 
-                    const div = document.createElement("div");
-                    div.textContent = `${name}${city}${state}${country}`;
-                    div.classList.add("suggestion-item");
+                        const normalizedQuery = query.toLowerCase();
 
-                    // Handle click event to select a location
-                    div.addEventListener("click", function () {
-                        s.SetText(`${name}${city}${state}${country}`);
+                        data.features.forEach(item => {
+                            const name = item.properties.name || '';
+                            const city = item.properties.city || '';
+                            const state = item.properties.state || '';
+                            const country = item.properties.country || '';
 
-                         if (item.properties.countrycode !== "PH")
-                             ForD.SetValue('Foreign');
-                         else
-                             ForD.SetValue('Domestic');
+                            // Always include 'name'
+                            const components = [name];
 
+                            // Avoid duplicates
+                            if (city && !normalizedQuery.includes(city.toLowerCase()) && city.toLowerCase() !== name.toLowerCase()) {
+                                components.push(city);
+                            }
+                            if (state && !normalizedQuery.includes(state.toLowerCase()) && state.toLowerCase() !== name.toLowerCase()) {
+                                components.push(state);
+                            }
+                            if (country && !normalizedQuery.includes(country.toLowerCase()) && country.toLowerCase() !== name.toLowerCase()) {
+                                components.push(country);
+                            }
+
+                            const displayText = components.join(', ');
+
+                            const div = document.createElement("div");
+                            div.textContent = displayText;
+                            div.classList.add("suggestion-item");
+
+                            div.addEventListener("click", function () {
+                                s.SetText(displayText);
+
+                                if (item.properties.countrycode !== "PH")
+                                    ForD.SetValue('Foreign');
+                                else
+                                    ForD.SetValue('Domestic');
+
+                                suggestionBox.innerHTML = "";
+                                suggestionBox.style.display = "none";
+                            });
+
+                            suggestionBox.appendChild(div);
+                        });
+                    })
+                    .catch(error => {
+                        console.error("Error fetching locations:", error);
                         suggestionBox.innerHTML = "";
                         suggestionBox.style.display = "none";
                     });
-
-                    suggestionBox.appendChild(div);
-                });
-            })
-            .catch(error => console.error("Error fetching locations:", error));
+            }, 300); // Adjust delay as needed
         }
 
         // Hide suggestions when clicking outside
