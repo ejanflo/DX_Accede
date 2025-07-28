@@ -159,19 +159,19 @@ namespace DX_WebTemplate
                     else
                     {
                         var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(mainExp.Dep_Code)).FirstOrDefault();
-                        Session["mainwfid"] = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == Convert.ToString(mainExp.Employee_Id) && x.CompanyId == Convert.ToInt32(mainExp.Company_Id) && x.DepCode == depcode.DepCode).Select(x => x.WF_Id).FirstOrDefault();
-                        //Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.IsRA == true && totExpCA >= x.Minimum && totExpCA <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault());
+                        Session["mainwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.IsRA == true && totExpCA >= x.Minimum && totExpCA <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault());
                     }
-
+                    /*_DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == Convert.ToString(mainExp.Employee_Id) && x.CompanyId == Convert.ToInt32(mainExp.Company_Id) && x.DepCode == depcode.DepCode).Select(x => x.WF_Id).FirstOrDefault();*/
+                    //Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.IsRA == true && totExpCA >= x.Minimum && totExpCA <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault());
 
                     //// - - Setting FAP workflow - - ////
                     if (Convert.ToString(Session["ford"]) == "Foreign")
                     {
-                        Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.ChargedToComp && x.Description.IndexOf("EXPFOREIGN", StringComparison.OrdinalIgnoreCase) >= 0 && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
+                        Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.ChargedToComp && x.Description.Contains("EXPFOREIGN") && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
                     }
                     else
                     {
-                        Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.ChargedToComp && x.Description.IndexOf("EXPDOMESTIC", StringComparison.OrdinalIgnoreCase) >= 0 && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
+                        Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.ChargedToComp && x.Description.Contains("EXPDOMESTIC") && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
                     }
 
                     Debug.WriteLine("Main Workflow ID: " + Session["mainwfid"]);

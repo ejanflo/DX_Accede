@@ -1961,9 +1961,9 @@
             this.xrLine3.Borders = DevExpress.XtraPrinting.BorderSide.None;
             this.xrLine3.BorderWidth = 2F;
             this.xrLine3.LineStyle = System.Drawing.Drawing2D.DashStyle.Dash;
-            this.xrLine3.LocationFloat = new DevExpress.Utils.PointFloat(23.40742F, 79.91466F);
+            this.xrLine3.LocationFloat = new DevExpress.Utils.PointFloat(28.40742F, 79.91466F);
             this.xrLine3.Name = "xrLine3";
-            this.xrLine3.SizeF = new System.Drawing.SizeF(1021.093F, 5.555557F);
+            this.xrLine3.SizeF = new System.Drawing.SizeF(1016.093F, 5.555557F);
             this.xrLine3.StylePriority.UseBorderDashStyle = false;
             this.xrLine3.StylePriority.UseBorders = false;
             this.xrLine3.StylePriority.UseBorderWidth = false;
