@@ -1336,7 +1336,7 @@
                                                                                                                             </PropertiesComboBox>
                                                                                                                         </dx:GridViewDataComboBoxColumn>
                                                                                                                         <dx:GridViewDataComboBoxColumn Caption="Approver" FieldName="ActedBy_User_Id" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                                                                                            <PropertiesComboBox DataSourceID="SqlEmpName" TextField="FullName" ValueField="OrgRole_Id">
+                                                                                                                            <PropertiesComboBox DataSourceID="SqlEmpName" TextField="FullName" ValueField="EmpCode">
                                                                                                                             </PropertiesComboBox>
                                                                                                                             <CellStyle Font-Bold="False">
                                                                                                                             </CellStyle>
