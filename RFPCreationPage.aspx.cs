@@ -547,8 +547,8 @@ namespace DX_WebTemplate
                     activity.IsDelete = false;
                     activity.DateCreated = DateTime.Now;
                     activity.Document_Id = RFP_ID;
-                    activity.AppId = ApproverSolo.App_Id;
-                    activity.CompanyId = ApproverSolo.Company_Id;
+                    activity.AppId = app_docType.App_Id;
+                    activity.CompanyId = rfp_main_query.Company_ID;
                     activity.AppDocTypeId = app_docType.DCT_Id;
                 }
                 _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(activity);
