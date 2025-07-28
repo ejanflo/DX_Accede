@@ -476,7 +476,7 @@ namespace DX_WebTemplate
                     {
                         var wf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(comp_id)).Where(x => x.App_Id == 1032)
                             .Where(x => x.With_DivHead == true)
-                            .Where(x => x.Description.Contains("foreign"))
+                            .Where(x => x.Description.Contains("rfpforeign"))
                             .Where(x => x.IsRA == false || x.IsRA == null).FirstOrDefault();
 
                         if (wf != null)
