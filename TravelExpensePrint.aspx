@@ -9,10 +9,10 @@
     <title>ANFLOVERSE - ACCEDE Printing</title>
     <link rel="icon" type="image/x-icon" href="/Content/Images/favicon.ico" />
 </head>
-<body style="overflow-x:auto">
+<body style="overflow-x:hidden">
     <form id="form1" runat="server">
-        <div>
-            <dx:ASPxWebDocumentViewer ID="ASPxWebDocumentViewer1" runat="server" ClientInstanceName="ASPxWebDocumentViewer1" DisableHttpHandlerValidation="False">
+        <div style="height: 100vh;">
+            <dx:ASPxWebDocumentViewer ID="ASPxWebDocumentViewer1" runat="server" ClientInstanceName="ASPxWebDocumentViewer1" DisableHttpHandlerValidation="False" Height="100%">
             </dx:ASPxWebDocumentViewer>
         </div>
     </form>

@@ -307,13 +307,21 @@
                 }),
                 success: function (response) {
                     ApprovePopup.Hide();
-                    if (response.d == "Cashier") {
+                    if (response.d == "Pending at Cashier") {
                         window.open('AllAccedeCashierPage.aspx', '_self');
-                    } else if (response.d == "Audit") {
+                    } else if (response.d == "Pending at Cashier, Disbursed") {
+                        window.open('TravelExpensePrint.aspx', '_blank');
+                        window.open('AllAccedeCashierPage.aspx', '_self');
+                    } else if (response.d == "Pending at Audit") {
                         window.open('AllAccedeAuditPage.aspx', '_self');
-                    } else if (response.d == "P2P") {
+                    } else if (response.d == "Pending at P2P") {
                         window.open('AllAccedeP2PPage.aspx', '_self');
-                    } else if (response.d == "LineFAP") {
+                    } else if (response.d == "Pending at P2P, Disbursed") {
+                        window.open('TravelExpensePrint.aspx', '_blank');
+                        window.open('AllAccedeP2PPage.aspx', '_self');
+                    } else if (response.d == "Pending") {
+                        window.open('AllAccedeApprovalPage.aspx', '_self');
+                    } else if (response.d == "Forwarded") {
                         window.open('AllAccedeApprovalPage.aspx', '_self');
                     }
                 },
@@ -2850,7 +2858,7 @@ onTravelClick();
                                     <dx:LayoutItem Caption="" ColSpan="1">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxButton ID="returnPopBtn" runat="server" Text="Return" BackColor="#E67C0E" ClientInstanceName="returnPopBtn" AutoPostBack="False" UseSubmitBehavior="False">
+                                                <dx:ASPxButton ID="returnPopBtn" runat="server" Text="Return" BackColor="#E67C0E" ClientInstanceName="returnPopBtn" AutoPostBack="False" UseSubmitBehavior="False" ValidationGroup="retValid">
                                                     <ClientSideEvents Click="function(s, e) {
                if(ASPxClientEdit.ValidateGroup('retValid')){
 	          ReturnDisapproveDoc('return');

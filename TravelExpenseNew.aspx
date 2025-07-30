@@ -1750,10 +1750,6 @@
                                                         </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataTextColumn FieldName="WBS" ShowInCustomizationForm="True" VisibleIndex="9">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataComboBoxColumn Caption="Classification" FieldName="Classification_Type_Id" ShowInCustomizationForm="True" VisibleIndex="6">
-                                                            <PropertiesComboBox DataSourceID="SqlExpenseClassification" TextField="ClassificationName" ValueField="ID">
-                                                            </PropertiesComboBox>
-                                                        </dx:GridViewDataComboBoxColumn>
                                                     </Columns>
                                                     <Toolbars>
                                                         <dx:GridViewToolbar>
@@ -3247,9 +3243,10 @@ ORDER BY Sequence">
         </SelectParameters>
     </asp:SqlDataSource>
 
-    <asp:SqlDataSource ID="SqlRFPMainCA" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_RFPMain] WHERE (([User_ID] = @User_ID) AND ([IsExpenseCA] = @IsExpenseCA) AND ([TranType] = @TranType) AND ([Status] = @Status) AND ([Exp_ID] IS NULL) AND ([Payee] = @Payee) AND ([isForeignTravel] = @isForeignTravel))">
+    <asp:SqlDataSource ID="SqlRFPMainCA" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_RFPMain] WHERE (([User_ID] = @User_ID) AND ([isTravel] = @isTravel) AND ([IsExpenseCA] = @IsExpenseCA) AND ([TranType] = @TranType) AND ([Status] = @Status) AND ([Exp_ID] IS NULL) AND ([Payee] = @Payee) AND ([isForeignTravel] = @isForeignTravel))">
         <SelectParameters>
             <asp:SessionParameter Name="User_ID" SessionField="userID" Type="String" />
+            <asp:Parameter DefaultValue="True" Name="isTravel" />
             <asp:Parameter DefaultValue="True" Name="IsExpenseCA" />
             <asp:Parameter DefaultValue="1" Name="TranType" />
             <asp:SessionParameter DefaultValue="" Name="Status" SessionField="statusid" />

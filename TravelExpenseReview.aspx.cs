@@ -6,6 +6,7 @@ using DevExpress.Utils;
 using DevExpress.Web;
 using DevExpress.XtraEditors.Filtering.Templates;
 using DevExpress.XtraPrinting;
+using DevExpress.XtraRichEdit.Layout;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -18,12 +19,14 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.Remoting.Contexts;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Security.Cryptography;
+using System.Security.Policy;
 using System.Web;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using static DevExpress.XtraEditors.Mask.MaskSettings;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using LayoutItem = DevExpress.Web.LayoutItem;
 
 namespace DX_WebTemplate
 {
@@ -1063,7 +1066,7 @@ namespace DX_WebTemplate
                 {
                     status = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Pending at Finance").Select(x => x.STS_Id).FirstOrDefault();
                     var fapWF = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.FAPWF_Id).FirstOrDefault();
-                    var fapWFD = _DataContext.ITP_S_WorkflowDetails.Where(x => x.WF_Id == fapWF && x.Sequence == 1).FirstOrDefault();
+                    var fapWFD = _DataContext.ITP_S_WorkflowDetails.Where(x => x.WF_Id == fapWF).OrderByDescending(x => x.Sequence).FirstOrDefault();
 
                     insertWA(Convert.ToInt32(fapWFD.WF_Id), Convert.ToInt32(fapWFD.WFD_Id), Convert.ToInt32(fapWFD.OrgRole_Id), id, compID, status, rfpid, remarks);
                 }
@@ -1227,9 +1230,8 @@ namespace DX_WebTemplate
         {
             TravelExpenseReview rev = new TravelExpenseReview();
             var result = rev.ApproveDocument(remarks, chargedcomp, chargeddept, arNo, sapDoc);
-            string stat = result ? Convert.ToString(rev.Session["stat_desc"]) : string.Empty; 
 
-            return stat;
+            return result;
         }
 
         public void updateTravelRFP(int docID, int reim_docID, string remarks, int chargedcomp, int chargeddept, string arNo, string sapDoc)
@@ -1313,10 +1315,11 @@ namespace DX_WebTemplate
             }
         }
 
-        public bool ApproveDocument(string remarks, int chargedcomp, int chargeddept, string arNo, string sapDoc)
+        public string ApproveDocument(string remarks, int chargedcomp, int chargeddept, string arNo, string sapDoc)
         {
             try
             {
+                string stat = "";
                 // Travel Main ID
                 int docID = Convert.ToInt32(Session["TravelExp_Id"]);
 
@@ -1380,6 +1383,8 @@ namespace DX_WebTemplate
                             insertWA(fapwf, fapwfd, orID, docID, companyID, fapstatus, reim_docID, remarks);
                         }
                     }
+
+                    stat = "Pending";
                 }
 
                 // Approval logic for FAP Workflow
@@ -1399,12 +1404,13 @@ namespace DX_WebTemplate
                         insertWA(Convert.ToInt32(audwf), Convert.ToInt32(audwfd), Convert.ToInt32(audorID), docID, companyID, audstatus, reim_docID, remarks);
                         SendEmailFromAudit(docID, audstatus, Convert.ToInt32(Session["prep"]), remarks, Convert.ToInt32(Session["userID"]));
                     }
+
+                    stat = "Pending at Finance";
                 }
 
                 // Approval logic for Audit Workflow
                 else if (Convert.ToString(Session["doc_stat2"]) == "Pending at Audit")
                 {
-
                     updateWA(docID, wfID, wfaID, 7, string.Empty, remarks, userID, DateTime.Now, reim_docID);
 
                     bool hasNextSequence = checkNextSequence(docID, companyID, remarks, userID, reim_docID, sapDoc);
@@ -1434,6 +1440,8 @@ namespace DX_WebTemplate
                             SendEmailFromCashP2P(docID, cashstatus, Convert.ToInt32(Session["prep"]), Convert.ToInt32(Session["userID"]), remarks);
                         }
                     }
+
+                    stat = "Pending at Audit";
                 }
 
                 // Approval logic for P2P Workflow
@@ -1462,6 +1470,8 @@ namespace DX_WebTemplate
                             var cashierorID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == cashierwf && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault();
                             var cashstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Cashier" || s.STS_Name == "Pending at Cashier").Select(s => s.STS_Id).FirstOrDefault();
 
+                            stat = "Pending at P2P";
+
                             insertWA(cashierwf, cashierwfd, (int)cashierorID, docID, companyID, cashstatus, reim_docID, remarks);
                             SendEmailFromCashP2P(docID, cashstatus, Convert.ToInt32(Session["prep"]), Convert.ToInt32(Session["userID"]), remarks);
                         }
@@ -1480,6 +1490,8 @@ namespace DX_WebTemplate
                                 r.Status = disburseStat;
                             }
                             _DataContext.SubmitChanges();
+
+                            stat = "Pending at P2P, Disbursed";
 
                             SendEmailComplete(docID, completeStat, Convert.ToInt32(Session["prep"]), remarks, Convert.ToInt32(Session["userID"]));
                         }
@@ -1512,6 +1524,8 @@ namespace DX_WebTemplate
                             var FAPorID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == FAPwflow && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault() ?? 0;
                             var FAPstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Finance").Select(s => s.STS_Id).FirstOrDefault();
 
+                            stat = "Pending at Cashier";
+
                             insertWA((int)FAPwflow, FAPwfd, (int)FAPorID, docID, companyID, FAPstatus, reim_docID, remarks);
                         }
                         else
@@ -1529,6 +1543,10 @@ namespace DX_WebTemplate
                                 r.Status = disburseStat;
                             }
                             _DataContext.SubmitChanges();
+
+                            //Page.ClientScript.RegisterStartupScript(this.GetType(), "myscript", string.Format("<script>window.open('TravelExpensePrint.aspx','_blank')</script>"));
+
+                            stat = "Pending at Cashier, Disbursed";
 
                             SendEmailComplete(docID, completeStat, Convert.ToInt32(Session["prep"]), remarks, Convert.ToInt32(Session["userID"]));
                         }
@@ -1550,13 +1568,15 @@ namespace DX_WebTemplate
                         insertWA(Convert.ToInt32(audwf), Convert.ToInt32(audwfd), Convert.ToInt32(audorID), docID, companyID, audstatus, reim_docID, remarks);
                         SendEmailFromAudit(docID, audstatus, Convert.ToInt32(Session["prep"]), remarks, Convert.ToInt32(Session["userID"]));
                     }
+
+                    stat = "Forwarded";
                 }
 
-                return true;
+                return stat;
             }
             catch (Exception)
             {
-                return false;
+                return string.Empty;
                 throw;
             }
         }

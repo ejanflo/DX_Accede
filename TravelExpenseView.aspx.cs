@@ -58,6 +58,51 @@ namespace DX_WebTemplate
                         else if (string.IsNullOrEmpty(chargedComp) && !string.IsNullOrEmpty(chargedDept))
                             chargedCB.Text = chargedDept;
 
+
+                        var forAccounting = ExpenseEditForm.FindItemOrGroupByName("forAccounting") as LayoutGroup;
+                        var printItem = ExpenseEditForm.FindItemOrGroupByName("printItem") as LayoutItem;
+                        var editItem = ExpenseEditForm.FindItemOrGroupByName("editItem") as LayoutItem;
+                        var recallItem = ExpenseEditForm.FindItemOrGroupByName("recallItem") as LayoutItem;
+
+                        //if (status.Contains("Pending at Finance"))
+                        //    forAccounting.ClientVisible = true;
+                        //else
+                        //    forAccounting.ClientVisible = false;
+
+                        if (status != null)
+                        {
+                            if (status == "Saved" || status.Contains("Returned"))
+                            {
+                                editItem.Visible = true;
+                                printItem.Visible = false;
+                                recallItem.Visible = false;
+                            }
+                            else if (status == "Approved" || status == "Completed")
+                            {
+                                printItem.Visible = true;
+                                editItem.Visible = false;
+                                recallItem.Visible = false;
+                            }
+                            else if (status == "Pending")
+                            {
+                                recallItem.Visible = true;
+                                editItem.Visible = false;
+                                printItem.Visible = false;
+                            }
+                            else
+                            {
+                                printItem.Visible = false;
+                                editItem.Visible = false;
+                                recallItem.Visible = false;
+                            }
+                        }
+                        else
+                        {
+                            editItem.Visible = true;
+                            printItem.Visible = false;
+                            recallItem.Visible = false;
+                        }
+
                         SqlMain.SelectParameters["ID"].DefaultValue = mainExp.ID.ToString();
                         timedepartTE.DateTime = DateTime.Parse(mainExp.Time_Departed.ToString());
                         timearriveTE.DateTime = DateTime.Parse(mainExp.Time_Arrived.ToString());
@@ -70,40 +115,6 @@ namespace DX_WebTemplate
 
                     InitializeExpCA(mainExp);
 
-                    var forAccounting = ExpenseEditForm.FindItemOrGroupByName("forAccounting") as LayoutGroup; 
-                    var printItem = ExpenseEditForm.FindItemOrGroupByName("printItem") as LayoutItem;
-                    var editItem = ExpenseEditForm.FindItemOrGroupByName("editItem") as LayoutItem;
-
-                    //if (status.Contains("Pending at Finance"))
-                    //    forAccounting.ClientVisible = true;
-                    //else
-                    //    forAccounting.ClientVisible = false;
-
-                    if (status != null)
-                    {
-                        if (status == "Saved" || status.Contains("Returned"))
-                        {
-                            editButton.Visible = true;
-                            printButton.Visible = false;
-                        }
-                        else if (status == "Approved" || status.Contains("Approved"))
-                        {
-                            printButton.Visible = true;
-                            printItem.VisibleIndex = 1;
-                            editItem.VisibleIndex = 0;
-                            editButton.Visible = false;
-                        }
-                        else
-                        {
-                            printButton.Visible = false;
-                            editButton.Visible = false;
-                        }
-                    }
-                    else
-                    {
-                        editButton.Visible = true;
-                        printButton.Visible = false;
-                    }
                 }
                 else
                     Response.Redirect("~/Logon.aspx");
@@ -241,6 +252,88 @@ namespace DX_WebTemplate
             _DataContext.SubmitChanges();
             SqlDocs.DataBind();
         }
+
+        [WebMethod]
+        public static bool AJAXRecallDocument(string remarks)
+        {
+            TravelExpenseView rev = new TravelExpenseView();
+            return rev.RecallDocument(remarks);
+        }
+
+        public bool RecallDocument(string remarks) 
+        {
+            var id = Convert.ToInt32(Session["TravelExp_Id"]);
+            var doctype = Convert.ToInt32(Session["appdoctype"]);
+            var stat = Convert.ToInt32(Session["doc_stat"]);
+
+            var status = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Recalled").Select(x => x.STS_Id).FirstOrDefault();
+            
+            var wfa_id = _DataContext.ITP_T_WorkflowActivities.Where(x => x.Document_Id == id && x.AppId == 1032 && x.AppDocTypeId == doctype && x.Status == stat).Select(x => x.WFA_Id).FirstOrDefault();
+
+            try
+            {
+                //UPDATE RFP Main
+                var updateRFPMain = _DataContext.ACCEDE_T_RFPMains
+                    .Where(e => e.Exp_ID == id && e.IsExpenseReim == true);
+                var rfpid = updateRFPMain.Select(x => x.ID).FirstOrDefault();
+
+                foreach (ACCEDE_T_RFPMain e in updateRFPMain)
+                {
+                    e.Remarks = remarks;
+                    e.Status = status;
+                }
+                _DataContext.SubmitChanges();
+
+                //UPDATE Workflow Activity 
+                var rfpapp_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE RFP").Where(x => x.App_Id == 1032).FirstOrDefault();
+                var rfpwfa = _DataContext.ITP_T_WorkflowActivities.Where(x => x.AppDocTypeId == rfpapp_docType.DCT_Id && x.Document_Id == rfpid && x.AppId == 1032).Select(x => x.WFA_Id).FirstOrDefault();
+
+                var updateRFPWFA = _DataContext.ITP_T_WorkflowActivities
+                    .Where(e => e.Document_Id == rfpid && e.AppId == 1032 && e.AppDocTypeId == rfpapp_docType.DCT_Id && e.WFA_Id == rfpwfa && e.Status == stat);
+
+                foreach (ITP_T_WorkflowActivity e in updateRFPWFA)
+                {
+                    e.DateAction = DateTime.Now;
+                    e.Remarks = remarks;
+                    e.Status = status;
+                    e.ActedBy_User_Id = Convert.ToString(Session["userID"]);
+                }
+                _DataContext.SubmitChanges();
+
+                //UPDATE Travel Main
+                var updateTravelMain = _DataContext.ACCEDE_T_TravelExpenseMains
+                    .Where(e => e.ID == id);
+
+                foreach (ACCEDE_T_TravelExpenseMain e in updateTravelMain)
+                {
+                    e.Remarks = remarks;
+                    e.Status = status;
+                }
+
+                var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).FirstOrDefault();
+
+                //UPDATE Workflow Activity 
+                var updateWFA = _DataContext.ITP_T_WorkflowActivities
+                    .Where(e => e.Document_Id == id && e.AppId == 1032 && e.AppDocTypeId == app_docType.DCT_Id && e.WFA_Id == wfa_id);
+
+                foreach (ITP_T_WorkflowActivity e in updateWFA)
+                {
+                    e.DateAction = DateTime.Now;
+                    e.Remarks = remarks;
+                    e.Status = status;
+                    e.ActedBy_User_Id = Convert.ToString(Session["userID"]);
+                }
+                _DataContext.SubmitChanges();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+                throw;
+            }
+        }
+
 
 
         [WebMethod]

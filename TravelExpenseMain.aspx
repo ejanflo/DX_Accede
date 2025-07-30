@@ -488,7 +488,7 @@
                                                     <CellStyle Font-Bold="True" ForeColor="#006838">
                                                     </CellStyle>
                                                 </dx:GridViewFormatConditionHighlight>
-                                                <dx:GridViewFormatConditionHighlight Expression="[STS_Description] = 'Rejected' Or [STS_Description] = 'Returned'" FieldName="STS_Description" Format="Custom">
+                                                <dx:GridViewFormatConditionHighlight Expression="[STS_Description] = 'Rejected' Or [STS_Description] = 'Returned' Or [STS_Description] = 'Recalled'Or [STS_Description] = 'Recall'" FieldName="STS_Description" Format="Custom">
                                                     <CellStyle Font-Bold="True" ForeColor="#E67C0E">
                                                     </CellStyle>
                                                 </dx:GridViewFormatConditionHighlight>

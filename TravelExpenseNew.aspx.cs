@@ -1108,38 +1108,20 @@ namespace DX_WebTemplate
 
                     exp.Remarks = string.Empty;
 
-                    if (doc_desc == "Returned by Audit")
-                    {
-                        new_stat = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Pending at Audit").Select(x => x.STS_Id).FirstOrDefault();
-                        wfID = _DataContext.ITP_S_WorkflowHeaders.Where(w => w.Name == "ACDE AUDIT" && w.App_Id == 1032 && w.Company_Id == Convert.ToInt32(company)).Select(x => x.WF_Id).FirstOrDefault();
-                        wfdID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == wfID && w.Sequence == 1).Select(w => w.WFD_Id).FirstOrDefault();
-                        orID = (int)_DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == wfID && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault();
-                    }
-                    else if (doc_desc == "Returned by Finance")
-                    {
-                        new_stat = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Pending at Finance").Select(x => x.STS_Id).FirstOrDefault();
-                        wfID = (int)_DataContext.ACCEDE_T_TravelExpenseMains.Where(w => w.ID == Convert.ToInt32(Session["TravelExp_Id"])).Select(x => x.FAPWF_Id).FirstOrDefault();
-                        wfdID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == wfID && w.Sequence == 1).Select(w => w.WFD_Id).FirstOrDefault();
-                        orID = (int)_DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == wfID && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault();
-                    }
-                    else
-                    {
-                        new_stat = 1;
-                        wfID = Convert.ToInt32(Convert.ToInt32(Session["mainwfid"]));
+                    new_stat = 1;
+                    wfID = Convert.ToInt32(Convert.ToInt32(Session["mainwfid"]));
 
-                        // GET WORKFLOW DETAILS ID
-                        var wfDetails = from wfd in _DataContext.ITP_S_WorkflowDetails
-                                        where wfd.WF_Id == wfID && wfd.Sequence == 1
-                                        select wfd.WFD_Id;
-                        wfdID = wfDetails.FirstOrDefault();
+                    // GET WORKFLOW DETAILS ID
+                    var wfDetails = from wfd in _DataContext.ITP_S_WorkflowDetails
+                                    where wfd.WF_Id == wfID && wfd.Sequence == 1
+                                    select wfd.WFD_Id;
+                    wfdID = wfDetails.FirstOrDefault();
 
-                        // GET ORG ROLE ID
-                        var orgRole = from or in _DataContext.ITP_S_WorkflowDetails
-                                      where or.WF_Id == wfID && or.Sequence == 1
-                                      select or.OrgRole_Id;
-                        orID = (int)orgRole.FirstOrDefault();
-                    }
-
+                    // GET ORG ROLE ID
+                    var orgRole = from or in _DataContext.ITP_S_WorkflowDetails
+                                  where or.WF_Id == wfID && or.Sequence == 1
+                                  select or.OrgRole_Id;
+                    orID = (int)orgRole.FirstOrDefault();
 
                     //Add reim to workflow activity
                     if (reim != null)

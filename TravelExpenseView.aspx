@@ -7,9 +7,29 @@
             gap: 10px; /* Adjust the spacing between the radio buttons */
         }
     </style>
-
-    <script src="Scripts/docviewer.js"></script>
     <script>
+        function RecallDoc() {
+            LoadingPanel.Show();
+            var remarks = recallRemarks.GetText();
+
+            $.ajax({
+                type: "POST",
+                url: "TravelExpenseView.aspx/AJAXRecallDocument",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({
+                    remarks: remarks
+                }),
+                success: function (response) {
+                    RecallPopup.Hide();
+                    window.open('TravelExpenseMain.aspx', '_self');
+                },
+                failure: function (response) {
+                    alert(response);
+                }
+            });
+        }
+
         function calcExpenses(s, e) {
             var totalSum = 0;
 
@@ -213,6 +233,19 @@
                                     </LayoutItemNestedControlCollection>
                                     <ParentContainerStyle Font-Bold="False">
                                     </ParentContainerStyle>
+                                </dx:LayoutItem>
+                                <dx:LayoutItem ColSpan="1" Name="recallItem" ShowCaption="False">
+                                    <LayoutItemNestedControlCollection>
+                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                            <dx:ASPxButton ID="recallButton" runat="server" AutoPostBack="False" BackColor="#E67C0E" ClientInstanceName="recallButton" Font-Bold="True" Font-Size="Small" ForeColor="White" Text="Recall" UseSubmitBehavior="False">
+                                                <ClientSideEvents Click="function(s, e) {
+                        RecallPopup.Show();
+}
+" />
+                                                <Border BorderColor="#E67C0E" />
+                                            </dx:ASPxButton>
+                                        </dx:LayoutItemNestedControlContainer>
+                                    </LayoutItemNestedControlCollection>
                                 </dx:LayoutItem>
                                 <dx:LayoutItem Caption="" ColSpan="1">
                                     <LayoutItemNestedControlCollection>
@@ -3484,6 +3517,81 @@ onTravelClick();
             </dx:PopupControlContentControl>
 </ContentCollection>
     </dx:ASPxPopupControl>
+
+        <dx:ASPxPopupControl ID="RecallPopup" runat="server" HeaderText="Recall Expense Report" Modal="True" AutoUpdatePosition="True" ClientInstanceName="RecallPopup" CloseAction="CloseButton" CloseOnEscape="True" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" PopupAnimationType="None">
+            <SettingsAdaptivity Mode="Always" VerticalAlign="WindowCenter" />
+            <ContentCollection>
+                <dx:PopupControlContentControl runat="server">
+                    <dx:ASPxFormLayout ID="ASPxFormLayout14" runat="server" Width="100%">
+                        <Items>
+                            <dx:LayoutItem ColSpan="1" ShowCaption="False" HorizontalAlign="Center">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxImage ID="ASPxFormLayout1_E5" runat="server" Height="50px" ImageAlign="Middle" ImageUrl="~/Content/Images/warning.png" Width="50px">
+                                        </dx:ASPxImage>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                                <TabImage IconID="businessobjects_bo_attention_svg_16x16">
+                                </TabImage>
+                            </dx:LayoutItem>
+                            <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Center">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxLabel ID="ASPxFormLayout1_E6" runat="server" Text="Are you sure to recall document?" Font-Size="Medium">
+                                        </dx:ASPxLabel>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                            </dx:LayoutItem>
+                            <dx:LayoutItem Caption="" ColSpan="1">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxMemo ID="recallRemarks" runat="server" ClientInstanceName="recallRemarks" Height="71px" NullText="Remarks (Required)" Width="100%">
+                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="recallValid">
+                                                <RequiredField ErrorText="*Required" IsRequired="True" />
+                                            </ValidationSettings>
+                                        </dx:ASPxMemo>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                            </dx:LayoutItem>
+                            <dx:EmptyLayoutItem ColSpan="1">
+                            </dx:EmptyLayoutItem>
+                            <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="HeadingLine">
+                                <Items>
+                                    <dx:LayoutItem Caption="" ColSpan="1">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxButton ID="recallPopBtn" runat="server" Text="Recall" BackColor="#E67C0E" ClientInstanceName="recallPopBtn" AutoPostBack="False" UseSubmitBehavior="False">
+                                                    <ClientSideEvents Click="function(s, e) {
+               if(ASPxClientEdit.ValidateGroup('recallValid')){
+	          RecallDoc();
+               }
+}" />
+                                                    <Border BorderColor="#E67C0E" />
+                                                </dx:ASPxButton>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                    </dx:LayoutItem>
+                                    <dx:LayoutItem Caption="" ColSpan="1">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxButton ID="ASPxFormLayout1_E7" runat="server" Text="Cancel" AutoPostBack="False" BackColor="White" ForeColor="Gray" UseSubmitBehavior="False">
+                                                    <ClientSideEvents Click="function(s, e) {
+               returnRemarks.SetText('');
+	ReturnPopup.Hide();
+}" />
+                                                    <Border BorderColor="Gray" />
+                                                </dx:ASPxButton>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                    </dx:LayoutItem>
+                                </Items>
+                            </dx:LayoutGroup>
+                        </Items>
+                        <SettingsItems HorizontalAlign="Center" />
+                    </dx:ASPxFormLayout>
+                </dx:PopupControlContentControl>
+            </ContentCollection>
+        </dx:ASPxPopupControl>
 
     <dx:ASPxLoadingPanel ID="LoadingPanel" ClientInstanceName="LoadingPanel" Modal="true" runat="server" Theme="MaterialCompact"></dx:ASPxLoadingPanel>
 
