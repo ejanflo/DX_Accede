@@ -1559,7 +1559,7 @@ namespace DX_WebTemplate
                                     Document_Id = exp.ID,
                                     AppId = 1032,
                                     ActedBy_User_Id = Session["userID"].ToString(),
-                                    CompanyId = Convert.ToInt32(exp.CompanyId),
+                                    CompanyId = Convert.ToInt32(CTCompany_id),
                                     AppDocTypeId = rfpDocType,
                                     IsActive = true
                                 };
@@ -1578,7 +1578,7 @@ namespace DX_WebTemplate
                                     Document_Id = exp.ID,
                                     AppId = 1032,
                                     ActedBy_User_Id = Session["userID"].ToString(),
-                                    CompanyId = Convert.ToInt32(exp.CompanyId),
+                                    CompanyId = Convert.ToInt32(CTCompany_id),
                                     AppDocTypeId = expDocType,
                                     IsActive = true
                                 };
@@ -1646,7 +1646,7 @@ namespace DX_WebTemplate
                                         Document_Id = reim.ID,
                                         AppId = 1032,
                                         ActedBy_User_Id = Session["userID"].ToString(),
-                                        CompanyId = Convert.ToInt32(exp.CompanyId),
+                                        CompanyId = Convert.ToInt32(CTCompany_id),
                                         AppDocTypeId = rfpDocType,
                                         IsActive = true
                                     };
@@ -1665,7 +1665,7 @@ namespace DX_WebTemplate
                                     Document_Id = exp.ID,
                                     AppId = 1032,
                                     ActedBy_User_Id = Session["userID"].ToString(),
-                                    CompanyId = Convert.ToInt32(exp.CompanyId),
+                                    CompanyId = Convert.ToInt32(CTCompany_id),
                                     AppDocTypeId = expDocType,
                                     IsActive = true
                                 };

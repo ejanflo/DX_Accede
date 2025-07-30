@@ -547,8 +547,8 @@ namespace DX_WebTemplate
                     activity.IsDelete = false;
                     activity.DateCreated = DateTime.Now;
                     activity.Document_Id = RFP_ID;
-                    activity.AppId = ApproverSolo.App_Id;
-                    activity.CompanyId = ApproverSolo.Company_Id;
+                    activity.AppId = app_docType.App_Id;
+                    activity.CompanyId = rfp_main_query.Company_ID;
                     activity.AppDocTypeId = app_docType.DCT_Id;
                 }
                 _DataContext.ITP_T_WorkflowActivities.InsertOnSubmit(activity);
@@ -559,7 +559,7 @@ namespace DX_WebTemplate
                     
                     var creator_details = _DataContext.ITP_S_UserMasters.Where(x=>x.EmpCode == rfp_main_query.Payee.ToString()).FirstOrDefault();
 
-                    bool emailApprover = SendEmailToApprover(app.UserId, Convert.ToInt32(app.Company_Id), creator_details.FullName, creator_details.Email, rfp_main_query.RFP_DocNum, rfp_main_query.DateCreated.ToString(), rfp_main_query.Purpose, payMethod.PMethod_name, tranType.RFPTranType_Name);
+                    bool emailApprover = SendEmailToApprover(app.UserId, Convert.ToInt32(rfp_main_query.Company_ID), creator_details.FullName, creator_details.Email, rfp_main_query.RFP_DocNum, rfp_main_query.DateCreated.ToString(), rfp_main_query.Purpose, payMethod.PMethod_name, tranType.RFPTranType_Name);
 
                     if (!emailApprover)
                     {
