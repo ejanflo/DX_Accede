@@ -157,7 +157,7 @@
                                         <dx:MenuItem Text="Cashier Inquiry" NavigateUrl="~/CashierInquiryPage.aspx" Image-IconID="businessobjects_bo_address_svg_white_16x16" />
                                         <dx:MenuItem Text="Delegation" NavigateUrl="~/UserDelegationPage.aspx" Image-IconID="businessobjects_bo_address_svg_white_16x16" />
                                         --%>
-                                        <dx:MenuItem Text="User Guide" NavigateUrl="~/maintenance.html" Target="_blank" Alignment="Right" Image-IconID="outlookinspired_support_svg_dark_16x16" />
+                                        <dx:MenuItem Text="User Guide" NavigateUrl="https://devapps.anflocor.com/FAQUserGuides.aspx" Target="_blank" Alignment="Right" Image-IconID="outlookinspired_support_svg_dark_16x16" />
                                         <dx:MenuItem Text="Helpdesk" NavigateUrl="https://helpdesk.anflocor.com/" Target="_blank" Alignment="Right" Image-IconID="outlookinspired_glyph_mail_svg_dark_16x16" />
                                         <dx:MenuItem Text="Log Out" NavigateUrl="~/Logout.aspx" Alignment="Right" Image-IconID="richedit_trackingchanges_locktracking_svg_dark_16x16" />
                                     </Items>

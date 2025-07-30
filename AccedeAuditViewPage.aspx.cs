@@ -595,7 +595,7 @@ namespace DX_WebTemplate
                     var wfDetails = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == actID).FirstOrDefault();
 
                     var exp_main = _DataContext.ACCEDE_T_ExpenseMains
-                        .Where(x => x.ID == Convert.ToInt32(wfDetails))
+                        .Where(x => x.ID == Convert.ToInt32(wfDetails.Document_Id))
                         .FirstOrDefault();
 
                     //var payMethod = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == rfp_main.PayMethod).FirstOrDefault();
