@@ -172,12 +172,10 @@
                                                     <PropertiesComboBox DataSourceID="sqlCompany" TextField="CompanyShortName" ValueField="WASSId">
                                                     </PropertiesComboBox>
                                                     <Columns>
-                                                        <dx:GridViewDataComboBoxColumn Caption="Location" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                            <PropertiesComboBox DataSourceID="SqlCompBranch" TextField="Desc" ValueField="ID">
-                                                            </PropertiesComboBox>
+                                                        <dx:GridViewDataTextColumn Caption="Department" ShowInCustomizationForm="True" VisibleIndex="0">
                                                             <CellStyle HorizontalAlign="Left">
                                                             </CellStyle>
-                                                        </dx:GridViewDataComboBoxColumn>
+                                                        </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:GridViewDataComboBoxColumn>
                                                 <dx:GridViewDataDateColumn FieldName="DateAction" ShowInCustomizationForm="True" VisibleIndex="11" Visible="False">
