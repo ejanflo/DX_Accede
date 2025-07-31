@@ -542,7 +542,7 @@ namespace DX_WebTemplate
                         }
                         else //End of previous WF
                         {
-                            if (wfHead_data.IsRA == true)
+                            if (actDetails.WF_Id == rfp_main.WF_Id)
                             {
                                 //transition to finance wf
                                 //var finance_wf_data = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032)
@@ -765,21 +765,22 @@ namespace DX_WebTemplate
                                         }
 
                                         _DataContext.SubmitChanges();
+
+                                        var creator_detail = _DataContext.ITP_S_UserMasters
+                                        .Where(x => x.EmpCode == rfp_main.User_ID)
+                                        .FirstOrDefault();
+
+                                        var sender_detail = _DataContext.ITP_S_UserMasters
+                                            .Where(x => x.EmpCode == Session["UserID"].ToString())
+                                            .FirstOrDefault();
+
+                                        SendEmailTo(Convert.ToInt32(rfp_main.ID), creator_detail.EmpCode, Convert.ToInt32(rfp_main.Company_ID), sender_detail.FullName, sender_detail.Email, rfp_main.RFP_DocNum, rfp_main.DateCreated.ToString(), rfp_main.Purpose, approve_remarks, "Approve", payMethod.PMethod_name, tranType.RFPTranType_Name, "PendingCash");
+
                                     }
                                     else
                                     {
                                         return "There is no workflow (ACDE Cashier) setup for your company. Please contact Admin to setup the workflow.";
                                     }
-
-                                    var creator_detail = _DataContext.ITP_S_UserMasters
-                                        .Where(x => x.EmpCode == rfp_main.User_ID)
-                                        .FirstOrDefault();
-
-                                    var sender_detail = _DataContext.ITP_S_UserMasters
-                                        .Where(x => x.EmpCode == Session["UserID"].ToString())
-                                        .FirstOrDefault();
-
-                                    SendEmailTo(Convert.ToInt32(rfp_main.ID), creator_detail.EmpCode, Convert.ToInt32(rfp_main.Company_ID), sender_detail.FullName, sender_detail.Email, rfp_main.RFP_DocNum, rfp_main.DateCreated.ToString(), rfp_main.Purpose, approve_remarks, "Approve", payMethod.PMethod_name, tranType.RFPTranType_Name, "PendingCash");
 
                                 }
 
@@ -1057,7 +1058,7 @@ namespace DX_WebTemplate
                 string recipientName = user_email.FName;
                 string senderName = sender_fullname;
                 string emailSender = sender_email;
-                string emailSite = "https://devapps.anflocor.com";
+                string emailSite = "https://apps.anflocor.com";
                 string sendEmailTo = user_email.Email;
                 string emailSubject = doc_no + ": "+ emailSubTitle;
                 string requestorName = requestor_detail.FullName.ToString();

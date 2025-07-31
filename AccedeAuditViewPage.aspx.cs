@@ -465,7 +465,7 @@ namespace DX_WebTemplate
                             }
                             else
                             {
-                                return "There is no workflow (ACDE P2P) setup for your company. Please contact Admin to setup the workflow.";
+                                return "There is no workflow (ACDE Cashier) setup for your company. Please contact Admin to setup the workflow.";
                             }
 
                             rfp_main_reimburse.Status = Cash_status.STS_Id;
@@ -483,7 +483,7 @@ namespace DX_WebTemplate
                                 .FirstOrDefault();
 
                             RFPApprovalView rfp = new RFPApprovalView();
-                            rfp.SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(rfp_main_reimburse.ChargedTo_CompanyId), sender_detail.FullName, sender_detail.Email, rfp_main_reimburse.RFP_DocNum, rfp_main_reimburse.DateCreated.ToString(), rfp_main_reimburse.Purpose, approve_remarks, "Approve", payMethodDesc.PMethod_name, tranTypeDesc.RFPTranType_Name, "");
+                            rfp.SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(rfp_main_reimburse.ChargedTo_CompanyId), sender_detail.FullName, sender_detail.Email, rfp_main_reimburse.RFP_DocNum, rfp_main_reimburse.DateCreated.ToString(), rfp_main_reimburse.Purpose, approve_remarks, "Approve", payMethodDesc.PMethod_name, tranTypeDesc.RFPTranType_Name, "PendingCash");
 
                         }
                     }

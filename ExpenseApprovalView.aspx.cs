@@ -693,10 +693,19 @@ namespace DX_WebTemplate
                                         }
 
                                         _DataContext.SubmitChanges();
+                                        var creator_detail = _DataContext.ITP_S_UserMasters
+                                            .Where(x => x.EmpCode == exp_main.UserId)
+                                            .FirstOrDefault();
+
+                                        var sender_detail = _DataContext.ITP_S_UserMasters
+                                            .Where(x => x.EmpCode == Session["UserID"].ToString())
+                                            .FirstOrDefault();
+
+                                        SendEmailTo(exp_main.ID, creator_detail.EmpCode, Convert.ToInt32(exp_main.CompanyId), sender_detail.FullName, sender_detail.Email, exp_main.DocNo, exp_main.DateCreated.ToString(), exp_main.Purpose, remarks, "Pending", payMethod.ToString(), tranType.ToString(), "PendingAR");
                                     }
                                     else
                                     {
-                                        return "There is no workflow (ACDE P2P) setup for your company. Please contact Admin to setup the workflow.";
+                                        return "There is no workflow (ACDE Cashier) setup for your company. Please contact Admin to setup the workflow.";
                                     }
                                 }
                                 else
@@ -1367,6 +1376,11 @@ namespace DX_WebTemplate
                         emailSubMessage = "Procure to Payment has approved your request. You can now proceed with the next steps based on the approved document.";
                     }
 
+                    if (status2 == "PendingAR")
+                    {
+                        emailSubMessage = "Your document has been forwarded to the Cashier. Please proceed to return your excess cash advance.";
+                    }
+
                     emailColor = text.Color.ToString();
                     emailMessage = text.Text1.ToString();
                     emailSubTitle = text.Text3.ToString();
@@ -1377,7 +1391,7 @@ namespace DX_WebTemplate
                 string recipientName = user_email.FName;
                 string senderName = sender_fullname;
                 string emailSender = sender_email;
-                string emailSite = "https://devapps.anflocor.com";
+                string emailSite = "https://apps.anflocor.com";
                 string sendEmailTo = user_email.Email;
                 string emailSubject = doc_no + ": " + emailSubTitle;
                 string requestorName = requestor_detail.FullName;

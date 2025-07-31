@@ -1871,7 +1871,7 @@ namespace DX_WebTemplate
             string senderName = requestor_fullname;
             string emailSender = requestor_email;
             string senderRemarks = "";
-            string emailSite = "https://devapps.anflocor.com/AccedeApprovalPage.aspx";
+            string emailSite = "https://apps.anflocor.com/AccedeApprovalPage.aspx";
             string sendEmailTo = user_email.Email;
             string emailSubject = "Document No. " + doc_id + " (" + status + ")";
 

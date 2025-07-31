@@ -89,34 +89,34 @@ namespace DX_WebTemplate
                 e.DisplayText = empname;
             }
 
-            if (e.Column.Caption == "Department")
+            if (e.Column.Caption == "Location")
             {
-                string department = "";
+                string loc_id = "";
 
                 if (app != 0)
                 {
                     var appname = context.ITP_S_DocumentTypes.Where(x => x.DCT_Id == app).Select(x => x.DCT_Name).FirstOrDefault();
                     if (appname == "ACDE RFP")
                     {
-                        int depid = Convert.ToInt32(context.ACCEDE_T_RFPMains.Where(x => x.ID == id).Select(x => x.Department_ID).FirstOrDefault());
-                        if (depid != 0)
-                            department = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == depid).Select(x => x.DepDesc).FirstOrDefault().ToUpper();
+                        loc_id = Convert.ToString(context.ACCEDE_T_RFPMains.Where(x => x.ID == id).Select(x => x.Comp_Location_Id).FirstOrDefault());
+                        //if (depid != 0)
+                        //    department = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == depid).Select(x => x.DepDesc).FirstOrDefault().ToUpper();
                     }
                     else if (appname == "ACDE Expense")
                     {
-                        int depid = Convert.ToInt32(context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.Dept_Id).FirstOrDefault());
-                        if (depid != 0)
-                            department = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == depid).Select(x => x.DepDesc).FirstOrDefault().ToUpper();
+                        loc_id = Convert.ToString(context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.ExpComp_Location_Id).FirstOrDefault());
+                        //if (depid != 0)
+                        //    department = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == depid).Select(x => x.DepDesc).FirstOrDefault().ToUpper();
                     }
                     else if (appname == "ACDE Expense Travel")
                     {
-                        string depid = Convert.ToString(context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.Dep_Code).FirstOrDefault());
-                        if (!string.IsNullOrEmpty(depid))
-                            department = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(depid)).Select(x => x.DepDesc).FirstOrDefault().ToUpper();
+                        loc_id = Convert.ToString(context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.LocBranch).FirstOrDefault());
+                        //if (!string.IsNullOrEmpty(depid))
+                        //    department = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(depid)).Select(x => x.DepDesc).FirstOrDefault().ToUpper();
                     }
                 }
 
-                e.DisplayText = department;
+                e.Value = loc_id;
             }
 
             if (e.Column.Caption == "Remarks")

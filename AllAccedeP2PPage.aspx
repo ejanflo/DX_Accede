@@ -118,6 +118,7 @@
                                             </SettingsPager>
                                             <Settings ShowHeaderFilterButton="True" />
                                             <SettingsBehavior EnableCustomizationWindow="True" />
+                                            <SettingsCookies Enabled="True" />
                                             <SettingsDataSecurity AllowEdit="False" AllowInsert="False" />
                                             <SettingsPopup>
                                                 <FilterControl AutoUpdatePosition="False">

@@ -677,7 +677,7 @@
                                                     </CellStyle>
                                                 </dx:GridViewDataTextColumn>
                                                 <dx:GridViewDataComboBoxColumn FieldName="Status" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                    <PropertiesComboBox DataSourceID="SqlStatus" TextField="STS_Name" ValueField="STS_Id">
+                                                    <PropertiesComboBox DataSourceID="SqlStatus" TextField="STS_Description" ValueField="STS_Id">
                                                     </PropertiesComboBox>
                                                 </dx:GridViewDataComboBoxColumn>
                                             </Columns>

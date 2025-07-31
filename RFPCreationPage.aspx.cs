@@ -611,7 +611,7 @@ namespace DX_WebTemplate
                 string recipientName = user_email.FName;
                 string senderName = creator_fullname;
                 string emailSender = creator_email;
-                string emailSite = "https://devapps.anflocor.com";
+                string emailSite = "https://apps.anflocor.com";
                 string sendEmailTo = user_email.Email;
                 string emailSubject = doc_no + ": Pending for Approval";
 
