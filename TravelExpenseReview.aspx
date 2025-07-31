@@ -319,7 +319,7 @@
                     } else if (response.d == "Pending at P2P, Disbursed") {
                         window.open('TravelExpensePrint.aspx', '_blank');
                         window.open('AllAccedeP2PPage.aspx', '_self');
-                    } else if (response.d == "Pending") {
+                    } else if (response.d == "Pending" || response.d == "Pending at Finance") {
                         window.open('AllAccedeApprovalPage.aspx', '_self');
                     } else if (response.d == "Forwarded") {
                         window.open('AllAccedeApprovalPage.aspx', '_self');
