@@ -628,11 +628,14 @@ namespace DX_WebTemplate
             {
                 //Get the value of the "Status" column for the current row
                 object statusValue = gridMain.GetRowValues(e.VisibleIndex, "Status");
+                object main_IDValue = gridMain.GetRowValues(e.VisibleIndex, "ID");
+                string main_ID = main_IDValue != null ? main_IDValue.ToString() : "";
                 var returnAuditStat = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Returned by Audit").FirstOrDefault();
+                var rfpMain = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == Convert.ToInt32(main_ID)).FirstOrDefault();
                 var returnCashierStat = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Returned by Cashier").FirstOrDefault();
                 var returnP2PStat = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Returned by P2P").FirstOrDefault();
                 //Check if the status is "saved" and make the button visible accordingly
-                if (statusValue != null && (statusValue.ToString() == "13" || statusValue.ToString() == "3" || statusValue.ToString() == "15" || statusValue.ToString() == returnAuditStat.STS_Id.ToString() || statusValue.ToString() == returnCashierStat.STS_Id.ToString() || statusValue.ToString() == returnP2PStat.STS_Id.ToString()))
+                if (statusValue != null && rfpMain.TranType != 2 && (statusValue.ToString() == "13" || statusValue.ToString() == "3" || statusValue.ToString() == "15" || statusValue.ToString() == returnAuditStat.STS_Id.ToString() || statusValue.ToString() == returnCashierStat.STS_Id.ToString() || statusValue.ToString() == returnP2PStat.STS_Id.ToString()))
                     e.Visible = DevExpress.Utils.DefaultBoolean.True;
                 else
                     e.Visible = DevExpress.Utils.DefaultBoolean.False;
