@@ -3092,7 +3092,7 @@ onTravelClick();
             <asp:Parameter DefaultValue="7" Name="Status" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlReim" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_RFPMain] WHERE (([TranType] = @TranType) AND ([Exp_ID] = @Exp_ID) AND ([isTravel] = 1))">
+    <asp:SqlDataSource ID="SqlReim" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_RFPMain] WHERE (([TranType] = @TranType) AND ([Exp_ID] = @Exp_ID) AND ([isTravel] = 1) AND ([Status] != 4))">
         <SelectParameters>
             <asp:Parameter DefaultValue="2" Name="TranType" Type="Int32" />
             <asp:SessionParameter DefaultValue="TravelExp_Id" Name="Exp_ID" SessionField="TravelExp_Id" Type="Int32" />
