@@ -159,7 +159,7 @@ namespace DX_WebTemplate
                     else
                     {
                         var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(mainExp.Dep_Code)).FirstOrDefault();
-                        Session["mainwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.IsRA == true && totExpCA >= x.Minimum && totExpCA <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault());
+                        Session["mainwfid"] = Convert.ToString(mainExp.WF_Id);
                     }
                     /*_DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == Convert.ToString(mainExp.Employee_Id) && x.CompanyId == Convert.ToInt32(mainExp.Company_Id) && x.DepCode == depcode.DepCode).Select(x => x.WF_Id).FirstOrDefault();*/
                     //Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.IsRA == true && totExpCA >= x.Minimum && totExpCA <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault());

@@ -1202,6 +1202,7 @@ namespace DX_WebTemplate
                 var org_id = fin_wfDetail_data.OrgRole_Id;
 
                 var date2day = DateTime.Now;
+
                 //DELEGATE CHECK
                 foreach (var del in _DataContext.ITP_S_TaskDelegations.Where(x => x.OrgRole_ID_Orig == fin_wfDetail_data.OrgRole_Id).Where(x => x.DateFrom <= date2day).Where(x => x.DateTo >= date2day).Where(x => x.isActive == true))
                 {
