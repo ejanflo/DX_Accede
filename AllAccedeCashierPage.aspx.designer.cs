@@ -96,13 +96,13 @@ namespace DX_WebTemplate
         protected global::System.Web.UI.WebControls.SqlDataSource sqlAllApproval;
 
         /// <summary>
-        /// SqlDepartment control.
+        /// SqlCompBranch control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.SqlDataSource SqlDepartment;
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlCompBranch;
 
         /// <summary>
         /// SqlUser control.

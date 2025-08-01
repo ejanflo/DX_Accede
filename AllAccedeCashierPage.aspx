@@ -118,6 +118,7 @@
                                             </SettingsPager>
                                             <Settings ShowHeaderFilterButton="True" />
                                             <SettingsBehavior EnableCustomizationWindow="True" />
+                                            <SettingsCookies Enabled="True" />
                                             <SettingsDataSecurity AllowEdit="False" AllowInsert="False" />
                                             <SettingsPopup>
                                                 <FilterControl AutoUpdatePosition="False">
@@ -310,7 +311,7 @@ ORDER BY DateAssigned">
             <asp:SessionParameter Name="UserId" SessionField="userID" Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([DepCode] IS NOT NULL)"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlCompBranch" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_CompanyBranch]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlUser" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_UserMaster]">
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlAppDocType" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_DocumentType]">

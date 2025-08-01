@@ -2560,7 +2560,7 @@ DisapproveClick(); DisapprovePopup.Hide();
         <dx:ASPxPopupControl ID="ExpItemMapPopup" runat="server" FooterText="" HeaderText="Expense Item Details" Width="1200px" ClientInstanceName="ExpItemMapPopup" Modal="True" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" AllowDragging="True" CloseAction="CloseButton" CssClass="rounded">
                         <ContentCollection>
             <dx:PopupControlContentControl runat="server">
-                <div id="scrollableContainer">
+                <div class="scrollableContainer">
                         <dx:ASPxFormLayout ID="ASPxFormLayout6" runat="server" Width="100%">
                     <Items>
                         <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="None" HorizontalAlign="Right" ClientVisible="False">

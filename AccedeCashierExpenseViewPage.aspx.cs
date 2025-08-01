@@ -826,7 +826,7 @@ namespace DX_WebTemplate
                 string recipientName = user_email.FName;
                 string senderName = sender_fullname;
                 string emailSender = sender_email;
-                string emailSite = "https://devapps.anflocor.com";
+                string emailSite = "https://apps.anflocor.com";
                 string sendEmailTo = user_email.Email;
                 string emailSubject = doc_no + ": " + "Released AR No.";
                 string requestorName = requestor_detail.FullName;

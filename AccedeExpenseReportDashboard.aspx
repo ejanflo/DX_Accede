@@ -543,6 +543,7 @@
                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	drpdown_CTDepartment.PerformCallback(s.GetValue());
 drpdown_CostCenter.SetValue(&quot;&quot;);
+drpdown_CompLocation.SetValue(&quot;&quot;);
 drpdown_Department.PerformCallback(s.GetValue());
 OnCompanyChanged(s.GetValue());
 drpdown_Comp.SetValue(s.GetValue());
