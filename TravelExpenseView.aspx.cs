@@ -83,7 +83,7 @@ namespace DX_WebTemplate
                                 editItem.Visible = false;
                                 recallItem.Visible = false;
                             }
-                            else if (status == "Pending")
+                            else if (status == "Pending" || status == "Pending at Finance")
                             {
                                 recallItem.Visible = true;
                                 editItem.Visible = false;
@@ -134,7 +134,7 @@ namespace DX_WebTemplate
                 var reimDetails = ExpenseEditForm.FindItemOrGroupByName("reimDetails") as LayoutItem;
                 var remItem = ExpenseEditForm.FindItemOrGroupByName("remItem") as LayoutItem;
 
-                var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.isTravel == true && x.IsExpenseReim == true).FirstOrDefault();
+                var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.isTravel == true && x.IsExpenseReim == true && x.Status != 4).FirstOrDefault();
 
                 if (reim != null)
                 {

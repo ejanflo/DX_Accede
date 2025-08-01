@@ -226,7 +226,7 @@ namespace DX_WebTemplate
                                 }
                             }
 
-                            var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.isTravel == true && x.IsExpenseReim == true).FirstOrDefault();
+                            var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.isTravel == true && x.IsExpenseReim == true && x.Status != 4).FirstOrDefault();
 
                             if (reim != null)
                             {
@@ -1325,13 +1325,13 @@ namespace DX_WebTemplate
                 int docID = Convert.ToInt32(Session["TravelExp_Id"]);
 
                 // RFP Main ID
-                int reim_docID = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == docID && x.IsExpenseReim == true).Where(x => x.isTravel == true).Select(x => x.ID).FirstOrDefault();
+                int reim_docID = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == docID && x.IsExpenseReim == true).Where(x => x.isTravel == true && x.Status != 4).Select(x => x.ID).FirstOrDefault();
 
                 // App DocType ID
                 var doctype_id = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).Select(x => x.DCT_Id).FirstOrDefault();
 
                 // Payment Method
-                var pmid = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == docID && x.IsExpenseReim == true).Where(x => x.isTravel == true).Select(x => x.PayMethod).FirstOrDefault();
+                var pmid = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == reim_docID).Select(x => x.PayMethod).FirstOrDefault();
                 var reimPayMethod = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == pmid).Select(x => x.PMethod_name).FirstOrDefault();
 
                 // User ID and Comp ID

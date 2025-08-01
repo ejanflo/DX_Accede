@@ -93,7 +93,8 @@ namespace DX_WebTemplate
                     var remItem = ExpenseEditForm.FindItemOrGroupByName("remItem") as LayoutItem;
                     var reimDetails = ExpenseEditForm.FindItemOrGroupByName("reimDetails") as LayoutItem;
 
-                    var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.isTravel == true && x.IsExpenseReim == true).FirstOrDefault();
+                    var voidStat = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Void").Select(x => x.STS_Id).FirstOrDefault();
+                    var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.isTravel == true && x.IsExpenseReim == true && x.Status != voidStat).FirstOrDefault();
 
                     if (reim != null)
                     {
@@ -285,6 +286,16 @@ namespace DX_WebTemplate
                     _DataContext.SubmitChanges();
                 }
 
+                var voidStat = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Void").Select(x => x.STS_Id).FirstOrDefault();
+                var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.isTravel == true && x.IsExpenseReim == true && x.Status != 4).FirstOrDefault();
+
+                if (reim != null)
+                {
+                    reim.Status = voidStat;
+
+                    _DataContext.SubmitChanges();
+                }
+
                 return true;
             }
             catch (Exception ex)
@@ -391,6 +402,17 @@ namespace DX_WebTemplate
                 else
                 {
                     expMain.ExpenseType_ID = 2;
+                }
+
+
+                var voidStat = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Void").Select(x => x.STS_Id).FirstOrDefault();
+                var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.isTravel == true && x.IsExpenseReim == true && x.Status != 4).FirstOrDefault();
+
+                if (reim != null)
+                {
+                    reim.Status = voidStat;
+
+                    _DataContext.SubmitChanges();
                 }
 
                 return true;
@@ -572,6 +594,16 @@ namespace DX_WebTemplate
                     _DataContext.ACCEDE_T_TravelExpenseDetailsFileAttaches.InsertOnSubmit(file);
                     _DataContext.SubmitChanges();
                 }
+
+                var voidStat = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Void").Select(x => x.STS_Id).FirstOrDefault();
+                var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.isTravel == true && x.IsExpenseReim == true && x.Status != 4).FirstOrDefault();
+
+                if (reim != null)
+                {
+                    reim.Status = voidStat;
+
+                    _DataContext.SubmitChanges();
+                }
             }
             catch (Exception)
             {
@@ -602,6 +634,15 @@ namespace DX_WebTemplate
                     ex.TravelExpenseMain_ID = Convert.ToInt32(Session["TravelExp_Id"]);
                 }
                 _DataContext.SubmitChanges();
+
+                var voidStat = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Void").Select(x => x.STS_Id).FirstOrDefault();
+                var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.isTravel == true && x.IsExpenseReim == true && x.Status != 4).FirstOrDefault();
+
+                if (reim != null)
+                {
+                    reim.Status = voidStat;
+                    _DataContext.SubmitChanges();
+                }
             }
             catch (Exception)
             {
@@ -1081,7 +1122,9 @@ namespace DX_WebTemplate
                 exp.Preparer_Id = Convert.ToInt32(Session["userID"]);
 
                 //Update reimbursement Workflows
-                var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.IsExpenseReim == true).Where(x => x.isTravel == true).FirstOrDefault();
+
+                var voidStat = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Void").Select(x => x.STS_Id).FirstOrDefault();
+                var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.IsExpenseReim == true).Where(x => x.isTravel == true).Where(x => x.Status != voidStat).FirstOrDefault();
 
                 if (reim != null)
                 {
