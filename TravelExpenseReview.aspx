@@ -2429,7 +2429,7 @@
                                 </LayoutItemNestedControlCollection>
                                 <CaptionSettings HorizontalAlign="Left" VerticalAlign="Middle" />
                             </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Expense Type" ColSpan="1" Width="100%" VerticalAlign="Middle">
+                            <dx:LayoutItem Caption="Expense Type" ColSpan="1" Width="100%" VerticalAlign="Middle" ClientVisible="False">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxRadioButton ID="rdButton_Trav" runat="server" ClientInstanceName="rdButton_Trav" CssClass="d-inline me-3" Font-Bold="True" ReadOnly="True" RightToLeft="False" Text="Travel" Theme="Moderno">
