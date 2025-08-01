@@ -836,12 +836,10 @@ WHERE  (Preparer_Id = @Preparer_Id) AND (Status IS NULL) OR
     <asp:SqlDataSource ID="SqlUser" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_UserMaster]">
         </asp:SqlDataSource>
 
-     <asp:SqlDataSource ID="SqlDepartmentEdit" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_SecurityUserDept] WHERE (([AppId] = @AppId) AND ([IsActive] = @IsActive) AND ([UserId] = @UserId) AND ([CompanyId] = @CompanyId))">
+     <asp:SqlDataSource ID="SqlDepartmentEdit" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT ID, DepCode, DepDesc FROM [vw_ACCEDE_I_SecurityUserDept] WHERE ([CompanyId] = @CompanyId) AND ([UserId] = @UserId) GROUP BY ID, DepDesc, DepCode">
         <SelectParameters>
-            <asp:Parameter DefaultValue="1032" Name="AppId" Type="Int32" />
-            <asp:Parameter DefaultValue="true" Name="IsActive" Type="Boolean" />
-            <asp:Parameter DefaultValue="" Name="UserId" Type="String" />
             <asp:Parameter DefaultValue="" Name="CompanyId" Type="Int32" />
+            <asp:Parameter DefaultValue="" Name="UserId" Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlCompanyEdit" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_SecurityUserComp] WHERE (([AppId] = @AppId) AND ([IsActive] = @IsActive) AND ([UserId] = @UserId))">
