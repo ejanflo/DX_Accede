@@ -157,7 +157,11 @@
             var amount = spinEdit_Amount.GetValue() != null ? spinEdit_Amount.GetValue() : 0;
             var comp_id = drpdown_CTCompany.GetValue();
             var payMethod = pay != null ? pay : 0;
+            var dept = drpdown_Department.GetValue() != null ? drpdown_Department.GetValue() : "0";
             var payMethodTxt = drpdown_PayMethod.GetText();
+            var emp = drpdown_Payee.GetValue() != null ? drpdown_Payee.GetValue() : "";
+
+            drpdown_WF.PerformCallback(dept + "|" + comp_id + "|" + emp + "|" + amount);
             //$.ajax({
             //    type: "POST",
             //    url: "RFPCreationPage.aspx/CheckMinAmountAJAX",
@@ -1032,7 +1036,8 @@ ifComp_is_DLI();
 	//onDeptChanged(s.GetValue());
 var comp = drpdown_Company.GetValue() != null ? drpdown_Company.GetValue() : &quot;&quot;;
 var emp = drpdown_Payee.GetValue() != null ? drpdown_Payee.GetValue() : &quot;&quot;;
-	onDeptChanged(s.GetValue()+&quot;|&quot;+comp+&quot;|&quot;+emp);
+var amount = spinEdit_Amount.GetValue() != null ? spinEdit_Amount.GetValue() : &quot;0&quot;;
+	onDeptChanged(s.GetValue()+&quot;|&quot;+comp+&quot;|&quot;+emp+&quot;|&quot;+amount);
 console.log(s.GetValue()+&quot;|&quot;+comp+&quot;|&quot;+emp);
 }" />
                                                     <ClearButton DisplayMode="Always">
@@ -1075,7 +1080,9 @@ console.log(s.GetValue()+&quot;|&quot;+comp+&quot;|&quot;+emp);
                                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	OnWFChanged();
 }" ButtonClick="function(s, e) {
-	OnWFChanged();
+	//OnWFChanged();
+}" EndCallback="function(s, e) {
+	WFSequenceGrid.PerformCallback(s.GetValue());
 }" />
                                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                                 <RequiredField ErrorText="This field is required." IsRequired="True" />
@@ -1128,6 +1135,8 @@ console.log(s.GetValue()+&quot;|&quot;+comp+&quot;|&quot;+emp);
                                                         <dx:ASPxComboBox ID="drpdwn_FAPWF" runat="server" ClientInstanceName="drpdwn_FAPWF" DataSourceID="SqlFAPWF2" OnCallback="drpdwn_FAPWF_Callback" TextField="Name" ValueField="WF_Id" Width="100%">
                                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	OnFAPWFChanged();
+}" EndCallback="function(s, e) {
+	FAPWFGrid.PerformCallback(s.GetValue());
 }" />
                                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreationForm">
                                                                 <RequiredField ErrorText="This field is required." IsRequired="True" />
@@ -1568,6 +1577,20 @@ SavePopup.Hide();
             <asp:Parameter DefaultValue="true" Name="isActive" Type="Boolean" />
         </SelectParameters>
     </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlWFAmount" runat="server"
+        ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>"
+        SelectCommand="sp_sel_ACCEDE_GetWorkflowHeadersByExpenseAndDepartment"
+        SelectCommandType="StoredProcedure">
+
+        <SelectParameters>
+            <asp:Parameter Name="UserId" Type="String" />
+            <asp:Parameter Name="CompanyId" Type="String" />
+            <asp:Parameter Name="totalExp" Type="Decimal" />
+            <asp:Parameter Name="DepCode" Type="String" />
+            <asp:Parameter Name="AppId" Type="String" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+
     <asp:SqlDataSource ID="SqlWF" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_WorkflowHeader] WHERE ([WF_Id] = @WF_Id)">
         <SelectParameters>
             <asp:Parameter Name="WF_Id" Type="Int32" />

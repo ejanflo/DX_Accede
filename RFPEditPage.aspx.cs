@@ -350,6 +350,7 @@ namespace DX_WebTemplate
             var dept_id = param[0] != "" ? param[0] : "0";
             var comp = param[1] != "" ? param[1] : "0";
             var emp = param[2] != "" ? param[2] : "";
+            var amount = param[3] != "0" ? param[3] : "0";
             var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(dept_id)).FirstOrDefault();
             //var expMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x=>x.ID == Convert.ToInt32(comp)).FirstOrDefault();
 
@@ -369,28 +370,40 @@ namespace DX_WebTemplate
             {
                 if (depcode != null)
                 {
-                    var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == emp)
-                            .Where(x => x.CompanyId == Convert.ToInt32(comp))
-                            .Where(x => x.DepCode == depcode.DepCode)
-                            //.Where(x => x.IsRA == true)
-                            .FirstOrDefault();
+                    //var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == emp)
+                    //        .Where(x => x.CompanyId == Convert.ToInt32(comp))
+                    //        .Where(x => x.DepCode == depcode.DepCode)
+                    //        //.Where(x => x.IsRA == true)
+                    //        .FirstOrDefault();
 
-                    if (rawf != null)
-                    {
-                        SqlWF.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
-                        drpdown_WF.DataSourceID = null;
-                        drpdown_WF.DataSource = SqlWF;
-                        drpdown_WF.SelectedIndex = 0;
-                        drpdown_WF.DataBind();
-                    }
-                    else
-                    {
-                        SqlWF.SelectParameters["WF_Id"].DefaultValue = "0";
-                        drpdown_WF.DataSourceID = null;
-                        drpdown_WF.DataSource = SqlWF;
-                        drpdown_WF.DataBind();
+                    //if (rawf != null)
+                    //{
+                    //    SqlWF.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
+                    //    drpdown_WF.DataSourceID = null;
+                    //    drpdown_WF.DataSource = SqlWF;
+                    //    drpdown_WF.SelectedIndex = 0;
+                    //    drpdown_WF.DataBind();
+                    //}
+                    //else
+                    //{
+                    //    SqlWF.SelectParameters["WF_Id"].DefaultValue = "0";
+                    //    drpdown_WF.DataSourceID = null;
+                    //    drpdown_WF.DataSource = SqlWF;
+                    //    drpdown_WF.DataBind();
 
-                    }
+                    //}
+
+                    SqlWFAmount.SelectParameters["UserId"].DefaultValue = emp;
+                    SqlWFAmount.SelectParameters["CompanyId"].DefaultValue = comp;
+                    SqlWFAmount.SelectParameters["totalExp"].DefaultValue = amount;
+                    SqlWFAmount.SelectParameters["DepCode"].DefaultValue = depcode.DepCode;
+                    SqlWFAmount.SelectParameters["AppId"].DefaultValue = "1032";
+                    SqlWFAmount.DataBind();
+
+                    drpdown_WF.DataSourceID = null;
+                    drpdown_WF.DataSource = SqlWFAmount;
+                    drpdown_WF.SelectedIndex = 0;
+                    drpdown_WF.DataBind();
                 }
             }
         }
@@ -432,11 +445,13 @@ namespace DX_WebTemplate
                         }
                         else
                         {
-                            SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = "";
+                            SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = "0";
                             SqlFAPWF2.DataBind();
 
                             drpdwn_FAPWF.DataSourceID = null;
-                            drpdwn_FAPWF.DataBindItems();
+                            drpdwn_FAPWF.DataSource = SqlFAPWF2;
+                            drpdwn_FAPWF.SelectedIndex = 0;
+                            drpdwn_FAPWF.DataBind();
                         }
                     }
                     else
@@ -460,13 +475,13 @@ namespace DX_WebTemplate
                         }
                         else
                         {
-                            SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = "";
+                            SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = "0";
                             SqlFAPWF2.DataBind();
 
                             drpdwn_FAPWF.DataSourceID = null;
                             drpdwn_FAPWF.DataSource = SqlFAPWF2;
-                            drpdwn_FAPWF.DataBindItems();
                             drpdwn_FAPWF.SelectedIndex = 0;
+                            drpdwn_FAPWF.DataBind();
                         }
                     }
                 }
@@ -491,13 +506,13 @@ namespace DX_WebTemplate
                         }
                         else
                         {
-                            SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = "";
+                            SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = "0";
                             SqlFAPWF2.DataBind();
 
                             drpdwn_FAPWF.DataSourceID = null;
                             drpdwn_FAPWF.DataSource = SqlFAPWF2;
-                            drpdwn_FAPWF.DataBindItems();
                             drpdwn_FAPWF.SelectedIndex = 0;
+                            drpdwn_FAPWF.DataBind();
                         }
                     }
                     else
@@ -520,13 +535,13 @@ namespace DX_WebTemplate
                         }
                         else
                         {
-                            SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = "";
+                            SqlFAPWF2.SelectParameters["WF_Id"].DefaultValue = "0";
                             SqlFAPWF2.DataBind();
 
                             drpdwn_FAPWF.DataSourceID = null;
                             drpdwn_FAPWF.DataSource = SqlFAPWF2;
-                            drpdwn_FAPWF.DataBindItems();
                             drpdwn_FAPWF.SelectedIndex = 0;
+                            drpdwn_FAPWF.DataBind();
                         }
                     }
 
@@ -545,6 +560,7 @@ namespace DX_WebTemplate
             WFSequenceGrid.DataSourceID = null;
             WFSequenceGrid.DataSource = SqlWorkflowSequence;
             WFSequenceGrid.DataBind();
+
         }
 
         protected void FAPWFGrid_CustomCallback(object sender, DevExpress.Web.ASPxGridViewCustomCallbackEventArgs e)
@@ -576,137 +592,144 @@ namespace DX_WebTemplate
             //    drpdwn_FAPWF.SelectedIndex = 0;
             //}
 
-            var param = e.Parameters.Split('|');
-            var comp_id = param[1];
-            var amount = param[2];
-            var classTypeId = param[3] != "null" ? param[3] : "0";
-            var tripType = param[0] != null ? param[0] : "";
-            //var comp_id = drpdown_CTCompany.Value != null ? drpdown_CTCompany.Value : 0;
-            //var amount = spinEdit_Amount.Value != null ? spinEdit_Amount.Value : "0.00";
-            //var classTypeId = drpdown_classification.Value != null ? drpdown_classification.Value : 0;
-            var classType = _DataContext.ACCEDE_S_ExpenseClassifications.Where(x => x.ID == Convert.ToInt32(classTypeId)).FirstOrDefault();
-            //var tripType = e.Parameter != "" ? e.Parameter.ToString() : "";
+            SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = e.Parameters.ToString();
+            SqlFAPWF.DataBind();
 
-            if (Convert.ToInt64(comp_id) != 0)
-            {
-                if (classType != null)
-                {
-                    if (Convert.ToBoolean(classType.withFAPLogic) == true)
-                    {
-                        var wf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(comp_id)).Where(x => x.App_Id == 1032)
-                        .Where(x => x.With_DivHead == true)
-                        .Where(x => x.Minimum <= Convert.ToDecimal(amount))
-                        .Where(x => x.Maximum >= Convert.ToDecimal(amount))
-                        .Where(x => x.IsRA == false || x.IsRA == null).FirstOrDefault();
+            FAPWFGrid.DataSourceID = null;
+            FAPWFGrid.DataSource = SqlFAPWF;
+            FAPWFGrid.DataBind();
 
-                        if (wf != null)
-                        {
-                            SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = wf.WF_Id.ToString();
-                            SqlFAPWF.DataBind();
+            //var param = e.Parameters.Split('|');
+            //var comp_id = param[1];
+            //var amount = param[2];
+            //var classTypeId = param[3] != "null" ? param[3] : "0";
+            //var tripType = param[0] != null ? param[0] : "";
+            ////var comp_id = drpdown_CTCompany.Value != null ? drpdown_CTCompany.Value : 0;
+            ////var amount = spinEdit_Amount.Value != null ? spinEdit_Amount.Value : "0.00";
+            ////var classTypeId = drpdown_classification.Value != null ? drpdown_classification.Value : 0;
+            //var classType = _DataContext.ACCEDE_S_ExpenseClassifications.Where(x => x.ID == Convert.ToInt32(classTypeId)).FirstOrDefault();
+            ////var tripType = e.Parameter != "" ? e.Parameter.ToString() : "";
 
-                            FAPWFGrid.DataSourceID = null;
-                            FAPWFGrid.DataSource = SqlFAPWF;
-                            FAPWFGrid.DataBind();
-                        }
-                        else
-                        {
-                            SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = "";
-                            SqlFAPWF.DataBind();
+            //if (Convert.ToInt64(comp_id) != 0)
+            //{
+            //    if (classType != null)
+            //    {
+            //        if (Convert.ToBoolean(classType.withFAPLogic) == true)
+            //        {
+            //            var wf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(comp_id)).Where(x => x.App_Id == 1032)
+            //            .Where(x => x.With_DivHead == true)
+            //            .Where(x => x.Minimum <= Convert.ToDecimal(amount))
+            //            .Where(x => x.Maximum >= Convert.ToDecimal(amount))
+            //            .Where(x => x.IsRA == false || x.IsRA == null).FirstOrDefault();
 
-                            FAPWFGrid.DataSourceID = null;
-                            FAPWFGrid.DataBind();
-                        }
-                    }
-                    else
-                    {
-                        var wf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(comp_id)).Where(x => x.App_Id == 1032)
-                        .Where(x => x.With_DivHead == false || x.With_DivHead == null)
-                        .Where(x => x.Minimum <= Convert.ToDecimal(amount))
-                        .Where(x => x.Maximum >= Convert.ToDecimal(amount))
-                        .Where(x => x.IsRA == false || x.IsRA == null).FirstOrDefault();
+            //            if (wf != null)
+            //            {
+            //                SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = wf.WF_Id.ToString();
+            //                SqlFAPWF.DataBind();
 
-                        if (wf != null)
-                        {
-                            SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = wf.WF_Id.ToString();
-                            SqlFAPWF.DataBind();
+            //                FAPWFGrid.DataSourceID = null;
+            //                FAPWFGrid.DataSource = SqlFAPWF;
+            //                FAPWFGrid.DataBind();
+            //            }
+            //            else
+            //            {
+            //                SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = "";
+            //                SqlFAPWF.DataBind();
 
-                            FAPWFGrid.DataSourceID = null;
-                            FAPWFGrid.DataSource = SqlFAPWF;
-                            FAPWFGrid.DataBind();
+            //                FAPWFGrid.DataSourceID = null;
+            //                FAPWFGrid.DataBind();
+            //            }
+            //        }
+            //        else
+            //        {
+            //            var wf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(comp_id)).Where(x => x.App_Id == 1032)
+            //            .Where(x => x.With_DivHead == false || x.With_DivHead == null)
+            //            .Where(x => x.Minimum <= Convert.ToDecimal(amount))
+            //            .Where(x => x.Maximum >= Convert.ToDecimal(amount))
+            //            .Where(x => x.IsRA == false || x.IsRA == null).FirstOrDefault();
 
-                        }
-                        else
-                        {
-                            SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = "";
-                            SqlFAPWF.DataBind();
+            //            if (wf != null)
+            //            {
+            //                SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = wf.WF_Id.ToString();
+            //                SqlFAPWF.DataBind();
 
-                            FAPWFGrid.DataSourceID = null;
-                            FAPWFGrid.DataSource = SqlFAPWF;
-                            FAPWFGrid.DataBind();
-                        }
-                    }
-                }
-                else
-                {
-                    if (tripType.ToString() == "1")
-                    {
-                        var wf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(comp_id)).Where(x => x.App_Id == 1032)
-                            .Where(x => x.With_DivHead == true)
-                            .Where(x => x.Description.Contains("foreign"))
-                            .Where(x => x.IsRA == false || x.IsRA == null).FirstOrDefault();
+            //                FAPWFGrid.DataSourceID = null;
+            //                FAPWFGrid.DataSource = SqlFAPWF;
+            //                FAPWFGrid.DataBind();
 
-                        if (wf != null)
-                        {
-                            SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = wf.WF_Id.ToString();
-                            SqlFAPWF.DataBind();
+            //            }
+            //            else
+            //            {
+            //                SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = "";
+            //                SqlFAPWF.DataBind();
 
-                            FAPWFGrid.DataSourceID = null;
-                            FAPWFGrid.DataSource = SqlFAPWF;
-                            FAPWFGrid.DataBind();
-                        }
-                        else
-                        {
-                            SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = "";
-                            SqlFAPWF.DataBind();
+            //                FAPWFGrid.DataSourceID = null;
+            //                FAPWFGrid.DataSource = SqlFAPWF;
+            //                FAPWFGrid.DataBind();
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if (tripType.ToString() == "1")
+            //        {
+            //            var wf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(comp_id)).Where(x => x.App_Id == 1032)
+            //                .Where(x => x.With_DivHead == true)
+            //                .Where(x => x.Description.Contains("foreign"))
+            //                .Where(x => x.IsRA == false || x.IsRA == null).FirstOrDefault();
 
-                            FAPWFGrid.DataSourceID = null;
-                            FAPWFGrid.DataSource = SqlFAPWF;
-                            FAPWFGrid.DataBind();
-                        }
-                    }
-                    else
-                    {
-                        var wf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(comp_id)).Where(x => x.App_Id == 1032)
-                            .Where(x => x.With_DivHead == false || x.With_DivHead == null)
-                            .Where(x => x.Minimum <= Convert.ToDecimal(amount))
-                            .Where(x => x.Maximum >= Convert.ToDecimal(amount))
-                            .Where(x => x.IsRA == false || x.IsRA == null).FirstOrDefault();
+            //            if (wf != null)
+            //            {
+            //                SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = wf.WF_Id.ToString();
+            //                SqlFAPWF.DataBind();
 
-                        if (wf != null)
-                        {
-                            SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = wf.WF_Id.ToString();
-                            SqlFAPWF.DataBind();
+            //                FAPWFGrid.DataSourceID = null;
+            //                FAPWFGrid.DataSource = SqlFAPWF;
+            //                FAPWFGrid.DataBind();
+            //            }
+            //            else
+            //            {
+            //                SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = "";
+            //                SqlFAPWF.DataBind();
 
-                            FAPWFGrid.DataSourceID = null;
-                            FAPWFGrid.DataSource = SqlFAPWF;
-                            FAPWFGrid.DataBind();
-                        }
-                        else
-                        {
-                            SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = "";
-                            SqlFAPWF.DataBind();
+            //                FAPWFGrid.DataSourceID = null;
+            //                FAPWFGrid.DataSource = SqlFAPWF;
+            //                FAPWFGrid.DataBind();
+            //            }
+            //        }
+            //        else
+            //        {
+            //            var wf = _DataContext.ITP_S_WorkflowHeaders.Where(x => x.Company_Id == Convert.ToInt32(comp_id)).Where(x => x.App_Id == 1032)
+            //                .Where(x => x.With_DivHead == false || x.With_DivHead == null)
+            //                .Where(x => x.Minimum <= Convert.ToDecimal(amount))
+            //                .Where(x => x.Maximum >= Convert.ToDecimal(amount))
+            //                .Where(x => x.IsRA == false || x.IsRA == null).FirstOrDefault();
 
-                            FAPWFGrid.DataSourceID = null;
-                            FAPWFGrid.DataSource = SqlFAPWF;
-                            FAPWFGrid.DataBind();
-                        }
-                    }
+            //            if (wf != null)
+            //            {
+            //                SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = wf.WF_Id.ToString();
+            //                SqlFAPWF.DataBind();
 
-                }
+            //                FAPWFGrid.DataSourceID = null;
+            //                FAPWFGrid.DataSource = SqlFAPWF;
+            //                FAPWFGrid.DataBind();
+            //            }
+            //            else
+            //            {
+            //                SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = "";
+            //                SqlFAPWF.DataBind();
+
+            //                FAPWFGrid.DataSourceID = null;
+            //                FAPWFGrid.DataSource = SqlFAPWF;
+            //                FAPWFGrid.DataBind();
+            //            }
+            //        }
+
+            //    }
 
 
 
-            }
+            //}
         }
 
         protected void UploadController_FilesUploadComplete(object sender, FilesUploadCompleteEventArgs e)
