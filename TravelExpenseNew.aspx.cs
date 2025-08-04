@@ -50,8 +50,8 @@ namespace DX_WebTemplate
 
                         SqlMain.SelectParameters["ID"].DefaultValue = mainExp.ID.ToString();
                         SqlEmpName.SelectParameters["EmpCode"].DefaultValue = mainExp.Employee_Id.ToString();
-                        //SqlWFCompany.SelectParameters["WASSId"].DefaultValue = mainExp.Company_Id.ToString();
-                        //SqlWFDepartment.SelectParameters["ID"].DefaultValue = mainExp.Dep_Code.ToString();
+                        SqlWFCompany.SelectParameters["WASSId"].DefaultValue = mainExp.Company_Id.ToString();
+                        SqlWFDepartment.SelectParameters["ID"].DefaultValue = mainExp.Dep_Code.ToString();
                         SqlLocBranch.SelectParameters["Comp_Id"].DefaultValue = mainExp.ChargedToComp.ToString();
                         SqlAllCompany.SelectParameters["WASSId"].DefaultValue = Convert.ToString(mainExp.ChargedToComp);
                         SqlAllDepartment.SelectParameters["Company_ID"].DefaultValue = Convert.ToString(mainExp.ChargedToComp);
@@ -1331,16 +1331,6 @@ namespace DX_WebTemplate
             {
             }
             ;
-        }
-
-        protected void compCB_Callback(object sender, CallbackEventArgsBase e)
-        {
-
-        }
-
-        protected void depCB_Callback(object sender, CallbackEventArgsBase e)
-        {
-
         }
     }
 }

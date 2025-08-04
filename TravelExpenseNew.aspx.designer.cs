@@ -60,6 +60,24 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox empnameCB;
 
         /// <summary>
+        /// companyCB control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox companyCB;
+
+        /// <summary>
+        /// departmentCB control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox departmentCB;
+
+        /// <summary>
         /// reportdateDE control.
         /// </summary>
         /// <remarks>
@@ -337,24 +355,6 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxFormLayout ASPxFormLayout8;
-
-        /// <summary>
-        /// compCB control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox compCB;
-
-        /// <summary>
-        /// depCB control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox depCB;
 
         /// <summary>
         /// WFActivityGrid control.
@@ -985,24 +985,6 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlEmpName;
-
-        /// <summary>
-        /// SqlDepartmentEdit control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.SqlDataSource SqlDepartmentEdit;
-
-        /// <summary>
-        /// SqlCompanyEdit control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.SqlDataSource SqlCompanyEdit;
 
         /// <summary>
         /// SqlWFCompany control.

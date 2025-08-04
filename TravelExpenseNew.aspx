@@ -576,6 +576,44 @@
                                                 <CaptionStyle Font-Bold="False">
                                                 </CaptionStyle>
                                             </dx:LayoutItem>
+                                            <dx:LayoutItem Caption="Workflow Company" ColSpan="1">
+                                                <LayoutItemNestedControlCollection>
+                                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                                        <dx:ASPxComboBox ID="companyCB" runat="server" ClientEnabled="False" ClientInstanceName="companyCB" DataSourceID="SqlWFCompany" EnableTheming="True" Font-Bold="True" Font-Size="Small" ReadOnly="True" TextField="CompanyShortName" ValueField="WASSId" Width="100%" SelectedIndex="0">
+                                                            <DropDownButton Visible="False">
+                                                            </DropDownButton>
+                                                            <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                                <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                            </ValidationSettings>
+                                                            <Border BorderStyle="None" />
+                                                            <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                            <DisabledStyle ForeColor="#333333">
+                                                            </DisabledStyle>
+                                                        </dx:ASPxComboBox>
+                                                    </dx:LayoutItemNestedControlContainer>
+                                                </LayoutItemNestedControlCollection>
+                                                <CaptionStyle Font-Bold="False">
+                                                </CaptionStyle>
+                                            </dx:LayoutItem>
+                                            <dx:LayoutItem Caption="Workflow Department" ColSpan="1">
+                                                <LayoutItemNestedControlCollection>
+                                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                                        <dx:ASPxComboBox ID="departmentCB" runat="server" ClientEnabled="False" ClientInstanceName="departmentCB" DataSourceID="SqlWFDepartment" Font-Bold="True" Font-Size="Small" ReadOnly="True" TextField="DepDesc" ValueField="ID" Width="100%" SelectedIndex="0">
+                                                            <DropDownButton Visible="False">
+                                                            </DropDownButton>
+                                                            <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                                <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                            </ValidationSettings>
+                                                            <Border BorderStyle="None" />
+                                                            <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                            <DisabledStyle ForeColor="#333333">
+                                                            </DisabledStyle>
+                                                        </dx:ASPxComboBox>
+                                                    </dx:LayoutItemNestedControlContainer>
+                                                </LayoutItemNestedControlCollection>
+                                                <CaptionStyle Font-Bold="False">
+                                                </CaptionStyle>
+                                            </dx:LayoutItem>
                                             <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2">
                                             </dx:EmptyLayoutItem>
                                             <dx:LayoutItem Caption="Report Date" ColSpan="1" FieldName="Date_Created">
@@ -1403,7 +1441,7 @@
                                                         <CollapseButton Width="16px">
                                                         </CollapseButton>
                                                     </Images>
-                                                    <SettingsCollapsing AnimationType="Slide" ExpandEffect="Slide" ExpandOnPageLoad="True">
+                                                    <SettingsCollapsing AnimationType="Slide" ExpandEffect="Slide">
                                                         <ExpandButton Position="Far" />
                                                     </SettingsCollapsing>
                                                     <ExpandBarTemplate>
@@ -1416,39 +1454,10 @@
                                                         <dx:PanelContent runat="server">
                                                             <dx:ASPxCallbackPanel ID="wfCallback" runat="server" ClientInstanceName="wfCallback" Width="100%">
                                                                 <SettingsLoadingPanel Enabled="False" />
-                                                                <SettingsCollapsing ExpandOnPageLoad="True">
-                                                                </SettingsCollapsing>
                                                                 <PanelCollection>
                                                                     <dx:PanelContent runat="server">
                                                                         <dx:ASPxFormLayout ID="ASPxFormLayout8" runat="server" ColCount="2" ColumnCount="2" Width="100%">
                                                                             <Items>
-                                                                                <dx:LayoutGroup Caption="SELECT APPROVAL WORKFLOW" ColCount="2" ColSpan="2" ColumnCount="2" ColumnSpan="2" GroupBoxDecoration="Box">
-                                                                                    <Items>
-                                                                                        <dx:LayoutItem Caption="Workflow Company" ColSpan="1">
-                                                                                            <LayoutItemNestedControlCollection>
-                                                                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                                                                    <dx:ASPxComboBox ID="compCB" runat="server" ClientInstanceName="compCB" DataSourceID="SqlCompanyEdit" EnableCallbackMode="True" Font-Bold="True" OnCallback="compCB_Callback" TextField="CompanyShortName" ValueField="CompanyId" Width="100%">
-                                                                                                        <ClientSideEvents SelectedIndexChanged="OnCompanyChanged" ValueChanged="OnCompanyChanged" />
-                                                                                                        <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
-                                                                                                            <RequiredField ErrorText="*Required field" IsRequired="True" />
-                                                                                                        </ValidationSettings>
-                                                                                                    </dx:ASPxComboBox>
-                                                                                                </dx:LayoutItemNestedControlContainer>
-                                                                                            </LayoutItemNestedControlCollection>
-                                                                                        </dx:LayoutItem>
-                                                                                        <dx:LayoutItem Caption="Workflow Department" ColSpan="1">
-                                                                                            <LayoutItemNestedControlCollection>
-                                                                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                                                                    <dx:ASPxComboBox ID="depCB" runat="server" ClientInstanceName="depCB" DataSourceID="SqlDepartmentEdit" EnableCallbackMode="True" Font-Bold="True" OnCallback="depCB_Callback" TextField="DepDesc" ValueField="ID" Width="100%">
-                                                                                                        <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
-                                                                                                            <RequiredField ErrorText="*Required field" IsRequired="True" />
-                                                                                                        </ValidationSettings>
-                                                                                                    </dx:ASPxComboBox>
-                                                                                                </dx:LayoutItemNestedControlContainer>
-                                                                                            </LayoutItemNestedControlCollection>
-                                                                                        </dx:LayoutItem>
-                                                                                    </Items>
-                                                                                </dx:LayoutGroup>
                                                                                 <dx:LayoutGroup Caption="WORKFLOW ACTIVITY" ColSpan="2" ColumnSpan="2" GroupBoxDecoration="Box">
                                                                                     <Items>
                                                                                         <dx:LayoutItem Caption="" ColSpan="1">
@@ -3117,21 +3126,6 @@
             <asp:Parameter Name="EmpCode" Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>
-
-     <asp:SqlDataSource ID="SqlDepartmentEdit" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT ID, DepCode, DepDesc FROM [vw_ACCEDE_I_SecurityUserDept] WHERE ([CompanyId] = @CompanyId) AND ([UserId] = @UserId) GROUP BY ID, DepDesc, DepCode">
-        <SelectParameters>
-            <asp:Parameter DefaultValue="" Name="CompanyId" Type="Int32" />
-            <asp:Parameter DefaultValue="" Name="UserId" Type="String" />
-        </SelectParameters>
-    </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlCompanyEdit" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_SecurityUserComp] WHERE (([AppId] = @AppId) AND ([IsActive] = @IsActive) AND ([UserId] = @UserId))">
-        <SelectParameters>
-            <asp:Parameter DefaultValue="1032" Name="AppId" Type="Int32" />
-            <asp:Parameter DefaultValue="true" Name="IsActive" Type="Boolean" />
-            <asp:Parameter DefaultValue="" Name="UserId" Type="String" />
-        </SelectParameters>
-    </asp:SqlDataSource>
-     
     <asp:SqlDataSource ID="SqlWFCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [CompanyMaster] WHERE ([WASSId] = @WASSId)">
         <SelectParameters>
             <asp:Parameter Name="WASSId" Type="Int32" />
