@@ -100,7 +100,7 @@
 
         function OnDeptChanged(dept_id) {
             drpdown_WF.PerformCallback(dept_id);
-            WFSequenceGrid.PerformCallback(dept_id);
+            //WFSequenceGrid.PerformCallback(dept_id);
             //exp_costCenter.PerformCallback();
             //$.ajax({
             //    type: "POST",
@@ -2123,12 +2123,14 @@ var emp = exp_EmpId.GetValue() != null ? exp_EmpId.GetValue() : &quot;&quot;;
                                                                 <dx:LayoutItem Caption="Workflow" ColSpan="1">
                                                                     <LayoutItemNestedControlCollection>
                                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                                            <dx:ASPxComboBox ID="drpdown_WF" runat="server" ClientInstanceName="drpdown_WF" Height="39px" OnCallback="drpdown_WF_Callback" TextField="Name" ValueField="WF_Id" Width="100%" DataSourceID="SqlWF">
+                                                                            <dx:ASPxComboBox ID="drpdown_WF" runat="server" ClientInstanceName="drpdown_WF" Height="39px" OnCallback="drpdown_WF_Callback" TextField="Name" ValueField="WF_Id" Width="100%" DataSourceID="SqlWFAmount">
                                                                                 <ClientSideEvents Init="function(s, e) {
-	//WFSequenceGrid.PerformCallback(s.GetValue());
+	WFSequenceGrid.PerformCallback(s.GetValue());
 }" SelectedIndexChanged="function(s, e) {
 	        //OnWFChanged();
-        }" />
+        }" EndCallback="function(s, e) {
+	WFSequenceGrid.PerformCallback(s.GetValue());
+}" />
                                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                                 </ValidationSettings>
@@ -2182,7 +2184,9 @@ var emp = exp_EmpId.GetValue() != null ? exp_EmpId.GetValue() : &quot;&quot;;
                                                                                 <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	
 	        FAPWFGrid.PerformCallback(s.GetValue());
-        }" />
+        }" EndCallback="function(s, e) {
+	FAPWFGrid.PerformCallback(s.GetValue());
+}" />
                                                                                 <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                                     <RequiredField ErrorText="This field is required." IsRequired="True" />
                                                                                 </ValidationSettings>
@@ -3525,7 +3529,7 @@ ExpAllocGrid.PerformCallback();
                                         <dx:LayoutItem Caption="IO" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="io_edit" runat="server" ClientInstanceName="io_edit" DataSourceID="SqlIO" DropDownWidth="300px" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" OnCallback="io_edit_Callback" TextField="IO_Num" TextFormatString="{0}" ValueField="IO_Num" Width="100%">
+                                                    <dx:ASPxComboBox ID="io_edit" runat="server" ClientInstanceName="IO" DataSourceID="SqlIO" DropDownWidth="300px" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" OnCallback="io_edit_Callback" TextField="IO_Num" TextFormatString="{0}" ValueField="IO_Num" Width="100%">
                                                         <Columns>
                                                             <dx:ListBoxColumn Caption="IO Number" FieldName="IO_Num" Name="IO Number">
                                                             </dx:ListBoxColumn>
@@ -4078,6 +4082,19 @@ computeNetAmount(&quot;edit&quot;);
         <SelectParameters>
             <asp:Parameter DefaultValue="True" Name="isActive" Type="Boolean" />
             <asp:Parameter Name="CompanyId" Type="Int32" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlWFAmount" runat="server"
+        ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>"
+        SelectCommand="sp_sel_ACCEDE_GetWorkflowHeadersByExpenseAndDepartment"
+        SelectCommandType="StoredProcedure">
+
+        <SelectParameters>
+            <asp:Parameter Name="UserId" Type="String" />
+            <asp:Parameter Name="CompanyId" Type="String" />
+            <asp:Parameter Name="totalExp" Type="Decimal" />
+            <asp:Parameter Name="DepCode" Type="String" />
+            <asp:Parameter Name="AppId" Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>
 </asp:Content>

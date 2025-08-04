@@ -113,7 +113,7 @@
 
                             <div class="title">
                                 <%--<a href="http://localhost:61185/Default.aspx">--%>
-                                    <a href="http://devapps.anflocor.com/Default.aspx">
+                                    <a href="http://apps.anflocor.com/Default.aspx">
                                 <dx:ASPxImage ID="ASPxImage1" runat="server" SpriteCssClass="header-logo" ShowLoadingImage="true"></dx:ASPxImage>
                                </a>
 

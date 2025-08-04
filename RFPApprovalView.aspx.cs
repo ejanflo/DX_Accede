@@ -372,6 +372,7 @@ namespace DX_WebTemplate
                             SqlCompany.SelectParameters["UserId"].DefaultValue = rfp_main.User_ID.ToString();
                             SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = rfp_main.ChargedTo_CompanyId.ToString();
                             SqlCostCenter.SelectParameters["DepartmentId"].DefaultValue = rfp_main.ChargedTo_DeptId.ToString();
+                            SqlIO.SelectParameters["CompanyId"].DefaultValue = rfp_main.ChargedTo_CompanyId.ToString();
                             SqlCostCenterCT.SelectParameters["Company_ID"].DefaultValue = rfp_main.ChargedTo_CompanyId.ToString();
                         }
                     }
@@ -1323,6 +1324,11 @@ namespace DX_WebTemplate
             //var count = drpdown_CostCenter.Items.Count;
             //if(count == 1)
             //    drpdown_CostCenter.SelectedIndex = 0; drpdown_CostCenter.DataBind();
+
+        }
+
+        protected void edit_IO_Callback(object sender, CallbackEventArgsBase e)
+        {
 
         }
     }
