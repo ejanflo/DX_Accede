@@ -34,9 +34,9 @@
     </style>
     <script>
         function onEmpSelected(s, e) {
-            compCB.PerformCallback(s.GetValue());
+            //compCB.PerformCallback(s.GetValue());
+            //depCB.SetSelectedIndex(-1);
             chargedCB.PerformCallback(s.GetValue());
-            depCB.SetSelectedIndex(-1);
             chargedCB0.SetSelectedIndex(-1);
             locBranch.SetSelectedIndex(-1);
         }
@@ -135,9 +135,9 @@
             loadPanel.Show();      
         }
 
-        function OnCompanyChanged(s, e) {
-            depCB.PerformCallback(s.GetValue() + "|" + employeeCB.GetValue());
-        }
+        //function OnCompanyChanged(s, e) {
+        //    depCB.PerformCallback(s.GetValue() + "|" + employeeCB.GetValue());
+        //}
 
         function onToolbarItemClick(s, e) { 
             if (e.item.name === "newReport") {
@@ -178,8 +178,8 @@
         function SaveExpense() {
             loadPanel.Show();
             var empcode = employeeCB.GetValue();
-            var companyid = compCB.GetValue();
-            var department_code = depCB.GetValue();
+            //var companyid = compCB.GetValue();
+            //var department_code = depCB.GetValue();
             var chargedtoComp = chargedCB.GetValue();
             var chargedtoDept = chargedCB0.GetValue();
             var tripto = triptoTB.GetValue();
@@ -198,8 +198,8 @@
                 dataType: "json",
                 data: JSON.stringify({
                     empcode: empcode,
-                    companyid: companyid,
-                    department_code: department_code,
+                    //companyid: companyid,
+                    //department_code: department_code,
                     chargedtoComp: chargedtoComp,
                     chargedtoDept: chargedtoDept,
                     tripto: tripto,
@@ -726,7 +726,7 @@
                     <dx:EmptyLayoutItem ColSpan="4" ColumnSpan="4">
                         <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                     </dx:EmptyLayoutItem>
-                    <dx:LayoutItem Caption="Workflow Company" ColSpan="2" VerticalAlign="Top" Width="50%" ColumnSpan="2">
+                    <dx:LayoutItem Caption="Workflow Company" ColSpan="2" VerticalAlign="Top" Width="50%" ColumnSpan="2" ClientVisible="False" Visible="False">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
                                 <dx:ASPxComboBox ID="compCB" runat="server" ClientInstanceName="compCB" TextField="CompanyShortName" ValueField="CompanyId" Width="100%" DataSourceID="SqlCompanyEdit" Font-Bold="True" EnableCallbackMode="True" OnCallback="compCB_Callback">
@@ -740,7 +740,7 @@
                         <CaptionSettings Location="Top" />
                         <Paddings PaddingTop="15px" />
                     </dx:LayoutItem>
-                    <dx:LayoutItem Caption="Workflow Department" ColSpan="2" VerticalAlign="Top" Width="100%" ColumnSpan="2">
+                    <dx:LayoutItem Caption="Workflow Department" ColSpan="2" VerticalAlign="Top" Width="100%" ColumnSpan="2" ClientVisible="False" Visible="False">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
                                 <dx:ASPxComboBox ID="depCB" runat="server" ClientInstanceName="depCB" DataSourceID="SqlDepartmentEdit" Font-Bold="True" TextField="DepDesc" ValueField="ID" Width="100%" OnCallback="depCB_Callback" EnableCallbackMode="True">

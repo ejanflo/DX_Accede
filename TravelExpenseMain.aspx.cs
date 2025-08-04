@@ -94,12 +94,12 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static bool AJAXSaveTravelExpense(string empcode, string companyid, string department_code, string chargedtoComp, string chargedtoDept, string tripto, DateTime datefrom, DateTime dateto, string timedepart, string timearrive, string purpose, string ford, string locbranch)
+        public static bool AJAXSaveTravelExpense(string empcode, string chargedtoComp, string chargedtoDept, string tripto, DateTime datefrom, DateTime dateto, string timedepart, string timearrive, string purpose, string ford, string locbranch)
         {
             DateTime timeDepart = Convert.ToDateTime(timedepart);
             DateTime timeArrive = Convert.ToDateTime(timearrive);
             TravelExpense travel = new TravelExpense();
-            return travel.SaveTravelExpense(empcode, companyid, department_code, chargedtoComp, chargedtoDept, tripto, datefrom, dateto, timeDepart.ToString("HH:mm"), timeArrive.ToString("HH:mm"), purpose, ford, DateTime.Now, locbranch);
+            return travel.SaveTravelExpense(empcode, chargedtoComp, chargedtoDept, tripto, datefrom, dateto, timeDepart.ToString("HH:mm"), timeArrive.ToString("HH:mm"), purpose, ford, DateTime.Now, locbranch);
         }
 
         public UserInfo GetUserInfo(string fullname)
@@ -128,7 +128,7 @@ namespace DX_WebTemplate
             return user;
         }
 
-        public bool SaveTravelExpense(string empcode, string companyid, string department_code, string chargedtoComp, string chargedtoDept, string tripto, DateTime datefrom, DateTime dateto, string timedepart, string timearrive, string purpose, string ford, DateTime datecreated, string locbranch)
+        public bool SaveTravelExpense(string empcode, string chargedtoComp, string chargedtoDept, string tripto, DateTime datefrom, DateTime dateto, string timedepart, string timearrive, string purpose, string ford, DateTime datecreated, string locbranch)
         {
             try
             {
@@ -137,17 +137,15 @@ namespace DX_WebTemplate
                 generateDocNo.RunStoredProc_GenerateDocNum(Convert.ToInt32(app_docType), Convert.ToInt32(chargedtoComp), 1032);
                 var docNo = generateDocNo.GetLatest_DocNum(Convert.ToInt32(app_docType), Convert.ToInt32(chargedtoComp), 1032);
 
-                var depcode = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(department_code)).Select(x => x.DepCode).FirstOrDefault();
-                var rawf = context.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == empcode)
-                            .Where(x => x.CompanyId == Convert.ToInt32(companyid))
-                            .Where(x => x.DepCode == depcode)
-                            .FirstOrDefault();
+                //var depcode = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(department_code)).Select(x => x.DepCode).FirstOrDefault();
+                //var rawf = context.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == empcode)
+                //            .Where(x => x.CompanyId == Convert.ToInt32(companyid))
+                //            .Where(x => x.DepCode == depcode)
+                //            .FirstOrDefault();
 
                 ACCEDE_T_TravelExpenseMain travelMain = new ACCEDE_T_TravelExpenseMain();
                 {
                     travelMain.Employee_Id = Convert.ToInt32(empcode);
-                    travelMain.Company_Id = Convert.ToInt32(companyid);
-                    travelMain.Dep_Code = department_code;
                     travelMain.ChargedToComp = Convert.ToInt32(chargedtoComp) == 0 ? Convert.ToInt32(null) : Convert.ToInt32(chargedtoComp);
                     travelMain.ChargedToDept = Convert.ToInt32(chargedtoDept) == 0 ? Convert.ToInt32(null) : Convert.ToInt32(chargedtoDept);
                     travelMain.Trip_To = tripto;
@@ -162,10 +160,10 @@ namespace DX_WebTemplate
                     travelMain.Preparer_Id = Convert.ToInt32(Session["userID"]);
                     travelMain.LocBranch = Convert.ToInt32(locbranch);
 
-                    if (rawf != null)
-                    { 
-                        travelMain.WF_Id = Convert.ToInt32(rawf.WF_Id);
-                    }
+                    //if (rawf != null)
+                    //{ 
+                    //    travelMain.WF_Id = Convert.ToInt32(rawf.WF_Id);
+                    //}
                 }
                 context.ACCEDE_T_TravelExpenseMains.InsertOnSubmit(travelMain);
                 context.SubmitChanges();
