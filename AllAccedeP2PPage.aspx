@@ -159,7 +159,7 @@
                                                     <EditFormSettings Visible="False" />
                                                 </dx:GridViewDataTextColumn>
                                                 <dx:GridViewDataTextColumn ShowInCustomizationForm="True" VisibleIndex="2" Caption="Document No.">
-                                                    <CellStyle Font-Bold="False" HorizontalAlign="Left">
+                                                    <CellStyle Font-Bold="False" HorizontalAlign="Center">
                                                     </CellStyle>
                                                     <Columns>
                                                         <dx:GridViewDataTextColumn Caption="Employee Name" ShowInCustomizationForm="True" VisibleIndex="0">
@@ -168,41 +168,27 @@
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataComboBoxColumn Caption="Company" FieldName="CompanyId" ShowInCustomizationForm="True" VisibleIndex="3">
-                                                    <PropertiesComboBox DataSourceID="sqlCompany" TextField="CompanyShortName" ValueField="WASSId">
-                                                    </PropertiesComboBox>
+                                                <dx:GridViewDataDateColumn FieldName="DateAction" ShowInCustomizationForm="True" VisibleIndex="10" Visible="False">
+                                                </dx:GridViewDataDateColumn>
+                                                <dx:GridViewDataTextColumn FieldName="AppId" ShowInCustomizationForm="True" VisibleIndex="11" Visible="False">
+                                                </dx:GridViewDataTextColumn>
+                                                <dx:GridViewDataTextColumn ShowInCustomizationForm="True" VisibleIndex="12" FieldName="Remarks" Visible="False">
+                                                </dx:GridViewDataTextColumn>
+                                                <dx:GridViewDataTextColumn FieldName="UserId" ShowInCustomizationForm="True" Visible="False" VisibleIndex="13">
+                                                </dx:GridViewDataTextColumn>
+                                                <dx:GridViewDataTextColumn FieldName="CompanyId" ShowInCustomizationForm="True" Visible="False" VisibleIndex="14">
+                                                </dx:GridViewDataTextColumn>
+                                                <dx:GridViewDataTextColumn Caption="Purpose" ShowInCustomizationForm="True" VisibleIndex="7">
+                                                    <CellStyle HorizontalAlign="Left">
+                                                    </CellStyle>
                                                     <Columns>
-                                                        <dx:GridViewDataTextColumn Caption="Department" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                        <dx:GridViewDataTextColumn Caption="Preparer" ShowInCustomizationForm="True" VisibleIndex="0">
                                                             <CellStyle HorizontalAlign="Left">
                                                             </CellStyle>
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
-                                                </dx:GridViewDataComboBoxColumn>
-                                                <dx:GridViewDataDateColumn FieldName="DateAction" ShowInCustomizationForm="True" VisibleIndex="11" Visible="False">
-                                                </dx:GridViewDataDateColumn>
-                                                <dx:GridViewDataTextColumn FieldName="AppId" ShowInCustomizationForm="True" VisibleIndex="12" Visible="False">
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn ShowInCustomizationForm="True" VisibleIndex="13" FieldName="Remarks" Visible="False">
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn FieldName="UserId" ShowInCustomizationForm="True" Visible="False" VisibleIndex="14">
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn FieldName="CompanyId" ShowInCustomizationForm="True" Visible="False" VisibleIndex="15">
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataComboBoxColumn Caption="Document Type" FieldName="AppDocTypeId" ShowInCustomizationForm="True" VisibleIndex="6">
-                                                    <PropertiesComboBox DataSourceID="SqlAppDocType" TextField="DCT_Description" ValueField="DCT_Id">
-                                                    </PropertiesComboBox>
-                                                    <Columns>
-                                                        <dx:GridViewDataDateColumn FieldName="DateAssigned" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                        </dx:GridViewDataDateColumn>
-                                                    </Columns>
-                                                </dx:GridViewDataComboBoxColumn>
-                                                <dx:GridViewDataTextColumn Caption="Purpose" ShowInCustomizationForm="True" VisibleIndex="7">
-                                                    <Columns>
-                                                        <dx:GridViewDataTextColumn Caption="Preparer" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                        </dx:GridViewDataTextColumn>
-                                                    </Columns>
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn Caption="Status" FieldName="STS_Description" ShowInCustomizationForm="True" VisibleIndex="10">
+                                                <dx:GridViewDataTextColumn Caption="Status" FieldName="STS_Description" ShowInCustomizationForm="True" VisibleIndex="9">
                                                     <CellStyle HorizontalAlign="Center">
                                                     </CellStyle>
                                                     <Columns>
@@ -212,6 +198,44 @@
                                                             <CellStyle HorizontalAlign="Left">
                                                             </CellStyle>
                                                         </dx:GridViewDataTextColumn>
+                                                    </Columns>
+                                                </dx:GridViewDataTextColumn>
+                                                <dx:GridViewDataDateColumn FieldName="DateAssigned" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                    <CellStyle HorizontalAlign="Left">
+                                                    </CellStyle>
+                                                    <Columns>
+                                                        <dx:GridViewDataComboBoxColumn Caption="Company" FieldName="CompanyId" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                            <PropertiesComboBox DataSourceID="sqlCompany" TextField="CompanyShortName" ValueField="WASSId">
+                                                            </PropertiesComboBox>
+                                                            <CellStyle HorizontalAlign="Left">
+                                                            </CellStyle>
+                                                        </dx:GridViewDataComboBoxColumn>
+                                                    </Columns>
+                                                </dx:GridViewDataDateColumn>
+                                                <dx:GridViewDataComboBoxColumn Caption="Document Type" FieldName="AppDocTypeId" ShowInCustomizationForm="True" VisibleIndex="8">
+                                                    <PropertiesComboBox DataSourceID="SqlAppDocType" TextField="DCT_Description" ValueField="DCT_Id">
+                                                    </PropertiesComboBox>
+                                                    <CellStyle HorizontalAlign="Center">
+                                                    </CellStyle>
+                                                    <Columns>
+                                                        <dx:GridViewDataComboBoxColumn Caption="Transaction Type" FieldName="TranType" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                            <PropertiesComboBox DataSourceID="SqlTranType" TextField="Description" ValueField="ExpenseType_ID">
+                                                            </PropertiesComboBox>
+                                                            <CellStyle Font-Bold="True" HorizontalAlign="Center">
+                                                            </CellStyle>
+                                                        </dx:GridViewDataComboBoxColumn>
+                                                    </Columns>
+                                                </dx:GridViewDataComboBoxColumn>
+                                                <dx:GridViewDataTextColumn Caption="Department" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                    <CellStyle HorizontalAlign="Left">
+                                                    </CellStyle>
+                                                    <Columns>
+                                                        <dx:GridViewDataComboBoxColumn Caption="Location" ShowInCustomizationForm="True" VisibleIndex="0" FieldName="Location">
+                                                            <PropertiesComboBox DataSourceID="sqlCompanyBranch" TextField="Name" ValueField="ID">
+                                                            </PropertiesComboBox>
+                                                            <CellStyle HorizontalAlign="Left">
+                                                            </CellStyle>
+                                                        </dx:GridViewDataComboBoxColumn>
                                                     </Columns>
                                                 </dx:GridViewDataTextColumn>
                                             </Columns>
@@ -302,7 +326,7 @@
     <asp:SqlDataSource ID="sqlName" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT [FullName], [EmpCode] FROM [ITP_S_UserMaster]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="sqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [CompanyMaster] WHERE ([WASSId] IS NOT NULL)"></asp:SqlDataSource>
     <asp:SqlDataSource ID="sqlStatus" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_Status]"></asp:SqlDataSource>
-    <asp:SqlDataSource ID="sqlAllApproval" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT Document_Id, Status, STS_Description, DateAssigned, DateAction, AppDocTypeId, AppId, Remarks, UserId, CompanyId, TranType, WF_Id, WFD_Id, WFA_Id, Travel_Id, NoTravel_Id, RFP_Id
+    <asp:SqlDataSource ID="sqlAllApproval" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT Document_Id, Status, STS_Description, DateAssigned, DateAction, AppDocTypeId, AppId, Remarks, UserId, CompanyId, TranType, WF_Id, WFD_Id, WFA_Id, Travel_Id, NoTravel_Id, RFP_Id, Location
 FROM     vw_ACCEDE_I_AllAccedeP2P
 WHERE  (UserId = @UserId) AND (TranType = 1 OR
                   TranType IS NULL) AND (Document_Id = Travel_Id OR Document_Id = NoTravel_Id OR                     Document_Id = RFP_Id)
@@ -316,4 +340,6 @@ ORDER BY DateAssigned">
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlAppDocType" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_DocumentType]">
     </asp:SqlDataSource>
-</asp:Content>
+    <asp:SqlDataSource ID="SqlTranType" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_ExpenseType]"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="sqlCompanyBranch" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_CompanyBranch]"></asp:SqlDataSource>
+    </asp:Content>
