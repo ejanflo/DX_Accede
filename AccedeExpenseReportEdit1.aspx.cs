@@ -5,8 +5,12 @@ using DevExpress.Web.Bootstrap;
 using DevExpress.Web.Internal.XmlProcessor;
 using DevExpress.Xpo;
 using DevExpress.XtraCharts;
+using DevExpress.XtraEditors.TextEditController.Win32;
 using DevExpress.XtraReports.Design.ParameterEditor;
 using DevExpress.XtraRichEdit.Fields;
+using OfficeOpenXml;
+using OfficeOpenXml.DataValidation.Contracts;
+using OfficeOpenXml.Style;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,6 +20,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Contexts;
 using System.Security.Cryptography;
@@ -23,11 +28,7 @@ using System.Web;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using OfficeOpenXml;
-using OfficeOpenXml.DataValidation.Contracts;
 using System.Windows.Media;
-using OfficeOpenXml.Style;
-using System.IO;
 
 namespace DX_WebTemplate
 {
@@ -334,42 +335,54 @@ namespace DX_WebTemplate
                         {
                             if(depcode != null)
                             {
-                                var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == mainExp.ExpenseName)
-                                .Where(x => x.CompanyId == Convert.ToInt32(mainExp.CompanyId))
-                                .Where(x => x.DepCode == depcode.DepCode)
-                                //.Where(x => x.IsRA == true)
-                                .FirstOrDefault();
+                                //var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == mainExp.ExpenseName)
+                                //.Where(x => x.CompanyId == Convert.ToInt32(mainExp.CompanyId))
+                                //.Where(x => x.DepCode == depcode.DepCode)
+                                ////.Where(x => x.IsRA == true)
+                                //.FirstOrDefault();
 
-                                if (rawf != null)
-                                {
-                                    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
-                                    SqlWF.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
-                                    drpdown_WF.DataSourceID = null;
-                                    drpdown_WF.DataSource = SqlWF;
-                                    drpdown_WF.SelectedIndex = 0;
-                                    drpdown_WF.DataBind();
+                                //if (rawf != null)
+                                //{
+                                //    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
+                                //    SqlWF.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
+                                //    drpdown_WF.DataSourceID = null;
+                                //    drpdown_WF.DataSource = SqlWF;
+                                //    drpdown_WF.SelectedIndex = 0;
+                                //    drpdown_WF.DataBind();
 
-                                    WFSequenceGrid.DataSourceID = null;
-                                    WFSequenceGrid.DataSource = SqlWorkflowSequence;
-                                    WFSequenceGrid.DataBind();
-                                }
-                                else
-                                {
-                                    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = "0";
-                                    SqlWF.SelectParameters["WF_Id"].DefaultValue = "0";
-                                    drpdown_WF.DataSourceID = null;
-                                    drpdown_WF.DataSource = SqlWF;
-                                    drpdown_WF.DataBind();
+                                //    WFSequenceGrid.DataSourceID = null;
+                                //    WFSequenceGrid.DataSource = SqlWorkflowSequence;
+                                //    WFSequenceGrid.DataBind();
+                                //}
+                                //else
+                                //{
+                                //    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = "0";
+                                //    SqlWF.SelectParameters["WF_Id"].DefaultValue = "0";
+                                //    drpdown_WF.DataSourceID = null;
+                                //    drpdown_WF.DataSource = SqlWF;
+                                //    drpdown_WF.DataBind();
 
-                                    WFSequenceGrid.DataSourceID = null;
-                                    WFSequenceGrid.DataSource = SqlWorkflowSequence;
-                                    WFSequenceGrid.DataBind();
-                                    //var test = drpdown_WF.DataSource.ToString();
-                                    //SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = "0";
-                                    //SqlWF.SelectParameters["WF_Id"].DefaultValue = "0";
-                                    //SqlWorkflowSequence.DataBind();
-                                    //SqlWF.DataBind();
-                                }
+                                //    WFSequenceGrid.DataSourceID = null;
+                                //    WFSequenceGrid.DataSource = SqlWorkflowSequence;
+                                //    WFSequenceGrid.DataBind();
+                                //    //var test = drpdown_WF.DataSource.ToString();
+                                //    //SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = "0";
+                                //    //SqlWF.SelectParameters["WF_Id"].DefaultValue = "0";
+                                //    //SqlWorkflowSequence.DataBind();
+                                //    //SqlWF.DataBind();
+                                //}
+
+                                SqlWFAmount.SelectParameters["UserId"].DefaultValue = mainExp.ExpenseName;
+                                SqlWFAmount.SelectParameters["CompanyId"].DefaultValue = mainExp.ExpChargedTo_CompanyId.ToString();
+                                SqlWFAmount.SelectParameters["totalExp"].DefaultValue = totalExp.ToString();
+                                SqlWFAmount.SelectParameters["DepCode"].DefaultValue = depcode.DepCode;
+                                SqlWFAmount.SelectParameters["AppId"].DefaultValue = "1032";
+                                SqlWFAmount.DataBind();
+
+                                drpdown_WF.DataSourceID = null;
+                                drpdown_WF.DataSource = SqlWFAmount;
+                                drpdown_WF.SelectedIndex = 0;
+                                drpdown_WF.DataBind();
                             }
                             
                         }
@@ -549,60 +562,65 @@ namespace DX_WebTemplate
 
         protected void WFSequenceGrid_CustomCallback(object sender, DevExpress.Web.ASPxGridViewCustomCallbackEventArgs e)
         {
-            var param = e.Parameters.Split('|');
-            var dept_id = param[0] != "null" ? param[0] : "0";
-            var comp = param[1] != "null" ? param[1] : "0";
-            var depcode = _DataContext.ITP_S_OrgDepartmentMasters
-                .Where(x => x.ID == Convert.ToInt32(dept_id))
-                .FirstOrDefault();
+            //var param = e.Parameters.Split('|');
+            //var dept_id = param[0] != "null" ? param[0] : "0";
+            //var comp = param[1] != "null" ? param[1] : "0";
+            //var depcode = _DataContext.ITP_S_OrgDepartmentMasters
+            //    .Where(x => x.ID == Convert.ToInt32(dept_id))
+            //    .FirstOrDefault();
 
-            var expMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"])).FirstOrDefault();
+            //var expMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["ExpenseId"])).FirstOrDefault();
 
-            var wfMapCheck = _DataContext.vw_ACCEDE_I_WFMappings.Where(x => x.UserId == expMain.ExpenseName)
-                            .Where(x => x.Company_Id == Convert.ToInt32(comp))
-                            .FirstOrDefault();
+            //var wfMapCheck = _DataContext.vw_ACCEDE_I_WFMappings.Where(x => x.UserId == expMain.ExpenseName)
+            //                .Where(x => x.Company_Id == Convert.ToInt32(comp))
+            //                .FirstOrDefault();
 
-            if (wfMapCheck != null)
-            {
-                SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = wfMapCheck.WF_ID.ToString();
+            //if (wfMapCheck != null)
+            //{
+            //    SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = wfMapCheck.WF_ID.ToString();
 
-                WFSequenceGrid.DataSourceID = null;
-                WFSequenceGrid.DataSource = SqlWorkflowSequence;
-                WFSequenceGrid.DataBind();
-            }
-            else
-            {
-                if(depcode != null)
-                {
-                    var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == expMain.ExpenseName)
-                                .Where(x => x.CompanyId == Convert.ToInt32(comp))
-                                .Where(x => x.DepCode == depcode.DepCode)
-                                //.Where(x => x.IsRA == true)
-                                .FirstOrDefault();
+            //    WFSequenceGrid.DataSourceID = null;
+            //    WFSequenceGrid.DataSource = SqlWorkflowSequence;
+            //    WFSequenceGrid.DataBind();
+            //}
+            //else
+            //{
+            //    if(depcode != null)
+            //    {
+            //        var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == expMain.ExpenseName)
+            //                    .Where(x => x.CompanyId == Convert.ToInt32(comp))
+            //                    .Where(x => x.DepCode == depcode.DepCode)
+            //                    //.Where(x => x.IsRA == true)
+            //                    .FirstOrDefault();
 
-                    if (rawf != null)
-                    {
-                        SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
-                        SqlWorkflowSequence.DataBind();
+            //        if (rawf != null)
+            //        {
+            //            SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
+            //            SqlWorkflowSequence.DataBind();
 
-                        WFSequenceGrid.DataSourceID = null;
-                        WFSequenceGrid.DataSource = SqlWorkflowSequence;
-                        WFSequenceGrid.DataBind();
-                    }
-                    else
-                    {
-                        SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = "0";
-                        WFSequenceGrid.DataSourceID = null;
-                        WFSequenceGrid.DataSource = SqlWorkflowSequence;
-                        WFSequenceGrid.DataBind();
+            //            WFSequenceGrid.DataSourceID = null;
+            //            WFSequenceGrid.DataSource = SqlWorkflowSequence;
+            //            WFSequenceGrid.DataBind();
+            //        }
+            //        else
+            //        {
+            //            SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = "0";
+            //            WFSequenceGrid.DataSourceID = null;
+            //            WFSequenceGrid.DataSource = SqlWorkflowSequence;
+            //            WFSequenceGrid.DataBind();
 
-                    }
-                }
-                
-            }
+            //        }
+            //    }
 
-                
-            
+            //}
+
+            SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = e.Parameters != null ? e.Parameters.ToString() : "";
+            SqlWorkflowSequence.DataBind();
+
+            WFSequenceGrid.DataSourceID = null;
+            WFSequenceGrid.DataSource = SqlWorkflowSequence;
+            WFSequenceGrid.DataBind();
+
         }
 
         protected void FAPWFGrid_CustomCallback(object sender, DevExpress.Web.ASPxGridViewCustomCallbackEventArgs e)
@@ -2695,6 +2713,15 @@ namespace DX_WebTemplate
             var dept_id = param[0] != "null" ? param[0] : "0";
             var comp = param[1] != "null" ? param[1] : "0";
             var emp = param[2] != "null" ? param[2] : "";
+            var expDetails = _DataContext.ACCEDE_T_ExpenseDetails
+                            .Where(x => x.ExpenseMain_ID == Convert.ToInt32(Session["ExpenseId"]));
+            var totalExp = new decimal(0.00);
+
+            foreach( var exp in expDetails)
+            {
+                totalExp += Convert.ToDecimal(exp.NetAmount);
+            }
+
             var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(dept_id)).FirstOrDefault();
             //var expMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x=>x.ID == Convert.ToInt32(comp)).FirstOrDefault();
 
@@ -2714,28 +2741,40 @@ namespace DX_WebTemplate
             {
                 if(depcode != null)
                 {
-                    var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == emp)
-                            .Where(x => x.CompanyId == Convert.ToInt32(comp))
-                            .Where(x => x.DepCode == depcode.DepCode)
-                            //.Where(x => x.IsRA == true)
-                            .FirstOrDefault();
+                    //var rawf = _DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == emp)
+                    //        .Where(x => x.CompanyId == Convert.ToInt32(comp))
+                    //        .Where(x => x.DepCode == depcode.DepCode)
+                    //        //.Where(x => x.IsRA == true)
+                    //        .FirstOrDefault();
 
-                    if (rawf != null)
-                    {
-                        SqlWF.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
-                        drpdown_WF.DataSourceID = null;
-                        drpdown_WF.DataSource = SqlWF;
-                        drpdown_WF.SelectedIndex = 0;
-                        drpdown_WF.DataBind();
-                    }
-                    else
-                    {
-                        SqlWF.SelectParameters["WF_Id"].DefaultValue = "0";
-                        drpdown_WF.DataSourceID = null;
-                        drpdown_WF.DataSource = SqlWF;
-                        drpdown_WF.DataBind();
+                    //if (rawf != null)
+                    //{
+                    //    SqlWF.SelectParameters["WF_Id"].DefaultValue = rawf.WF_Id.ToString();
+                    //    drpdown_WF.DataSourceID = null;
+                    //    drpdown_WF.DataSource = SqlWF;
+                    //    drpdown_WF.SelectedIndex = 0;
+                    //    drpdown_WF.DataBind();
+                    //}
+                    //else
+                    //{
+                    //    SqlWF.SelectParameters["WF_Id"].DefaultValue = "0";
+                    //    drpdown_WF.DataSourceID = null;
+                    //    drpdown_WF.DataSource = SqlWF;
+                    //    drpdown_WF.DataBind();
 
-                    }
+                    //}
+
+                    SqlWFAmount.SelectParameters["UserId"].DefaultValue = emp;
+                    SqlWFAmount.SelectParameters["CompanyId"].DefaultValue = comp;
+                    SqlWFAmount.SelectParameters["totalExp"].DefaultValue = totalExp.ToString();
+                    SqlWFAmount.SelectParameters["DepCode"].DefaultValue = depcode.DepCode;
+                    SqlWFAmount.SelectParameters["AppId"].DefaultValue = "1032";
+                    SqlWFAmount.DataBind();
+
+                    drpdown_WF.DataSourceID = null;
+                    drpdown_WF.DataSource = SqlWFAmount;
+                    drpdown_WF.SelectedIndex = 0;
+                    drpdown_WF.DataBind();
                 }
             }
         }
