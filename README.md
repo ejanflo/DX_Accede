@@ -1,5 +1,5 @@
 # Accede
-- Expense Management Application
+- Employee Expense Management Application
 - Supports Cash Advances, Liquidations and Reimbursements
 - Offers intuitive and user-friendly interface that simplifies expense tracking, submission and approval
 
