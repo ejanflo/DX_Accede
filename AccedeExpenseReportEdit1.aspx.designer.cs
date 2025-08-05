@@ -951,15 +951,6 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxDateEdit dateAdded;
 
         /// <summary>
-        /// costCenter control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox costCenter;
-
-        /// <summary>
         /// particulars control.
         /// </summary>
         /// <remarks>
@@ -967,15 +958,6 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxComboBox particulars;
-
-        /// <summary>
-        /// IO control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox IO;
 
         /// <summary>
         /// supplier control.
@@ -987,15 +969,6 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox supplier;
 
         /// <summary>
-        /// grossAmount control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxSpinEdit grossAmount;
-
-        /// <summary>
         /// tin control.
         /// </summary>
         /// <remarks>
@@ -1003,15 +976,6 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxSpinEdit tin;
-
-        /// <summary>
-        /// vat control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxSpinEdit vat;
 
         /// <summary>
         /// invoiceOR control.
@@ -1023,15 +987,6 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox invoiceOR;
 
         /// <summary>
-        /// ewt control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxSpinEdit ewt;
-
-        /// <summary>
         /// WBS control.
         /// </summary>
         /// <remarks>
@@ -1041,15 +996,6 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox WBS;
 
         /// <summary>
-        /// netAmount control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxSpinEdit netAmount;
-
-        /// <summary>
         /// accountCharged control.
         /// </summary>
         /// <remarks>
@@ -1057,6 +1003,60 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxComboBox accountCharged;
+
+        /// <summary>
+        /// costCenter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox costCenter;
+
+        /// <summary>
+        /// IO control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox IO;
+
+        /// <summary>
+        /// grossAmount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxSpinEdit grossAmount;
+
+        /// <summary>
+        /// vat control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxSpinEdit vat;
+
+        /// <summary>
+        /// ewt control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxSpinEdit ewt;
+
+        /// <summary>
+        /// netAmount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxSpinEdit netAmount;
 
         /// <summary>
         /// memo_expItem control.
@@ -1185,15 +1185,6 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxDateEdit dateAdded_edit;
 
         /// <summary>
-        /// costCenter_edit control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox costCenter_edit;
-
-        /// <summary>
         /// particulars_edit control.
         /// </summary>
         /// <remarks>
@@ -1201,15 +1192,6 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxComboBox particulars_edit;
-
-        /// <summary>
-        /// io_edit control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox io_edit;
 
         /// <summary>
         /// supplier_edit control.
@@ -1221,15 +1203,6 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox supplier_edit;
 
         /// <summary>
-        /// grossAmount_edit control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxSpinEdit grossAmount_edit;
-
-        /// <summary>
         /// tin_edit control.
         /// </summary>
         /// <remarks>
@@ -1237,15 +1210,6 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxSpinEdit tin_edit;
-
-        /// <summary>
-        /// vat_edit control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxSpinEdit vat_edit;
 
         /// <summary>
         /// invoiceOR_edit control.
@@ -1257,15 +1221,6 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox invoiceOR_edit;
 
         /// <summary>
-        /// ewt_edit control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxSpinEdit ewt_edit;
-
-        /// <summary>
         /// wbs_edit control.
         /// </summary>
         /// <remarks>
@@ -1275,15 +1230,6 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox wbs_edit;
 
         /// <summary>
-        /// netAmount_edit control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxSpinEdit netAmount_edit;
-
-        /// <summary>
         /// accountCharged_edit control.
         /// </summary>
         /// <remarks>
@@ -1291,6 +1237,60 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxComboBox accountCharged_edit;
+
+        /// <summary>
+        /// costCenter_edit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox costCenter_edit;
+
+        /// <summary>
+        /// io_edit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox io_edit;
+
+        /// <summary>
+        /// grossAmount_edit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxSpinEdit grossAmount_edit;
+
+        /// <summary>
+        /// vat_edit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxSpinEdit vat_edit;
+
+        /// <summary>
+        /// ewt_edit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxSpinEdit ewt_edit;
+
+        /// <summary>
+        /// netAmount_edit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxSpinEdit netAmount_edit;
 
         /// <summary>
         /// memo_expItem_edit control.
