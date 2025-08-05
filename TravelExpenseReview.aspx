@@ -369,7 +369,15 @@
                 success: function (response) {
                     ReturnPopup.Hide();
                     DisapprovePopup.Hide();
-                    window.open('AllAccedeApprovalPage.aspx', '_self');
+                    if (response.d == "Pending at Cashier") {
+                        window.open('AllAccedeCashierPage.aspx', '_self');
+                    }  else if (response.d == "Pending at Audit") {
+                        window.open('AllAccedeAuditPage.aspx', '_self');
+                    } else if (response.d == "Pending at P2P") {
+                        window.open('AllAccedeP2PPage.aspx', '_self');
+                    } else if (response.d == "Pending" || response.d == "Pending at Finance" || response.d == "Forwarded") {
+                        window.open('AllAccedeApprovalPage.aspx', '_self');
+                    }
                 },
                 failure: function (response) {
                     alert(response);

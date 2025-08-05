@@ -969,15 +969,13 @@ namespace DX_WebTemplate
 
 
         [WebMethod]
-        public static bool AJAXReturnDisapproveDocument(string action, string remarks)
+        public static string AJAXReturnDisapproveDocument(string action, string remarks)
         {
             TravelExpenseReview rev = new TravelExpenseReview();
-            rev.ReturnDisapproveDocument(action, remarks);
-
-            return true;
+            return rev.ReturnDisapproveDocument(action, remarks);
         }
 
-        public void ReturnDisapproveDocument(string action, string remarks)
+        public string ReturnDisapproveDocument(string action, string remarks)
         {
             var id = Convert.ToInt32(Session["TravelExp_Id"]);
             var doc_status = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.Status).FirstOrDefault();    
@@ -1075,6 +1073,7 @@ namespace DX_WebTemplate
                     SendEmailWithCC(id, userID, compID, status, prepID, cc, remarks, statname);
                 }
 
+                return doc_desc;
             }
             catch (Exception)
             {
