@@ -1238,4 +1238,14 @@
       <Column Name="isActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
     </Type>
   </Table>
+  <Table Name="dbo.ACCEDE_S_IO" Member="ACCEDE_S_IOs">
+    <Type Name="ACCEDE_S_IO">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IO_Num" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="IO_Description" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
+      <Column Name="isActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="CompanyId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CompanySAPCode" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+    </Type>
+  </Table>
 </Database>
