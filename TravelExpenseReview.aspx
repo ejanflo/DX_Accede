@@ -22,31 +22,6 @@
     </style>
 
     <script>
-        function checkSAPDoc(s, e) {
-            var SAPDoc = s.GetValue()
-
-            $.ajax({
-                type: "POST",
-                url: "TravelExpenseReview.aspx/CheckSAPDocAJAX",
-                data: JSON.stringify({
-                    rfpSAPDoc: SAPDoc
-                }),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    if (response.d == true) {
-                        s.SetIsValid(false);
-                        s.SetErrorText("SAP Document exists.");
-                    } else {
-                        s.SetIsValid(true);
-                    }
-                },
-                failure: function (response) {
-                    // Handle failure
-                }
-            });
-        }
-
         function OnFowardWFChanged(wf_id) {
             ForwardSequenceGrid.PerformCallback(wf_id);
         }
@@ -908,7 +883,6 @@
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxTextBox ID="sapdocTB" runat="server" ClientInstanceName="sapdocTB" Font-Bold="True" Width="100%">
-                                                                <ClientSideEvents ValueChanged="checkSAPDoc" />
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="sapdocValid">
                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>

@@ -969,36 +969,6 @@ namespace DX_WebTemplate
 
 
         [WebMethod]
-        public static bool CheckSAPDocAJAX(string rfpSAPDoc)
-        {
-            TravelExpenseReview rev = new TravelExpenseReview();
-            return rev.CheckSAPDoc(rfpSAPDoc);
-        }
-
-        public bool CheckSAPDoc(string rfpSAPDoc)
-        {
-            try
-            {
-                var checkSAPDoc = _DataContext.ACCEDE_T_RFPMains.Any(x => x.SAPDocNo == rfpSAPDoc);
-
-                if (checkSAPDoc)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-                throw;
-            }
-        }
-
-
-        [WebMethod]
         public static bool AJAXReturnDisapproveDocument(string action, string remarks)
         {
             TravelExpenseReview rev = new TravelExpenseReview();
