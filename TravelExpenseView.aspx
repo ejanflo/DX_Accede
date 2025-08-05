@@ -1316,7 +1316,7 @@
                                                                     <CollapseButton Width="16px">
                                                                     </CollapseButton>
                                                                 </Images>
-                                                                <SettingsCollapsing AnimationType="Slide" ExpandEffect="Slide">
+                                                                <SettingsCollapsing AnimationType="Slide" ExpandEffect="Slide" ExpandOnPageLoad="True">
                                                                     <ExpandButton Position="Far" />
                                                                 </SettingsCollapsing>
                                                                 <ExpandBarTemplate>

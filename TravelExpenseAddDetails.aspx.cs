@@ -1,5 +1,6 @@
 ﻿using DevExpress.Utils;
 using DevExpress.Web;
+using DevExpress.Web.Internal.XmlProcessor;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -240,6 +241,74 @@ namespace DX_WebTemplate
                 {
                     e.Visible = false;
                 }
+            }
+        }
+
+        [WebMethod]
+        public static string UpdateTravelExpenseDetailsAJAX(DateTime travelDate, string totalExp)
+        {
+            TravelExpenseAddDetails exp = new TravelExpenseAddDetails();
+            return exp.UpdateTravelExpenseDetails(travelDate, totalExp);
+        }
+
+        public string UpdateTravelExpenseDetails(DateTime travelDate, string totalExp)
+        {
+            try
+            {
+                var url = "";
+                var updateExpDetail = _DataContext.ACCEDE_T_TravelExpenseDetails
+                     .Where(x => x.TravelExpenseDetail_ID == Convert.ToInt32(Session["ExpDetailsID"]));
+
+                foreach (ACCEDE_T_TravelExpenseDetail ex in updateExpDetail)
+                {
+                    //.IsExpenseCA = false;
+                    ex.Total_Expenses = Convert.ToDecimal(totalExp);
+                    ex.TravelExpenseDetail_Date = travelDate;
+                    ex.TravelExpenseMain_ID = Convert.ToInt32(Session["TravelExp_Id"]);
+                }
+                _DataContext.SubmitChanges();
+
+                var voidStat = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Void").Select(x => x.STS_Id).FirstOrDefault();
+                var reim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == Convert.ToInt32(Session["TravelExp_Id"]) && x.isTravel == true && x.IsExpenseReim == true && x.Status != 4).FirstOrDefault();
+
+                int docStatId;
+                string doc_stat = null;
+
+                if (Session["doc_stat"] != null && int.TryParse(Session["doc_stat"].ToString(), out docStatId))
+                {
+                    doc_stat = _DataContext.ITP_S_Status
+                        .Where(x => x.STS_Id == docStatId)
+                        .Select(x => x.STS_Description)
+                        .FirstOrDefault();
+                }
+
+                if (doc_stat == "Saved" || string.IsNullOrEmpty(doc_stat))
+                {
+                    if (reim != null)
+                    {
+                        reim.Status = voidStat;
+                    }
+
+                    url = "TravelExpenseNew.aspx";
+                }
+                else if(doc_stat == "Pending at Finance")
+                {
+                    if (reim != null)
+                    {
+                        reim.Amount = Convert.ToDecimal(totalExp);
+                    }
+
+                    url = "TravelExpenseReview.aspx";
+                }
+
+                _DataContext.SubmitChanges();
+
+                return url;
+            }
+            catch (Exception)
+            {
+
+                throw;
             }
         }
     }

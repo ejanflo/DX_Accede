@@ -557,7 +557,7 @@
 
             const response = await $.ajax({
                 type: "POST",
-                url: "TravelExpenseNew.aspx/UpdateTravelExpenseDetailsAJAX",
+                url: "TravelExpenseAddDetails.aspx/UpdateTravelExpenseDetailsAJAX",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: JSON.stringify({
@@ -566,11 +566,7 @@
                 })
             });
 
-            if (response) {
-                window.open("TravelExpenseNew.aspx", "_self");
-            } else {
-                /*alert("error");*/
-            }
+            window.open(response.d, "_self");
         } catch (error) {
             console.error("Error:", error);
             LoadingPanel.Hide();
@@ -748,7 +744,9 @@
                                                                         </SettingsPopup>
                                                                         <Columns>
                                                                             <dx:GridViewCommandColumn Caption=" " ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="35px">
-                                                                                <HeaderStyle HorizontalAlign="Center" />
+                                                                                <HeaderStyle HorizontalAlign="Center" >
+                                                                                <Border BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                                </HeaderStyle>
                                                                                 <CellStyle HorizontalAlign="Center">
                                                                                     <BorderTop BorderColor="Black" BorderStyle="Solid" />
                                                                                 </CellStyle>
@@ -943,7 +941,7 @@
                                                                                 </Columns>
                                                                             </dx:GridViewBandColumn>
                                                                             <dx:GridViewDataTextColumn Caption="LOCATION/PARTICULARS" FieldName="LocParticulars" ShowInCustomizationForm="True" VisibleIndex="1" Width="40px">
-                                                                                <HeaderStyle HorizontalAlign="Center">
+                                                                                <HeaderStyle HorizontalAlign="Center" Font-Bold="True">
                                                                                 <Border BorderColor="Black" BorderStyle="Solid" />
                                                                                 </HeaderStyle>
                                                                                 <CellStyle HorizontalAlign="Center">
@@ -951,6 +949,13 @@
                                                                                     <BorderRight BorderColor="Black" BorderStyle="Solid" />
                                                                                 </CellStyle>
                                                                             </dx:GridViewDataTextColumn>
+                                                                            <dx:GridViewDataMemoColumn Caption="FINANCE REMARKS" FieldName="FinanceRemarks" ShowInCustomizationForm="True" VisibleIndex="7">
+                                                                                <HeaderStyle Font-Bold="True" HorizontalAlign="Center">
+                                                                                <Border BorderColor="Black" BorderStyle="Solid" />
+                                                                                </HeaderStyle>
+                                                                                <CellStyle Font-Size="Smaller">
+                                                                                </CellStyle>
+                                                                            </dx:GridViewDataMemoColumn>
                                                                         </Columns>
                                                                         <TotalSummary>
                                                                             <dx:ASPxSummaryItem FieldName="ReimTranspo_Amount1" SummaryType="Sum" />
@@ -968,7 +973,7 @@
                                                                         </Styles>
                                                                         <Paddings PaddingBottom="20px" PaddingTop="20px" />
                                                                     </dx:ASPxGridView>
-                                                                    <asp:SqlDataSource ID="SqlExpenseDetails" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_TravelExpenseDetailsMap] WHERE ([TravelExpenseDetail_ID] = @TravelExpenseDetail_ID)" DeleteCommand="DELETE FROM [ACCEDE_T_TravelExpenseDetailsMap] WHERE [TravelExpenseDetailMap_ID] = @TravelExpenseDetailMap_ID" UpdateCommand="UPDATE [ACCEDE_T_TravelExpenseDetailsMap] SET [TravelExpenseDetail_ID] = @TravelExpenseDetail_ID, [ReimTranspo_Type1] = @ReimTranspo_Type1, [ReimTranspo_Amount1] = @ReimTranspo_Amount1, [ReimTranspo_Type2] = @ReimTranspo_Type2, [ReimTranspo_Amount2] = @ReimTranspo_Amount2, [ReimTranspo_Type3] = @ReimTranspo_Type3, [ReimTranspo_Amount3] = @ReimTranspo_Amount3, [FixedAllow_ForP] = @FixedAllow_ForP, [FixedAllow_Amount] = @FixedAllow_Amount, [MiscTravel_Type] = @MiscTravel_Type, [MiscTravel_Specify] = @MiscTravel_Specify, [MiscTravel_Amount] = @MiscTravel_Amount, [Entertainment_Explain] = @Entertainment_Explain, [Entertainment_Amount] = @Entertainment_Amount, [BusMeals_Explain] = @BusMeals_Explain, [BusMeals_Amount] = @BusMeals_Amount, [OtherBus_Type] = @OtherBus_Type, [OtherBus_Specify] = @OtherBus_Specify, [OtherBus_Amount] = @OtherBus_Amount, [FixedAllow_Remarks] = @FixedAllow_Remarks, [LocParticulars] = @LocParticulars WHERE [TravelExpenseDetailMap_ID] = @TravelExpenseDetailMap_ID">
+                                                                    <asp:SqlDataSource ID="SqlExpenseDetails" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_TravelExpenseDetailsMap] WHERE ([TravelExpenseDetail_ID] = @TravelExpenseDetail_ID)" DeleteCommand="DELETE FROM [ACCEDE_T_TravelExpenseDetailsMap] WHERE [TravelExpenseDetailMap_ID] = @TravelExpenseDetailMap_ID" UpdateCommand="UPDATE [ACCEDE_T_TravelExpenseDetailsMap] SET [TravelExpenseDetail_ID] = @TravelExpenseDetail_ID, [ReimTranspo_Type1] = @ReimTranspo_Type1, [ReimTranspo_Amount1] = @ReimTranspo_Amount1, [ReimTranspo_Type2] = @ReimTranspo_Type2, [ReimTranspo_Amount2] = @ReimTranspo_Amount2, [ReimTranspo_Type3] = @ReimTranspo_Type3, [ReimTranspo_Amount3] = @ReimTranspo_Amount3, [FixedAllow_ForP] = @FixedAllow_ForP, [FixedAllow_Amount] = @FixedAllow_Amount, [MiscTravel_Type] = @MiscTravel_Type, [MiscTravel_Specify] = @MiscTravel_Specify, [MiscTravel_Amount] = @MiscTravel_Amount, [Entertainment_Explain] = @Entertainment_Explain, [Entertainment_Amount] = @Entertainment_Amount, [BusMeals_Explain] = @BusMeals_Explain, [BusMeals_Amount] = @BusMeals_Amount, [OtherBus_Type] = @OtherBus_Type, [OtherBus_Specify] = @OtherBus_Specify, [OtherBus_Amount] = @OtherBus_Amount, [FixedAllow_Remarks] = @FixedAllow_Remarks, [LocParticulars] = @LocParticulars, [FinanceRemarks] = @FinanceRemarks WHERE [TravelExpenseDetailMap_ID] = @TravelExpenseDetailMap_ID">
                                                                         <DeleteParameters>
                                                                             <asp:Parameter Name="TravelExpenseDetailMap_ID" Type="Int32" />
                                                                         </DeleteParameters>
@@ -997,6 +1002,7 @@
                                                                             <asp:Parameter Name="OtherBus_Amount" Type="Decimal" />
                                                                             <asp:Parameter Name="FixedAllow_Remarks" Type="String" />
                                                                             <asp:Parameter Name="LocParticulars" Type="String" />
+                                                                            <asp:Parameter Name="FinanceRemarks" />
                                                                             <asp:Parameter Name="TravelExpenseDetailMap_ID" Type="Int32" />
                                                                         </UpdateParameters>
                                                                     </asp:SqlDataSource>

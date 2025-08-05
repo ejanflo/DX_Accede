@@ -1077,6 +1077,15 @@ namespace DX_WebTemplate
         protected global::System.Web.UI.WebControls.SqlDataSource SqlWF;
 
         /// <summary>
+        /// SqlRAWF control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlRAWF;
+
+        /// <summary>
         /// SqlFAPWF control.
         /// </summary>
         /// <remarks>

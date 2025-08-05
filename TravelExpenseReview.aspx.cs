@@ -1589,6 +1589,45 @@ namespace DX_WebTemplate
 
 
         [WebMethod]
+        public static string CancelFuncAJAX()
+        {
+            TravelExpenseReview exp = new TravelExpenseReview();
+            return exp.CancelFunc();
+        }
+
+        public string CancelFunc()
+        {
+            var url = "";
+            var mainExp = _DataContext.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).FirstOrDefault();
+
+            var doc_stat = _DataContext.ITP_S_Status.Where(x => x.STS_Id == Convert.ToInt32(mainExp.Status)).Select(x => x.STS_Description).FirstOrDefault();
+
+            if (doc_stat == "Saved" || string.IsNullOrEmpty(doc_stat))
+            {
+                url = "TravelExpenseNew.aspx";
+            }
+            else if (doc_stat == "Pending at Finance" || doc_stat == "Pending")
+            {
+                url = "AllAccedeApprovalPage.aspx";
+            }
+            else if (doc_stat == "Pending at Audit")
+            {
+                url = "AllAccedeAuditPage.aspx";
+            }
+            else if (doc_stat == "Pending at P2P")
+            {
+                url = "AllAccedeP2PPage.aspx";
+            }
+            else if (doc_stat == "Pending at Cashier")
+            {
+                url = "AllAccedeCashierPage.aspx";
+            }
+
+            return url;
+        }
+
+
+        [WebMethod]
         public static object RedirectToRFPDetailsAJAX(string rfpDoc)
         {
             TravelExpenseReview exp = new TravelExpenseReview();

@@ -22,6 +22,21 @@
     </style>
 
     <script>
+        function cancelFunc(s, e) {
+            $.ajax({
+                type: "POST",
+                url: "TravelExpenseReview.aspx/CancelFuncAJAX",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    window.open(response.d, "_self");
+                },
+                failure: function (response) {
+                    // Handle failure
+                }
+            });
+        }
+
         function OnFowardWFChanged(wf_id) {
             ForwardSequenceGrid.PerformCallback(wf_id);
         }
@@ -467,7 +482,7 @@
                                             <dx:ASPxButton ID="cancelBtn" runat="server" BackColor="White" Font-Bold="True" Font-Size="Small" ForeColor="#878787" HorizontalAlign="Right" Text="Cancel" AutoPostBack="False" ClientInstanceName="cancelBtn" UseSubmitBehavior="False">
                                                 <ClientSideEvents Click="function(s, e) {
                         LoadingPanel.Show();
-                        history.back();
+                        cancelFunc();
         }" />
                                             </dx:ASPxButton>
                                         </dx:LayoutItemNestedControlContainer>
@@ -1557,7 +1572,7 @@
                                                                     <CollapseButton Width="16px">
                                                                     </CollapseButton>
                                                                 </Images>
-                                                                <SettingsCollapsing AnimationType="Slide" ExpandEffect="Slide">
+                                                                <SettingsCollapsing AnimationType="Slide" ExpandEffect="Slide" ExpandOnPageLoad="True">
                                                                     <ExpandButton Position="Far" />
                                                                 </SettingsCollapsing>
                                                                 <ExpandBarTemplate>
@@ -3104,7 +3119,7 @@ onTravelClick();
             <asp:Parameter DefaultValue="" Name="Exp_ID" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([DepCode] IS NOT NULL) AND ([SAP_CostCenter] IS NOT NULL)">
+    <asp:SqlDataSource ID="SqlDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([DepCode] IS NOT NULL)">
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlExpDetails" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_TravelExpenseDetails] WHERE ([TravelExpenseMain_ID] = @TravelExpenseMain_ID) ORDER BY [TravelExpenseDetail_Date] ASC">
         <SelectParameters>

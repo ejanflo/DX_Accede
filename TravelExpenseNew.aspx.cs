@@ -1,4 +1,5 @@
 ﻿using DevExpress.Web;
+using DevExpress.XtraEditors.TextEditController.Win32;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -49,7 +50,6 @@ namespace DX_WebTemplate
                         timearriveTE.DateTime = DateTime.Parse(mainExp.Time_Arrived.ToString());
 
                         SqlMain.SelectParameters["ID"].DefaultValue = mainExp.ID.ToString();
-                        SqlEmpName.SelectParameters["EmpCode"].DefaultValue = mainExp.Employee_Id.ToString();
                         SqlWFCompany.SelectParameters["WASSId"].DefaultValue = mainExp.Company_Id.ToString();
                         SqlWFDepartment.SelectParameters["ID"].DefaultValue = mainExp.Dep_Code.ToString();
                         SqlLocBranch.SelectParameters["Comp_Id"].DefaultValue = mainExp.ChargedToComp.ToString();
@@ -156,11 +156,37 @@ namespace DX_WebTemplate
                     if (wfmapping != null)
                     {
                         Session["mainwfid"] = Convert.ToString(wfmapping.WF_ID);
+                        SqlWF.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
+                        SqlWFDetails.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
+                        SqlWFDetails.DataBind();
                     }
                     else
                     {
-                        var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(mainExp.Dep_Code)).FirstOrDefault();
-                        Session["mainwfid"] = Convert.ToString(mainExp.WF_Id);
+                        if (!string.IsNullOrEmpty(Convert.ToString(mainExp.Company_Id)) && !string.IsNullOrEmpty(Convert.ToString(mainExp.Dep_Code)))
+                        {
+                            var depcode = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(mainExp.Dep_Code)).FirstOrDefault();
+
+                            SqlRAWF.SelectParameters["UserId"].DefaultValue = mainExp.Employee_Id.ToString();
+                            SqlRAWF.SelectParameters["CompanyId"].DefaultValue = mainExp.Company_Id.ToString();
+                            SqlRAWF.SelectParameters["totalExp"].DefaultValue = totalexp.ToString();
+                            SqlRAWF.SelectParameters["DepCode"].DefaultValue = depcode.DepCode;
+                            SqlRAWF.SelectParameters["AppId"].DefaultValue = "1032";
+                            SqlRAWF.DataBind();
+
+                            drpdown_WF.DataSourceID = null;
+                            drpdown_WF.DataSource = SqlRAWF;
+                            drpdown_WF.SelectedIndex = 0;
+                            drpdown_WF.DataBind();
+
+                            Session["mainwfid"] = drpdown_WF.SelectedItem.Value;
+
+                            if (!string.IsNullOrEmpty(Session["mainwfid"].ToString()))
+                            {
+                                SqlWFDetails.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
+                                SqlWFDetails.DataBind();
+                            }
+                        }
+
                         //Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.Company_Id && x.IsRA == true && totExpCA >= x.Minimum && totExpCA <= x.Maximum).Select(x => x.WF_Id).FirstOrDefault());
                     }
                     /*_DataContext.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == Convert.ToString(mainExp.Employee_Id) && x.CompanyId == Convert.ToInt32(mainExp.Company_Id) && x.DepCode == depcode.DepCode).Select(x => x.WF_Id).FirstOrDefault();*/
@@ -176,16 +202,8 @@ namespace DX_WebTemplate
                         Session["fapwfid"] = Convert.ToString(_DataContext.ITP_S_WorkflowHeaders.Where(x => x.App_Id == 1032 && x.Company_Id == mainExp.ChargedToComp && x.Description.Contains("EXPDOMESTIC") && (x.IsRA == false || x.IsRA == null)).Select(x => x.WF_Id).FirstOrDefault());
                     }
 
-                    Debug.WriteLine("Main Workflow ID: " + Session["mainwfid"]);
-                    Debug.WriteLine("FAP Workflow ID: " + Session["fapwfid"]);
-
                     SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
                     SqlFAPWFDetails.SelectParameters["WF_Id"].DefaultValue = Session["fapwfid"].ToString();
-
-                    SqlWF.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
-                    SqlWFDetails.SelectParameters["WF_Id"].DefaultValue = Session["mainwfid"].ToString();
-
-                    SqlWFDetails.DataBind();
                     SqlFAPWFDetails.DataBind();
                 }
             }
@@ -479,7 +497,7 @@ namespace DX_WebTemplate
         [WebMethod]
         public static object DisplayExpDetailsAJAX(int expDetailID)
         {
-            TravelExpenseAdd exp = new TravelExpenseAdd();
+            TravelExpenseNew exp = new TravelExpenseNew();
             return exp.DisplayExpDetails(expDetailID);
         }
 
@@ -956,7 +974,7 @@ namespace DX_WebTemplate
         [WebMethod]
         public static bool AddRFPReimburseAJAX(string empname, DateTime reportdate, string company, string department, string purpose, string amount, string chargedComp, string chargedDept, string locbranch, string ford, string wf, string fapwf)
         {
-            TravelExpenseAdd exp = new TravelExpenseAdd();
+            TravelExpenseNew exp = new TravelExpenseNew();
 
             return exp.AddRFPReimburse(empname, reportdate, company, department, purpose, amount, chargedComp, chargedDept, locbranch, ford, wf, fapwf);
         }
@@ -1032,7 +1050,7 @@ namespace DX_WebTemplate
         [WebMethod]
         public static bool CheckReimburseValidationAJAX(string t_amount)
         {
-            TravelExpenseAdd ex = new TravelExpenseAdd();
+            TravelExpenseNew ex = new TravelExpenseNew();
             return ex.CheckReimburseValidation(t_amount);
         }
 

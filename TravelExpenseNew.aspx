@@ -1441,7 +1441,7 @@
                                                         <CollapseButton Width="16px">
                                                         </CollapseButton>
                                                     </Images>
-                                                    <SettingsCollapsing AnimationType="Slide" ExpandEffect="Slide">
+                                                    <SettingsCollapsing AnimationType="Slide" ExpandEffect="Slide" ExpandOnPageLoad="True">
                                                         <ExpandButton Position="Far" />
                                                     </SettingsCollapsing>
                                                     <ExpandBarTemplate>
@@ -3121,10 +3121,7 @@
             <asp:Parameter Name="ID" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlEmpName" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_UserMaster] WHERE ([EmpCode] = @EmpCode)">
-        <SelectParameters>
-            <asp:Parameter Name="EmpCode" Type="String" />
-        </SelectParameters>
+    <asp:SqlDataSource ID="SqlEmpName" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_UserMaster]">
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlWFCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [CompanyMaster] WHERE ([WASSId] = @WASSId)">
         <SelectParameters>
@@ -3136,7 +3133,7 @@
             <asp:Parameter Name="WASSId" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlWFDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([ID] = @ID) AND ([SAP_CostCenter] IS NOT NULL)">
+    <asp:SqlDataSource ID="SqlWFDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([ID] = @ID)">
         <SelectParameters>
             <asp:Parameter Name="ID" />
         </SelectParameters>
@@ -3203,6 +3200,19 @@ ORDER BY ITP_T_WorkflowActivity.WFA_Id">
     <asp:SqlDataSource ID="SqlWF" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_WorkflowHeader] WHERE ([WF_Id] = @WF_Id)">
         <SelectParameters>
             <asp:Parameter Name="WF_Id" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlRAWF" runat="server"
+        ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>"
+        SelectCommand="sp_sel_ACCEDE_GetWorkflowHeadersByExpenseAndDepartment"
+        SelectCommandType="StoredProcedure">
+
+        <SelectParameters>
+            <asp:Parameter Name="UserId" Type="String" />
+            <asp:Parameter Name="CompanyId" Type="String" />
+            <asp:Parameter Name="totalExp" Type="Decimal" />
+            <asp:Parameter Name="DepCode" Type="String" />
+            <asp:Parameter Name="AppId" Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlFAPWF" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_WorkflowHeader] WHERE ([WF_Id] = @WF_Id)">

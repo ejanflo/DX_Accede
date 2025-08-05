@@ -137,12 +137,6 @@ namespace DX_WebTemplate
                 generateDocNo.RunStoredProc_GenerateDocNum(Convert.ToInt32(app_docType), Convert.ToInt32(chargedtoComp), 1032);
                 var docNo = generateDocNo.GetLatest_DocNum(Convert.ToInt32(app_docType), Convert.ToInt32(chargedtoComp), 1032);
 
-                var depcode = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(department_code)).Select(x => x.DepCode).FirstOrDefault();
-                var rawf = context.vw_ACCEDE_I_UserWFAccesses.Where(x => x.UserId == empcode)
-                            .Where(x => x.CompanyId == Convert.ToInt32(companyid))
-                            .Where(x => x.DepCode == depcode)
-                            .FirstOrDefault();
-
                 ACCEDE_T_TravelExpenseMain travelMain = new ACCEDE_T_TravelExpenseMain();
                 {
                     travelMain.Employee_Id = Convert.ToInt32(empcode);
@@ -161,11 +155,6 @@ namespace DX_WebTemplate
                     travelMain.Doc_No = docNo;
                     travelMain.Preparer_Id = Convert.ToInt32(Session["userID"]);
                     travelMain.LocBranch = Convert.ToInt32(locbranch);
-
-                    if (rawf != null)
-                    { 
-                        travelMain.WF_Id = Convert.ToInt32(rawf.WF_Id);
-                    }
                 }
                 context.ACCEDE_T_TravelExpenseMains.InsertOnSubmit(travelMain);
                 context.SubmitChanges();
