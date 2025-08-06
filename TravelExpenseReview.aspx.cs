@@ -1544,8 +1544,6 @@ namespace DX_WebTemplate
                             }
                             _DataContext.SubmitChanges();
 
-                            //Page.ClientScript.RegisterStartupScript(this.GetType(), "myscript", string.Format("<script>window.open('TravelExpensePrint.aspx','_blank')</script>"));
-
                             stat = "Pending at Cashier, Disbursed";
 
                             SendEmailComplete(docID, completeStat, Convert.ToInt32(Session["prep"]), remarks, Convert.ToInt32(Session["userID"]));
@@ -1617,7 +1615,7 @@ namespace DX_WebTemplate
             {
                 url = "AllAccedeP2PPage.aspx";
             }
-            else if (doc_stat == "Pending at Cashier")
+            else if (doc_stat == "Pending at Cashier" || doc_stat == "Pending SAP Doc No.")
             {
                 url = "AllAccedeCashierPage.aspx";
             }
