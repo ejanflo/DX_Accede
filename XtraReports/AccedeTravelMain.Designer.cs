@@ -1372,7 +1372,7 @@
             this.xrLabel33.StylePriority.UseFont = false;
             this.xrLabel33.StylePriority.UseTextAlignment = false;
             this.xrLabel33.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleCenter;
-            this.xrLabel33.TextFormatString = "{0:MM/dd/yy}";
+            this.xrLabel33.TextFormatString = "{0:MM/dd/yyyy hh:mm tt}";
             // 
             // xrLabel32
             // 
@@ -1420,7 +1420,7 @@
             this.xrLabel35.StylePriority.UseFont = false;
             this.xrLabel35.StylePriority.UseTextAlignment = false;
             this.xrLabel35.TextAlignment = DevExpress.XtraPrinting.TextAlignment.BottomCenter;
-            this.xrLabel35.TextFormatString = "{0:MM/dd/yy}";
+            this.xrLabel35.TextFormatString = "{0:MM/dd/yyyy hh:mm tt}";
             // 
             // xrLabel34
             // 
@@ -1499,7 +1499,7 @@
             this.xrLabel28.StylePriority.UseFont = false;
             this.xrLabel28.StylePriority.UseTextAlignment = false;
             this.xrLabel28.TextAlignment = DevExpress.XtraPrinting.TextAlignment.BottomCenter;
-            this.xrLabel28.TextFormatString = "{0:MM/dd/yy}";
+            this.xrLabel28.TextFormatString = "{0:MM/dd/yyyy hh:mm tt}";
             // 
             // xrLabel19
             // 
@@ -1983,7 +1983,7 @@
             this.xrLabel74.StylePriority.UseFont = false;
             this.xrLabel74.StylePriority.UseTextAlignment = false;
             this.xrLabel74.TextAlignment = DevExpress.XtraPrinting.TextAlignment.BottomCenter;
-            this.xrLabel74.TextFormatString = "{0:MM/dd/yy}";
+            this.xrLabel74.TextFormatString = "{0:MM/dd/yyyy hh:mm tt}";
             // 
             // xrLabel55
             // 
@@ -2016,7 +2016,7 @@
             this.xrLabel53.StylePriority.UseFont = false;
             this.xrLabel53.StylePriority.UseTextAlignment = false;
             this.xrLabel53.TextAlignment = DevExpress.XtraPrinting.TextAlignment.BottomCenter;
-            this.xrLabel53.TextFormatString = "{0:MM/dd/yy}";
+            this.xrLabel53.TextFormatString = "{0:MM/dd/yyyy hh:mm tt}";
             // 
             // xrLabel44
             // 
@@ -2051,7 +2051,7 @@
             this.xrLabel43.StylePriority.UseFont = false;
             this.xrLabel43.StylePriority.UseTextAlignment = false;
             this.xrLabel43.TextAlignment = DevExpress.XtraPrinting.TextAlignment.BottomCenter;
-            this.xrLabel43.TextFormatString = "{0:MM/dd/yy}";
+            this.xrLabel43.TextFormatString = "{0:MM/dd/yyyy hh:mm tt}";
             // 
             // xrLabel42
             // 
@@ -2085,7 +2085,7 @@
             this.xrLabel38.StylePriority.UseFont = false;
             this.xrLabel38.StylePriority.UseTextAlignment = false;
             this.xrLabel38.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleCenter;
-            this.xrLabel38.TextFormatString = "{0:MM/dd/yy}";
+            this.xrLabel38.TextFormatString = "{0:MM/dd/yyyy hh:mm tt}";
             // 
             // xrLabel37
             // 
@@ -2133,7 +2133,7 @@
             this.xrLabel40.StylePriority.UseFont = false;
             this.xrLabel40.StylePriority.UseTextAlignment = false;
             this.xrLabel40.TextAlignment = DevExpress.XtraPrinting.TextAlignment.BottomCenter;
-            this.xrLabel40.TextFormatString = "{0:MM/dd/yy}";
+            this.xrLabel40.TextFormatString = "{0:MM/dd/yyyy hh:mm tt}";
             // 
             // xrLabel36
             // 
@@ -2166,7 +2166,7 @@
             this.xrLabel39.StylePriority.UseFont = false;
             this.xrLabel39.StylePriority.UseTextAlignment = false;
             this.xrLabel39.TextAlignment = DevExpress.XtraPrinting.TextAlignment.BottomCenter;
-            this.xrLabel39.TextFormatString = "{0:MM/dd/yy}";
+            this.xrLabel39.TextFormatString = "{0:MM/dd/yyyy hh:mm tt}";
             // 
             // xrLabel41
             // 
@@ -2199,7 +2199,7 @@
             this.xrLabel20.StylePriority.UseFont = false;
             this.xrLabel20.StylePriority.UseTextAlignment = false;
             this.xrLabel20.TextAlignment = DevExpress.XtraPrinting.TextAlignment.BottomCenter;
-            this.xrLabel20.TextFormatString = "{0:MM/dd/yy}";
+            this.xrLabel20.TextFormatString = "{0:MM/dd/yyyy hh:mm tt}";
             // 
             // xrLabel21
             // 

@@ -732,10 +732,10 @@
                                                 <CaptionStyle Font-Bold="False">
                                                 </CaptionStyle>
                                             </dx:LayoutItem>
-                                            <dx:LayoutItem Caption="Charged To Department" ColSpan="1">
+                                            <dx:LayoutItem Caption="Charged To Department" ColSpan="1" FieldName="ChargedToDept">
                                                 <LayoutItemNestedControlCollection>
                                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                                        <dx:ASPxComboBox ID="chargedCB0" runat="server" ClientInstanceName="chargedCB0" DataSourceID="SqlAllDepartment" Font-Bold="True" Font-Size="Small" TextField="DepDesc" ValueField="ID" Width="100%" SelectedIndex="0">
+                                                        <dx:ASPxComboBox ID="chargedCB0" runat="server" ClientInstanceName="chargedCB0" DataSourceID="SqlAllDepartment" Font-Bold="True" Font-Size="Small" TextField="DepDesc" ValueField="ID" Width="100%">
                                                             <ClearButton DisplayMode="Always">
                                                             </ClearButton>
                                                             <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
@@ -962,6 +962,9 @@
                                                             </Buttons>
                                                             <ButtonStyle BackColor="#006838">
                                                             </ButtonStyle>
+                                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                                <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                            </ValidationSettings>
                                                             <DisabledStyle Font-Bold="True" Font-Size="Small" ForeColor="#222222">
                                                             </DisabledStyle>
                                                         </dx:ASPxButtonEdit>
@@ -972,7 +975,7 @@
                                                 <ParentContainerStyle Font-Size="Small">
                                                 </ParentContainerStyle>
                                             </dx:LayoutItem>
-                                            <dx:LayoutItem Caption="AR Reference No." ClientVisible="False" ColSpan="1" Name="remItem" FieldName="ARRefNo">
+                                            <dx:LayoutItem Caption="AR Reference No." ClientVisible="False" ColSpan="1" Name="arItem" FieldName="ARRefNo">
                                                 <LayoutItemNestedControlCollection>
                                                     <dx:LayoutItemNestedControlContainer runat="server">
                                                         <dx:ASPxTextBox ID="arNoTB" runat="server" ClientInstanceName="arNoTB" Font-Bold="True" Font-Size="Small" Width="100%">
@@ -1491,7 +1494,7 @@
                                                                                                                 </PropertiesComboBox>
                                                                                                             </dx:GridViewDataComboBoxColumn>
                                                                                                             <dx:GridViewDataComboBoxColumn Caption="Approver" FieldName="ActedBy_User_Id" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                                                                                <PropertiesComboBox DataSourceID="SqlEmpName" TextField="FullName" ValueField="EmpCode">
+                                                                                                                <PropertiesComboBox DataSourceID="SqlEmployees" TextField="FullName" ValueField="EmpCode">
                                                                                                                 </PropertiesComboBox>
                                                                                                                 <CellStyle Font-Bold="False">
                                                                                                                 </CellStyle>
@@ -2491,13 +2494,13 @@
                                                                         <Paddings PaddingBottom="10px" />
                                                                         <TextBoxStyle Font-Size="Small" />
                                                                     </dx:ASPxUploadControl>
-                                                                    <dx:ASPxGridView ID="TraDocuGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="TraDocuGrid" Font-Size="Small" KeyFieldName="ID" Theme="MaterialCompact" Width="100%">
+                                                                    <dx:ASPxGridView ID="TraDocuGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="TraDocuGrid" Font-Size="Small" KeyFieldName="ID" Theme="MaterialCompact" Width="100%" OnRowDeleting="TraDocuGrid_RowDeleting" OnRowUpdating="TraDocuGrid_RowUpdating">
                                                                         <ClientSideEvents CustomButtonClick="onCustomButtonClick" />
                                                                         <SettingsPager Mode="ShowAllRecords">
                                                                         </SettingsPager>
                                                                         <SettingsEditing Mode="Inline">
                                                                         </SettingsEditing>
-                                                                        <SettingsBehavior AllowDragDrop="False" AllowGroup="False" AllowHeaderFilter="False" AllowSort="False" />
+                                                                        <SettingsBehavior AllowDragDrop="False" AllowGroup="False" AllowHeaderFilter="False" AllowSort="False" ConfirmDelete="True" />
                                                                         <SettingsCommandButton>
                                                                             <EditButton>
                                                                                 <Image IconID="richedit_trackingchanges_trackchanges_svg_16x16">
@@ -2540,6 +2543,8 @@
                                                                             <dx:GridViewDataTextColumn FieldName="FileAttachment" ShowInCustomizationForm="True" Visible="False" VisibleIndex="2">
                                                                             </dx:GridViewDataTextColumn>
                                                                             <dx:GridViewDataComboBoxColumn FieldName="Description" ShowInCustomizationForm="True" VisibleIndex="4">
+                                                                                <PropertiesComboBox DataSourceID="SqlSupDocType" TextField="Document_Type" ValueField="ID">
+                                                                                </PropertiesComboBox>
                                                                                 <EditFormSettings Visible="True" />
                                                                             </dx:GridViewDataComboBoxColumn>
                                                                         </Columns>
@@ -3121,7 +3126,12 @@
             <asp:Parameter Name="ID" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlEmpName" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_UserMaster]">
+    <asp:SqlDataSource ID="SqlEmpName" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_UserMaster] WHERE ([EmpCode] = @EmpCode)">
+        <SelectParameters>
+            <asp:Parameter Name="EmpCode" Type="String" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlEmployees" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_UserMaster]">
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlWFCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [CompanyMaster] WHERE ([WASSId] = @WASSId)">
         <SelectParameters>

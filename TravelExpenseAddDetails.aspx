@@ -1036,7 +1036,7 @@
                                                                         <ClientSideEvents CustomButtonClick="onCustomButtonClick" />
                                                                         <SettingsEditing Mode="Inline">
                                                                         </SettingsEditing>
-                                                                        <SettingsBehavior AllowDragDrop="False" AllowGroup="False" AllowHeaderFilter="False" AllowSort="False" />
+                                                                        <SettingsBehavior AllowDragDrop="False" AllowGroup="False" AllowHeaderFilter="False" AllowSort="False" ConfirmDelete="True" />
                                                                         <SettingsCommandButton>
                                                                             <EditButton>
                                                                                 <Image IconID="richedit_trackingchanges_trackchanges_svg_16x16">
@@ -1090,9 +1090,11 @@
                                                                             <dx:GridViewDataTextColumn FieldName="FileAttachment" ShowInCustomizationForm="True" Visible="False" VisibleIndex="2" ReadOnly="True">
                                                                                 <EditFormSettings Visible="False" />
                                                                             </dx:GridViewDataTextColumn>
-                                                                            <dx:GridViewDataTextColumn FieldName="Description" ShowInCustomizationForm="True" VisibleIndex="4">
+                                                                            <dx:GridViewDataComboBoxColumn FieldName="Description" ShowInCustomizationForm="True" VisibleIndex="4">
+                                                                                <PropertiesComboBox DataSourceID="SqlSupDocType" TextField="Document_Type" ValueField="ID">
+                                                                                </PropertiesComboBox>
                                                                                 <EditFormSettings Visible="True" />
-                                                                            </dx:GridViewDataTextColumn>
+                                                                            </dx:GridViewDataComboBoxColumn>
                                                                         </Columns>
                                                                         <Styles>
                                                                             <Header>
@@ -1152,6 +1154,8 @@
     <asp:SqlDataSource ID="SqlReimTranspo" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_ReimTranspo] ORDER BY [Type]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlOtherBusExp" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_OtherBusExp] ORDER BY [Type]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlMiscTravelExp" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_MiscTravelExp] ORDER BY [Type]"></asp:SqlDataSource>
+
+    <asp:SqlDataSource ID="SqlSupDocType" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_DocumentType] ORDER BY [Document_Type]"></asp:SqlDataSource>
         </div>
     </form>
 </body>

@@ -50,6 +50,7 @@ namespace DX_WebTemplate
                         timearriveTE.DateTime = DateTime.Parse(mainExp.Time_Arrived.ToString());
 
                         SqlMain.SelectParameters["ID"].DefaultValue = mainExp.ID.ToString();
+                        SqlEmpName.SelectParameters["EmpCode"].DefaultValue = mainExp.Employee_Id.ToString();
                         SqlWFCompany.SelectParameters["WASSId"].DefaultValue = mainExp.Company_Id.ToString();
                         SqlWFDepartment.SelectParameters["ID"].DefaultValue = mainExp.Dep_Code.ToString();
                         SqlLocBranch.SelectParameters["Comp_Id"].DefaultValue = mainExp.ChargedToComp.ToString();
@@ -90,7 +91,7 @@ namespace DX_WebTemplate
                 {
                     var due_lbl = ExpenseEditForm.FindItemOrGroupByName("due_lbl") as LayoutItem;
                     var reimItem = ExpenseEditForm.FindItemOrGroupByName("reimItem") as LayoutItem;
-                    var remItem = ExpenseEditForm.FindItemOrGroupByName("remItem") as LayoutItem;
+                    var arItem = ExpenseEditForm.FindItemOrGroupByName("arItem") as LayoutItem;
                     var reimDetails = ExpenseEditForm.FindItemOrGroupByName("reimDetails") as LayoutItem;
 
                     var voidStat = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Void").Select(x => x.STS_Id).FirstOrDefault();
@@ -123,7 +124,7 @@ namespace DX_WebTemplate
 
                     if (totalexp > totalca)
                     {
-                        remItem.ClientVisible = false;
+                        arItem.ClientVisible = false;
                         due_lbl.Caption = "Due To Employee";
                         if (reim != null)
                             reimItem.ClientVisible = false;
@@ -134,13 +135,13 @@ namespace DX_WebTemplate
                     {
                         due_lbl.Caption = "Due To Company";
                         reimItem.ClientVisible = false;
-                        remItem.ClientVisible = true;
+                        arItem.ClientVisible = false;
                     }
                     else
                     {
                         due_lbl.Caption = "Due To Company";
                         reimItem.ClientVisible = false;
-                        remItem.ClientVisible = false;
+                        arItem.ClientVisible = false;
                     }
 
                     drpdown_expenseType.Value = expType;
@@ -1349,6 +1350,52 @@ namespace DX_WebTemplate
             {
             }
             ;
+        }
+
+        protected void TraDocuGrid_RowUpdating(object sender, DevExpress.Web.Data.ASPxDataUpdatingEventArgs e)
+        {
+            ds = (DataSet)Session["DataSetDoc"];
+            ASPxGridView gridView = (ASPxGridView)sender;
+            DataTable dataTable = gridView.GetMasterRowKeyValue() != null ? ds.Tables[0] : ds.Tables[0];
+            DataRow row = dataTable.Rows.Find(e.Keys[0]);
+
+            // Check if all new values are empty or null
+            bool hasValidData = false;
+            foreach (var key in e.NewValues.Keys)
+            {
+                var value = e.NewValues[key];
+                if (value != null && !string.IsNullOrWhiteSpace(value.ToString()))
+                {
+                    hasValidData = true;
+                    break;
+                }
+            }
+
+            // If all values are empty, cancel the update
+            if (!hasValidData)
+            {
+                e.Cancel = true;
+                gridView.CancelEdit();
+                return;
+            }
+
+            // Update the row in the DataTable
+            IDictionaryEnumerator enumerator = e.NewValues.GetEnumerator();
+            enumerator.Reset();
+            while (enumerator.MoveNext())
+                row[enumerator.Key.ToString()] = enumerator.Value ?? DBNull.Value;
+
+            gridView.CancelEdit();
+            e.Cancel = true;
+        }
+
+        protected void TraDocuGrid_RowDeleting(object sender, DevExpress.Web.Data.ASPxDataDeletingEventArgs e)
+        {
+            int i = TraDocuGrid.FindVisibleIndexByKeyValue(e.Keys[TraDocuGrid.KeyFieldName]);
+            Control c = TraDocuGrid.FindDetailRowTemplateControl(i, "TraDocuGrid");
+            e.Cancel = true;
+            ds = (DataSet)Session["DataSetDoc"];
+            ds.Tables[0].Rows.Remove(ds.Tables[0].Rows.Find(e.Keys[TraDocuGrid.KeyFieldName]));
         }
     }
 }
