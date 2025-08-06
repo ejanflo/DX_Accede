@@ -3,6 +3,7 @@ using DevExpress.Web;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
@@ -321,6 +322,7 @@ namespace DX_WebTemplate
                             net_lbl.DisplayFormatString = "#,##0.00" + " " + exp.Exp_Currency;
                             vat_lbl.DisplayFormatString = "#,##0.00" + " " + exp.Exp_Currency;
                             net_lbl.DisplayFormatString = "#,##0.00" + " " + exp.Exp_Currency;
+
 
                         }
                         else
@@ -1329,6 +1331,70 @@ namespace DX_WebTemplate
             return exp;
         }
 
+        [WebMethod]
+        public static ExpItemDetails DisplayExpDetailsEditAJAX(int item_id)
+        {
+            ExpenseApprovalView exp = new ExpenseApprovalView();
+            return exp.DisplayExpDetailsEdit(item_id);
+
+        }
+
+        public ExpItemDetails DisplayExpDetailsEdit(int item_id)
+        {
+            var expDetail = _DataContext.vw_ACCEDE_I_ExpenseDetails
+                .Where(x => x.ExpenseReportDetail_ID == item_id)
+                .FirstOrDefault();
+
+            var exp_detailsMap = _DataContext.ACCEDE_T_ExpenseDetailsMaps.Where(x => x.ExpenseReportDetail_ID == item_id);
+            decimal totalAmnt = 0;
+
+            foreach (var item in exp_detailsMap)
+            {
+                totalAmnt += Convert.ToDecimal(item.NetAmount);
+            }
+
+            totalAmnt = Convert.ToDecimal(expDetail.GrossAmount) - totalAmnt;
+
+
+            ExpItemDetails exp = new ExpItemDetails();
+            if (expDetail != null)
+            {
+                var expMainMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(expDetail.ExpenseMain_ID)).FirstOrDefault();
+                var acct_charge = _DataContext.ACDE_T_MasterCodes
+                    .Where(x => x.ID == Convert.ToInt32(expDetail.AccountToCharged))
+                    .FirstOrDefault();
+
+                //var cost_center = _DataContext.ACCEDE_S_CostCenters.Where(x=>x.CostCenter_ID == Convert.ToInt32(expMain.CostCenterIOWBS)).FirstOrDefault();
+                //var cc = _DataContext.ITP_S_OrgDepartmentMasters
+                //    .Where(x=>x.ID == Convert.ToInt32(expMainMain.ExpChargedTo_DeptId))
+                //    .FirstOrDefault();
+
+                DateTime dateAdd = Convert.ToDateTime(expDetail.DateAdded);
+
+                //Assign values to fields -- 
+                exp.acctCharge = acct_charge != null ? acct_charge.ID.ToString() : "";
+                exp.costCenter = expDetail.CostCenterIOWBS != null ? expDetail.CostCenterIOWBS.ToString() : "";
+                exp.particulars = expDetail.Particulars != null ? expDetail.Particulars.ToString() : "";
+                exp.supplier = expDetail.Supplier != null ? expDetail.Supplier : "";
+                exp.tin = expDetail.TIN != null ? expDetail.TIN : "";
+                exp.invoice = expDetail.InvoiceOR != null ? expDetail.InvoiceOR : "";
+                exp.gross = expDetail.GrossAmount != null ? expDetail.GrossAmount.ToString() : "";
+                exp.dateCreated = dateAdd != null ? dateAdd.ToString("MMMM dd, yyyy") : "";
+                exp.net = expDetail.NetAmount != null ? expDetail.NetAmount.ToString() : "0.00";
+                exp.vat = expDetail.VAT != null ? expDetail.VAT.ToString() : "0.00";
+                exp.ewt = expDetail.EWT != null ? expDetail.EWT.ToString() : "0.00";
+                exp.io = expDetail.ExpDtl_IO != null ? expDetail.ExpDtl_IO.ToString() : "";
+                exp.wbs = expDetail.ExpDtl_WBS != null ? expDetail.ExpDtl_WBS.ToString() : "";
+                exp.remarks = expDetail.ExpDetail_remarks != null ? expDetail.ExpDetail_remarks.ToString() : "";
+                exp.totalAllocAmnt = totalAmnt;
+            }
+
+            Session["ExpMainId"] = item_id.ToString();
+            Session["ExpDetailsID"] = item_id.ToString();
+
+            return exp;
+        }
+
         public bool SendEmailTo(int doc_id, string receiver_id, int Comp_id, string sender_fullname, string sender_email, string doc_no, string date_created, string document_purpose, string remarks, string status, string payMethod, string tranType, string status2)
         {
             try
@@ -1437,13 +1503,13 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static string SaveExpDetailsAJAX(string net_amount, string vat_amnt, string ewt_amnt, string io, string wbs, string cc)
+        public static string SaveExpDetailsAJAX(string net_amount, string vat_amnt, string ewt_amnt, string io, string wbs, string cc, string remarks, string dateAdd, string particular, string supplier, string tin, string invoice, string gross)
         {
             ExpenseApprovalView exp = new ExpenseApprovalView();
-            return exp.SaveExpDetails(net_amount, vat_amnt, ewt_amnt, io, wbs, cc);
+            return exp.SaveExpDetails(net_amount, vat_amnt, ewt_amnt, io, wbs, cc, remarks, dateAdd, particular, supplier, tin, invoice, gross);
         }
 
-        public string SaveExpDetails(string net_amount, string vat_amnt, string ewt_amnt, string io, string wbs, string cc)
+        public string SaveExpDetails(string net_amount, string vat_amnt, string ewt_amnt, string io, string wbs, string cc, string remarks, string dateAdd, string particular, string supplier, string tin, string invoice, string gross)
         {
             try
             {
@@ -1457,6 +1523,13 @@ namespace DX_WebTemplate
                 expDetails.ExpDtl_IO = io;
                 expDetails.ExpDtl_WBS = wbs;
                 expDetails.CostCenterIOWBS = cc;
+                expDetails.ExpDetail_remarks = remarks;
+                expDetails.DateAdded = Convert.ToDateTime(dateAdd);
+                expDetails.Particulars = Convert.ToInt32(particular);
+                expDetails.Supplier = supplier;
+                expDetails.TIN = tin;
+                expDetails.InvoiceOR = invoice;
+                expDetails.GrossAmount = Convert.ToDecimal(gross);
 
 
                 var reim = _DataContext.ACCEDE_T_RFPMains
@@ -1775,6 +1848,135 @@ namespace DX_WebTemplate
             CADocuGrid.DataSource = SqlCAFileAttach;
             CADocuGrid.DataBind();
         }
+
+        protected void ExpAllocGrid_edit_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            decimal totalNetAmount = 0;
+
+            // Check if the grid is bound to a DataTable, List, or other collection
+            for (int i = 0; i < ExpAllocGrid_edit.VisibleRowCount; i++)
+            {
+                // Get the value of NetAmount from each visible row
+                object netAmountObj = ExpAllocGrid_edit.GetRowValues(i, "NetAmount");
+
+                if (netAmountObj != null && netAmountObj != DBNull.Value)
+                {
+                    decimal netAmount = Convert.ToDecimal(netAmountObj);
+                    totalNetAmount += netAmount;
+                }
+            }
+            //if (totalNetAmount > Convert.ToDecimal(grossAmount_edit.Value))
+            //{
+            //    ExpAllocGrid_edit.Styles.Footer.ForeColor = System.Drawing.Color.Red;
+            //}
+            ASPxGridView grid = (ASPxGridView)sender;
+
+            grid.JSProperties["cpComputeUnalloc_edit"] = totalNetAmount;
+        }
+
+        protected void ExpAllocGrid_edit_RowDeleting(object sender, DevExpress.Web.Data.ASPxDataDeletingEventArgs e)
+        {
+            //decimal totalAmnt = new decimal(0.00);
+            int deletedRowIndex = Convert.ToInt32(e.Keys[ExpAllocGrid_edit.KeyFieldName].ToString());
+            var expAllocs = _DataContext.ACCEDE_T_ExpenseDetailsMaps
+                .Where(x => x.ExpenseDetailMap_ID == Convert.ToInt32(deletedRowIndex))
+                .FirstOrDefault();
+            //ASPxGridView grid = (ASPxGridView)sender;
+            //foreach (var item in expAllocs)
+            //{
+            //    totalAmnt += Convert.ToDecimal(item.NetAmount);
+            //}
+            //grid.JSProperties["cpComputeUnalloc_edit"] = totalAmnt;
+
+            decimal totalNetAmount = 0;
+            decimal finalTotalAmnt = 0;
+            for (int i = 0; i < ExpAllocGrid_edit.VisibleRowCount; i++)
+            {
+                // Get the value of NetAmount from each visible row
+                object netAmountObj = ExpAllocGrid_edit.GetRowValues(i, "NetAmount");
+
+                if (netAmountObj != null && netAmountObj != DBNull.Value)
+                {
+                    decimal netAmount = Convert.ToDecimal(netAmountObj);
+                    totalNetAmount += netAmount;
+                }
+            }
+            //if (totalNetAmount > Convert.ToDecimal(grossAmount.Value))
+            //{
+            //    ExpAllocGrid.Styles.Footer.ForeColor = System.Drawing.Color.Red;
+            //}
+
+            finalTotalAmnt = totalNetAmount - Convert.ToDecimal(expAllocs.NetAmount);
+            ASPxGridView grid = (ASPxGridView)sender;
+            grid.JSProperties["cpComputeUnalloc_edit"] = finalTotalAmnt;
+        }
+
+        protected void ExpAllocGrid_edit_RowInserting(object sender, DevExpress.Web.Data.ASPxDataInsertingEventArgs e)
+        {
+            var expAllocs = _DataContext.ACCEDE_T_ExpenseDetailsMaps
+                .Where(x => x.ExpenseReportDetail_ID == Convert.ToInt32(Session["ExpDetailsID"]));
+
+            decimal totalAmnt = new decimal(0.00);
+
+            ASPxGridView grid = (ASPxGridView)sender;
+
+            foreach (var item in expAllocs)
+            {
+                totalAmnt += Convert.ToDecimal(item.NetAmount);
+            }
+
+            totalAmnt = totalAmnt + Convert.ToDecimal(e.NewValues["NetAmount"]);
+            if (totalAmnt > Convert.ToDecimal(grossAmount_edit.Value))
+            {
+                grid.Styles.Footer.ForeColor = System.Drawing.Color.Red;
+
+                // Set a custom JS property to pass the alert message to the client side
+                grid.JSProperties["cpAllocationExceeded"] = true;
+
+                e.Cancel = true;
+
+            }
+            else
+            {
+                e.NewValues["ExpenseReportDetail_ID"] = Convert.ToInt32(Session["ExpDetailsID"]);
+                e.NewValues["Preparer_ID"] = Convert.ToInt32(Session["userID"]);
+
+                grid.JSProperties["cpComputeUnalloc_edit"] = totalAmnt;
+            }
+
+
+        }
+
+        protected void ExpAllocGrid_edit_RowUpdating(object sender, DevExpress.Web.Data.ASPxDataUpdatingEventArgs e)
+        {
+            decimal totalNetAmount = 0;
+            var RowIndex = e.NewValues["ExpenseDetailMap_ID"].ToString();
+            var newAmnt = e.NewValues["NetAmount"].ToString();
+            // Check if the grid is bound to a DataTable, List, or other collection
+            for (int i = 0; i < ExpAllocGrid_edit.VisibleRowCount; i++)
+            {
+                // Get the value of NetAmount from each visible row
+                object netAmountObj = ExpAllocGrid_edit.GetRowValues(i, "NetAmount");
+                object ID_Obj = ExpAllocGrid_edit.GetRowValues(i, "ExpenseDetailMap_ID");
+
+                if (netAmountObj != null && netAmountObj != DBNull.Value)
+                {
+                    decimal netAmount = Convert.ToDecimal(netAmountObj);
+                    if (RowIndex.ToString() == ID_Obj.ToString())
+                    {
+                        netAmount = Convert.ToDecimal(newAmnt);
+                    }
+                    totalNetAmount += netAmount;
+                }
+            }
+            //if (totalNetAmount > Convert.ToDecimal(grossAmount_edit.Value))
+            //{
+            //    ExpAllocGrid_edit.Styles.Footer.ForeColor = System.Drawing.Color.Red;
+            //}
+            ASPxGridView grid = (ASPxGridView)sender;
+
+            grid.JSProperties["cpComputeUnalloc_edit"] = totalNetAmount;
+        }
     }
 
     public class RFPDetails
@@ -1810,6 +2012,8 @@ namespace DX_WebTemplate
         public string io { get; set; }
         public string wbs { get; set; }
         public string remarks { get; set; }
+        public decimal totalAllocAmnt { get; set; }
     }
+
 
 }

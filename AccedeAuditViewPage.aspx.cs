@@ -546,7 +546,7 @@ namespace DX_WebTemplate
                             return "There is no workflow (ACDE P2P) setup for your company. Please contact Admin to setup the workflow.";
                         }
 
-                        rfp_main_reimburse.Status = P2PStatus.STS_Id;
+                        //rfp_main_reimburse.Status = P2PStatus.STS_Id;
                         exp_main.Status = P2PStatus.STS_Id;
                         foreach (var item in rfp_main_CA)
                         {

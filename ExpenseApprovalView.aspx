@@ -287,7 +287,7 @@
             console.log(item_id);
             $.ajax({
                 type: "POST",
-                url: "ExpenseApprovalView.aspx/DisplayExpDetailsAJAX",
+                url: "ExpenseApprovalView.aspx/DisplayExpDetailsEditAJAX",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: JSON.stringify({
@@ -303,13 +303,15 @@
                     //        layoutItem.SetCaption(response.d.docNum);
                     //    }
                     //}
+                    var dateStr = response.d.dateCreated; // This is a string
+                    var dateObj = new Date(dateStr); // Convert to JS Date object
 
                     particulars_edit.SetValue(response.d.particulars);
                     supplier_edit.SetValue(response.d.supplier);
                     tin_edit.SetValue(response.d.tin);
                     invoiceOR_edit.SetValue(response.d.invoice);
                     grossAmount_edit.SetValue(response.d.gross);
-                    dateAdded_edit.SetValue(response.d.dateCreated);
+                    dateAdded_edit.SetValue(dateObj); // Now it will work
                     //acctChargeExp_edit.SetValue(response.d.acctCharge);
                     costCenter_edit.SetValue(response.d.costCenter);
                     netAmount_edit.SetValue(response.d.net);
@@ -317,8 +319,11 @@
                     ewt_edit.SetValue(response.d.ewt);
                     io_edit.SetValue(response.d.io);
                     wbs_edit.SetValue(response.d.wbs);
+                    memo_expItemRemarks_edit.SetValue(response.d.remarks);
 
                     ExpAllocGrid_edit.Refresh();
+                    var curr = exp_Currency.GetValue();
+                    Unalloc_amnt_edit.SetValue(curr + " " + response.d.totalAllocAmnt.toFixed(2));
                     //DocuGrid1_edit.Refresh();
                     expensePopup_edit.Show();
 
@@ -604,6 +609,13 @@
                 var io = io_edit.GetValue() != null ? io_edit.GetValue() : "";
                 var wbs = wbs_edit.GetValue() != null ? wbs_edit.GetValue() : "";
                 var cc = costCenter_edit.GetValue();
+                var remarks = memo_expItemRemarks_edit.GetValue() != null ? memo_expItemRemarks_edit.GetValue() : "";
+                var dateAdd = dateAdded_edit.GetValue() != null ? dateAdded_edit.GetValue() : "";
+                var particular = particulars_edit.GetValue() != null ? particulars_edit.GetValue() : "";
+                var supplier = supplier_edit.GetValue() != null ? supplier_edit.GetValue() : "";
+                var tin = tin_edit.GetValue() != null ? tin_edit.GetValue() : "";
+                var invoice = invoiceOR_edit.GetValue() != null ? invoiceOR_edit.GetValue() : "";
+                var gross = grossAmount_edit.GetValue() != null ? grossAmount_edit.GetValue() : "";
 
                 LoadingPanel.Show();
 
@@ -617,7 +629,14 @@
                         ewt_amnt: ewt_amnt,
                         io: io,
                         wbs: wbs,
-                        cc: cc
+                        cc: cc,
+                        remarks: remarks,
+                        dateAdd: dateAdd,
+                        particular: particular,
+                        supplier: supplier,
+                        tin: tin,
+                        invoice: invoice,
+                        gross: gross
 
                     }),
                     contentType: "application/json; charset=utf-8",
@@ -641,6 +660,82 @@
             }
         }
 
+        function onEndCallback(s, e) {
+
+            if (s.cpAllocationExceeded) {
+                alert("Allocation Exceeded!");
+                s.cpAllocationExceeded = null;  // Clear the custom property
+            }
+
+
+            if (s.cpComputeUnalloc) {
+
+                var gross = grossAmount.GetValue();
+                console.log(s.cpComputeUnalloc);
+                var alloc_amnt = s.cpComputeUnalloc;
+                var curr = exp_Currency.GetValue();
+
+                var total_unalloc = (gross - alloc_amnt).toFixed(2);
+
+                Unalloc_amnt.SetValue(curr + " " + total_unalloc);
+                if (total_unalloc < 0) {
+                    var layoutControl = window["Unalloc_amnt"];
+                    var labelElement = layoutControl.GetMainElement();
+                    if (labelElement) {
+                        console.log(labelElement.innerHTML);
+                        // Look for the label inside the layout item — this finds any <span> or <td> with the value
+                        var label = labelElement.querySelector("input"); // Adjust class if needed
+
+                        if (label) {
+                            label.style.setProperty("color", "red", "important");
+                        } else {
+                            console.log("Label not found inside layout item.");
+                        }
+                    }
+                } else {
+                    var layoutControl = window["Unalloc_amnt"];
+                    var labelElement = layoutControl.GetMainElement();
+                    if (labelElement) {
+                        console.log(labelElement.innerHTML);
+                        // Look for the label inside the layout item — this finds any <span> or <td> with the value
+                        var label = labelElement.querySelector("input"); // Adjust class if needed
+
+                        if (label) {
+                            label.style.setProperty("color", "black", "important");
+                        } else {
+                            console.log("Label not found inside layout item.");
+                        }
+                    }
+                }
+
+                s.cpComputeUnalloc = null;  // Clear the custom property
+            }
+
+            if (s.cpComputeUnalloc == 0) {
+                var gross = grossAmount.GetValue();
+                var curr = exp_Currency.GetValue();
+                Unalloc_amnt.SetValue(curr + " " + gross.toFixed(2));
+            }
+
+            if (s.cpComputeUnalloc_edit) {
+
+                var gross = grossAmount_edit.GetValue();
+                var alloc_amnt = s.cpComputeUnalloc_edit;
+                var curr = exp_Currency.GetValue();
+
+                var total_unalloc = (gross - alloc_amnt).toFixed(2);
+                Unalloc_amnt_edit.SetValue(curr + " " + total_unalloc);
+
+                s.cpComputeUnalloc_edit = null;  // Clear the custom property
+            }
+
+            if (s.cpComputeUnalloc_edit == 0) {
+                var gross = grossAmount_edit.GetValue();
+                var curr = exp_Currency.GetValue();
+                Unalloc_amnt_edit.SetValue(curr + " " + gross.toFixed(2));
+            }
+        }
+
         var fileBtn = "";
         //PDF/IMAGE VIEWER
         var pdfjsLib = window['pdfjs-dist/build/pdf'];
@@ -650,7 +745,7 @@
         var resolution = 1; //Set Resolution to Adjust PDF clarity.
         function onViewAttachment(s, e) {
 
-            if (e.buttonID == 'btnDownloadFile' || e.buttonID == 'btnDownloadFile1' || e.buttonID == 'btnDownloadFile2') {
+            if (e.buttonID == 'btnDownloadFile' || e.buttonID == 'btnDownloadFile1' || e.buttonID == 'btnDownloadFile2' || e.buttonID == 'btnDownloadFile3') {
                 fileBtn = e.buttonID;
                 var fileId = s.GetRowKey(e.visibleIndex);
                 var filename;
@@ -665,6 +760,9 @@
                     CAPopup.Hide();
                 }
 
+                if (e.buttonID == 'btnDownloadFile3') {
+                    expensePopup_edit.Hide();
+                }
 
                 LoadingPanel.SetText("Loading attachment&hellip;");
                 LoadingPanel.Show();
@@ -713,6 +811,10 @@
 
                     if (fileBtn == 'btnDownloadFile2') {
                         CAPopup.Show();
+                    }
+
+                    if (e.buttonID == 'btnDownloadFile3') {
+                        expensePopup_edit.Show();
                     }
                 });
 
@@ -1241,10 +1343,24 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                     </dx:EmptyLayoutItem>
                                     <dx:EmptyLayoutItem ColSpan="1">
                                     </dx:EmptyLayoutItem>
+                                    <dx:LayoutItem Caption="Currency" ColSpan="1" FieldName="Exp_Currency">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxTextBox ID="exp_Currency" runat="server" ClientInstanceName="exp_Currency" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
+                                                    <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                        <RequiredField ErrorText="*Required" />
+                                                    </ValidationSettings>
+                                                    <Border BorderStyle="None" />
+                                                    <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                </dx:ASPxTextBox>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                        <CaptionSettings HorizontalAlign="Right" />
+                                    </dx:LayoutItem>
                                     <dx:LayoutItem Caption="AR Reference No." ClientVisible="False" ColSpan="1" FieldName="AR_Reference_No" Name="ARNo">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxTextBox ID="txt_CTDepartment0" runat="server" ClientInstanceName="txt_CTDepartment" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="50%">
+                                                <dx:ASPxTextBox ID="txt_CTDepartment0" runat="server" ClientInstanceName="txt_CTDepartment" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
                                                     <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                         <RequiredField ErrorText="*Required" />
                                                     </ValidationSettings>
@@ -2471,21 +2587,23 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                 </dx:LayoutItem>
                             </Items>
                         </dx:LayoutGroup>
+                        <dx:EmptyLayoutItem ColSpan="1" Width="100%">
+                        </dx:EmptyLayoutItem>
                         <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="None" HorizontalAlign="Center" Width="100%">
                             <Items>
-                                <dx:LayoutGroup Caption="" ColCount="2" ColSpan="2" ColumnCount="2" ColumnSpan="2" GroupBoxDecoration="None" Width="60%" HorizontalAlign="Center">
+                                <dx:LayoutGroup Caption="" ColCount="2" ColSpan="2" ColumnCount="2" ColumnSpan="2" GroupBoxDecoration="None" Width="100%" HorizontalAlign="Center">
                                     <Items>
-                                        <dx:LayoutGroup Caption="" ColSpan="1" GroupBoxDecoration="None">
+                                        <dx:LayoutGroup Caption="" ColSpan="1" GroupBoxDecoration="None" Width="50%">
                                             <Items>
-                                                <dx:LayoutItem Caption="Particulars" ColSpan="1" Width="50%">
+                                                <dx:LayoutItem Caption="Date" ColSpan="1">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxTextBox ID="particulars_lbl" runat="server" ClientInstanceName="particulars_lbl" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True">
+                                                            <dx:ASPxTextBox ID="dateCreated_lbl" runat="server" ClientInstanceName="dateCreated_lbl" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
                                                                     <RequiredField ErrorText="*Required" />
                                                                 </ValidationSettings>
                                                                 <Border BorderStyle="None" />
-                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
                                                             </dx:ASPxTextBox>
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
@@ -2493,7 +2611,23 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                     <ParentContainerStyle Font-Size="Small">
                                                     </ParentContainerStyle>
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Supplier" ColSpan="1" Width="50%">
+                                                <dx:LayoutItem Caption="Particulars" ColSpan="1">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxTextBox ID="particulars_lbl" runat="server" ClientInstanceName="particulars_lbl" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True">
+                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
+                                                                    <RequiredField ErrorText="*Required" />
+                                                                </ValidationSettings>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
+                                                            </dx:ASPxTextBox>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionSettings HorizontalAlign="Right" />
+                                                    <ParentContainerStyle Font-Size="Small">
+                                                    </ParentContainerStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Supplier" ColSpan="1">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxTextBox ID="supplier_lbl" runat="server" ClientInstanceName="supplier_lbl" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True">
@@ -2501,7 +2635,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                                     <RequiredField ErrorText="*Required" />
                                                                 </ValidationSettings>
                                                                 <Border BorderStyle="None" />
-                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
                                                             </dx:ASPxTextBox>
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
@@ -2517,7 +2651,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                                     <RequiredField ErrorText="*Required" />
                                                                 </ValidationSettings>
                                                                 <Border BorderStyle="None" />
-                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
                                                             </dx:ASPxTextBox>
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
@@ -2533,7 +2667,41 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                                     <RequiredField ErrorText="*Required" />
                                                                 </ValidationSettings>
                                                                 <Border BorderStyle="None" />
-                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
+                                                            </dx:ASPxTextBox>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionSettings HorizontalAlign="Right" />
+                                                    <ParentContainerStyle Font-Size="Small">
+                                                    </ParentContainerStyle>
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="WBS" ColSpan="1">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxTextBox ID="wbs_expd_lbl" runat="server" ClientInstanceName="wbs_expd_lbl" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
+                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
+                                                                    <RequiredField ErrorText="*Required" />
+                                                                </ValidationSettings>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
+                                                            </dx:ASPxTextBox>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionSettings HorizontalAlign="Right" />
+                                                </dx:LayoutItem>
+                                            </Items>
+                                        </dx:LayoutGroup>
+                                        <dx:LayoutGroup Caption="" ColSpan="1" GroupBoxDecoration="None" Width="50%">
+                                            <Items>
+                                                <dx:LayoutItem Caption="Cost Center" ColSpan="1">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxTextBox ID="costCenterExp_lbl" runat="server" ClientInstanceName="costCenterExp_lbl" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True">
+                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
+                                                                    <RequiredField ErrorText="*Required" />
+                                                                </ValidationSettings>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
                                                             </dx:ASPxTextBox>
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
@@ -2544,68 +2712,18 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                 <dx:LayoutItem Caption="IO" ColSpan="1">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxTextBox ID="io_expd_lbl" runat="server" ClientInstanceName="io_expd_lbl" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
+                                                            <dx:ASPxTextBox ID="io_expd_lbl" runat="server" ClientInstanceName="io_expd_lbl" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True">
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
                                                                     <RequiredField ErrorText="*Required" />
                                                                 </ValidationSettings>
                                                                 <Border BorderStyle="None" />
-                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
                                                             </dx:ASPxTextBox>
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings HorizontalAlign="Right" />
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="WBS" ColSpan="1">
-                                                    <LayoutItemNestedControlCollection>
-                                                        <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxTextBox ID="wbs_expd_lbl" runat="server" ClientInstanceName="wbs_expd_lbl" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
-                                                                    <RequiredField ErrorText="*Required" />
-                                                                </ValidationSettings>
-                                                                <Border BorderStyle="None" />
-                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                            </dx:ASPxTextBox>
-                                                        </dx:LayoutItemNestedControlContainer>
-                                                    </LayoutItemNestedControlCollection>
-                                                    <CaptionSettings HorizontalAlign="Right" />
-                                                </dx:LayoutItem>
-                                            </Items>
-                                        </dx:LayoutGroup>
-                                        <dx:LayoutGroup Caption="" ColSpan="1" GroupBoxDecoration="None">
-                                            <Items>
-                                                <dx:LayoutItem Caption="Date" ColSpan="1">
-                                                    <LayoutItemNestedControlCollection>
-                                                        <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxTextBox ID="dateCreated_lbl" runat="server" ClientInstanceName="dateCreated_lbl" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True">
-                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
-                                                                    <RequiredField ErrorText="*Required" />
-                                                                </ValidationSettings>
-                                                                <Border BorderStyle="None" />
-                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                            </dx:ASPxTextBox>
-                                                        </dx:LayoutItemNestedControlContainer>
-                                                    </LayoutItemNestedControlCollection>
-                                                    <CaptionSettings HorizontalAlign="Right" />
-                                                    <ParentContainerStyle Font-Size="Small">
-                                                    </ParentContainerStyle>
-                                                </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Cost Center" ColSpan="1">
-                                                    <LayoutItemNestedControlCollection>
-                                                        <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxTextBox ID="costCenterExp_lbl" runat="server" ClientInstanceName="costCenterExp_lbl" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True">
-                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
-                                                                    <RequiredField ErrorText="*Required" />
-                                                                </ValidationSettings>
-                                                                <Border BorderStyle="None" />
-                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                            </dx:ASPxTextBox>
-                                                        </dx:LayoutItemNestedControlContainer>
-                                                    </LayoutItemNestedControlCollection>
-                                                    <CaptionSettings HorizontalAlign="Right" />
-                                                    <ParentContainerStyle Font-Size="Small">
-                                                    </ParentContainerStyle>
-                                                </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Gross Amount" ColSpan="1" Width="50%">
+                                                <dx:LayoutItem Caption="Gross Amount" ColSpan="1">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxTextBox ID="gross_lbl" runat="server" ClientInstanceName="gross_lbl" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%" DisplayFormatString="#,##0.00 PHP" HorizontalAlign="Right">
@@ -2613,7 +2731,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                                     <RequiredField ErrorText="*Required" />
                                                                 </ValidationSettings>
                                                                 <Border BorderStyle="None" />
-                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
                                                             </dx:ASPxTextBox>
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
@@ -2629,7 +2747,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                                     <RequiredField ErrorText="*Required" />
                                                                 </ValidationSettings>
                                                                 <Border BorderStyle="None" />
-                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
                                                             </dx:ASPxTextBox>
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
@@ -2637,7 +2755,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                     <ParentContainerStyle Font-Size="Small">
                                                     </ParentContainerStyle>
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="EWT" ColSpan="1" HorizontalAlign="Left" Width="55%">
+                                                <dx:LayoutItem Caption="EWT" ColSpan="1" HorizontalAlign="Left">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxTextBox ID="ewt_lbl" runat="server" ClientInstanceName="ewt_lbl" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True" HorizontalAlign="Right">
@@ -2645,7 +2763,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                                     <RequiredField ErrorText="*Required" />
                                                                 </ValidationSettings>
                                                                 <Border BorderStyle="None" />
-                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
                                                             </dx:ASPxTextBox>
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
@@ -2661,7 +2779,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                                     <RequiredField ErrorText="*Required" />
                                                                 </ValidationSettings>
                                                                 <Border BorderStyle="None" />
-                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
                                                             </dx:ASPxTextBox>
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
@@ -2669,7 +2787,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                     <ParentContainerStyle Font-Size="Small">
                                                     </ParentContainerStyle>
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Account to be Charged" ClientVisible="False" ColSpan="1" Width="50%">
+                                                <dx:LayoutItem Caption="Account to be Charged" ClientVisible="False" ColSpan="1">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxTextBox ID="acctChargeExp_lbl" runat="server" ClientInstanceName="acctChargeExp_lbl" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True">
@@ -2677,7 +2795,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                                     <RequiredField ErrorText="*Required" />
                                                                 </ValidationSettings>
                                                                 <Border BorderStyle="None" />
-                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                                <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
                                                             </dx:ASPxTextBox>
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
@@ -2689,7 +2807,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                         </dx:LayoutGroup>
                                     </Items>
                                 </dx:LayoutGroup>
-                                <dx:LayoutGroup ColSpan="2" ColumnSpan="2" GroupBoxDecoration="None" Width="100%">
+                                <dx:LayoutGroup ColSpan="2" ColumnSpan="2" GroupBoxDecoration="Box" Width="100%" Caption="">
                                     <Items>
                                         <dx:LayoutItem Caption="Remarks" ColSpan="1" Width="100%">
                                             <LayoutItemNestedControlCollection>
@@ -2699,7 +2817,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                             <RequiredField ErrorText="*Required" />
                                                         </ValidationSettings>
                                                         <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                        <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
                                                     </dx:ASPxMemo>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
@@ -2805,7 +2923,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                             </dx:PopupControlContentControl>
             </ContentCollection>
         </dx:ASPxPopupControl>
-        <dx:ASPxPopupControl ID="expensePopup_edit" runat="server" FooterText="" HeaderText="Edit Expense Item" Width="1200px" ClientInstanceName="expensePopup_edit" Modal="True" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" AllowDragging="True" CloseAction="CloseButton" CssClass="rounded" PopupAnimationType="None">
+        <dx:ASPxPopupControl ID="expensePopup_edit" runat="server" FooterText="" HeaderText="Edit Expense Item" Width="1500px" ClientInstanceName="expensePopup_edit" Modal="True" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" AllowDragging="True" CloseAction="CloseButton" CssClass="rounded" PopupAnimationType="None">
                         <ContentCollection>
             <dx:PopupControlContentControl runat="server">
                 <div class="scrollableContainer">
@@ -2844,113 +2962,54 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                 </dx:LayoutItem>
                             </Items>
                         </dx:LayoutGroup>
+                        <dx:EmptyLayoutItem ColSpan="1">
+                        </dx:EmptyLayoutItem>
                         <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="None" HorizontalAlign="Center" Width="100%">
                             <Items>
-                                <dx:LayoutGroup Caption="" ColCount="2" ColSpan="2" ColumnCount="2" ColumnSpan="2" GroupBoxDecoration="HeadingLine" Width="60%" HorizontalAlign="Center" Name="ErrorLabel">
+                                <dx:LayoutGroup Caption="" ColSpan="1" GroupBoxDecoration="None" HorizontalAlign="Left" Name="ErrorLabel" Width="50%">
                                     <Items>
                                         <dx:LayoutItem Caption="Date" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxTextBox ID="dateAdded_edit" runat="server" ClientInstanceName="dateAdded_edit" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
-                                                            <RequiredField ErrorText="*Required" />
-                                                        </ValidationSettings>
+                                                    <dx:ASPxDateEdit ID="dateAdded_edit" runat="server" ClientInstanceName="dateAdded_edit" Width="100%" Font-Bold="True" Font-Size="Small">
                                                         <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                    </dx:ASPxTextBox>
+                                                        <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
+                                                    </dx:ASPxDateEdit>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                             <CaptionSettings HorizontalAlign="Right" />
                                             <ParentContainerStyle Font-Size="Small">
                                             </ParentContainerStyle>
                                         </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Cost Center" ColSpan="1">
+                                        <dx:LayoutItem Caption="Particulars" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="costCenter_edit" runat="server" ClientInstanceName="costCenter_edit" DataSourceID="sqlCostCenter" Font-Bold="True" Font-Size="Small" TextField="SAP_CostCenter" ValueField="SAP_CostCenter" Width="100%">
-                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
-                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                        </ValidationSettings>
-                                                        <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                    </dx:ASPxComboBox>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <CaptionSettings HorizontalAlign="Right" />
-                                            <ParentContainerStyle Font-Size="Small">
-                                            </ParentContainerStyle>
-                                        </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Particulars" ColSpan="1" Width="60%">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxTextBox ID="particulars_edit" runat="server" ClientInstanceName="particulars_edit" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
-                                                            <RequiredField ErrorText="*Required" />
-                                                        </ValidationSettings>
-                                                        <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                    </dx:ASPxTextBox>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <CaptionSettings HorizontalAlign="Right" />
-                                            <ParentContainerStyle Font-Size="Small">
-                                            </ParentContainerStyle>
-                                        </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="IO" ColSpan="1">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="io_edit" runat="server" ClientInstanceName="io_edit" DataSourceID="SqlIO" DropDownWidth="300px" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" TextField="IO_Num" TextFormatString="{0}" ValueField="IO_Num" Width="100%">
+                                                    <dx:ASPxComboBox ID="particulars_edit" runat="server" Font-Bold="True" Font-Size="Small" Width="100%" ClientInstanceName="particulars_edit" DataSourceID="SqlParticulars" TextField="P_Name" ValueField="ID" NullValueItemDisplayText="{0} - {1}" TextFormatString="{0} - {1}">
                                                         <Columns>
-                                                            <dx:ListBoxColumn Caption="IO Number" FieldName="IO_Num" Name="IO Number">
+                                                            <dx:ListBoxColumn Caption="Name" FieldName="P_Name">
                                                             </dx:ListBoxColumn>
-                                                            <dx:ListBoxColumn Caption="IO Description" FieldName="IO_Description" Name="IO Description">
+                                                            <dx:ListBoxColumn Caption="Description" FieldName="P_Description">
                                                             </dx:ListBoxColumn>
                                                         </Columns>
-                                                        <ClearButton DisplayMode="Always">
-                                                        </ClearButton>
-                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
-                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                        </ValidationSettings>
                                                         <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                        <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
                                                     </dx:ASPxComboBox>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                             <CaptionSettings HorizontalAlign="Right" />
+                                            <ParentContainerStyle Font-Size="Small">
+                                            </ParentContainerStyle>
                                         </dx:LayoutItem>
                                         <dx:LayoutItem Caption="Supplier" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxTextBox ID="supplier_edit" runat="server" ClientInstanceName="supplier_edit" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True">
+                                                    <dx:ASPxTextBox ID="supplier_edit" runat="server" ClientInstanceName="supplier_edit" Font-Bold="True" Font-Size="Small" Width="100%">
                                                         <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
                                                             <RequiredField ErrorText="*Required" />
                                                         </ValidationSettings>
                                                         <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                        <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
                                                     </dx:ASPxTextBox>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <CaptionSettings HorizontalAlign="Right" />
-                                            <ParentContainerStyle Font-Size="Small">
-                                            </ParentContainerStyle>
-                                        </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Gross Amount" ColSpan="1" Name="gross_edit">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxSpinEdit ID="grossAmount_edit" runat="server" AllowNull="False" ClientInstanceName="grossAmount_edit" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="True" Font-Size="Small" Increment="100" MaxValue="99999999999999" Number="0.00" Width="100%" HorizontalAlign="Right" ReadOnly="True">
-                                                        <SpinButtons ClientVisible="False">
-                                                        </SpinButtons>
-                                                        <ClientSideEvents ValueChanged="function(s, e) {
-	//netAmount_edit.SetValue(s.GetValue());
-	//ExpAllocGrid_edit.PerformCallback();
-computeNetAmount(&quot;edit&quot;);
-}" />
-                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
-                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
-                                                        </ValidationSettings>
-                                                        <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                    </dx:ASPxSpinEdit>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                             <CaptionSettings HorizontalAlign="Right" />
@@ -2960,28 +3019,13 @@ computeNetAmount(&quot;edit&quot;);
                                         <dx:LayoutItem Caption="Vendor TIN" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxTextBox ID="tin_edit" runat="server" ClientInstanceName="tin_edit" Font-Bold="True" Font-Size="Small" Width="50%" ReadOnly="True">
+                                                    <dx:ASPxTextBox ID="tin_edit" runat="server" ClientInstanceName="tin_edit" Font-Bold="True" Font-Size="Small" Width="100%">
                                                         <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
                                                             <RequiredField ErrorText="*Required" />
                                                         </ValidationSettings>
                                                         <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                        <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
                                                     </dx:ASPxTextBox>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <CaptionSettings HorizontalAlign="Right" />
-                                            <ParentContainerStyle Font-Size="Small">
-                                            </ParentContainerStyle>
-                                        </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Net Amount" ColSpan="1" Name="net_edit">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxSpinEdit ID="netAmount_edit" runat="server" ClientInstanceName="netAmount_edit" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="True" Font-Size="Small" MaxValue="99999999999999" Number="0.00" Width="100%" HorizontalAlign="Right" ReadOnly="True">
-                                                        <SpinButtons ClientVisible="False">
-                                                        </SpinButtons>
-                                                        <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                    </dx:ASPxSpinEdit>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                             <CaptionSettings HorizontalAlign="Right" />
@@ -2991,32 +3035,13 @@ computeNetAmount(&quot;edit&quot;);
                                         <dx:LayoutItem Caption="Invoice/OR No." ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxTextBox ID="invoiceOR_edit" runat="server" ClientInstanceName="invoiceOR_edit" Font-Bold="True" Font-Size="Small" Width="50%" ReadOnly="True">
+                                                    <dx:ASPxTextBox ID="invoiceOR_edit" runat="server" ClientInstanceName="invoiceOR_edit" Font-Bold="True" Font-Size="Small" Width="100%">
                                                         <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
                                                             <RequiredField ErrorText="*Required" />
                                                         </ValidationSettings>
                                                         <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                        <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
                                                     </dx:ASPxTextBox>
-                                                </dx:LayoutItemNestedControlContainer>
-                                            </LayoutItemNestedControlCollection>
-                                            <CaptionSettings HorizontalAlign="Right" />
-                                            <ParentContainerStyle Font-Size="Small">
-                                            </ParentContainerStyle>
-                                        </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="VAT" ColSpan="1" Name="vat_edit">
-                                            <LayoutItemNestedControlCollection>
-                                                <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxSpinEdit ID="vat_edit" runat="server" ClientInstanceName="vat_edit" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="True" Font-Size="Small" MaxValue="999999999" Number="0.00" Width="100%" HorizontalAlign="Right">
-                                                        <SpinButtons ClientVisible="False">
-                                                        </SpinButtons>
-                                                        <ClientSideEvents ValueChanged="function(s, e) {
-	computeNetAmount(&quot;edit&quot;);
-
-}" />
-                                                        <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                    </dx:ASPxSpinEdit>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                             <CaptionSettings HorizontalAlign="Right" />
@@ -3031,24 +3056,72 @@ computeNetAmount(&quot;edit&quot;);
                                                             <RequiredField ErrorText="*Required" />
                                                         </ValidationSettings>
                                                         <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                        <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
                                                     </dx:ASPxTextBox>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                             <CaptionSettings HorizontalAlign="Right" />
                                         </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="EWT" ColSpan="1" HorizontalAlign="Left" Width="55%" Name="ewt_edit">
+                                    </Items>
+                                    <ParentContainerStyle ForeColor="Red">
+                                    </ParentContainerStyle>
+                                </dx:LayoutGroup>
+                                <dx:LayoutGroup Caption="" ColSpan="1" GroupBoxDecoration="None" HorizontalAlign="Left" Width="50%">
+                                    <Items>
+                                        <dx:LayoutItem Caption="Cost Center" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxSpinEdit ID="ewt_edit" runat="server" ClientInstanceName="ewt_edit" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="True" Font-Size="Small" MaxValue="999999999" Number="0.00" Width="100%" HorizontalAlign="Right">
+                                                    <dx:ASPxComboBox ID="costCenter_edit" runat="server" ClientInstanceName="costCenter_edit" DataSourceID="sqlCostCenter" Font-Bold="True" Font-Size="Small" TextField="SAP_CostCenter" ValueField="SAP_CostCenter" Width="100%">
+                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
+                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                        </ValidationSettings>
+                                                        <Border BorderStyle="None" />
+                                                        <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
+                                                    </dx:ASPxComboBox>
+                                                </dx:LayoutItemNestedControlContainer>
+                                            </LayoutItemNestedControlCollection>
+                                            <CaptionSettings HorizontalAlign="Right" />
+                                            <ParentContainerStyle Font-Size="Small">
+                                            </ParentContainerStyle>
+                                        </dx:LayoutItem>
+                                        <dx:LayoutItem Caption="IO" ColSpan="1">
+                                            <LayoutItemNestedControlCollection>
+                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                    <dx:ASPxComboBox ID="io_edit" runat="server" ClientInstanceName="io_edit" DataSourceID="SqlIO" Font-Bold="True" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" TextField="IO_Num" TextFormatString="{0} - {1}" ValueField="IO_Num" Width="100%">
+                                                        <Columns>
+                                                            <dx:ListBoxColumn Caption="IO Number" FieldName="IO_Num" Name="IO Number" Width="60px">
+                                                            </dx:ListBoxColumn>
+                                                            <dx:ListBoxColumn Caption="IO Description" FieldName="IO_Description" Name="IO Description">
+                                                            </dx:ListBoxColumn>
+                                                        </Columns>
+                                                        <ClearButton DisplayMode="Always">
+                                                        </ClearButton>
+                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
+                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                        </ValidationSettings>
+                                                        <Border BorderStyle="None" />
+                                                        <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
+                                                    </dx:ASPxComboBox>
+                                                </dx:LayoutItemNestedControlContainer>
+                                            </LayoutItemNestedControlCollection>
+                                            <CaptionSettings HorizontalAlign="Right" />
+                                        </dx:LayoutItem>
+                                        <dx:LayoutItem Caption="Gross Amount" ColSpan="1" Name="gross_edit">
+                                            <LayoutItemNestedControlCollection>
+                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                    <dx:ASPxSpinEdit ID="grossAmount_edit" runat="server" AllowNull="False" ClientInstanceName="grossAmount_edit" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="True" Font-Size="Small" HorizontalAlign="Right" Increment="100" MaxValue="99999999999999" Number="0.00" Width="100%">
                                                         <SpinButtons ClientVisible="False">
                                                         </SpinButtons>
                                                         <ClientSideEvents ValueChanged="function(s, e) {
-	computeNetAmount(&quot;edit&quot;);
-
+	//netAmount_edit.SetValue(s.GetValue());
+	//ExpAllocGrid_edit.PerformCallback();
+computeNetAmount(&quot;edit&quot;);
 }" />
+                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
+                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                        </ValidationSettings>
                                                         <Border BorderStyle="None" />
-                                                        <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                        <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
                                                     </dx:ASPxSpinEdit>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
@@ -3056,13 +3129,78 @@ computeNetAmount(&quot;edit&quot;);
                                             <ParentContainerStyle Font-Size="Small">
                                             </ParentContainerStyle>
                                         </dx:LayoutItem>
-                                        <dx:EmptyLayoutItem ColSpan="1">
-                                        </dx:EmptyLayoutItem>
-                                        <dx:EmptyLayoutItem ColSpan="1">
-                                        </dx:EmptyLayoutItem>
+                                        <dx:LayoutItem Caption="Net Amount" ColSpan="1" Name="net_edit">
+                                            <LayoutItemNestedControlCollection>
+                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                    <dx:ASPxSpinEdit ID="netAmount_edit" runat="server" ClientInstanceName="netAmount_edit" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="True" Font-Size="Small" HorizontalAlign="Right" MaxValue="99999999999999" Number="0.00" ReadOnly="True" Width="100%">
+                                                        <SpinButtons ClientVisible="False">
+                                                        </SpinButtons>
+                                                        <Border BorderStyle="None" />
+                                                        <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
+                                                    </dx:ASPxSpinEdit>
+                                                </dx:LayoutItemNestedControlContainer>
+                                            </LayoutItemNestedControlCollection>
+                                            <CaptionSettings HorizontalAlign="Right" />
+                                            <ParentContainerStyle Font-Size="Small">
+                                            </ParentContainerStyle>
+                                        </dx:LayoutItem>
+                                        <dx:LayoutItem Caption="VAT" ColSpan="1" Name="vat_edit">
+                                            <LayoutItemNestedControlCollection>
+                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                    <dx:ASPxSpinEdit ID="vat_edit" runat="server" ClientInstanceName="vat_edit" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="True" Font-Size="Small" HorizontalAlign="Right" MaxValue="999999999" Number="0.00" Width="100%">
+                                                        <SpinButtons ClientVisible="False">
+                                                        </SpinButtons>
+                                                        <ClientSideEvents ValueChanged="function(s, e) {
+	computeNetAmount(&quot;edit&quot;);
+
+}" />
+                                                        <Border BorderStyle="None" />
+                                                        <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
+                                                    </dx:ASPxSpinEdit>
+                                                </dx:LayoutItemNestedControlContainer>
+                                            </LayoutItemNestedControlCollection>
+                                            <CaptionSettings HorizontalAlign="Right" />
+                                            <ParentContainerStyle Font-Size="Small">
+                                            </ParentContainerStyle>
+                                        </dx:LayoutItem>
+                                        <dx:LayoutItem Caption="EWT" ColSpan="1" HorizontalAlign="Left" Name="ewt_edit">
+                                            <LayoutItemNestedControlCollection>
+                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                    <dx:ASPxSpinEdit ID="ewt_edit" runat="server" ClientInstanceName="ewt_edit" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="True" Font-Size="Small" HorizontalAlign="Right" MaxValue="999999999" Number="0.00" Width="100%">
+                                                        <SpinButtons ClientVisible="False">
+                                                        </SpinButtons>
+                                                        <ClientSideEvents ValueChanged="function(s, e) {
+	computeNetAmount(&quot;edit&quot;);
+
+}" />
+                                                        <Border BorderStyle="None" />
+                                                        <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
+                                                    </dx:ASPxSpinEdit>
+                                                </dx:LayoutItemNestedControlContainer>
+                                            </LayoutItemNestedControlCollection>
+                                            <CaptionSettings HorizontalAlign="Right" />
+                                            <ParentContainerStyle Font-Size="Small">
+                                            </ParentContainerStyle>
+                                        </dx:LayoutItem>
                                     </Items>
-                                    <ParentContainerStyle ForeColor="Red">
-                                    </ParentContainerStyle>
+                                </dx:LayoutGroup>
+                                <dx:LayoutGroup Caption="" ColSpan="2" ColumnSpan="2" Width="100%">
+                                    <Items>
+                                        <dx:LayoutItem Caption="Remarks" ColSpan="1">
+                                            <LayoutItemNestedControlCollection>
+                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                    <dx:ASPxMemo ID="memo_expItemRemarks_edit" runat="server" ClientInstanceName="memo_expItemRemarks_edit" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" Width="100%">
+                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                            <RequiredField ErrorText="*Required" />
+                                                        </ValidationSettings>
+                                                        <Border BorderStyle="None" />
+                                                        <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
+                                                    </dx:ASPxMemo>
+                                                </dx:LayoutItemNestedControlContainer>
+                                            </LayoutItemNestedControlCollection>
+                                            <CaptionSettings HorizontalAlign="Left" Location="Top" />
+                                        </dx:LayoutItem>
+                                    </Items>
                                 </dx:LayoutGroup>
                                 <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2" Height="20px" Width="100%">
                                 </dx:EmptyLayoutItem>
@@ -3081,7 +3219,7 @@ computeNetAmount(&quot;edit&quot;);
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                         </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Unallocated Amount" ColSpan="1" Name="Unalloc_amnt_edit" Width="30%" ClientVisible="False">
+                                        <dx:LayoutItem Caption="Unallocated Amount" ColSpan="1" Name="Unalloc_amnt_edit" Width="30%">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
                                                     <dx:ASPxTextBox ID="Unalloc_amnt_edit" runat="server" ClientInstanceName="Unalloc_amnt_edit" Font-Bold="True" HorizontalAlign="Right" ReadOnly="True" Width="100%">
@@ -3093,10 +3231,11 @@ computeNetAmount(&quot;edit&quot;);
                                         <dx:LayoutItem Caption="" ClientVisible="False" ColSpan="2" ColumnSpan="2" Name="EditAllocGrid" ShowCaption="False" Width="100%">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxGridView ID="ExpAllocGrid_edit" runat="server" AutoGenerateColumns="False" ClientInstanceName="ExpAllocGrid_edit" DataSourceID="SqlExpMap" KeyFieldName="ExpenseDetailMap_ID" Width="100%">
+                                                    <dx:ASPxGridView ID="ExpAllocGrid_edit" runat="server" AutoGenerateColumns="False" ClientInstanceName="ExpAllocGrid_edit" DataSourceID="SqlExpMap" KeyFieldName="ExpenseDetailMap_ID" OnCustomCallback="ExpAllocGrid_edit_CustomCallback" OnRowDeleting="ExpAllocGrid_edit_RowDeleting" OnRowInserting="ExpAllocGrid_edit_RowInserting" Width="100%" OnRowUpdating="ExpAllocGrid_edit_RowUpdating">
+                                                        <ClientSideEvents EndCallback="onEndCallback" />
                                                         <SettingsPager Mode="EndlessPaging">
                                                         </SettingsPager>
-                                                        <SettingsEditing Mode="Inline">
+                                                        <SettingsEditing Mode="Batch">
                                                         </SettingsEditing>
                                                         <Settings GridLines="None" ShowFooter="True" ShowTitlePanel="True" />
                                                         <SettingsPopup>
@@ -3105,10 +3244,10 @@ computeNetAmount(&quot;edit&quot;);
                                                         </SettingsPopup>
                                                         <SettingsText CommandDelete="Remove" />
                                                         <Columns>
-                                                            <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="160px" Visible="False">
+                                                            <dx:GridViewCommandColumn ShowDeleteButton="True" ShowInCustomizationForm="True" ShowNewButtonInHeader="True" VisibleIndex="0" Width="160px" ShowEditButton="True">
                                                             </dx:GridViewCommandColumn>
                                                             <dx:GridViewDataComboBoxColumn Caption="Cost Center" FieldName="CostCenterIOWBS" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                                <PropertiesComboBox DataSourceID="sqlCostCenter" TextField="SAP_CostCenter" ValueField="SAP_CostCenter">
+                                                                <PropertiesComboBox DataSourceID="SqlCostCenterAll" TextField="SAP_CostCenter" ValueField="SAP_CostCenter" TextFormatString="{0}">
                                                                 </PropertiesComboBox>
                                                             </dx:GridViewDataComboBoxColumn>
                                                             <dx:GridViewDataSpinEditColumn Caption="Allocated Amount" FieldName="NetAmount" ShowInCustomizationForm="True" VisibleIndex="2">
@@ -3145,6 +3284,47 @@ computeNetAmount(&quot;edit&quot;);
                                 </dx:LayoutGroup>
                                 <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2" Width="100%">
                                 </dx:EmptyLayoutItem>
+                                <dx:LayoutGroup Caption="Supporting Documents" ColSpan="2" ColumnSpan="2" GroupBoxDecoration="HeadingLine" Width="100%">
+                                    <Items>
+                                        <dx:LayoutItem Caption="" ColSpan="1">
+                                            <LayoutItemNestedControlCollection>
+                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                    <dx:ASPxGridView ID="ASPxGridView1" runat="server" AutoGenerateColumns="False" ClientInstanceName="DocuGrid1" DataSourceID="SqlExpDetailAttach" KeyFieldName="ID" Width="100%">
+                                                        <ClientSideEvents CustomButtonClick="onViewAttachment" />
+                                                        <SettingsPopup>
+                                                            <FilterControl AutoUpdatePosition="False">
+                                                            </FilterControl>
+                                                        </SettingsPopup>
+                                                        <Columns>
+                                                            <dx:GridViewCommandColumn Caption="File" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                                <CustomButtons>
+                                                                    <dx:GridViewCommandColumnCustomButton ID="btnDownloadFile3" Text="Open File">
+                                                                        <Image IconID="pdfviewer_next_svg_16x16">
+                                                                        </Image>
+                                                                    </dx:GridViewCommandColumnCustomButton>
+                                                                </CustomButtons>
+                                                                <CellStyle HorizontalAlign="Left">
+                                                                </CellStyle>
+                                                            </dx:GridViewCommandColumn>
+                                                            <dx:GridViewDataTextColumn FieldName="ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="0">
+                                                            </dx:GridViewDataTextColumn>
+                                                            <dx:GridViewDataTextColumn FieldName="FileName" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="1">
+                                                            </dx:GridViewDataTextColumn>
+                                                            <dx:GridViewDataTextColumn FieldName="Description" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                            </dx:GridViewDataTextColumn>
+                                                            <dx:GridViewDataTextColumn Caption="File Size" FieldName="FileSize" ShowInCustomizationForm="True" VisibleIndex="4">
+                                                            </dx:GridViewDataTextColumn>
+                                                            <dx:GridViewDataTextColumn FieldName="FileAttachment" ShowInCustomizationForm="True" Visible="False" VisibleIndex="6">
+                                                            </dx:GridViewDataTextColumn>
+                                                            <dx:GridViewDataTextColumn FieldName="FileExtension" ShowInCustomizationForm="True" VisibleIndex="2">
+                                                            </dx:GridViewDataTextColumn>
+                                                        </Columns>
+                                                    </dx:ASPxGridView>
+                                                </dx:LayoutItemNestedControlContainer>
+                                            </LayoutItemNestedControlCollection>
+                                        </dx:LayoutItem>
+                                    </Items>
+                                </dx:LayoutGroup>
                             </Items>
                         </dx:LayoutGroup>
                     </Items>
@@ -3826,11 +4006,35 @@ DisapproveClick(); DisapprovePopup.Hide();
             <asp:Parameter DefaultValue="4" Name="Status" Type="Int32" />
         </SelectParameters>
      </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlExpMap" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_ExpenseDetailsMap] WHERE ([ExpenseReportDetail_ID] = @ExpenseReportDetail_ID)">
+    <asp:SqlDataSource ID="SqlExpMap" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_ExpenseDetailsMap] WHERE ([ExpenseReportDetail_ID] = @ExpenseReportDetail_ID)" DeleteCommand="DELETE FROM [ACCEDE_T_ExpenseDetailsMap] WHERE [ExpenseDetailMap_ID] = @ExpenseDetailMap_ID" InsertCommand="INSERT INTO [ACCEDE_T_ExpenseDetailsMap] ([AccountToCharged], [CostCenterIOWBS], [VAT], [EWT], [NetAmount], [ExpenseReportDetail_ID], [Preparer_ID], [EDM_Remarks]) VALUES (@AccountToCharged, @CostCenterIOWBS, @VAT, @EWT, @NetAmount, @ExpenseReportDetail_ID, @Preparer_ID, @EDM_Remarks)" UpdateCommand="UPDATE [ACCEDE_T_ExpenseDetailsMap] SET [AccountToCharged] = @AccountToCharged, [CostCenterIOWBS] = @CostCenterIOWBS, [VAT] = @VAT, [EWT] = @EWT, [NetAmount] = @NetAmount, [ExpenseReportDetail_ID] = @ExpenseReportDetail_ID, [Preparer_ID] = @Preparer_ID, [EDM_Remarks] = @EDM_Remarks WHERE [ExpenseDetailMap_ID] = @ExpenseDetailMap_ID">
+        <DeleteParameters>
+            <asp:Parameter Name="ExpenseDetailMap_ID" Type="Int32" />
+        </DeleteParameters>
+        <InsertParameters>
+            <asp:Parameter Name="AccountToCharged" Type="Int32" />
+            <asp:Parameter Name="CostCenterIOWBS" Type="String" />
+            <asp:Parameter Name="VAT" Type="Decimal" />
+            <asp:Parameter Name="EWT" Type="Decimal" />
+            <asp:Parameter Name="NetAmount" Type="Decimal" />
+            <asp:Parameter Name="ExpenseReportDetail_ID" Type="Int32" />
+            <asp:Parameter Name="Preparer_ID" Type="String" />
+            <asp:Parameter Name="EDM_Remarks" Type="String" />
+        </InsertParameters>
         <SelectParameters>
-            <asp:SessionParameter Name="ExpenseReportDetail_ID" SessionField="ExpMainId" Type="Int32" />
+            <asp:SessionParameter Name="ExpenseReportDetail_ID" SessionField="ExpDetailsID" Type="Int32" />
         </SelectParameters>
-     </asp:SqlDataSource>
+        <UpdateParameters>
+            <asp:Parameter Name="AccountToCharged" Type="Int32" />
+            <asp:Parameter Name="CostCenterIOWBS" Type="String" />
+            <asp:Parameter Name="VAT" Type="Decimal" />
+            <asp:Parameter Name="EWT" Type="Decimal" />
+            <asp:Parameter Name="NetAmount" Type="Decimal" />
+            <asp:Parameter Name="ExpenseReportDetail_ID" Type="Int32" />
+            <asp:Parameter Name="Preparer_ID" Type="String" />
+            <asp:Parameter Name="EDM_Remarks" Type="String" />
+            <asp:Parameter Name="ExpenseDetailMap_ID" Type="Int32" />
+        </UpdateParameters>
+    </asp:SqlDataSource>
     <asp:SqlDataSource ID="sqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([SAP_CostCenter] IS NOT NULL) ORDER BY [SAP_CostCenter]">
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlUser" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_UserMaster]"></asp:SqlDataSource>
@@ -3885,4 +4089,7 @@ DisapproveClick(); DisapprovePopup.Hide();
             <asp:Parameter Name="CompanyId" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlCostCenterAll" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([SAP_CostCenter] IS NOT NULL)">
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlParticulars" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_Particulars]"></asp:SqlDataSource>
 </asp:Content>
