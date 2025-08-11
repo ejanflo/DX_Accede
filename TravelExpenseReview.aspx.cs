@@ -165,9 +165,9 @@ namespace DX_WebTemplate
                             }
 
                             // Disapprove visibility rules
-                            if (status == "Pending at Finance" || status == "Pending at P2P" || mainExp.ExpenseType_ID != 1)
+                            if (status == "Pending at Finance" || status == "Pending" )
                             {
-                                disapproveItem.Visible = false;
+                                disapproveItem.Visible = true;
                             }
 
                             if (status == "Pending at Audit")
@@ -177,8 +177,9 @@ namespace DX_WebTemplate
                                 returnPrevItem.ClientVisible = true;
                             }
 
-                            if (status == "Pending at P2P")
+                            if (status == "Pending at P2P" || mainExp.ExpenseType_ID != 1)
                             {
+                                disapproveItem.Visible = false;
                                 sapItem.Visible = true;
                             }
 
