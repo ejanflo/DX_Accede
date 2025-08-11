@@ -318,8 +318,11 @@
     <asp:SqlDataSource ID="sqlStatus" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_Status]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="sqlAllApproval" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT Document_Id, Status, STS_Description, DateAssigned, DateAction, AppDocTypeId, AppId, Remarks, UserId, CompanyId, TranType, WF_Id, WFD_Id, WFA_Id, Travel_Id, NoTravel_Id, RFP_Id, Location
 FROM     vw_ACCEDE_I_AllAccedeCashier
-WHERE  (Document_Id = Travel_Id OR Document_Id = NoTravel_Id OR                     Document_Id = RFP_Id)
+WHERE  (Document_Id = Travel_Id OR Document_Id = NoTravel_Id OR Document_Id = RFP_Id) AND (UserId = @UserId)
 ORDER BY DateAssigned">
+        <SelectParameters>
+            <asp:SessionParameter Name="UserId" SessionField="userID" />
+        </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlCompBranch" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_CompanyBranch]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlTranType" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_ExpenseType]"></asp:SqlDataSource>
