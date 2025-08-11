@@ -212,7 +212,7 @@ namespace DX_WebTemplate
                         else if (string.IsNullOrEmpty(cComp) && !string.IsNullOrEmpty(cDept))
                             chargedto = cDept;
 
-                        report.Parameters["id"].Value = id; 
+                        report.Parameters["id"].Value = id;
                         report2.Parameters["id2"].Value = id;
                         report2.Parameters["docnum"].Value = docnum;
                         report.Parameters["ford"].Value = ford;
