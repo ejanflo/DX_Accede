@@ -29,7 +29,10 @@ namespace DX_WebTemplate
 
                     DateTime finapprdate = DateTime.Now;
                     DateTime finapprdate1 = DateTime.Now;
+                    DateTime finapprdate2 = DateTime.Now;
                     DateTime depapprdate = DateTime.Now;
+                    DateTime depapprdate1 = DateTime.Now;
+                    DateTime depapprdate2 = DateTime.Now;
                     DateTime fwdapprdate0 = DateTime.Now;
                     DateTime fwdapprdate = DateTime.Now;
                     DateTime p2papprdate = DateTime.Now;
@@ -37,7 +40,10 @@ namespace DX_WebTemplate
                     DateTime audapprdate = DateTime.Now;
                     var finapprname = string.Empty;
                     var finapprname1 = string.Empty;
+                    var finapprname2 = string.Empty;
                     var depapprname = string.Empty;
+                    var depapprname1 = string.Empty;
+                    var depapprname2 = string.Empty;
                     var fwdapprname0 = string.Empty;
                     var fwdapprname = string.Empty;
                     var p2papprname = string.Empty;
@@ -80,6 +86,15 @@ namespace DX_WebTemplate
                             finapprname1 = context.ITP_S_UserMasters.Where(x => x.EmpCode == finapprid1).Select(x => x.FullName).FirstOrDefault().ToUpper() ?? string.Empty;
                         }
 
+                        var finwfd2 = context.ITP_S_WorkflowDetails.Where(x => x.WF_Id == finwf && x.Sequence == 4).FirstOrDefault();
+
+                        if (finwfd2 != null)
+                        {
+                            var finapprid2 = context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WFD_Id == finwfd2.WFD_Id && x.WF_Id == finwf && x.AppId == 1032).Select(x => x.ActedBy_User_Id).FirstOrDefault();
+                            finapprdate2 = (DateTime)context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WFD_Id == finwfd2.WFD_Id && x.WF_Id == finwf && x.AppId == 1032).Select(x => x.DateAction).FirstOrDefault();
+                            finapprname2 = context.ITP_S_UserMasters.Where(x => x.EmpCode == finapprid2).Select(x => x.FullName).FirstOrDefault().ToUpper() ?? string.Empty;
+                        }
+
                         // Line Manager Approvers
                         var depwf = travel.WF_Id;
                         string depapprname0 = string.Empty;
@@ -100,6 +115,30 @@ namespace DX_WebTemplate
                             {
                                 depapprdate = (DateTime)context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WFD_Id == depwfd.WFD_Id && x.WF_Id == depwf && x.AppId == 1032).Select(x => x.DateAction).FirstOrDefault();
                                 depapprname = context.ITP_S_UserMasters.Where(x => x.EmpCode == depapprid).Select(x => x.FullName).FirstOrDefault().ToUpper() ?? string.Empty;
+                            }
+                        }
+
+                        var depwfd1 = context.ITP_S_WorkflowDetails.Where(x => x.WF_Id == depwf && x.Sequence == 3).FirstOrDefault();
+
+                        if (depwfd1 != null)
+                        {
+                            var depapprid = context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WFD_Id == depwfd1.WFD_Id && x.WF_Id == depwf && x.AppId == 1032).Select(x => x.ActedBy_User_Id).FirstOrDefault();
+                            if (depapprid != null)
+                            {
+                                depapprdate1 = (DateTime)context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WFD_Id == depwfd1.WFD_Id && x.WF_Id == depwf && x.AppId == 1032).Select(x => x.DateAction).FirstOrDefault();
+                                depapprname1 = context.ITP_S_UserMasters.Where(x => x.EmpCode == depapprid).Select(x => x.FullName).FirstOrDefault().ToUpper() ?? string.Empty;
+                            }
+                        }
+
+                        var depwfd2 = context.ITP_S_WorkflowDetails.Where(x => x.WF_Id == depwf && x.Sequence == 4).FirstOrDefault();
+
+                        if (depwfd2 != null)
+                        {
+                            var depapprid = context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WFD_Id == depwfd2.WFD_Id && x.WF_Id == depwf && x.AppId == 1032).Select(x => x.ActedBy_User_Id).FirstOrDefault();
+                            if (depapprid != null)
+                            {
+                                depapprdate2 = (DateTime)context.ITP_T_WorkflowActivities.Where(x => x.Document_Id == travel.ID && x.WFD_Id == depwfd2.WFD_Id && x.WF_Id == depwf && x.AppId == 1032).Select(x => x.DateAction).FirstOrDefault();
+                                depapprname2 = context.ITP_S_UserMasters.Where(x => x.EmpCode == depapprid).Select(x => x.FullName).FirstOrDefault().ToUpper() ?? string.Empty;
                             }
                         }
 
@@ -195,16 +234,22 @@ namespace DX_WebTemplate
                         report.Parameters["empdate"].Value = empdate;
                         report.Parameters["audapprname"].Value = audapprname;
                         report.Parameters["audapprdate"].Value = audapprdate;
-                        report.Parameters["finapprname1"].Value = finapprname1;
-                        report.Parameters["finapprdate1"].Value = finapprdate1;
                         report.Parameters["finapprname0"].Value = finapprname0;
                         report.Parameters["finapprdate0"].Value = finapprdate0;
                         report.Parameters["finapprname"].Value = finapprname;
                         report.Parameters["finapprdate"].Value = finapprdate;
+                        report.Parameters["finapprname1"].Value = finapprname1;
+                        report.Parameters["finapprdate1"].Value = finapprdate1;
+                        report.Parameters["finapprname2"].Value = finapprname2;
+                        report.Parameters["finapprdate2"].Value = finapprdate2;
                         report.Parameters["depapprname0"].Value = depapprname0;
                         report.Parameters["depapprdate0"].Value = depapprdate0;
                         report.Parameters["depapprname"].Value = depapprname;
                         report.Parameters["depapprdate"].Value = depapprdate;
+                        report.Parameters["depapprname1"].Value = depapprname1;
+                        report.Parameters["depapprdate1"].Value = depapprdate1;
+                        report.Parameters["depapprname2"].Value = depapprname2;
+                        report.Parameters["depapprdate2"].Value = depapprdate2;
                         report.Parameters["p2papprname"].Value = p2papprname;
                         report.Parameters["p2papprdate"].Value = p2papprdate;
                         report.Parameters["cashapprname"].Value = cashapprname;
