@@ -251,6 +251,8 @@
                                                         <dx:GridViewToolbarItem Alignment="Left" BeginGroup="True" Text="View Disbursed Expenses" Name="expenseDisbursedBtn" Target="_blank" NavigateUrl="CashierInquiryPage.aspx?tab=expenseDisbursedTab">
                                                         </dx:GridViewToolbarItem>
                                                         <dx:GridViewToolbarItem Alignment="Right" BeginGroup="True" Text="View Approval History" Name="approvalHistoryButton" Target="_blank">
+                                                            <Image IconID="businessobjects_bo_audit_changehistory_svg_gray_16x16">
+                                                            </Image>
                                                         </dx:GridViewToolbarItem>
                                                         <dx:GridViewToolbarItem Text="Refresh" Alignment="Right" BeginGroup="True" Command="Refresh">
                                                             <Image IconID="print_print_svg_16x16">
