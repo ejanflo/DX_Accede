@@ -177,9 +177,9 @@ namespace DX_WebTemplate
                                 returnPrevItem.ClientVisible = true;
                             }
 
-                            if (status == "Pending at P2P" || mainExp.ExpenseType_ID != 1)
+                            if (status == "Pending at P2P")
+                            /*|| mainExp.ExpenseType_ID != 1*/
                             {
-                                disapproveItem.Visible = false;
                                 sapItem.Visible = true;
                             }
 
