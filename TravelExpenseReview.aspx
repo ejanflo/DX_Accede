@@ -232,7 +232,7 @@
                     //loadPanel.Hide();
                     //travelExpensePopup.Show();
 
-                    if (response.d.status == "Pending at Finance") {
+                    if (response.d.status == "Pending at Finance" || response.d.status == "Pending at Audit") {
                         window.open("TravelExpenseAddDetails.aspx?action=edit", "_self");
                     } else {
                         window.open("TravelExpenseAddDetails.aspx?action=view", "_self");

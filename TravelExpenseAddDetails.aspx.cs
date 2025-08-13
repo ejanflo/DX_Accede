@@ -50,7 +50,7 @@ namespace DX_WebTemplate
 
                         if (action == "edit")
                         {
-                            if (doc_stat == "Saved" || doc_stat == "Pending at Finance" || string.IsNullOrEmpty(doc_stat))
+                            if (doc_stat == "Saved" || doc_stat == "Pending at Finance" || doc_stat == "Pending at Audit" || string.IsNullOrEmpty(doc_stat))
                             {
                                 travelDateCalendar1.Enabled = true;
                                 ASPxGridView23.Columns[0].Visible = true;
@@ -207,7 +207,7 @@ namespace DX_WebTemplate
                         .FirstOrDefault();
                 }
 
-                if (doc_stat == "Saved" || doc_stat == "Pending at Finance" || string.IsNullOrEmpty(doc_stat))
+                if (doc_stat == "Saved" || doc_stat == "Pending at Finance" || doc_stat == "Pending at Audit" || string.IsNullOrEmpty(doc_stat))
                 {
                     e.Visible = true;
                 }
@@ -233,7 +233,7 @@ namespace DX_WebTemplate
                         .FirstOrDefault();
                 }
 
-                if (doc_stat == "Saved" || doc_stat == "Pending at Finance" || string.IsNullOrEmpty(doc_stat))
+                if (doc_stat == "Saved" || doc_stat == "Pending at Finance" || doc_stat == "Pending at Audit" || string.IsNullOrEmpty(doc_stat))
                 {
                     e.Visible = true;
                 }
@@ -291,7 +291,7 @@ namespace DX_WebTemplate
 
                     url = "TravelExpenseNew.aspx";
                 }
-                else if(doc_stat == "Pending at Finance")
+                else if(doc_stat == "Pending at Finance" || doc_stat == "Pending at Audit")
                 {
                     if (reim != null)
                     {
