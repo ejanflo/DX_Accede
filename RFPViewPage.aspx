@@ -925,10 +925,10 @@ onTravelClick();
                                                 </LayoutItemNestedControlCollection>
                                                 <CaptionSettings HorizontalAlign="Right" />
                                             </dx:LayoutItem>
-                                            <dx:LayoutItem Caption="Payee" ColSpan="1" FieldName="payeeName" Name="Payee">
+                                            <dx:LayoutItem Caption="Payee" ColSpan="1" Name="Payee">
                                                 <LayoutItemNestedControlCollection>
                                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                                        <dx:ASPxTextBox ID="ASPxTextBox8" runat="server" Font-Bold="True" ReadOnly="True" Width="100%">
+                                                        <dx:ASPxTextBox ID="txt_Payee" runat="server" Font-Bold="True" ReadOnly="True" Width="100%" ClientInstanceName="txt_Payee">
                                                             <Border BorderStyle="None" />
                                                             <BorderBottom BorderColor="#333333" BorderStyle="Solid" BorderWidth="1px" />
                                                         </dx:ASPxTextBox>

@@ -1,6 +1,6 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Main.master" AutoEventWireup="true" CodeBehind="AccedeExpenseReportDashboard.aspx.cs" Inherits="DX_WebTemplate.Accede_Expense_Report" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Main.master" AutoEventWireup="true" CodeBehind="AccedeInvoiceNonPODashboard.aspx.cs" Inherits="DX_WebTemplate.AccedeInvoiceNonPODashboard" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <style>
+        <style>
         .radio-buttons-container {
             display: flex;
             align-items: center; /* Vertically centers the radio buttons */
@@ -24,12 +24,12 @@
         function OnCompanyChanged(comp) {
             //drpdown_CostCenter.PerformCallback();
             drpdown_Department.PerformCallback(comp);
-            drpdown_EmpId.PerformCallback(comp);
+            //drpdown_EmpId.PerformCallback(comp);
         }
         function OnDeptChanged(dept_id) {
             //$.ajax({
             //    type: "POST",
-            //    url: "AccedeExpenseReportDashboard.aspx/GetCosCenterFrmDeptAJAX",
+            ////    url: "AccedeExpenseReportDashboard.aspx/GetCosCenterFrmDeptAJAX",
             //    contentType: "application/json; charset=utf-8",
             //    dataType: "json",
             //    data: JSON.stringify({
@@ -61,7 +61,7 @@
 
         function SaveExpense() {
             loadPanel.Show();
-            var expName = drpdown_EmpId.GetValue();
+            var expName = drpdown_vendor.GetValue();
             var expDate = date_expDate.GetValue();
             var payType = drpdown_PayType.GetValue();
             var Comp = drpdown_Comp.GetValue() != null ? drpdown_Comp.GetValue() : "";
@@ -80,7 +80,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "AccedeExpenseReportDashboard.aspx/AddExpenseReportAJAX",
+                url: "AccedeInvoiceNonPODashboard.aspx/AddExpenseReportAJAX",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: JSON.stringify({
@@ -104,7 +104,7 @@
                     console.log(response.d);
                     if (response.d == true) {
                         
-                        window.location.href = "AccedeExpenseReportEdit1.aspx";
+                        window.location.href = "AccedeNonPOEditPage.aspx";
                     }
                 },
                 error: function (xhr, status, error) {
@@ -556,10 +556,10 @@ drpdown_CompLocation.PerformCallback(s.GetValue());
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
                             </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Employee Name" ColSpan="1">
+                            <dx:LayoutItem Caption="Vendor" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="drpdown_EmpId" runat="server" ClientInstanceName="drpdown_EmpId" TextField="FullName" ValueField="DelegateFor_UserID" Width="100%" OnCallback="drpdown_EmpId_Callback">
+                                        <dx:ASPxComboBox ID="drpdown_vendor" runat="server" ClientInstanceName="drpdown_vendor" TextField="VendorName" ValueField="VendorCode" Width="100%" OnCallback="drpdown_EmpId_Callback" DataSourceID="SqlVendor">
                                             <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	OnUserChanged(s.GetValue(), drpdown_Comp.GetValue());
 }" />
@@ -626,7 +626,7 @@ drpdown_CompLocation.PerformCallback(s.GetValue());
                             <dx:LayoutItem Caption="Transaction Type" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="drpdown_PayType" runat="server" Width="100%" DataSourceID="sqlExpenseType" TextField="Description" ValueField="ExpenseType_ID" ClientInstanceName="drpdown_PayType">
+                                        <dx:ASPxComboBox ID="drpdown_PayType" runat="server" Width="100%" DataSourceID="sqlExpenseType" TextField="Description" ValueField="ExpenseType_ID" ClientInstanceName="drpdown_PayType" SelectedIndex="0">
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreateForm">
                                                 <RequiredField ErrorText="Required field." IsRequired="True" />
                                             </ValidationSettings>
@@ -662,7 +662,7 @@ drpdown_CompLocation.PerformCallback(s.GetValue());
                             </dx:LayoutItem>
 
 
-                            <dx:LayoutItem Caption="Classification" ColSpan="1">
+                            <dx:LayoutItem Caption="Classification" ColSpan="1" ClientVisible="False">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxComboBox ID="drpdown_classification" runat="server" ClientInstanceName="drpdown_classification" DataSourceID="SqlClassification" TextField="ClassificationName" ValueField="ID" Width="100%">
@@ -792,11 +792,15 @@ drpdown_CompLocation.PerformCallback(s.GetValue());
     <dx:ASPxLoadingPanel ID="loadPanel" runat="server" Text="Redirecting&amp;hellip;" Theme="MaterialCompact" ClientInstanceName="loadPanel" Modal="True">
     </dx:ASPxLoadingPanel>
         <asp:SqlDataSource ID="sqlName" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT [FullName], [EmpCode] FROM [ITP_S_UserMaster]"></asp:SqlDataSource>
-        <asp:SqlDataSource ID="sqlExpenseType" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_ExpenseType] ORDER BY [Description]"></asp:SqlDataSource>
-        <asp:SqlDataSource ID="sqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT [WASSId], [CompanyDesc], [CompanyShortName] FROM [CompanyMaster] WHERE ([WASSId] IS NOT NULL) ORDER BY [CompanyDesc]"></asp:SqlDataSource>
-        <asp:SqlDataSource ID="sqlExpense" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_ExpenseMain] WHERE (([UserId] = @UserId) AND ([ExpenseType_ID] &lt;&gt; @ExpenseType_ID)) ORDER BY [ID] DESC">
+        <asp:SqlDataSource ID="sqlExpenseType" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_ExpenseType] WHERE ([ExpenseType_ID] = @ExpenseType_ID)">
             <SelectParameters>
-                <asp:SessionParameter Name="UserId" SessionField="userID" Type="String" />
+                <asp:Parameter DefaultValue="3" Name="ExpenseType_ID" Type="Int32" />
+            </SelectParameters>
+        </asp:SqlDataSource>
+        <asp:SqlDataSource ID="sqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT [WASSId], [CompanyDesc], [CompanyShortName] FROM [CompanyMaster] WHERE ([WASSId] IS NOT NULL) ORDER BY [CompanyDesc]"></asp:SqlDataSource>
+        <asp:SqlDataSource ID="sqlExpense" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_ExpenseMain] WHERE (([UserId] = @UserId) AND ([ExpenseType_ID] = @ExpenseType_ID))">
+            <SelectParameters>
+                <asp:Parameter Name="UserId" Type="String" />
                 <asp:Parameter DefaultValue="3" Name="ExpenseType_ID" Type="Int32" />
             </SelectParameters>
         </asp:SqlDataSource>
@@ -839,7 +843,7 @@ drpdown_CompLocation.PerformCallback(s.GetValue());
             <asp:Parameter DefaultValue="1" Name="TranType" Type="Int32" />
             <asp:SessionParameter Name="Exp_ID" SessionField="AccedeExpenseID" Type="Int32" />
         </SelectParameters>
-     </asp:SqlDataSource>
+    </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlExpDetails" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_ExpenseDetails] WHERE ([ExpenseMain_ID] = @ExpenseMain_ID)">
         <SelectParameters>
             <asp:SessionParameter Name="ExpenseMain_ID" SessionField="AccedeExpenseID" Type="Int32" />
@@ -851,7 +855,7 @@ drpdown_CompLocation.PerformCallback(s.GetValue());
             <asp:Parameter DefaultValue="2" Name="TranType" Type="Int32" />
             <asp:SessionParameter Name="Exp_ID" SessionField="AccedeExpenseID" Type="Int32" />
         </SelectParameters>
-     </asp:SqlDataSource>
+    </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([Company_ID] = @Company_ID)">
         <SelectParameters>
             <asp:Parameter Name="Company_ID" Type="Int32" />
@@ -895,10 +899,11 @@ drpdown_CompLocation.PerformCallback(s.GetValue());
         <SelectParameters>
             <asp:Parameter Name="Company_ID" Type="Int32" />
         </SelectParameters>
-</asp:SqlDataSource>
+    </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlCompLocation" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_CompanyBranch] WHERE ([Comp_Id] = @Comp_Id)">
         <SelectParameters>
             <asp:Parameter Name="Comp_Id" Type="Int32" />
         </SelectParameters>
-</asp:SqlDataSource>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlVendor" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_Vendor]"></asp:SqlDataSource>
 </asp:Content>

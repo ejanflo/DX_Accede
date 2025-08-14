@@ -162,7 +162,7 @@
                                                     <CellStyle Font-Bold="False" HorizontalAlign="Left">
                                                     </CellStyle>
                                                     <Columns>
-                                                        <dx:GridViewDataTextColumn Caption="Employee Name" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                        <dx:GridViewDataTextColumn Caption="Employee Name/Vendor" ShowInCustomizationForm="True" VisibleIndex="0">
                                                             <CellStyle Font-Bold="True" HorizontalAlign="Left">
                                                             </CellStyle>
                                                         </dx:GridViewDataTextColumn>

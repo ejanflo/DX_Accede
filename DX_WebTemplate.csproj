@@ -169,6 +169,10 @@
     <Content Include="AccedeExpenseReportReview.aspx" />
     <Content Include="AccedeExpenseReportSaves.aspx" />
     <Content Include="AccedeExpenseViewPage.aspx" />
+    <Content Include="AccedeInvoiceNonPODashboard.aspx" />
+    <Content Include="AccedeInvoiceNonPOViewPage.aspx" />
+    <Content Include="AccedeNonPOApprovalView.aspx" />
+    <Content Include="AccedeNonPOEditPage.aspx" />
     <Content Include="AccedeP2PInquiryPage.aspx" />
     <Content Include="AccedeP2PViewPage.aspx" />
     <Content Include="AccedeP2P_RFPViewPage.aspx" />
@@ -450,6 +454,34 @@
     </Compile>
     <Compile Include="AccedeExpenseViewPage.aspx.designer.cs">
       <DependentUpon>AccedeExpenseViewPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AccedeInvoiceNonPODashboard.aspx.cs">
+      <DependentUpon>AccedeInvoiceNonPODashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AccedeInvoiceNonPODashboard.aspx.designer.cs">
+      <DependentUpon>AccedeInvoiceNonPODashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AccedeInvoiceNonPOViewPage.aspx.cs">
+      <DependentUpon>AccedeInvoiceNonPOViewPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AccedeInvoiceNonPOViewPage.aspx.designer.cs">
+      <DependentUpon>AccedeInvoiceNonPOViewPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AccedeNonPOApprovalView.aspx.cs">
+      <DependentUpon>AccedeNonPOApprovalView.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AccedeNonPOApprovalView.aspx.designer.cs">
+      <DependentUpon>AccedeNonPOApprovalView.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AccedeNonPOEditPage.aspx.cs">
+      <DependentUpon>AccedeNonPOEditPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AccedeNonPOEditPage.aspx.designer.cs">
+      <DependentUpon>AccedeNonPOEditPage.aspx</DependentUpon>
     </Compile>
     <Compile Include="AccedeP2PInquiryPage.aspx.cs">
       <DependentUpon>AccedeP2PInquiryPage.aspx</DependentUpon>

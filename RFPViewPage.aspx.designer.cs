@@ -258,13 +258,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox io_edit;
 
         /// <summary>
-        /// ASPxTextBox8 control.
+        /// txt_Payee control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox8;
+        protected global::DevExpress.Web.ASPxTextBox txt_Payee;
 
         /// <summary>
         /// ASPxTextBox9 control.

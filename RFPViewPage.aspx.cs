@@ -1,5 +1,6 @@
 ﻿using DevExpress.DocumentServices.ServiceModel.DataContracts;
 using DevExpress.Web;
+using DevExpress.Web.Internal.XmlProcessor;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -68,7 +69,18 @@ namespace DX_WebTemplate
                             ExpBtn.Visible = false;
                     }
 
-                    var btnSub = formRFP.FindItemOrGroupByName("btnSubmit") as LayoutItem;
+                    if(rfp_details.TranType == 3)
+                    {
+                        var payee = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == rfp_details.Payee).FirstOrDefault();
+                        txt_Payee.Text = payee.VendorName.ToString();
+                    }
+                    else
+                    {
+                        var payee = _DataContext.ITP_S_UserMasters.Where(x=>x.EmpCode == rfp_details.Payee).FirstOrDefault();
+                        txt_Payee.Text = payee.FullName.ToString();
+                    }
+
+                        var btnSub = formRFP.FindItemOrGroupByName("btnSubmit") as LayoutItem;
                     var btnEdit = formRFP.FindItemOrGroupByName("btnEditRFP") as LayoutItem;
                     var btnRecall = formRFP.FindItemOrGroupByName("recallBtn") as LayoutItem;
                     var myLayoutGroup = formRFP.FindItemOrGroupByName("PageTitle") as LayoutGroup;
@@ -101,7 +113,7 @@ namespace DX_WebTemplate
                         }
                         var test = rfp_details.IsExpenseReim;
                         var CA_tranType = _DataContext.ACCEDE_S_RFPTranTypes.Where(x=>x.RFPTranType_Name == "Cash Advance").FirstOrDefault();
-                        if((rfp_details.Status == 3 || rfp_details.Status == 13 || rfp_details.Status == 15) && rfp_details.User_ID == empCode && rfp_details.IsExpenseReim != true)
+                        if((rfp_details.Status == 3 || rfp_details.Status == 13 || rfp_details.Status == 15) && rfp_details.User_ID == empCode && rfp_details.IsExpenseReim != true && rfp_details.IsExpenseCA == true)
                         {
                             btnEdit.Visible = true;
                             btnSub.Visible = true;
@@ -358,6 +370,14 @@ namespace DX_WebTemplate
             return rfp_main.ID;
         }
 
+        private string Encrypt(string plainText)
+        {
+            // Example: Use a proper encryption library like AES or RSA for actual implementations
+            // This is just a placeholder for encryption logic
+            return Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(plainText));
+        }
+
+
         [WebMethod]
         public static object redirectExpAJAX()
         {
@@ -387,6 +407,8 @@ namespace DX_WebTemplate
 
                 Session["ExpenseId"] = rfpDetails.Exp_ID;
                 Session["TravelExp_Id"] = rfpDetails.Exp_ID;
+                string encryptedID = Encrypt(rfpDetails.Exp_ID.ToString()); // Implement the Encrypt method securely
+                string redirectUrl = $"AccedeInvoiceNonPOViewPage.aspx?secureToken={encryptedID}";
 
                 if (rfpDetails.isTravel == true)
                 {
@@ -398,11 +420,23 @@ namespace DX_WebTemplate
                 }
                 else
                 {
-                    result = new
+                    if(rfpDetails.TranType == 3)
                     {
-                        status = "success",
-                        link = "AccedeExpenseViewPage.aspx"
-                    };
+                        result = new
+                        {
+                            status = "success",
+                            link = redirectUrl
+                        };
+                    }
+                    else
+                    {
+                        result = new
+                        {
+                            status = "success",
+                            link = "AccedeExpenseViewPage.aspx"
+                        };
+                    }
+                    
                 }
             }
             catch (Exception ex)
