@@ -1,6 +1,5 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Main.master" AutoEventWireup="true" CodeBehind="AccedeNonPOApprovalView.aspx.cs" Inherits="DX_WebTemplate.AccedeNonPOApprovalView" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Main.master" AutoEventWireup="true" CodeBehind="AccedeNonPO_AuditView.aspx.cs" Inherits="DX_WebTemplate.AccedeNonPO_AuditView" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-     
     
     <style>
         .radio-buttons-container {
@@ -49,9 +48,9 @@
         }
 
         function OnActionItemClick(s, e) {
-             if (e.actionName === "Cancel") {
-                 history.back()
-             }
+            if (e.actionName === "Cancel") {
+                history.back()
+            }
         }
 
         function linkToRFP() {
@@ -79,7 +78,7 @@
         }
 
         function OnCTDeptChanged(dept_id) {
-            drpdown_CostCenter.PerformCallback(drpdown_CTComp.GetValue()+"|"+dept_id);
+            drpdown_CostCenter.PerformCallback(drpdown_CTComp.GetValue() + "|" + dept_id);
         }
 
         function onCustomButtonClick(s, e) {
@@ -101,7 +100,7 @@
 
                 viewReimModal(item_id);
             }
-            
+
             if (e.buttonID == 'btnEdit') {
                 var item_id = s.GetRowKey(e.visibleIndex);
 
@@ -119,40 +118,34 @@
             WFSequenceGrid0.PerformCallback(wf_id);
         }
 
-        function viewCADetailModal(item_id) {
+        function CheckValidDocNo(SAPDoc, callback) {
+            var secureToken = new URLSearchParams(window.location.search).get('secureToken');
             $.ajax({
                 type: "POST",
-                url: "ExpenseApprovalView.aspx/DisplayCADetailsAJAX",
+                url: "AccedeNonPO_P2PView.aspx/CheckSAPVAlidAJAX",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: JSON.stringify({
-                    item_id: item_id
-
+                    SAPDoc: SAPDoc,
+                    secureToken: secureToken
                 }),
                 success: function (response) {
-                    console.log("ok");
-                    var layoutControl = window["FormCA"];
-                    if (layoutControl) {
-                        var layoutItem = layoutControl.GetItemByName("CADocNum");
-                        if (layoutItem) {
-                            layoutItem.SetCaption(response.d.docNum);
+                    console.log(response.d);
+                    console.log(callback);
+                    if (response.d === "clear") {
+                        if (callback == 1) {
+                            ApprovePopup.Show();
                         }
+
+                        if (callback == 2) {
+                            saveFinChanges(0);
+                        }
+
+                    } else {
+                        edit_SAPDocNo.SetIsValid(false);
+                        edit_SAPDocNo.SetErrorText("SAP Document No. already exists.");
+
                     }
-                    company_lbl.SetValue(response.d.company);
-                    payMethod_lbl.SetValue(response.d.payMethod);
-                    tranType_lbl.SetValue(response.d.tranType);
-                    department_lbl.SetValue(response.d.department);
-                    costCenter_lbl.SetValue(response.d.CostCenter);
-                    payee_lbl.SetValue(response.d.payee);
-                    purpose_lbl.SetValue(response.d.purpose);
-                    amount_lbl.SetValue(response.d.amount);
-                    currency_lbl.SetValue(response.d.currency);
-                    RAWF_lbl.SetValue(response.d.RAWF);
-                    FAPWF_lbl.SetValue(response.d.FAPWF);
-                    CAWFActivityGrid.PerformCallback(item_id);
-                    CADocuGrid.PerformCallback(item_id);
-                    CAPopup.Show();
-                    
                 },
                 error: function (xhr, status, error) {
                     console.log("Error:", error);
@@ -160,182 +153,7 @@
             });
         }
 
-        function viewReimModal(item_id) {
-            $.ajax({
-                type: "POST",
-                url: "ExpenseApprovalView.aspx/DisplayReimDetailsAJAX",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                data: JSON.stringify({
-                    item_id: item_id
-
-                }),
-                success: function (response) {
-                    console.log("ok");
-                    var layoutControl = window["FormReim1"];
-                    if (layoutControl) {
-                        var layoutItem = layoutControl.GetItemByName("ReimDocNum1");
-                        if (layoutItem) {
-                            layoutItem.SetCaption(response.d.docNum);
-                        }
-                    }
-                    company_lbl_reim.SetValue(response.d.company);
-                    payMethod_lbl_reim.SetValue(response.d.payMethod);
-                    tranType_lbl_reim.SetValue(response.d.tranType);
-                    department_lbl_reim.SetValue(response.d.department);
-                    costCenter_lbl_reim.SetValue(response.d.CostCenter);
-                    payee_lbl_reim.SetValue(response.d.payee);
-                    purpose_lbl_reim.SetValue(response.d.purpose);
-                    amount_lbl_reim.SetValue(response.d.amount);
-                    currency_lbl_reim.SetValue(response.d.currency);
-                    Reim_RAWF_lbl.SetValue(response.d.RAWF);
-                    Reim_FAPWF_lbl.SetValue(response.d.FAPWF);
-                    ReimPopup.Show();
-
-                },
-                error: function (xhr, status, error) {
-                    console.log("Error:", error);
-                }
-            });
-        }
-
-        function viewReimModal2(item_id) {
-            $.ajax({
-                type: "POST",
-                url: "ExpenseApprovalView.aspx/DisplayReimDetailsAJAX",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                data: JSON.stringify({
-                    item_id: item_id
-
-                }),
-                success: function (response) {
-                    console.log("ok");
-                    var layoutControl = window["FormReim"];
-                    if (layoutControl) {
-                        var layoutItem = layoutControl.GetItemByName("ReimDocNum");
-                        if (layoutItem) {
-                            layoutItem.SetCaption(response.d.docNum);
-                        }
-                    }
-                    company_lbl_reim_edit.SetValue(response.d.company);
-                    payMethod_drpdown_reim_edit.SetValue(response.d.payMethod_id);
-                    console.log(response.d.payMethod_id);
-                    tranType_lbl_reim_edit.SetValue(response.d.tranType);
-                    department_lbl_reim_edit.SetValue(response.d.department);
-                    costCenter_lbl_reim_edit.SetValue(response.d.CostCenter);
-                    payee_lbl_reim_edit.SetValue(response.d.payee);
-                    purpose_lbl_reim_edit.SetValue(response.d.purpose);
-                    amount_lbl_reim_edit.SetValue(response.d.amount);
-                    currency_lbl_reim_edit.SetValue(response.d.currency);
-                    ReimPopup_edit.Show();
-
-                },
-                error: function (xhr, status, error) {
-                    console.log("Error:", error);
-                }
-            });
-        }
-
-        //function viewExpDetailModal(item_id) {
-        //    console.log(item_id);
-        //    $.ajax({
-        //        type: "POST",
-        //        url: "ExpenseApprovalView.aspx/DisplayExpDetailsAJAX",
-        //        contentType: "application/json; charset=utf-8",
-        //        dataType: "json",
-        //        data: JSON.stringify({
-        //            item_id: item_id
-
-        //        }),
-        //        success: function (response) {
-        //            console.log("ok");
-        //            //var layoutControl = window["FormCA"];
-        //            //if (layoutControl) {
-        //            //    var layoutItem = layoutControl.GetItemByName("CADocNum");
-        //            //    if (layoutItem) {
-        //            //        layoutItem.SetCaption(response.d.docNum);
-        //            //    }
-        //            //}
-
-        //            particulars_lbl.SetValue(response.d.particulars);
-        //            supplier_lbl.SetValue(response.d.supplier);
-        //            tin_lbl.SetValue(response.d.tin);
-        //            invoice_lbl.SetValue(response.d.invoice);
-        //            gross_lbl.SetValue(response.d.gross);
-        //            dateCreated_lbl.SetValue(response.d.dateCreated);
-        //            acctChargeExp_lbl.SetValue(response.d.acctCharge);
-        //            costCenterExp_lbl.SetValue(response.d.costCenter);
-        //            net_lbl.SetValue(response.d.net);
-        //            vat_lbl.SetValue(response.d.vat);
-        //            ewt_lbl.SetValue(response.d.ewt);
-        //            io_expd_lbl.SetValue(response.d.io);
-        //            wbs_expd_lbl.SetValue(response.d.wbs);
-        //            memo_expItemRemarks.SetValue(response.d.remarks);
-        //            console.log(response.d.costCenter);
-        //            ExpAllocGrid.Refresh();
-        //            DocuGrid1.Refresh();
-        //            ExpItemMapPopup.Show();
-
-        //        },
-        //        error: function (xhr, status, error) {
-        //            console.log("Error:", error);
-        //        }
-        //    });
-        //}
-
-        //function viewExpDetailModal2(item_id) {
-        //    console.log(item_id);
-        //    $.ajax({
-        //        type: "POST",
-        //        url: "ExpenseApprovalView.aspx/DisplayExpDetailsEditAJAX",
-        //        contentType: "application/json; charset=utf-8",
-        //        dataType: "json",
-        //        data: JSON.stringify({
-        //            item_id: item_id
-
-        //        }),
-        //        success: function (response) {
-        //            console.log("ok");
-        //            //var layoutControl = window["FormCA"];
-        //            //if (layoutControl) {
-        //            //    var layoutItem = layoutControl.GetItemByName("CADocNum");
-        //            //    if (layoutItem) {
-        //            //        layoutItem.SetCaption(response.d.docNum);
-        //            //    }
-        //            //}
-        //            var dateStr = response.d.dateCreated; // This is a string
-        //            var dateObj = new Date(dateStr); // Convert to JS Date object
-
-        //            particulars_edit.SetValue(response.d.particulars);
-        //            supplier_edit.SetValue(response.d.supplier);
-        //            tin_edit.SetValue(response.d.tin);
-        //            invoiceOR_edit.SetValue(response.d.invoice);
-        //            grossAmount_edit.SetValue(response.d.gross);
-        //            dateAdded_edit.SetValue(dateObj); // Now it will work
-        //            //acctChargeExp_edit.SetValue(response.d.acctCharge);
-        //            costCenter_edit.SetValue(response.d.costCenter);
-        //            netAmount_edit.SetValue(response.d.net);
-        //            vat_edit.SetValue(response.d.vat);
-        //            ewt_edit.SetValue(response.d.ewt);
-        //            io_edit.SetValue(response.d.io);
-        //            wbs_edit.SetValue(response.d.wbs);
-        //            memo_expItemRemarks_edit.SetValue(response.d.remarks);
-
-        //            ExpAllocGrid_edit.Refresh();
-        //            var curr = exp_Currency.GetValue();
-        //            Unalloc_amnt_edit.SetValue(curr + " " + response.d.totalAllocAmnt.toFixed(2));
-        //            //DocuGrid1_edit.Refresh();
-        //            expensePopup_edit.Show();
-
-        //        },
-        //        error: function (xhr, status, error) {
-        //            console.log("Error:", error);
-        //        }
-        //    });
-        //}
-
-        function viewExpDetailModal(expDetailID) {
+        function viewExpDetailModal(expDetailID) { //FOR VIEW
             //console.log(expDetailID);
             $.ajax({
                 type: "POST",
@@ -396,7 +214,7 @@
             });
         }
 
-        function viewExpDetailModal2(expDetailID) {
+        function viewExpDetailModal2(expDetailID) { //FOR EDIT
             $.ajax({
                 type: "POST",
                 url: "AccedeNonPOApprovalView.aspx/DisplayExpDetailsEditAJAX",
@@ -452,72 +270,6 @@
             });
         }
 
-        function approveForwardClick() {
-            LoadingPanel.SetText('Processing&hellip;');
-            LoadingPanel.Show();
-            var secureToken = new URLSearchParams(window.location.search).get('secureToken');
-            var forwardWF = drpdown_ForwardWF.GetValue() != null ? drpdown_ForwardWF.GetValue() : "";
-            var remarks = txt_forward_remarks.GetValue() != null ? txt_forward_remarks.GetValue() : "";
-            var CTComp_id = drpdown_CTComp.GetValue();
-            var CTDept_id = drpdown_CTDepartment.GetValue();
-            var costCenter = drpdown_CostCenter.GetValue();
-            var ClassType = drpdown_classification.GetValue();
-            var curr = drpdown_Currency.GetValue() != null ? drpdown_Currency.GetValue() : "";
-            var payType = drpdown_PayType.GetValue() != null ? drpdown_PayType.GetValue() : "";
-
-            $.ajax({
-                type: "POST",
-                url: "ExpenseApprovalView.aspx/btnApproveForwardAJAX",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                data: JSON.stringify({
-                    secureToken: secureToken,
-                    forwardWF: forwardWF,
-                    remarks: remarks,
-                    CTComp_id: CTComp_id,
-                    CTDept_id: CTDept_id,
-                    costCenter: costCenter,
-                    ClassType: ClassType,
-                    curr: curr,
-                    payType: payType
-                }),
-                success: function (response) {
-                    // Update the description text box with the response value
-                    var funcResult = response.d;
-                    LoadingPanel.Hide();
-
-                    if (funcResult == "success") {
-                        LoadingPanel.SetText('You approved this document. Redirecting&hellip;');
-                        LoadingPanel.Show();
-                        window.location.href = 'AllAccedeApprovalPage.aspx';
-
-                    } else {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'There is an error approving this document.',
-                            icon: 'error',
-                            showCancelButton: false,
-                            confirmButtonColor: '#3085d6',
-                            cancelButtonColor: '#d33',
-                            confirmButtonText: 'OK',
-                            allowOutsideClick: false
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                // If user clicks OK, call the C# function
-                                LoadingPanel.SetText('Redirecting&hellip;');
-                                LoadingPanel.Show();
-                                window.location.href = 'AllAccedeApprovalPage.aspx';
-
-                            }
-                        });
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.log("Error:", error);
-                }
-            });
-        }
-
         function approveClick() {
             LoadingPanel.SetText('Processing&hellip;');
             LoadingPanel.Show();
@@ -532,7 +284,7 @@
             console.log(costCenter);
             $.ajax({
                 type: "POST",
-                url: "AccedeNonPOApprovalView.aspx/btnApproveClickAjax",
+                url: "AccedeNonPO_AuditView.aspx/btnApproveClickAjax",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: JSON.stringify({
@@ -553,9 +305,10 @@
                     if (funcResult == "success") {
                         LoadingPanel.SetText('You approved this request. Redirecting&hellip;');
                         LoadingPanel.Show();
-                        window.location.href = 'AllAccedeApprovalPage.aspx';
+                        window.location.href = 'AllAccedeP2PPage.aspx';
 
-                    } else {
+                    }
+                    else {
                         alert(response.d);
                         LoadingPanel.Hide();
                     }
@@ -579,7 +332,7 @@
             var payType = drpdown_PayType.GetValue() != null ? drpdown_PayType.GetValue() : "";
             $.ajax({
                 type: "POST",
-                url: "ExpenseApprovalView.aspx/btnReturnClickAjax",
+                url: "AccedeNonPO_AuditView.aspx/btnReturnClickAjax",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: JSON.stringify({
@@ -702,11 +455,11 @@
 
         var ViewisExpanded = false;
         function isToggleView() {
-            
+
             ViewisExpanded = !ViewisExpanded;
             var layoutControl = window["ViewNonPOExpForm"];
             if (layoutControl) {
-                
+
                 var layoutItem = layoutControl.GetItemByName("ViewAllocGrid");
                 if (layoutItem) {
                     //console.log("YAWARDS");
@@ -1258,7 +1011,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                 </LayoutItemNestedControlCollection>
                             </dx:LayoutItem>
 
-                            <dx:LayoutItem Caption="" ColSpan="1" Width="20%">
+                            <dx:LayoutItem Caption="" ColSpan="1" Width="20%" ClientVisible="False">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxButton ID="btnDisapprove" runat="server" BackColor="#CC2A17" Text="Disapprove" AutoPostBack="False">
@@ -1271,7 +1024,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                 </LayoutItemNestedControlCollection>
                             </dx:LayoutItem>
 
-                            <dx:LayoutItem Caption="" ColSpan="1" Width="20%" ClientVisible="False">
+                            <dx:LayoutItem Caption="" ColSpan="1" Width="20%">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxButton ID="btnCancel" runat="server" Text="Cancel" Theme="iOS" ClientInstanceName="btnCancel" AutoPostBack="False" EnableTheming="True" BackColor="White" Font-Bold="False" ForeColor="Gray">
@@ -1331,23 +1084,10 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Charged To Company" ColSpan="1" FieldName="CTCompName" Name="txt_CTComp">
-                                        <LayoutItemNestedControlCollection>
-                                            <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxTextBox ID="txt_CTCompany" runat="server" ClientInstanceName="txt_CTCompany" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
-                                                    <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
-                                                        <RequiredField ErrorText="*Required" />
-                                                    </ValidationSettings>
-                                                    <Border BorderStyle="None" />
-                                                    <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                </dx:ASPxTextBox>
-                                            </dx:LayoutItemNestedControlContainer>
-                                        </LayoutItemNestedControlCollection>
-                                    </dx:LayoutItem>
                                     <dx:LayoutItem Caption="Charged To Company" ColSpan="1" Name="edit_CTComp" FieldName="ExpChargedTo_CompanyId">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxComboBox ID="drpdown_CTComp" runat="server" ClientInstanceName="drpdown_CTComp" DataSourceID="SqlCompany" TextField="CompanyShortName" ValueField="CompanyId" Width="100%" Font-Bold="True" Font-Size="Small">
+                                                <dx:ASPxComboBox ID="drpdown_CTComp" runat="server" ClientInstanceName="drpdown_CTComp" DataSourceID="SqlCompany" TextField="CompanyShortName" ValueField="WASSId" Width="100%" Font-Bold="True" Font-Size="Small">
                                                     <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	drpdown_CTDepartment.PerformCallback(s.GetValue());
 //OnCompanyChanged(s.GetValue());
@@ -1364,33 +1104,27 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                     <dx:LayoutItem Caption="Location" ColSpan="1" FieldName="CompLocation">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxTextBox ID="txt_CompLocation" runat="server" ClientInstanceName="txt_CompLocation" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
+                                                <dx:ASPxComboBox ID="exp_CompLocation" runat="server" ClientInstanceName="exp_CompLocation" DataSourceID="SqlCompLocation" EnableTheming="True" Font-Bold="True" Font-Size="Small" TextField="Name" ValueField="ID" Width="100%">
+                                                    <ClientSideEvents SelectedIndexChanged="function(s, e) {
+//exp_Company.SetValue(s.GetValue());
+//costCenter.PerformCallback();
+//exp_CTDepartment.PerformCallback(s.GetValue());
+//drpdown_CostCenter.SetValue(&quot;&quot;);
+//exp_EmpId.PerformCallback(s.GetValue());
+//drpdwn_FAPWF.PerformCallback(s.GetValue());
+}" />
                                                     <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
-                                                        <RequiredField ErrorText="*Required" />
+                                                        <RequiredField ErrorText="*Required" IsRequired="True" />
                                                     </ValidationSettings>
-                                                    <Border BorderStyle="None" />
-                                                    <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                </dx:ASPxTextBox>
-                                            </dx:LayoutItemNestedControlContainer>
-                                        </LayoutItemNestedControlCollection>
-                                    </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Charged To Department" ColSpan="1" FieldName="CTDeptName" Name="txt_CTDept">
-                                        <LayoutItemNestedControlCollection>
-                                            <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxTextBox ID="txt_CTDepartment" runat="server" ClientInstanceName="txt_CTDepartment" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
-                                                    <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
-                                                        <RequiredField ErrorText="*Required" />
-                                                    </ValidationSettings>
-                                                    <Border BorderStyle="None" />
-                                                    <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                </dx:ASPxTextBox>
+                                                    <Border BorderColor="#006838" BorderWidth="1px" />
+                                                </dx:ASPxComboBox>
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
                                     </dx:LayoutItem>
                                     <dx:LayoutItem Caption="Charged To Department" ColSpan="1" Name="edit_CTDept" FieldName="ExpChargedTo_DeptId">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxComboBox ID="drpdown_CTDepartment" runat="server" ClientInstanceName="drpdown_CTDepartment" DataSourceID="SqlCTDepartment" DropDownWidth="500px" NullValueItemDisplayText="{1}" OnCallback="drpdown_CTDepartment_Callback" TextField="DepDesc" TextFormatString="{1}" ValueField="ID" Width="100%" Font-Bold="True" Font-Size="Small">
+                                                <dx:ASPxComboBox ID="drpdown_CTDepartment" runat="server" ClientInstanceName="drpdown_CTDepartment" DataSourceID="SqlCTDepartment" DropDownWidth="500px" NullValueItemDisplayText="{1}" TextField="DepDesc" TextFormatString="{1}" ValueField="ID" Width="100%" Font-Bold="True" Font-Size="Small">
                                                     <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	OnCTDeptChanged(s.GetValue());
 }" />
@@ -1405,19 +1139,6 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                     </ValidationSettings>
                                                     <Border BorderColor="#006838" BorderWidth="1px" />
                                                 </dx:ASPxComboBox>
-                                            </dx:LayoutItemNestedControlContainer>
-                                        </LayoutItemNestedControlCollection>
-                                    </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Cost Center" ColSpan="1" FieldName="CostCenter" Name="txt_CostCenter">
-                                        <LayoutItemNestedControlCollection>
-                                            <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxTextBox ID="txt_CostCenter" runat="server" ClientInstanceName="txt_CostCenter" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
-                                                    <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
-                                                        <RequiredField ErrorText="*Required" />
-                                                    </ValidationSettings>
-                                                    <Border BorderStyle="None" />
-                                                    <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                </dx:ASPxTextBox>
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
                                     </dx:LayoutItem>
@@ -1569,20 +1290,6 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                     </dx:LayoutItem>
                                     <dx:EmptyLayoutItem ColSpan="1">
                                     </dx:EmptyLayoutItem>
-                                    <dx:LayoutItem Caption="Currency" ColSpan="1" FieldName="Exp_Currency" Name="txt_Curr">
-                                        <LayoutItemNestedControlCollection>
-                                            <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxTextBox ID="exp_Currency" runat="server" ClientInstanceName="exp_Currency" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
-                                                    <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
-                                                        <RequiredField ErrorText="*Required" />
-                                                    </ValidationSettings>
-                                                    <Border BorderStyle="None" />
-                                                    <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                </dx:ASPxTextBox>
-                                            </dx:LayoutItemNestedControlContainer>
-                                        </LayoutItemNestedControlCollection>
-                                        <CaptionSettings HorizontalAlign="Right" />
-                                    </dx:LayoutItem>
                                     <dx:LayoutItem Caption="Currency" ColSpan="1" Name="edit_Curr" FieldName="Exp_Currency">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
@@ -1592,19 +1299,6 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                     </ValidationSettings>
                                                     <Border BorderColor="#006838" BorderWidth="1px" />
                                                 </dx:ASPxComboBox>
-                                            </dx:LayoutItemNestedControlContainer>
-                                        </LayoutItemNestedControlCollection>
-                                    </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Payment Type" ColSpan="1" FieldName="PayTypeName" Name="txt_PayType">
-                                        <LayoutItemNestedControlCollection>
-                                            <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxTextBox ID="txt_CTDepartment0" runat="server" ClientInstanceName="txt_CTDepartment" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
-                                                    <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
-                                                        <RequiredField ErrorText="*Required" />
-                                                    </ValidationSettings>
-                                                    <Border BorderStyle="None" />
-                                                    <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                                </dx:ASPxTextBox>
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
                                     </dx:LayoutItem>
@@ -1662,87 +1356,8 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                     </dx:EmptyLayoutItem>
                     <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2" Width="100%">
                     </dx:EmptyLayoutItem>
-                    <dx:TabbedLayoutGroup ColSpan="2" ColumnSpan="2" Width="100%" ActiveTabIndex="1">
+                    <dx:TabbedLayoutGroup ColSpan="2" ColumnSpan="2" Width="100%">
                         <Items>
-                            <dx:LayoutGroup Caption="Cash Advances" ColSpan="1" ClientVisible="False">
-                                <Items>
-                                    <dx:LayoutItem Caption="" ColSpan="1">
-                                        <LayoutItemNestedControlCollection>
-                                            <dx:LayoutItemNestedControlContainer runat="server">
-                             
-                                                <dx:ASPxGridView ID="CAGrid" runat="server" AutoGenerateColumns="False" DataSourceID="SqlCADetails" KeyFieldName="ID" Width="100%">
-                                                    <ClientSideEvents CustomButtonClick="onCustomButtonClick" />
-                                                    <SettingsPopup>
-                                                        <FilterControl AutoUpdatePosition="False">
-                                                        </FilterControl>
-                                                    </SettingsPopup>
-                                                    <Columns>
-                                                        <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="9">
-                                                            <EditFormSettings Visible="False" />
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="TranType" ShowInCustomizationForm="True" Visible="False" VisibleIndex="10">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataCheckColumn FieldName="isTravel" ShowInCustomizationForm="True" Visible="False" VisibleIndex="11">
-                                                        </dx:GridViewDataCheckColumn>
-                                                        <dx:GridViewDataTextColumn Caption="Cost Center" FieldName="SAPCostCenter" ShowInCustomizationForm="True" VisibleIndex="4">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn Caption="IO" FieldName="IO_Num" ShowInCustomizationForm="True" VisibleIndex="5">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataDateColumn FieldName="LastDayTransact" ShowInCustomizationForm="True" Visible="False" VisibleIndex="12">
-                                                        </dx:GridViewDataDateColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Amount" ShowInCustomizationForm="True" VisibleIndex="7">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Purpose" ShowInCustomizationForm="True" VisibleIndex="8">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="WF_Id" ShowInCustomizationForm="True" Visible="False" VisibleIndex="13">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="User_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="14">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Status" ShowInCustomizationForm="True" Visible="False" VisibleIndex="15">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="RFP_DocNum" ShowInCustomizationForm="True" Visible="False" VisibleIndex="16">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataDateColumn FieldName="DateCreated" ShowInCustomizationForm="True" Visible="False" VisibleIndex="17">
-                                                        </dx:GridViewDataDateColumn>
-                                                        <dx:GridViewDataCheckColumn FieldName="IsExpenseCA" ShowInCustomizationForm="True" Visible="False" VisibleIndex="18">
-                                                        </dx:GridViewDataCheckColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Exp_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="19">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="FAPWF_Id" ShowInCustomizationForm="True" Visible="False" VisibleIndex="20">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataCheckColumn FieldName="IsExpenseReim" ShowInCustomizationForm="True" Visible="False" VisibleIndex="21">
-                                                        </dx:GridViewDataCheckColumn>
-                                                        <dx:GridViewCommandColumn Caption="Action" ShowInCustomizationForm="True" VisibleIndex="0" Width="120px">
-                                                            <CustomButtons>
-                                                                <dx:GridViewCommandColumnCustomButton ID="btnView" Text="View">
-                                                                    <Image IconID="actions_open2_svg_white_16x16">
-                                                                    </Image>
-                                                                    <Styles>
-                                                                        <Style BackColor="#006838" ForeColor="White">
-                                                                            <Paddings PaddingBottom="4px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="4px" />
-                                                                        </Style>
-                                                                    </Styles>
-                                                                </dx:GridViewCommandColumnCustomButton>
-                                                            </CustomButtons>
-                                                            <CellStyle HorizontalAlign="Left">
-                                                            </CellStyle>
-                                                        </dx:GridViewCommandColumn>
-                                                        <dx:GridViewDataTextColumn Caption="Company" FieldName="CompanyShortName" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn Caption="Department" FieldName="DepDesc" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="payeeName" ShowInCustomizationForm="True" VisibleIndex="3" Caption="Payee">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn Caption="Payment Method" FieldName="PMethod_name" ShowInCustomizationForm="True" VisibleIndex="6">
-                                                        </dx:GridViewDataTextColumn>
-                                                    </Columns>
-                                                </dx:ASPxGridView>
-                             
-                                            </dx:LayoutItemNestedControlContainer>
-                                        </LayoutItemNestedControlCollection>
-                                    </dx:LayoutItem>
-                                </Items>
-                            </dx:LayoutGroup>
                             <dx:LayoutGroup Caption="INVOICE LINE ITEMS" ColSpan="1">
                                 <Items>
                                     <dx:LayoutItem Caption="" ColSpan="1">
@@ -1821,90 +1436,6 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                     </dx:LayoutItem>
                                 </Items>
                             </dx:LayoutGroup>
-                            <dx:LayoutGroup Caption="Reimbursements" ColSpan="1" ClientVisible="False">
-                                <Items>
-                                    <dx:LayoutItem Caption="" ColSpan="1">
-                                        <LayoutItemNestedControlCollection>
-                                            <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxGridView ID="ReimburseGrid" runat="server" Width="100%" AutoGenerateColumns="False" DataSourceID="SqlReimDetails" KeyFieldName="ID">
-                                                    <ClientSideEvents CustomButtonClick="onCustomButtonClick" />
-                                                    <SettingsPopup>
-                                                        <FilterControl AutoUpdatePosition="False">
-                                                        </FilterControl>
-                                                    </SettingsPopup>
-                                                    <Columns>
-                                                        <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="8">
-                                                            <EditFormSettings Visible="False" />
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="TranType" ShowInCustomizationForm="True" Visible="False" VisibleIndex="9">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataCheckColumn FieldName="isTravel" ShowInCustomizationForm="True" Visible="False" VisibleIndex="10">
-                                                        </dx:GridViewDataCheckColumn>
-                                                        <dx:GridViewDataTextColumn Caption="Cost Center" FieldName="SAPCostCenter" ShowInCustomizationForm="True" VisibleIndex="3">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn Caption="IO" FieldName="IO_Num" ShowInCustomizationForm="True" VisibleIndex="4">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Payee" ShowInCustomizationForm="True" Visible="False" VisibleIndex="11">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataDateColumn FieldName="LastDayTransact" ShowInCustomizationForm="True" Visible="False" VisibleIndex="12">
-                                                        </dx:GridViewDataDateColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Amount" ShowInCustomizationForm="True" VisibleIndex="5">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Purpose" ShowInCustomizationForm="True" VisibleIndex="7">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="WF_Id" ShowInCustomizationForm="True" Visible="False" VisibleIndex="13">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="User_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="14">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Status" ShowInCustomizationForm="True" Visible="False" VisibleIndex="15">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="RFP_DocNum" ShowInCustomizationForm="True" Visible="False" VisibleIndex="16">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataDateColumn FieldName="DateCreated" ShowInCustomizationForm="True" Visible="False" VisibleIndex="17">
-                                                        </dx:GridViewDataDateColumn>
-                                                        <dx:GridViewDataCheckColumn FieldName="IsExpenseCA" ShowInCustomizationForm="True" Visible="False" VisibleIndex="18">
-                                                        </dx:GridViewDataCheckColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Exp_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="19">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="FAPWF_Id" ShowInCustomizationForm="True" Visible="False" VisibleIndex="20">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataCheckColumn FieldName="IsExpenseReim" ShowInCustomizationForm="True" Visible="False" VisibleIndex="21">
-                                                        </dx:GridViewDataCheckColumn>
-                                                        <dx:GridViewCommandColumn Caption="Action" ShowInCustomizationForm="True" VisibleIndex="0" Width="120px">
-                                                            <CustomButtons>
-                                                                <dx:GridViewCommandColumnCustomButton ID="btnViewReim" Text="View">
-                                                                    <Image IconID="actions_open2_svg_white_16x16">
-                                                                    </Image>
-                                                                    <Styles>
-                                                                        <Style BackColor="#006838" ForeColor="White">
-                                                                            <Paddings PaddingBottom="4px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="4px" />
-                                                                        </Style>
-                                                                    </Styles>
-                                                                </dx:GridViewCommandColumnCustomButton>
-                                                                <dx:GridViewCommandColumnCustomButton ID="btnEditReim" Text="Edit">
-                                                                    <Image IconID="iconbuilder_actions_edit_svg_white_16x16">
-                                                                    </Image>
-                                                                    <Styles>
-                                                                        <Style BackColor="#006DD6" ForeColor="White">
-                                                                            <Paddings PaddingBottom="4px" PaddingLeft="7px" PaddingRight="7px" PaddingTop="4px" />
-                                                                        </Style>
-                                                                    </Styles>
-                                                                </dx:GridViewCommandColumnCustomButton>
-                                                            </CustomButtons>
-                                                        </dx:GridViewCommandColumn>
-                                                        <dx:GridViewDataTextColumn Caption="Company" FieldName="CompanyShortName" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn Caption="Department" FieldName="DepDesc" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="PMethod_name" ShowInCustomizationForm="True" VisibleIndex="6" Caption="Payment Method">
-                                                        </dx:GridViewDataTextColumn>
-                                                    </Columns>
-                                                </dx:ASPxGridView>
-                                            </dx:LayoutItemNestedControlContainer>
-                                        </LayoutItemNestedControlCollection>
-                                    </dx:LayoutItem>
-                                </Items>
-                            </dx:LayoutGroup>
                         </Items>
                     </dx:TabbedLayoutGroup>
                     <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2" Width="100%">
@@ -1920,39 +1451,58 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                     <dx:LayoutItem Caption="" ColSpan="1">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxGridView ID="DocuGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="DocuGrid" DataSourceID="SqlDocs" KeyFieldName="ID" Width="100%">
-                                                    <ClientSideEvents CustomButtonClick="onViewAttachment" />
+                                                <dx:ASPxUploadControl ID="UploadController" runat="server" AutoStartUpload="True" OnFilesUploadComplete="UploadController_FilesUploadComplete" ShowProgressPanel="True" UploadMode="Auto" Width="80%">
+                                                    <ClientSideEvents FilesUploadComplete="function(s, e) {
+    DocumentGrid.Refresh();
+    }
+    " />
+                                                    <AdvancedModeSettings EnableDragAndDrop="True" EnableFileList="True" EnableMultiSelect="True">
+                                                    </AdvancedModeSettings>
+                                                </dx:ASPxUploadControl>
+                                                <dx:ASPxGridView ID="DocumentGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="DocumentGrid" DataSourceID="SqlDocs" KeyFieldName="ID" Width="100%">
+                                                    <ClientSideEvents CustomButtonClick="function(s, e) {
+    window.location = 'FileHandler.ashx?id=' + s.GetRowKey(e.visibleIndex) + '';
+    }" />
                                                     <SettingsPopup>
                                                         <FilterControl AutoUpdatePosition="False">
                                                         </FilterControl>
                                                     </SettingsPopup>
                                                     <Columns>
-                                                        <dx:GridViewCommandColumn Caption="File" ShowInCustomizationForm="True" VisibleIndex="6">
+                                                        <dx:GridViewCommandColumn Caption="Action" ShowDeleteButton="True" ShowEditButton="True" ShowInCustomizationForm="True" VisibleIndex="0">
+                                                        </dx:GridViewCommandColumn>
+                                                        <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
+                                                            <EditFormSettings Visible="False" />
+                                                        </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewDataTextColumn FieldName="FileName" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="2">
+                                                        </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewDataTextColumn FieldName="Description" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                        </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewDataTextColumn FieldName="FileExtension" ShowInCustomizationForm="True" Visible="False" VisibleIndex="4">
+                                                        </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewDataTextColumn FieldName="URL" ShowInCustomizationForm="True" Visible="False" VisibleIndex="5">
+                                                        </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewDataDateColumn FieldName="DateUploaded" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="6">
+                                                        </dx:GridViewDataDateColumn>
+                                                        <dx:GridViewDataTextColumn FieldName="App_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="7">
+                                                        </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewDataTextColumn FieldName="Company_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="8">
+                                                        </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewDataTextColumn FieldName="User_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="9">
+                                                        </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewDataTextColumn FieldName="Doc_No" ShowInCustomizationForm="True" Visible="False" VisibleIndex="10">
+                                                        </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewDataTextColumn FieldName="Doc_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="11">
+                                                        </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewCommandColumn Caption="File" ShowInCustomizationForm="True" VisibleIndex="13">
                                                             <CustomButtons>
-                                                                <dx:GridViewCommandColumnCustomButton ID="btnDownloadFile" Text="Open File">
+                                                                <dx:GridViewCommandColumnCustomButton ID="btnDownload" Text="Open File">
                                                                     <Image IconID="pdfviewer_next_svg_16x16">
                                                                     </Image>
                                                                 </dx:GridViewCommandColumnCustomButton>
                                                             </CustomButtons>
-                                                            <CellStyle HorizontalAlign="Left">
-                                                            </CellStyle>
                                                         </dx:GridViewCommandColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="0">
+                                                        <dx:GridViewDataTextColumn Caption="File Size" FieldName="FileSize" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="12">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="FileName" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Description" ShowInCustomizationForm="True" VisibleIndex="3">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn Caption="File Size" FieldName="FileSize" ShowInCustomizationForm="True" VisibleIndex="4">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="FileAttachment" ShowInCustomizationForm="True" Visible="False" VisibleIndex="7">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="FileExtension" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataComboBoxColumn Caption="Uploaded By" FieldName="User_ID" ShowInCustomizationForm="True" VisibleIndex="5">
-                                                            <PropertiesComboBox DataSourceID="SqlUser" TextField="FullName" ValueField="EmpCode">
-                                                            </PropertiesComboBox>
-                                                        </dx:GridViewDataComboBoxColumn>
                                                     </Columns>
                                                 </dx:ASPxGridView>
                                             </dx:LayoutItemNestedControlContainer>
@@ -2141,938 +1691,8 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
         <BackgroundImage HorizontalPosition="center" ImageUrl="../Content/Images/flat-mountains.svg'" Repeat="NoRepeat" />
     </dx:ASPxFormLayout>
 
-        <dx:ASPxPopupControl ID="CAPopup" runat="server" FooterText="" HeaderText="Cash Advance Details" Width="1146px" ClientInstanceName="CAPopup" Modal="True" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" AllowDragging="True" CloseAction="CloseButton" CssClass="rounded">
-                        <ContentCollection>
-            <dx:PopupControlContentControl runat="server">
-                <div class="scrollableContainer">
-                        <dx:ASPxFormLayout ID="FormCA" runat="server" Width="100%" SettingsAdaptivity-AdaptivityMode="SingleColumnWindowLimit" ClientInstanceName="FormCA">
-<SettingsAdaptivity AdaptivityMode="SingleColumnWindowLimit"></SettingsAdaptivity>
-        <Items>
-            <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="HeadingLine" Width="100%" Name="CADocNum">
-                <GroupBoxStyle>
-                    <Caption Font-Size="X-Large" BackColor="#FEFEFE">
-                    </Caption>
-                </GroupBoxStyle>
-                <Items>
-
-
-                    <dx:LayoutGroup Caption="" ColSpan="1" Width="50%">
-                        <Items>
-                            <dx:LayoutItem Caption="Company" ColSpan="1" FieldName="CompanyShortName">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="company_lbl" runat="server" ClientInstanceName="company_lbl" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Payment Method" ColSpan="1" FieldName="PMethod_name">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="payMethod_lbl" runat="server" ClientInstanceName="payMethod_lbl" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Type of Transaction" ColSpan="1" FieldName="RFPTranType_Name">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="tranType_lbl" runat="server" Width="100%" ReadOnly="True" ClientInstanceName="tranType_lbl" Font-Bold="True" Font-Size="Small">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="WBS" ClientVisible="False" ColSpan="1" Name="wbs" FieldName="WBS">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="wbs_lbl" runat="server" ClientInstanceName="wbs_lbl" Width="100%" Font-Bold="True" Font-Size="Small" ReadOnly="True">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                        </Items>
-                    </dx:LayoutGroup>
-                    <dx:LayoutGroup Caption="" ColSpan="1" Width="50%">
-                        <Items>
-                            <dx:LayoutItem Caption="Department" ColSpan="1" FieldName="DepDesc">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="department_lbl" runat="server" ClientInstanceName="department_lbl" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Cost Center" ColSpan="1" FieldName="SAPCostCenter">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="costCenter_lbl" runat="server" Width="100%" ClientInstanceName="costCenter_lbl" Font-Bold="True" Font-Size="Small" ReadOnly="True">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="IO" ColSpan="1" ClientVisible="False" FieldName="IO_Num">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="io_lbl" runat="server" Width="100%" ClientInstanceName="io_lbl" Font-Bold="True" Font-Size="Small" ReadOnly="True">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Payee" ColSpan="1" FieldName="payeeName">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="payee_lbl" runat="server" Width="100%" ClientInstanceName="payee_lbl" ReadOnly="True" Font-Bold="True" Font-Size="Small">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Account to be charged" ColSpan="1" ClientVisible="False" FieldName="AcctChargeName">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="acctCharge_lbl" runat="server" ClientInstanceName="acctCharge_lbl" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                        </Items>
-                    </dx:LayoutGroup>
-                    <dx:LayoutItem Caption="Nature of Disbursement/Purpose" ColSpan="2" ColumnSpan="2" Width="100%" FieldName="Purpose">
-                        <LayoutItemNestedControlCollection>
-                            <dx:LayoutItemNestedControlContainer runat="server">
-                                <dx:ASPxMemo ID="purpose_lbl" runat="server" ClientInstanceName="purpose_lbl" Height="71px" ReadOnly="True" Width="100%" Font-Bold="True" Font-Size="Small">
-                                    <Border BorderStyle="None" />
-                                    <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                </dx:ASPxMemo>
-                            </dx:LayoutItemNestedControlContainer>
-                        </LayoutItemNestedControlCollection>
-                        <CaptionSettings HorizontalAlign="Left" Location="Top" />
-                    </dx:LayoutItem>
-                    <dx:LayoutGroup Caption="" ColSpan="2" ColumnSpan="2" Width="100%" ColCount="3" ColumnCount="3" GroupBoxDecoration="HeadingLine">
-                        <Items>
-                            <dx:LayoutItem Caption="Amount" ColSpan="1" FieldName="Amount">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="amount_lbl" runat="server" ClientInstanceName="amount_lbl" DisplayFormatString="#,##0.00" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." IsRequired="True" />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Currency" ColSpan="1" FieldName="Currency">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="currency_lbl" runat="server" ClientInstanceName="currency_lbl" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." IsRequired="True" />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:EmptyLayoutItem ColSpan="1">
-                            </dx:EmptyLayoutItem>
-                            <dx:LayoutItem Caption="Remarks" ClientVisible="False" ColSpan="2" ColumnSpan="2" Width="100%">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxMemo ID="remarks_reim" runat="server" ClientInstanceName="remarks_reim" Height="71px" Width="100%">
-                                        </dx:ASPxMemo>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                        </Items>
-                    </dx:LayoutGroup>
-                    <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2" Width="100%">
-                    </dx:EmptyLayoutItem>
-                    <dx:LayoutGroup Caption="Workflow Details" ColCount="2" ColSpan="2" ColumnCount="2" ColumnSpan="2" Width="100%" GroupBoxDecoration="HeadingLine">
-                        <Items>
-                            <dx:LayoutItem Caption="RA Workflow" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="RAWF_lbl" runat="server" ClientInstanceName="RAWF_lbl" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="FAP Workflow" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="FAPWF_lbl" runat="server" ClientInstanceName="FAPWF_lbl" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                            </dx:LayoutItem>
-                        </Items>
-                    </dx:LayoutGroup>
-                    <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2" Width="100%">
-                    </dx:EmptyLayoutItem>
-                    <dx:LayoutGroup Caption="Workflow Activity" ColSpan="2" ColumnSpan="2" Width="100%" GroupBoxDecoration="HeadingLine">
-                        <Items>
-                            <dx:LayoutItem Caption="" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxGridView ID="CAWFActivityGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="CAWFActivityGrid" DataSourceID="SqlCAWFActivity" OnCustomCallback="CAWFActivityGrid_CustomCallback" Width="100%">
-                                            <SettingsEditing Mode="Batch">
-                                            </SettingsEditing>
-                                            <SettingsDataSecurity AllowDelete="False" AllowEdit="False" AllowInsert="False" />
-                                            <SettingsPopup>
-                                                <FilterControl AutoUpdatePosition="False">
-                                                </FilterControl>
-                                            </SettingsPopup>
-                                            <Columns>
-                                                <dx:GridViewDataTextColumn FieldName="DateAssigned" ShowInCustomizationForm="True" VisibleIndex="3">
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn FieldName="DateAction" ShowInCustomizationForm="True" VisibleIndex="4">
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn Caption="Workflow" FieldName="Name" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn Caption="Org Role" FieldName="Role_Name" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn Caption="Approver" FieldName="FullName" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn Caption="Status" FieldName="STS_Name" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="5">
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn Caption="Remarks" FieldName="Remarks" ShowInCustomizationForm="True" VisibleIndex="6">
-                                                </dx:GridViewDataTextColumn>
-                                            </Columns>
-                                        </dx:ASPxGridView>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                            </dx:LayoutItem>
-                        </Items>
-                    </dx:LayoutGroup>
-                    <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2" Width="100%">
-                    </dx:EmptyLayoutItem>
-                    <dx:LayoutGroup Caption="Supporting Documents" ColSpan="2" ColumnSpan="2" GroupBoxDecoration="HeadingLine" Width="100%">
-                        <Items>
-                            <dx:LayoutItem Caption="" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxGridView ID="CADocuGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="CADocuGrid" DataSourceID="SqlCAFileAttach" KeyFieldName="ID" Width="100%" OnCustomCallback="CADocuGrid_CustomCallback">
-                                            <ClientSideEvents CustomButtonClick="onViewAttachment" />
-                                            <SettingsPopup>
-                                                <FilterControl AutoUpdatePosition="False">
-                                                </FilterControl>
-                                            </SettingsPopup>
-                                            <Columns>
-                                                <dx:GridViewCommandColumn Caption="File" ShowInCustomizationForm="True" VisibleIndex="5">
-                                                    <CustomButtons>
-                                                        <dx:GridViewCommandColumnCustomButton ID="btnDownloadFile2" Text="Open File">
-                                                            <Image IconID="pdfviewer_next_svg_16x16">
-                                                            </Image>
-                                                        </dx:GridViewCommandColumnCustomButton>
-                                                    </CustomButtons>
-                                                    <CellStyle HorizontalAlign="Left">
-                                                    </CellStyle>
-                                                </dx:GridViewCommandColumn>
-                                                <dx:GridViewDataTextColumn FieldName="ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="0">
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn FieldName="FileName" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="1">
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn FieldName="Description" ShowInCustomizationForm="True" VisibleIndex="3">
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn Caption="File Size" FieldName="FileSize" ShowInCustomizationForm="True" VisibleIndex="4">
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn FieldName="FileAttachment" ShowInCustomizationForm="True" Visible="False" VisibleIndex="6">
-                                                </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn FieldName="FileExtension" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                </dx:GridViewDataTextColumn>
-                                            </Columns>
-                                        </dx:ASPxGridView>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                            </dx:LayoutItem>
-                        </Items>
-                    </dx:LayoutGroup>
-                    <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2" Width="100%">
-                    </dx:EmptyLayoutItem>
-                    <dx:LayoutGroup ColCount="3" ColSpan="2" ColumnCount="3" ColumnSpan="2" GroupBoxDecoration="None" HorizontalAlign="Right" Width="100%" ClientVisible="False">
-                        <Items>
-                            <dx:LayoutItem Caption="" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxButton ID="popupSubmitBtn1" runat="server" AutoPostBack="False" BackColor="#006838" ClientInstanceName="popupSubmitBtn" Font-Bold="True" Font-Size="Small" ForeColor="White" HorizontalAlign="Right" Text="Add" UseSubmitBehavior="False" ValidationGroup="PopupSubmit">
-                                            <ClientSideEvents Click="function(s, e) {
-	AddReimbursement();
-}" />
-                                            <Border BorderColor="#006838" />
-                                        </dx:ASPxButton>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxButton ID="popupCancelBtn1" runat="server" AutoPostBack="False" BackColor="White" ClientInstanceName="popupCancelBtn" Font-Bold="True" Font-Size="Small" ForeColor="#878787" HorizontalAlign="Right" Text="Cancel" UseSubmitBehavior="False">
-                                            <ClientSideEvents Click="function(s, e) {
-                     ASPxClientEdit.ClearEditorsInContainerById('reimDiv');
-                     reimbursePopup.Hide();
-            }" />
-                                            <Border BorderColor="#878787" />
-                                        </dx:ASPxButton>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                            </dx:LayoutItem>
-                        </Items>
-                    </dx:LayoutGroup>
-                </Items>
-                <SettingsItemCaptions HorizontalAlign="Right" />
-            </dx:LayoutGroup>
-        </Items>
-        <SettingsItemCaptions ChangeCaptionLocationInAdaptiveMode="False" />
-        <BackgroundImage HorizontalPosition="center" ImageUrl="../Content/Images/flat-mountains.svg'" Repeat="NoRepeat" />
-    </dx:ASPxFormLayout>
-
-                  
-
-
-                </div>
-                            </dx:PopupControlContentControl>
-            </ContentCollection>
-        </dx:ASPxPopupControl>
-
-        <dx:ASPxPopupControl ID="ReimPopup" runat="server" FooterText="" HeaderText="Reimbursement Details" Width="1146px" ClientInstanceName="ReimPopup" Modal="True" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" AllowDragging="True" CloseAction="CloseButton" CssClass="rounded">
-                        <ContentCollection>
-            <dx:PopupControlContentControl runat="server">
-                <div class="scrollableContainer">
-                        <dx:ASPxFormLayout ID="FormReim1" runat="server" Width="100%" SettingsAdaptivity-AdaptivityMode="SingleColumnWindowLimit" ClientInstanceName="FormReim1">
-<SettingsAdaptivity AdaptivityMode="SingleColumnWindowLimit"></SettingsAdaptivity>
-        <Items>
-            <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="HeadingLine" Width="100%" Name="ReimDocNum1">
-                <GroupBoxStyle>
-                    <Caption Font-Size="X-Large" BackColor="#FEFEFE">
-                    </Caption>
-                </GroupBoxStyle>
-                <Items>
-
-
-                    <dx:LayoutGroup Caption="" ColSpan="1" Width="50%">
-                        <Items>
-                            <dx:LayoutItem Caption="Company" ColSpan="1" FieldName="CompanyShortName">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="company_lbl_reim" runat="server" ClientInstanceName="company_lbl_reim" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Payment Method" ColSpan="1" FieldName="PMethod_name">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="payMethod_lbl_reim" runat="server" ClientInstanceName="payMethod_lbl_reim" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Type of Transaction" ColSpan="1" FieldName="RFPTranType_Name">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="tranType_lbl_reim" runat="server" Width="100%" ReadOnly="True" ClientInstanceName="tranType_lbl_reim" Font-Bold="True" Font-Size="Small">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="WBS" ClientVisible="False" ColSpan="1" Name="wbs" FieldName="WBS">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="wbs_lbl_reim" runat="server" ClientInstanceName="wbs_lbl_reim" Width="100%" Font-Bold="True" Font-Size="Small" ReadOnly="True">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                        </Items>
-                    </dx:LayoutGroup>
-                    <dx:LayoutGroup Caption="" ColSpan="1" Width="50%">
-                        <Items>
-                            <dx:LayoutItem Caption="Department" ColSpan="1" FieldName="DepDesc">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="department_lbl_reim" runat="server" ClientInstanceName="department_lbl_reim" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Cost Center" ColSpan="1" FieldName="SAPCostCenter">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="costCenter_lbl_reim" runat="server" Width="100%" ClientInstanceName="costCenter_lbl_reim" Font-Bold="True" Font-Size="Small" ReadOnly="True">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="IO" ColSpan="1" ClientVisible="False" FieldName="IO_Num">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="io_lbl_reim" runat="server" Width="100%" ClientInstanceName="io_lbl_reim" Font-Bold="True" Font-Size="Small" ReadOnly="True">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Payee" ColSpan="1" FieldName="payeeName">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="payee_lbl_reim" runat="server" Width="100%" ClientInstanceName="payee_lbl_reim" ReadOnly="True" Font-Bold="True" Font-Size="Small">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Account to be charged" ColSpan="1" ClientVisible="False" FieldName="AcctChargeName">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="acctCharge_lbl_reim" runat="server" ClientInstanceName="acctCharge_lbl_reim" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                        </Items>
-                    </dx:LayoutGroup>
-                    <dx:LayoutItem Caption="Nature of Disbursement/Purpose" ColSpan="2" ColumnSpan="2" Width="100%" FieldName="Purpose">
-                        <LayoutItemNestedControlCollection>
-                            <dx:LayoutItemNestedControlContainer runat="server">
-                                <dx:ASPxMemo ID="purpose_lbl_reim" runat="server" ClientInstanceName="purpose_lbl_reim" Height="71px" ReadOnly="True" Width="100%" Font-Bold="True" Font-Size="Small">
-                                    <Border BorderStyle="None" />
-                                    <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                </dx:ASPxMemo>
-                            </dx:LayoutItemNestedControlContainer>
-                        </LayoutItemNestedControlCollection>
-                        <CaptionSettings HorizontalAlign="Left" Location="Top" />
-                    </dx:LayoutItem>
-                    <dx:LayoutGroup Caption="" ColSpan="2" ColumnSpan="2" Width="100%" ColCount="3" ColumnCount="3">
-                        <Items>
-                            <dx:LayoutItem Caption="Amount" ColSpan="1" FieldName="Amount">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="amount_lbl_reim" runat="server" ClientInstanceName="amount_lbl_reim" DisplayFormatString="#,##0.00" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." IsRequired="True" />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Currency" ColSpan="1" FieldName="Currency">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="currency_lbl_reim" runat="server" ClientInstanceName="currency_lbl_reim" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." IsRequired="True" />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:EmptyLayoutItem ColSpan="1">
-                            </dx:EmptyLayoutItem>
-                            <dx:LayoutItem Caption="Remarks" ClientVisible="False" ColSpan="2" ColumnSpan="2" Width="100%">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxMemo ID="ASPxMemo2" runat="server" ClientInstanceName="remarks_reim" Height="71px" Width="100%">
-                                        </dx:ASPxMemo>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                        </Items>
-                    </dx:LayoutGroup>
-                    <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2" Width="100%">
-                    </dx:EmptyLayoutItem>
-                    <dx:LayoutGroup Caption="Workflow Details" ColCount="2" ColSpan="2" ColumnCount="2" ColumnSpan="2" Width="100%">
-                        <Items>
-                            <dx:LayoutItem Caption="RA Workflow" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="Reim_RAWF_lbl" runat="server" ClientInstanceName="Reim_RAWF_lbl" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="FAP Workflow" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="Reim_FAPWF_lbl" runat="server" ClientInstanceName="Reim_FAPWF_lbl" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                            </dx:LayoutItem>
-                        </Items>
-                    </dx:LayoutGroup>
-                    <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2" Width="100%">
-                    </dx:EmptyLayoutItem>
-                    <dx:LayoutGroup ColCount="3" ColSpan="2" ColumnCount="3" ColumnSpan="2" GroupBoxDecoration="None" HorizontalAlign="Right" Width="100%" ClientVisible="False">
-                        <Items>
-                            <dx:LayoutItem Caption="" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxButton ID="ASPxButton1" runat="server" AutoPostBack="False" BackColor="#006838" ClientInstanceName="popupSubmitBtn" Font-Bold="True" Font-Size="Small" ForeColor="White" HorizontalAlign="Right" Text="Add" UseSubmitBehavior="False" ValidationGroup="PopupSubmit">
-                                            <ClientSideEvents Click="function(s, e) {
-	AddReimbursement();
-}" />
-                                            <Border BorderColor="#006838" />
-                                        </dx:ASPxButton>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxButton ID="ASPxButton2" runat="server" AutoPostBack="False" BackColor="White" ClientInstanceName="popupCancelBtn" Font-Bold="True" Font-Size="Small" ForeColor="#878787" HorizontalAlign="Right" Text="Cancel" UseSubmitBehavior="False">
-                                            <ClientSideEvents Click="function(s, e) {
-                     ASPxClientEdit.ClearEditorsInContainerById('reimDiv');
-                     reimbursePopup.Hide();
-            }" />
-                                            <Border BorderColor="#878787" />
-                                        </dx:ASPxButton>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                            </dx:LayoutItem>
-                        </Items>
-                    </dx:LayoutGroup>
-                </Items>
-                <SettingsItemCaptions HorizontalAlign="Right" />
-            </dx:LayoutGroup>
-        </Items>
-        <SettingsItemCaptions ChangeCaptionLocationInAdaptiveMode="False" />
-        <BackgroundImage HorizontalPosition="center" ImageUrl="../Content/Images/flat-mountains.svg'" Repeat="NoRepeat" />
-    </dx:ASPxFormLayout>
-
-                  
-
-
-                </div>
-                            </dx:PopupControlContentControl>
-            </ContentCollection>
-        </dx:ASPxPopupControl>
-
         <%--End of NON PO Line Item Edit--%>
         
-        <dx:ASPxPopupControl ID="ReimPopup_edit" runat="server" FooterText="" HeaderText="Edit Reimbursement Details" Width="1146px" ClientInstanceName="ReimPopup_edit" Modal="True" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" AllowDragging="True" CloseAction="CloseButton" CssClass="rounded">
-                        <ContentCollection>
-            <dx:PopupControlContentControl runat="server">
-                <div class="scrollableContainer">
-                        <dx:ASPxFormLayout ID="ASPxFormLayout4" runat="server" Width="100%" SettingsAdaptivity-AdaptivityMode="SingleColumnWindowLimit" ClientInstanceName="FormReim">
-<SettingsAdaptivity AdaptivityMode="SingleColumnWindowLimit"></SettingsAdaptivity>
-        <Items>
-<dx:LayoutGroup Caption="" ColCount="4" ColumnCount="4" GroupBoxDecoration="None" ColSpan="1" HorizontalAlign="Right">
-<Items>
-<dx:LayoutItem Caption="" ColSpan="1" Width="1px" HorizontalAlign="Right"><LayoutItemNestedControlCollection>
-<dx:LayoutItemNestedControlContainer runat="server">
-                                <dx:ASPxButton ID="ASPxButton7" runat="server" AutoPostBack="False" BackColor="#006838" ClientInstanceName="popupSubmitBtn" Font-Bold="True" Font-Size="Small" ForeColor="White" Text="Save" UseSubmitBehavior="False" ValidationGroup="PopupSubmit">
-                                    <ClientSideEvents Click="function(s, e) {
-	EditReimDetails();
-}" />
-                                    <Border BorderColor="#006838" />
-                                </dx:ASPxButton>
-
-                            </dx:LayoutItemNestedControlContainer>
-</LayoutItemNestedControlCollection>
-
-</dx:LayoutItem>
-    <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Right" Width="1px">
-        <LayoutItemNestedControlCollection>
-            <dx:LayoutItemNestedControlContainer runat="server">
-                <dx:ASPxButton ID="ASPxButton8" runat="server" AutoPostBack="False" BackColor="White" ClientInstanceName="popupCancelBtn" Font-Bold="True" Font-Size="Small" ForeColor="#878787" Text="Cancel" UseSubmitBehavior="False">
-                    <ClientSideEvents Click="function(s, e) {
-                     //ASPxClientEdit.ClearEditorsInContainerById('expDiv');
-                     ReimPopup_edit.Hide();
-            }" />
-                    <Border BorderColor="#878787" />
-                </dx:ASPxButton>
-            </dx:LayoutItemNestedControlContainer>
-        </LayoutItemNestedControlCollection>
-    </dx:LayoutItem>
-</Items>
-
-</dx:LayoutGroup>
-            <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="HeadingLine" Width="100%" Name="ReimDocNum">
-                <GroupBoxStyle>
-                    <Caption Font-Size="X-Large" BackColor="#FEFEFE">
-                    </Caption>
-                </GroupBoxStyle>
-                <Items>
-
-
-                    <dx:LayoutGroup Caption="" ColSpan="1" Width="50%">
-                        <Items>
-                            <dx:LayoutItem Caption="Company" ColSpan="1" FieldName="CompanyShortName">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="company_lbl_reim_edit" runat="server" ClientInstanceName="company_lbl_reim_edit" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Payment Method" ColSpan="1" FieldName="PMethod_name">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="payMethod_drpdown_reim_edit" runat="server" Width="100%" DataSourceID="SqlPaymethod" TextField="PMethod_name" ValueField="ID" ClientInstanceName="payMethod_drpdown_reim_edit">
-                                            <Border BorderColor="#006838" BorderWidth="1px" />
-                                        </dx:ASPxComboBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Type of Transaction" ColSpan="1" FieldName="RFPTranType_Name">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="tranType_lbl_reim_edit" runat="server" ClientInstanceName="tranType_lbl_reim_edit" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="WBS" ClientVisible="False" ColSpan="1" FieldName="WBS" Name="wbs">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="wbs_lbl_reim_edit" runat="server" ClientInstanceName="wbs_lbl_reim_edit" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                        </Items>
-                    </dx:LayoutGroup>
-
-
-                    <dx:LayoutGroup Caption="" ColSpan="1" Width="50%">
-                        <Items>
-                            <dx:LayoutItem Caption="Department" ColSpan="1" FieldName="DepDesc">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="department_lbl_reim_edit" runat="server" ClientInstanceName="department_lbl_reim_edit" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Cost Center" ColSpan="1" FieldName="SAPCostCenter">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="costCenter_lbl_reim_edit" runat="server" ClientInstanceName="costCenter_lbl_reim_edit" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="IO" ClientVisible="False" ColSpan="1" FieldName="IO_Num">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="io_lbl_reim_edit" runat="server" ClientInstanceName="io_lbl_reim_edit" DataSourceID="SqlIO" DropDownWidth="300px" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" TextField="IO_Num" TextFormatString="{0}" ValueField="IO_Num" Width="100%">
-                                            <Columns>
-                                                <dx:ListBoxColumn Caption="IO Number" FieldName="IO_Num" Name="IO Number">
-                                                </dx:ListBoxColumn>
-                                                <dx:ListBoxColumn Caption="IO Description" FieldName="IO_Description" Name="IO Description">
-                                                </dx:ListBoxColumn>
-                                            </Columns>
-                                            <ClearButton DisplayMode="Always">
-                                            </ClearButton>
-                                            <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
-                                                <RequiredField ErrorText="*Required" IsRequired="True" />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
-                                        </dx:ASPxComboBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Payee" ColSpan="1" FieldName="payeeName">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="payee_lbl_reim_edit" runat="server" Width="100%" ReadOnly="True" ClientInstanceName="payee_lbl_reim_edit" Font-Bold="True" Font-Size="Small">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Account to be charged" ClientVisible="False" ColSpan="1" FieldName="AcctChargeName">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="acctCharge_lbl_reim_edit" runat="server" ClientInstanceName="acctCharge_lbl_reim_edit" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                        </Items>
-                    </dx:LayoutGroup>
-                    <dx:LayoutItem Caption="Nature of Disbursement/Purpose" ColSpan="2" ColumnSpan="2" Width="100%" FieldName="Purpose">
-                        <LayoutItemNestedControlCollection>
-                            <dx:LayoutItemNestedControlContainer runat="server">
-                                <dx:ASPxMemo ID="purpose_lbl_reim_edit" runat="server" ClientInstanceName="purpose_lbl_reim_edit" Height="71px" ReadOnly="True" Width="100%" Font-Bold="True" Font-Size="Small">
-                                    <Border BorderStyle="None" />
-                                    <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                </dx:ASPxMemo>
-                            </dx:LayoutItemNestedControlContainer>
-                        </LayoutItemNestedControlCollection>
-                        <CaptionSettings HorizontalAlign="Left" Location="Top" />
-                    </dx:LayoutItem>
-                    <dx:LayoutGroup Caption="" ColSpan="2" Width="100%" ColCount="3" ColumnCount="3" ColumnSpan="2">
-                        <Items>
-                            <dx:LayoutItem Caption="Amount" ColSpan="1" FieldName="Amount">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="amount_lbl_reim_edit" runat="server" ClientInstanceName="amount_lbl_reim_edit" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%" DisplayFormatString="#,##0.00">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." IsRequired="True" />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Currency" ColSpan="1" FieldName="Currency">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="currency_lbl_reim_edit" runat="server" Width="100%" ClientInstanceName="currency_lbl_reim_edit" Font-Bold="True" Font-Size="Small" ReadOnly="True">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." IsRequired="True" />
-                                            </ValidationSettings>
-                                            <Border BorderStyle="None" />
-                                            <BorderBottom BorderColor="#333333" BorderStyle="Solid" />
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:EmptyLayoutItem ColSpan="1">
-                            </dx:EmptyLayoutItem>
-                            <dx:LayoutItem Caption="Remarks" ColSpan="2" ClientVisible="False" ColumnSpan="2" Width="100%">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxMemo ID="remarks_reim_edit" runat="server" ClientInstanceName="remarks_reim_edit" Height="71px" Width="100%">
-                                        </dx:ASPxMemo>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                        </Items>
-                    </dx:LayoutGroup>
-                    <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2" Width="100%">
-                    </dx:EmptyLayoutItem>
-                    <dx:LayoutGroup ColSpan="2" ColumnSpan="2" Width="100%" ColCount="3" ColumnCount="3" ClientVisible="False" GroupBoxDecoration="None" HorizontalAlign="Right">
-                        <Items>
-                            <dx:LayoutItem Caption="" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxButton ID="ASPxButton3" runat="server" AutoPostBack="False" BackColor="#006838" ClientInstanceName="popupSubmitBtn" Font-Bold="True" Font-Size="Small" ForeColor="White" HorizontalAlign="Right" Text="Add" UseSubmitBehavior="False" ValidationGroup="PopupSubmit">
-                                            <ClientSideEvents Click="function(s, e) {
-	AddReimbursement();
-}" />
-                                            <Border BorderColor="#006838" />
-                                        </dx:ASPxButton>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxButton ID="ASPxButton4" runat="server" AutoPostBack="False" BackColor="White" ClientInstanceName="popupCancelBtn" Font-Bold="True" Font-Size="Small" ForeColor="#878787" HorizontalAlign="Right" Text="Cancel" UseSubmitBehavior="False">
-                                            <ClientSideEvents Click="function(s, e) {
-                     ASPxClientEdit.ClearEditorsInContainerById('reimDiv');
-                     reimbursePopup.Hide();
-            }" />
-                                            <Border BorderColor="#878787" />
-                                        </dx:ASPxButton>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                            </dx:LayoutItem>
-                        </Items>
-                    </dx:LayoutGroup>
-                </Items>
-                <SettingsItemCaptions HorizontalAlign="Right" />
-            </dx:LayoutGroup>
-        </Items>
-        <SettingsItemCaptions ChangeCaptionLocationInAdaptiveMode="False" />
-        <BackgroundImage HorizontalPosition="center" ImageUrl="../Content/Images/flat-mountains.svg'" Repeat="NoRepeat" />
-    </dx:ASPxFormLayout>
-
-                  
-
-
-                </div>
-                            </dx:PopupControlContentControl>
-            </ContentCollection>
-        </dx:ASPxPopupControl>
         <dx:ASPxFloatingActionButton ID="ASPxFloatingActionButton1" runat="server" ClientInstanceName="fab" ContainerElementID="demoFabContent" EnableTheming="True" Theme="MaterialCompact" Visible="False">
             <ClientSideEvents Init="OnInit" ActionItemClick="OnActionItemClick" />
             <Items>
@@ -3133,127 +1753,6 @@ approveClick();
                                 <dx:ASPxButton ID="ASPxFormLayout1_E10" runat="server" Text="Cancel" AutoPostBack="False" BackColor="White" ForeColor="Gray">
                                     <ClientSideEvents Click="function(s, e) {
 	ApprovePopup.Hide();
-}" />
-                                    <Border BorderColor="Gray" />
-                                </dx:ASPxButton>
-                            </dx:LayoutItemNestedControlContainer>
-                        </LayoutItemNestedControlCollection>
-                    </dx:LayoutItem>
-                </Items>
-            </dx:LayoutGroup>
-        </Items>
-    </dx:ASPxFormLayout>
-            </dx:PopupControlContentControl>
-</ContentCollection>
-    </dx:ASPxPopupControl>
-
-        <dx:ASPxPopupControl ID="ApproveForPopup" runat="server" HeaderText="Approve and Forward this Document?" Modal="True" AllowDragging="True" AutoUpdatePosition="True" ClientInstanceName="ApproveForPopup" CloseAction="CloseButton" CloseOnEscape="True" EnableViewState="False" PopupAnimationType="None" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" Width="800px">
-        <SettingsAdaptivity VerticalAlign="WindowCenter" />
-        <ContentCollection>
-<dx:PopupControlContentControl runat="server">
-    <dx:ASPxFormLayout ID="ASPxFormLayout5" runat="server" Width="100%">
-        <Items>
-            <dx:LayoutItem ColSpan="1" HorizontalAlign="Center" ShowCaption="False">
-                <LayoutItemNestedControlCollection>
-                    <dx:LayoutItemNestedControlContainer runat="server">
-                        <dx:ASPxImage ID="ASPxImage1" runat="server" Height="50px" ImageAlign="Middle" ImageUrl="~/Content/Images/warning.png" Width="50px">
-                        </dx:ASPxImage>
-                    </dx:LayoutItemNestedControlContainer>
-                </LayoutItemNestedControlCollection>
-            </dx:LayoutItem>
-            <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Center">
-                <LayoutItemNestedControlCollection>
-                    <dx:LayoutItemNestedControlContainer runat="server">
-                        <dx:ASPxLabel ID="ASPxLabel1" runat="server" Text="Are you sure you want to approve and forward?" Font-Size="Medium">
-                        </dx:ASPxLabel>
-                    </dx:LayoutItemNestedControlContainer>
-                </LayoutItemNestedControlCollection>
-            </dx:LayoutItem>
-            <dx:EmptyLayoutItem ColSpan="1">
-            </dx:EmptyLayoutItem>
-            <dx:LayoutItem Caption="Forward to" ColSpan="1">
-                <LayoutItemNestedControlCollection>
-                    <dx:LayoutItemNestedControlContainer runat="server">
-                        <dx:ASPxComboBox ID="drpdown_ForwardWF" runat="server" ClientInstanceName="drpdown_ForwardWF" Width="100%">
-                            <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	OnFowardWFChanged(s.GetValue());
-}" />
-                            <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ApproveForwardGroup">
-                                <ErrorImage IconID="iconbuilder_security_warningcircled2_svg_16x16">
-                                </ErrorImage>
-                                <RequiredField ErrorText="Required" IsRequired="True" />
-                            </ValidationSettings>
-                        </dx:ASPxComboBox>
-                    </dx:LayoutItemNestedControlContainer>
-                </LayoutItemNestedControlCollection>
-            </dx:LayoutItem>
-            <dx:EmptyLayoutItem ColSpan="1">
-            </dx:EmptyLayoutItem>
-            <dx:LayoutGroup Caption="Workflow Details" ColSpan="1">
-                <Items>
-                    <dx:LayoutItem Caption="" ColSpan="1">
-                        <LayoutItemNestedControlCollection>
-                            <dx:LayoutItemNestedControlContainer runat="server">
-                                <dx:ASPxGridView ID="WFSequenceGrid0" runat="server" AutoGenerateColumns="False" ClientInstanceName="WFSequenceGrid0" DataSourceID="SqlWFSequenceForward" Width="100%" OnCustomCallback="WFSequenceGrid0_CustomCallback">
-                                    <SettingsEditing Mode="Batch">
-                                    </SettingsEditing>
-                                    <SettingsDataSecurity AllowDelete="False" AllowEdit="False" AllowInsert="False" />
-                                    <SettingsPopup>
-                                        <FilterControl AutoUpdatePosition="False">
-                                        </FilterControl>
-                                    </SettingsPopup>
-                                    <Columns>
-                                        <dx:GridViewDataTextColumn Caption="Sequence" FieldName="Sequence" ShowInCustomizationForm="True" VisibleIndex="1">
-                                        </dx:GridViewDataTextColumn>
-                                        <dx:GridViewDataComboBoxColumn Caption="Approver" FieldName="FullName" ShowInCustomizationForm="True" VisibleIndex="2">
-                                            <PropertiesComboBox TextFormatString="{0}" ValueField="TerritoryID">
-                                                <Columns>
-                                                    <dx:ListBoxColumn Caption="Territory" FieldName="TerritoryDescription">
-                                                    </dx:ListBoxColumn>
-                                                    <dx:ListBoxColumn Caption="Region" FieldName="RegionID">
-                                                    </dx:ListBoxColumn>
-                                                </Columns>
-                                            </PropertiesComboBox>
-                                        </dx:GridViewDataComboBoxColumn>
-                                    </Columns>
-                                </dx:ASPxGridView>
-                            </dx:LayoutItemNestedControlContainer>
-                        </LayoutItemNestedControlCollection>
-                    </dx:LayoutItem>
-                </Items>
-            </dx:LayoutGroup>
-            <dx:LayoutItem ColSpan="1" HorizontalAlign="Center" ShowCaption="False" Width="80%">
-                <LayoutItemNestedControlCollection>
-                    <dx:LayoutItemNestedControlContainer runat="server">
-                        <dx:ASPxMemo ID="txt_forward_remarks" runat="server" Caption="Remarks" Width="100%" ClientInstanceName="txt_forward_remarks">
-                        </dx:ASPxMemo>
-                    </dx:LayoutItemNestedControlContainer>
-                </LayoutItemNestedControlCollection>
-            </dx:LayoutItem>
-            <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="HeadingLine" HorizontalAlign="Center">
-                <Items>
-                    <dx:LayoutItem Caption="" ColSpan="1">
-                        <LayoutItemNestedControlCollection>
-                            <dx:LayoutItemNestedControlContainer runat="server">
-                                <dx:ASPxButton ID="mdlBtnApproveForward" runat="server" Text="Confirm Approve and Forward" BackColor="#006DD6" AutoPostBack="False" ClientInstanceName="mdlBtnApproveForward">
-                                    <ClientSideEvents Click="function(s, e) {
-
-if(ASPxClientEdit.ValidateGroup('ApproveForwardGroup')){
-ApproveForPopup.Hide();
-approveForwardClick();
-}
-}" />
-                                    <Border BorderColor="#006DD6" />
-                                </dx:ASPxButton>
-                            </dx:LayoutItemNestedControlContainer>
-                        </LayoutItemNestedControlCollection>
-                    </dx:LayoutItem>
-                    <dx:LayoutItem Caption="" ColSpan="1">
-                        <LayoutItemNestedControlCollection>
-                            <dx:LayoutItemNestedControlContainer runat="server">
-                                <dx:ASPxButton ID="ASPxButton9" runat="server" Text="Cancel" AutoPostBack="False" BackColor="White" ForeColor="Gray">
-                                    <ClientSideEvents Click="function(s, e) {
-	ApproveForPopup.Hide();
 }" />
                                     <Border BorderColor="Gray" />
                                 </dx:ASPxButton>
@@ -4251,7 +2750,7 @@ DisapproveClick(); DisapprovePopup.Hide();
                                     <dx:LayoutItem ColSpan="1" Name="Unallocated_amnt" Caption="Unallocated Amount" Width="30%">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxTextBox ID="Unalloc_amnt_edit" runat="server" ClientInstanceName="Unalloc_amnt_edit" HorizontalAlign="Right" Width="100%" Font-Bold="True" ReadOnly="True">
+                                                <dx:ASPxTextBox ID="Unalloc_amnt_edit" runat="server" ClientInstanceName="Unalloc_amnt_edit" HorizontalAlign="Right" Width="100%" Font-Bold="True" ReadOnly="True" DisplayFormatString="#,##0.00">
                                                     <Border BorderStyle="None" />
                                                 </dx:ASPxTextBox>
                                             </dx:LayoutItemNestedControlContainer>
@@ -4381,11 +2880,9 @@ DisapproveClick(); DisapprovePopup.Hide();
             <asp:Parameter Name="ID" Type="Int32" />
         </SelectParameters>
      </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_SecurityUserComp] WHERE (([AppId] = @AppId) AND ([IsActive] = @IsActive) AND ([UserId] = @UserId))">
+    <asp:SqlDataSource ID="SqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [CompanyMaster] WHERE ([WASSId] = @WASSId)">
         <SelectParameters>
-            <asp:Parameter DefaultValue="1032" Name="AppId" Type="Int32" />
-            <asp:Parameter DefaultValue="true" Name="IsActive" Type="Boolean" />
-            <asp:Parameter DefaultValue="" Name="UserId" Type="String" />
+            <asp:Parameter Name="WASSId" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlWFSequence" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_RS_Workflow_Sequence] WHERE ([WF_Id] = @WF_Id) ORDER BY [Sequence]">
@@ -4410,13 +2907,29 @@ DisapproveClick(); DisapprovePopup.Hide();
             <asp:Parameter Name="Document_Id" Type="Int32" />
         </SelectParameters>
      </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlDocs" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_T_FileAttachment] WHERE (([Doc_ID] = @Doc_ID) AND ([App_ID] = @App_ID) AND ([DocType_Id] = @DocType_Id))">
+    <asp:SqlDataSource ID="SqlDocs" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" DeleteCommand="DELETE FROM [ITP_T_FileAttachment] WHERE [ID] = @original_ID" InsertCommand="INSERT INTO [ITP_T_FileAttachment] ([FileName], [Description], [DateUploaded], [FileSize]) VALUES (@FileName, @Description, @DateUploaded, @FileSize)" OldValuesParameterFormatString="original_{0}" SelectCommand="SELECT [ID], [FileName], [Description], [DateUploaded], [FileSize] FROM [ITP_T_FileAttachment] WHERE (([App_ID] = @App_ID) AND ([Doc_ID] = @Doc_ID) AND ([DocType_Id] = @DocType_Id))" UpdateCommand="UPDATE [ITP_T_FileAttachment] SET [FileName] = @FileName, [Description] = @Description, [DateUploaded] = @DateUploaded, [FileSize] = @FileSize WHERE [ID] = @original_ID">
+        <DeleteParameters>
+            <asp:Parameter Name="original_ID" Type="Int32" />
+        </DeleteParameters>
+        <InsertParameters>
+            <asp:Parameter Name="FileName" Type="String" />
+            <asp:Parameter Name="Description" Type="String" />
+            <asp:Parameter Name="DateUploaded" Type="DateTime" />
+            <asp:Parameter Name="FileSize" Type="String" />
+        </InsertParameters>
         <SelectParameters>
-            <asp:Parameter Name="Doc_ID" Type="Int32" />
-            <asp:Parameter DefaultValue="1032" Name="App_ID" Type="Int32" />
-            <asp:Parameter DefaultValue="1016" Name="DocType_Id" Type="Int32" />
+            <asp:Parameter Name="App_ID" Type="Int32" DefaultValue="1032" />
+            <asp:Parameter DefaultValue="" Name="Doc_ID" Type="Int32" />
+            <asp:Parameter Name="DocType_Id" Type="Int32" />
         </SelectParameters>
-     </asp:SqlDataSource>
+        <UpdateParameters>
+            <asp:Parameter Name="FileName" Type="String" />
+            <asp:Parameter Name="Description" Type="String" />
+            <asp:Parameter Name="DateUploaded" Type="DateTime" />
+            <asp:Parameter Name="FileSize" Type="String" />
+            <asp:Parameter Name="original_ID" Type="Int32" />
+        </UpdateParameters>
+    </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlCADetails" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_RFPMainView] WHERE (([Exp_ID] = @Exp_ID) AND ([IsExpenseCA] = @IsExpenseCA))">
         <SelectParameters>
             <asp:Parameter Name="Exp_ID" Type="Int32" />
@@ -4487,7 +3000,7 @@ DisapproveClick(); DisapprovePopup.Hide();
             <asp:Parameter Name="EmpCode" Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>
-        <asp:SqlDataSource ID="SqlCTDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([Company_ID] = @Company_ID)">
+    <asp:SqlDataSource ID="SqlCTDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster] WHERE ([Company_ID] = @Company_ID)">
         <SelectParameters>
             <asp:Parameter Name="Company_ID" Type="Int32" />
         </SelectParameters>
@@ -4522,4 +3035,9 @@ DisapproveClick(); DisapprovePopup.Hide();
         </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlCurrency" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACDE_T_Currency]"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlCompLocation" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_CompanyBranch] WHERE ([Comp_Id] = @Comp_Id)">
+        <SelectParameters>
+            <asp:Parameter Name="Comp_Id" Type="Int32" />
+        </SelectParameters>
+    </asp:SqlDataSource>
 </asp:Content>

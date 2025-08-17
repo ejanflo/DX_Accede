@@ -28,7 +28,9 @@ namespace DX_WebTemplate
         {
 
             object value = e.GetFieldValue("AppDocTypeId");
+            object tranValue = e.GetFieldValue("TranType");
             int app = (value != DBNull.Value) ? Convert.ToInt32(value) : 0;
+            int tran = (tranValue != DBNull.Value) ? Convert.ToInt32(tranValue) : 0;
             var id = Convert.ToInt32(e.GetFieldValue("Document_Id"));
 
             if (e.Column.Caption == "Document No.")
@@ -49,7 +51,7 @@ namespace DX_WebTemplate
                 e.DisplayText = docno;
             }
 
-            if (e.Column.Caption == "Employee Name")
+            if (e.Column.Caption == "Employee Name/Vendor")
             {
                 string empname = "";
 
@@ -67,12 +69,25 @@ namespace DX_WebTemplate
                     }
                     else if (appname == "ACDE Expense")
                     {
-                        string useridRaw = context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.ExpenseName).FirstOrDefault();
-                        string userid = new string(useridRaw?.Where(char.IsDigit).ToArray());
-                        if (!string.IsNullOrEmpty(userid))
+                        if (tran != 3)
                         {
-                            empname = context.ITP_S_UserMasters.Where(x => x.EmpCode == userid).Select(x => x.FullName).FirstOrDefault()?.ToUpper() ?? string.Empty;
+                            string useridRaw = context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.ExpenseName).FirstOrDefault();
+                            string userid = new string(useridRaw?.Where(char.IsDigit).ToArray());
+                            if (!string.IsNullOrEmpty(userid))
+                            {
+                                empname = context.ITP_S_UserMasters.Where(x => x.EmpCode == userid).Select(x => x.FullName).FirstOrDefault()?.ToUpper() ?? string.Empty;
+                            }
                         }
+                        else
+                        {
+                            string useridRaw = context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.ExpenseName).FirstOrDefault();
+                            string userid = new string(useridRaw?.Where(char.IsDigit).ToArray());
+                            if (!string.IsNullOrEmpty(userid))
+                            {
+                                empname = context.ACCEDE_S_Vendors.Where(x => x.VendorCode == userid).Select(x => x.VendorName).FirstOrDefault()?.ToUpper() ?? string.Empty;
+                            }
+                        }
+
                     }
                     else if (appname == "ACDE Expense Travel")
                     {
@@ -203,8 +218,9 @@ namespace DX_WebTemplate
             string encryptedID = Encrypt(actID);
             Session["ExpId_p2p"] = Convert.ToString(e.Parameters.Split('|').First());
             Session["passP2PRFPID"] = Convert.ToString(e.Parameters.Split('|').First());
-            
 
+            var DocID = expenseGrid.GetRowValuesByKeyValue(rowKey, "Document_Id");
+            var expMain = context.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(DocID)).FirstOrDefault();
 
             Debug.WriteLine("Main ID: " + Session["TravelExp_Id"]);
             Debug.WriteLine("WFA :" + Session["wfa"]);
@@ -224,8 +240,21 @@ namespace DX_WebTemplate
                 }
                 else if (app == "ACDE Expense")
                 {
-                    string redirectUrl = $"~/AccedeP2PViewPage.aspx?secureToken={encryptedID}";
-                    ASPxWebControl.RedirectOnCallback(redirectUrl);
+                    //string redirectUrl = $"~/AccedeP2PViewPage.aspx?secureToken={encryptedID}";
+                    //ASPxWebControl.RedirectOnCallback(redirectUrl);
+
+                    if (expMain.ExpenseType_ID == 3)
+                    {
+                        //ASPxWebControl.RedirectOnCallback("ExpenseApprovalView.aspx");
+                        string redirectUrl = $"~/AccedeNonPO_P2PView.aspx?secureToken={encryptedID}";
+                        ASPxWebControl.RedirectOnCallback(redirectUrl);
+                    }
+                    else
+                    {
+                        //ASPxWebControl.RedirectOnCallback("ExpenseApprovalView.aspx");
+                        string redirectUrl = $"~/AccedeP2PViewPage.aspx?secureToken={encryptedID}";
+                        ASPxWebControl.RedirectOnCallback(redirectUrl);
+                    }
                 }
                 else if (app == "ACDE Expense Travel")
                 {

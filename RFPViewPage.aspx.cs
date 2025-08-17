@@ -71,7 +71,7 @@ namespace DX_WebTemplate
 
                     if(rfp_details.TranType == 3)
                     {
-                        var payee = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == rfp_details.Payee).FirstOrDefault();
+                        var payee = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == rfp_details.Payee.ToString().Trim()).FirstOrDefault();
                         txt_Payee.Text = payee.VendorName.ToString();
                     }
                     else
@@ -80,7 +80,7 @@ namespace DX_WebTemplate
                         txt_Payee.Text = payee.FullName.ToString();
                     }
 
-                        var btnSub = formRFP.FindItemOrGroupByName("btnSubmit") as LayoutItem;
+                    var btnSub = formRFP.FindItemOrGroupByName("btnSubmit") as LayoutItem;
                     var btnEdit = formRFP.FindItemOrGroupByName("btnEditRFP") as LayoutItem;
                     var btnRecall = formRFP.FindItemOrGroupByName("recallBtn") as LayoutItem;
                     var myLayoutGroup = formRFP.FindItemOrGroupByName("PageTitle") as LayoutGroup;

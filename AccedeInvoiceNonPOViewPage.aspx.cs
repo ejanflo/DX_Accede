@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using static DX_WebTemplate.AccedeNonPOEditPage;
 
 namespace DX_WebTemplate
 {
@@ -516,6 +517,79 @@ namespace DX_WebTemplate
             {
                 return "Secure Token is null. Please refresh the page or login again.";
             }
+        }
+
+        //Display Expense detail data to modal
+        [WebMethod]
+        public static ExpDetailsNonPO DisplayExpDetailsAJAX(int expDetailID)
+        {
+            AccedeInvoiceNonPOViewPage exp = new AccedeInvoiceNonPOViewPage();
+            return exp.DisplayExpDetails(expDetailID);
+        }
+
+        public ExpDetailsNonPO DisplayExpDetails(int expDetailID)
+        {
+            var exp_details = _DataContext.ACCEDE_T_ExpenseDetails
+                .Where(x => x.ExpenseReportDetail_ID == expDetailID)
+                .FirstOrDefault();
+
+            var exp_detailsMap = _DataContext.ACCEDE_T_ExpenseDetailsMaps.Where(x => x.ExpenseReportDetail_ID == expDetailID);
+            decimal totalAmnt = 0;
+
+            foreach (var item in exp_detailsMap)
+            {
+                totalAmnt += Convert.ToDecimal(item.NetAmount);
+            }
+
+            totalAmnt = Convert.ToDecimal(exp_details.GrossAmount) - totalAmnt;
+
+            ExpDetailsNonPO exp_det_class = new ExpDetailsNonPO();
+
+            if (exp_details != null)
+            {
+                exp_det_class.dateAdded = Convert.ToDateTime(exp_details.DateAdded).ToString("MM/dd/yyyy hh:mm:ss");
+
+                exp_det_class.supplier = exp_details.Supplier ?? exp_det_class.supplier;
+                var particulars_desc = _DataContext.ACCEDE_S_Particulars.Where(x => x.ID == Convert.ToInt32(exp_details.Particulars)).FirstOrDefault();
+                exp_det_class.particulars = particulars_desc.P_Name != null ? particulars_desc.P_Description+" - "+ particulars_desc.P_Name : exp_det_class.particulars;
+                exp_det_class.acctCharge = exp_details.AccountToCharged ?? exp_det_class.acctCharge;
+                exp_det_class.tin = exp_details.TIN ?? exp_det_class.tin;
+                exp_det_class.invoice = exp_details.InvoiceOR ?? exp_det_class.invoice;
+                exp_det_class.costCenter = exp_details.CostCenterIOWBS ?? exp_det_class.costCenter;
+                exp_det_class.grossAmnt = exp_details.GrossAmount != null ? Convert.ToDecimal(exp_details.GrossAmount) : exp_det_class.grossAmnt;
+                exp_det_class.vat = exp_details.VAT != null ? Convert.ToDecimal(exp_details.VAT) : exp_det_class.vat;
+                exp_det_class.ewt = exp_details.EWT != null ? Convert.ToDecimal(exp_details.EWT) : exp_det_class.ewt;
+                exp_det_class.netAmnt = exp_details.NetAmount != null ? Convert.ToDecimal(exp_details.NetAmount) : exp_det_class.netAmnt;
+                exp_det_class.expMainId = exp_details.ExpenseMain_ID != null ? Convert.ToInt32(exp_details.ExpenseMain_ID) : exp_det_class.expMainId;
+                exp_det_class.preparerId = exp_details.Preparer_ID ?? exp_det_class.preparerId;
+                exp_det_class.io = exp_details.ExpDtl_IO ?? exp_det_class.io;
+                exp_det_class.remarks = exp_details.ExpDetail_remarks ?? exp_det_class.remarks;
+                exp_det_class.wbs = exp_details.ExpDtl_WBS ?? exp_det_class.wbs;
+
+                //var exp_details_nonpo = _DataContext.ACCEDE_T_ExpenseDetailsInvNonPOs.Where(x => x.ExpDetailMain_ID == Convert.ToInt32(exp_details.ExpenseReportDetail_ID)).FirstOrDefault();
+                //exp_det_class.Assignment = exp_details_nonpo.Assignment ?? exp_det_class.Assignment;
+                //exp_det_class.UserId = exp_details_nonpo.UserId ?? exp_det_class.UserId;
+                //exp_det_class.Allowance = exp_details_nonpo.Allowance ?? exp_det_class.Allowance;
+                //exp_det_class.SLCode = exp_details_nonpo.SLCode ?? exp_det_class.SLCode;
+                //exp_det_class.EWTTaxType_Id = exp_details_nonpo.EWTTaxType_Id != null ? Convert.ToInt32(exp_details_nonpo.EWTTaxType_Id) : exp_det_class.EWTTaxType_Id;
+                //exp_det_class.EWTTaxAmount = exp_details_nonpo.EWTTaxAmount != null ? Convert.ToDecimal(exp_details_nonpo.EWTTaxAmount) : exp_det_class.EWTTaxAmount;
+                //exp_det_class.EWTTaxCode = exp_details_nonpo.EWTTaxCode ?? exp_det_class.EWTTaxCode;
+                //exp_det_class.InvoiceTaxCode = exp_details_nonpo.InvoiceTaxCode ?? exp_det_class.InvoiceTaxCode;
+                //exp_det_class.Asset = exp_details_nonpo.Asset ?? exp_det_class.Asset;
+                //exp_det_class.SubAssetCode = exp_details_nonpo.SubAssetCode ?? exp_det_class.SubAssetCode;
+                //exp_det_class.TransactionType = exp_details_nonpo.TransactionType ?? exp_det_class.TransactionType;
+                //exp_det_class.AltRecon = exp_details_nonpo.AltRecon ?? exp_det_class.AltRecon;
+                //exp_det_class.SpecialGL = exp_details_nonpo.SpecialGL ?? exp_det_class.SpecialGL;
+                exp_det_class.Qty = exp_details.Qty ?? exp_det_class.Qty;
+                exp_det_class.UnitPrice = exp_details.UnitPrice ?? exp_det_class.UnitPrice;
+
+                exp_det_class.totalAllocAmnt = totalAmnt;
+
+                Session["ExpDetailsID"] = expDetailID.ToString();
+
+            }
+
+            return exp_det_class;
         }
     }
 }

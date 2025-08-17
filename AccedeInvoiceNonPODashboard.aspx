@@ -117,7 +117,7 @@
         </script>
     <dx:ASPxFormLayout ID="ASPxFormLayout1" runat="server" Font-Bold="False" Height="144px" Width="100%">
         <Items>
-            <dx:LayoutGroup Caption="My Expense Report" ColSpan="1" GroupBoxDecoration="HeadingLine" Width="100%">
+            <dx:LayoutGroup Caption="My Invoices (Non-PO)" ColSpan="1" GroupBoxDecoration="HeadingLine" Width="100%">
                 <CellStyle Font-Bold="False">
                 </CellStyle>
                 <Items>

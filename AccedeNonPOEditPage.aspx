@@ -1746,7 +1746,7 @@ alert('Please verify your workflow details.');
                                 </dx:EmptyLayoutItem>
                                 <dx:TabbedLayoutGroup ColSpan="2" ColumnSpan="2" Width="100%">
                                     <Items>
-                                        <dx:LayoutGroup Caption="LINE ITEMS" ColSpan="2" ColumnSpan="2" GroupBoxDecoration="None" Width="100%">
+                                        <dx:LayoutGroup Caption="INVOICE LINE ITEMS" ColSpan="2" ColumnSpan="2" GroupBoxDecoration="None" Width="100%">
                                             <Paddings PaddingBottom="15px" />
                                             <Items>
                                                 <dx:LayoutItem Caption="" ColSpan="1">
@@ -3335,7 +3335,7 @@ AddExpDetails();
                                         <dx:LayoutItem ColSpan="1" Name="Unallocated_amnt" Caption="Unallocated Amount" Width="30%">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxTextBox ID="Unalloc_amnt" runat="server" ClientInstanceName="Unalloc_amnt" HorizontalAlign="Right" Width="100%" Font-Bold="True" ReadOnly="True">
+                                                    <dx:ASPxTextBox ID="Unalloc_amnt" runat="server" ClientInstanceName="Unalloc_amnt" HorizontalAlign="Right" Width="100%" Font-Bold="True" ReadOnly="True" DisplayFormatString="#,##0.00">
                                                         <Border BorderStyle="None" />
                                                     </dx:ASPxTextBox>
                                                 </dx:LayoutItemNestedControlContainer>
@@ -3871,7 +3871,7 @@ ExpAllocGrid.PerformCallback();
                                         <dx:LayoutItem ColSpan="1" Name="Unallocated_amnt" Caption="Unallocated Amount" Width="30%">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxTextBox ID="Unalloc_amnt_edit" runat="server" ClientInstanceName="Unalloc_amnt_edit" HorizontalAlign="Right" Width="100%" Font-Bold="True" ReadOnly="True">
+                                                    <dx:ASPxTextBox ID="Unalloc_amnt_edit" runat="server" ClientInstanceName="Unalloc_amnt_edit" HorizontalAlign="Right" Width="100%" Font-Bold="True" ReadOnly="True" DisplayFormatString="#,##0.00">
                                                         <Border BorderStyle="None" />
                                                     </dx:ASPxTextBox>
                                                 </dx:LayoutItemNestedControlContainer>

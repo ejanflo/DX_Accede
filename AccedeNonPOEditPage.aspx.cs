@@ -35,7 +35,7 @@ namespace DX_WebTemplate
                     var mainExp = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["NonPOExpenseId"])).FirstOrDefault();
                     var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense").Where(x => x.App_Id == 1032).FirstOrDefault();
 
-                    sqlExpenseCA.SelectParameters["Exp_ID"].DefaultValue = mainExp.ID.ToString();
+                    //sqlExpenseCA.SelectParameters["Exp_ID"].DefaultValue = mainExp.ID.ToString();
                     SqlRFPMainReim.SelectParameters["Exp_ID"].DefaultValue = mainExp.ID.ToString();
                     SqlExpDetails.SelectParameters["ExpenseMain_ID"].DefaultValue = mainExp.ID.ToString();
                     SqlMain.SelectParameters["ID"].DefaultValue = mainExp.ID.ToString();
@@ -1417,7 +1417,8 @@ namespace DX_WebTemplate
                 var reim = _DataContext.ACCEDE_T_RFPMains
                     .Where(x => x.Exp_ID == exp.ID)
                     .Where(x => x.Status != 4)
-                    .Where(x => x.IsExpenseReim == true)
+                    .Where(x => x.IsExpenseReim != true)
+                    .Where(x => x.IsExpenseCA != true)
                     .Where(x => x.isTravel != true)
                     .FirstOrDefault();
 
@@ -1868,7 +1869,7 @@ namespace DX_WebTemplate
             //    .FirstOrDefault();
 
             var requestor_fullname = _DataContext.ITP_S_UserMasters
-                .Where(um => um.EmpCode == Convert.ToString(expMain.ExpenseName))
+                .Where(um => um.EmpCode == Convert.ToString(expMain.UserId))
                 .Select(um => um.FullName)
                 .FirstOrDefault();
 
@@ -2064,13 +2065,13 @@ namespace DX_WebTemplate
 
         //Display Expense detail data to modal
         [WebMethod]
-        public static ExpDetails DisplayExpDetailsAJAX(int expDetailID)
+        public static ExpDetailsNonPO DisplayExpDetailsAJAX(int expDetailID)
         {
             AccedeNonPOEditPage exp = new AccedeNonPOEditPage();
             return exp.DisplayExpDetails(expDetailID);
         }
 
-        public ExpDetails DisplayExpDetails(int expDetailID)
+        public ExpDetailsNonPO DisplayExpDetails(int expDetailID)
         {
             var exp_details = _DataContext.ACCEDE_T_ExpenseDetails
                 .Where(x => x.ExpenseReportDetail_ID == expDetailID)
@@ -2086,7 +2087,7 @@ namespace DX_WebTemplate
 
             totalAmnt = Convert.ToDecimal(exp_details.GrossAmount) - totalAmnt;
 
-            ExpDetails exp_det_class = new ExpDetails();
+            ExpDetailsNonPO exp_det_class = new ExpDetailsNonPO();
 
             if (exp_details != null)
             {
@@ -2584,7 +2585,7 @@ namespace DX_WebTemplate
             catch (Exception ex) { return false; }
         }
 
-        public class ExpDetails
+        public class ExpDetailsNonPO
         {
             public string dateAdded { get; set; }
             public string supplier { get; set; }

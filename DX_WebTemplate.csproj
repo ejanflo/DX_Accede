@@ -173,6 +173,9 @@
     <Content Include="AccedeInvoiceNonPOViewPage.aspx" />
     <Content Include="AccedeNonPOApprovalView.aspx" />
     <Content Include="AccedeNonPOEditPage.aspx" />
+    <Content Include="AccedeNonPO_AuditView.aspx" />
+    <Content Include="AccedeNonPO_CashierView.aspx" />
+    <Content Include="AccedeNonPO_P2PView.aspx" />
     <Content Include="AccedeP2PInquiryPage.aspx" />
     <Content Include="AccedeP2PViewPage.aspx" />
     <Content Include="AccedeP2P_RFPViewPage.aspx" />
@@ -482,6 +485,27 @@
     </Compile>
     <Compile Include="AccedeNonPOEditPage.aspx.designer.cs">
       <DependentUpon>AccedeNonPOEditPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AccedeNonPO_AuditView.aspx.cs">
+      <DependentUpon>AccedeNonPO_AuditView.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AccedeNonPO_AuditView.aspx.designer.cs">
+      <DependentUpon>AccedeNonPO_AuditView.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AccedeNonPO_CashierView.aspx.cs">
+      <DependentUpon>AccedeNonPO_CashierView.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AccedeNonPO_CashierView.aspx.designer.cs">
+      <DependentUpon>AccedeNonPO_CashierView.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AccedeNonPO_P2PView.aspx.cs">
+      <DependentUpon>AccedeNonPO_P2PView.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AccedeNonPO_P2PView.aspx.designer.cs">
+      <DependentUpon>AccedeNonPO_P2PView.aspx</DependentUpon>
     </Compile>
     <Compile Include="AccedeP2PInquiryPage.aspx.cs">
       <DependentUpon>AccedeP2PInquiryPage.aspx</DependentUpon>

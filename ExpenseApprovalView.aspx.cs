@@ -1561,21 +1561,34 @@ namespace DX_WebTemplate
 
         protected void ExpGrid_CustomButtonInitialize(object sender, ASPxGridViewCustomButtonEventArgs e)
         {
-            if (e.VisibleIndex > 0 && e.ButtonID == "btnEdit") // Ensure it's a data row and the button is the desired one
+            if (e.VisibleIndex >= 0 && e.ButtonID == "btnEdit") // Ensure it's a data row and the button is the desired one
             {
-                var FinApproverVerify = _DataContext.vw_ACCEDE_FinApproverVerifies
+                string encryptedID = Request.QueryString["secureToken"];
+                if (!string.IsNullOrEmpty(encryptedID))
+                {
+                    int actID = Convert.ToInt32(Decrypt(encryptedID));
+
+                    var actDetails = _DataContext.ITP_T_WorkflowActivities
+                        .Where(x => x.WFA_Id == Convert.ToInt32(actID))
+                        .FirstOrDefault();
+
+                    var exp_main = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(actDetails.Document_Id)).FirstOrDefault();
+
+                    var FinApproverVerify = _DataContext.vw_ACCEDE_FinApproverVerifies
                     .Where(x => x.UserId == Session["userID"].ToString())
                     .Where(x => x.Role_Name == "Accede Finance Approver")
                     .FirstOrDefault();
 
-                if (FinApproverVerify != null)
-                {
-                    e.Visible = DevExpress.Utils.DefaultBoolean.True;
+                    if (FinApproverVerify != null && actDetails.WF_Id == exp_main.FAPWF_Id)
+                    {
+                        e.Visible = DevExpress.Utils.DefaultBoolean.True;
+                    }
+                    else
+                    {
+                        e.Visible = DevExpress.Utils.DefaultBoolean.False;
+                    }
                 }
-                else
-                {
-                    e.Visible = DevExpress.Utils.DefaultBoolean.False;
-                }
+
             }
         }
 
