@@ -4742,5 +4742,5 @@ computeNetAmount(&quot;edit&quot;);
             <asp:Parameter Name="AppId" Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlVendor" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_Vendor]"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlVendor" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_Vendor] ORDER BY [VendorName]"></asp:SqlDataSource>
 </asp:Content>

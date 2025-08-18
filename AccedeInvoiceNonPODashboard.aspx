@@ -534,7 +534,7 @@
         <Items>
             <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2">
                 <Items>
-                    <dx:LayoutGroup Caption="Invoice Header" ColSpan="2" ColCount="2" ColumnCount="2" ColumnSpan="2" GroupBoxDecoration="HeadingLine">
+                    <dx:LayoutGroup Caption="Header Details" ColSpan="2" ColCount="2" ColumnCount="2" ColumnSpan="2" GroupBoxDecoration="HeadingLine">
                         <Items>
                             <dx:LayoutItem Caption="Charged To Company" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
@@ -905,5 +905,5 @@ drpdown_CompLocation.PerformCallback(s.GetValue());
             <asp:Parameter Name="Comp_Id" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlVendor" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_Vendor]"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlVendor" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_Vendor] ORDER BY [VendorName]"></asp:SqlDataSource>
 </asp:Content>

@@ -1678,50 +1678,52 @@ namespace DX_WebTemplate
 
                 _DataContext.SubmitChanges();
 
-                var rfpCA = _DataContext.ACCEDE_T_RFPMains
+                var ptvRFP = _DataContext.ACCEDE_T_RFPMains
                     .Where(x => x.Exp_ID == Convert.ToInt32(Session["NonPOExpenseId"]))
                     .Where(x => x.isTravel != true)
-                    .Where(x => x.IsExpenseCA == true);
+                    .Where(x => x.Status != 4)
+                    .Where(x => x.IsExpenseReim != true)
+                    .Where(x => x.IsExpenseCA != true);
 
-                var rfpReim = _DataContext.ACCEDE_T_RFPMains
-                    .Where(x => x.Exp_ID == Convert.ToInt32(Session["NonPOExpenseId"]))
-                    .Where(x => x.Status != 4).Where(x => x.IsExpenseReim == true)
-                    .Where(x => x.isTravel != true)
-                    .FirstOrDefault();
+                //var rfpReim = _DataContext.ACCEDE_T_RFPMains
+                //    .Where(x => x.Exp_ID == Convert.ToInt32(Session["NonPOExpenseId"]))
+                //    .Where(x => x.Status != 4).Where(x => x.IsExpenseReim == true)
+                //    .Where(x => x.isTravel != true)
+                //    .FirstOrDefault();
 
                 var expDetails = _DataContext.ACCEDE_T_ExpenseDetails
                     .Where(x => x.ExpenseMain_ID == Convert.ToInt32(Session["NonPOExpenseId"]));
 
-                decimal totalReim = new decimal(0);
-                decimal totalCA = new decimal(0);
+                //decimal totalReim = new decimal(0);
+                //decimal totalCA = new decimal(0);
                 decimal totalExpense = new decimal(0);
 
-                foreach (var ca in rfpCA)
-                {
-                    totalCA += Convert.ToDecimal(ca.Amount);
-                }
+                //foreach (var ca in rfpCA)
+                //{
+                //    totalCA += Convert.ToDecimal(ca.Amount);
+                //}
 
                 foreach (var exp in expDetails)
                 {
                     totalExpense += Convert.ToDecimal(exp.NetAmount);
                 }
 
-                totalReim = totalCA - totalExpense;
-                if (totalReim < 0)
-                {
-                    if (rfpReim != null)
-                    {
-                        rfpReim.Amount = Math.Abs(totalReim);
-                    }
-                }
-                else
-                {
-                    if (rfpReim != null)
-                    {
-                        rfpReim.Status = 4;
-                    }
+                //totalReim = totalCA - totalExpense;
+                //if (totalReim < 0)
+                //{
+                //    if (rfpReim != null)
+                //    {
+                //        rfpReim.Amount = Math.Abs(totalReim);
+                //    }
+                //}
+                //else
+                //{
+                //    if (rfpReim != null)
+                //    {
+                //        rfpReim.Status = 4;
+                //    }
 
-                }
+                //}
 
                 _DataContext.SubmitChanges();
                 return "success";
