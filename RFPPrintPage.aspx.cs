@@ -27,6 +27,7 @@ namespace DX_WebTemplate
                     var costcenter = "";
                     var depcode = "";
                     var fullname = "";
+                    var requestor = "";
                     var desig = "";
                     var isReprint = 0;
 
@@ -75,10 +76,31 @@ namespace DX_WebTemplate
                             .Where(x => x.WASSId == Convert.ToInt32(rfp.Company_ID))
                             .Select(x => x.CompanyShortName)
                             .FirstOrDefault();
-                        fullname = context.ITP_S_UserMasters
-                                .Where(x => x.EmpCode == Convert.ToString(rfp.User_ID))
-                                .Select(x => x.FullName)
-                                .FirstOrDefault();
+                        if(rfp.TranType == 3)
+                        {
+                            string raw = rfp.Payee.ToString();
+                            string cleaned = raw.Replace("\r", "").Replace("\n", "");
+                            var payee = context.ACCEDE_S_Vendors.Where(x => x.VendorCode == cleaned).FirstOrDefault();
+                            fullname = payee.VendorName.ToString();
+
+                            requestor = context.ITP_S_UserMasters
+                                    .Where(x => x.EmpCode == Convert.ToString(rfp.User_ID))
+                                    .Select(x => x.FullName)
+                                    .FirstOrDefault();
+                        }
+                        else
+                        {
+                            fullname = context.ITP_S_UserMasters
+                                    .Where(x => x.EmpCode == Convert.ToString(rfp.User_ID))
+                                    .Select(x => x.FullName)
+                                    .FirstOrDefault();
+
+                            requestor = context.ITP_S_UserMasters
+                                    .Where(x => x.EmpCode == Convert.ToString(rfp.User_ID))
+                                    .Select(x => x.FullName)
+                                    .FirstOrDefault();
+                        }
+                            
                         desig = context.ITP_S_UserMasters
                             .Where(x => x.EmpCode == Convert.ToString(rfp.User_ID))
                             .Select(x => x.DesDesc)
@@ -284,6 +306,7 @@ namespace DX_WebTemplate
                         report.Parameters["company"].Value = company.ToString();
                         report.Parameters["companyid"].Value = companyid;
                         report.Parameters["fullname"].Value = fullname.ToUpper();
+                        report.Parameters["requestor"].Value = requestor.ToUpper();
                         report.Parameters["cashinwords"].Value = cashinwords.ToUpper();
                         report.Parameters["desig"].Value = desig.ToUpper();
                         report.Parameters["depcost"].Value = depcode.ToUpper() + " - " + costcenter;

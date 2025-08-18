@@ -83,7 +83,10 @@ namespace DX_WebTemplate
                         else
                         {
                             string useridRaw = context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.ExpenseName).FirstOrDefault();
-                            string userid = new string(useridRaw?.Where(char.IsDigit).ToArray());
+                            string raw = useridRaw.ToString();
+                            string cleaned = raw.Replace("\r", "").Replace("\n", "");
+                            
+                            string userid = new string(cleaned?.Where(char.IsDigit).ToArray());
                             if (!string.IsNullOrEmpty(userid))
                             {
                                 empname = context.ACCEDE_S_Vendors.Where(x => x.VendorCode == userid).Select(x => x.VendorName).FirstOrDefault()?.ToUpper() ?? string.Empty;

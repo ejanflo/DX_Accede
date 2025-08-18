@@ -71,7 +71,9 @@ namespace DX_WebTemplate
 
                     if(rfp_details.TranType == 3)
                     {
-                        var payee = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == rfp_details.Payee.ToString().Trim()).FirstOrDefault();
+                        string raw = rfp_details.Payee.ToString();
+                        string cleaned = raw.Replace("\r", "").Replace("\n", "");
+                        var payee = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == cleaned).FirstOrDefault();
                         txt_Payee.Text = payee.VendorName.ToString();
                     }
                     else
@@ -172,17 +174,19 @@ namespace DX_WebTemplate
                                         .Where(x=>x.Status == Convert.ToInt32(pending_SAPDoc_status.STS_Id))
                                         .FirstOrDefault();
 
+                    var edit_SAPDoc = formRFP.FindItemOrGroupByName("edit_SAPDoc") as LayoutItem;
+                    var lbl_SAPDoc = formRFP.FindItemOrGroupByName("lbl_SAPDoc") as LayoutItem;
+                    var edit_IO = formRFP.FindItemOrGroupByName("IO_edit") as LayoutItem;
+                    var lbl_IO = formRFP.FindItemOrGroupByName("IO_lbl") as LayoutItem;
+                    var upload = formRFP.FindItemOrGroupByName("uploader_cashier") as LayoutItem;
+                    var btnCash = formRFP.FindItemOrGroupByName("btnCash") as LayoutItem;
+                    var btnPrint = formRFP.FindItemOrGroupByName("btnPrintRFP") as LayoutItem;
+                    var BtnSave = formRFP.FindItemOrGroupByName("BtnSaveDetails") as LayoutItem;
+
                     if (CashierVerify != null && (rfp_details.Status == CashierStatus.STS_Id || pendingSAPDocAct != null) /*&& rfp_details.User_ID != empCode*/)
                     //if (CashierVerify != null && rfp_details.Status == 7)
                     {
-                        var edit_SAPDoc = formRFP.FindItemOrGroupByName("edit_SAPDoc") as LayoutItem;
-                        var lbl_SAPDoc = formRFP.FindItemOrGroupByName("lbl_SAPDoc") as LayoutItem;
-                        var edit_IO = formRFP.FindItemOrGroupByName("IO_edit") as LayoutItem;
-                        var lbl_IO = formRFP.FindItemOrGroupByName("IO_lbl") as LayoutItem;
-                        var upload = formRFP.FindItemOrGroupByName("uploader_cashier") as LayoutItem;
-                        var btnCash = formRFP.FindItemOrGroupByName("btnCash") as LayoutItem;
-                        var btnPrint = formRFP.FindItemOrGroupByName("btnPrintRFP") as LayoutItem;
-                        var BtnSave = formRFP.FindItemOrGroupByName("BtnSaveDetails") as LayoutItem;
+                        
 
                         edit_SAPDoc.ClientVisible = true;
                         lbl_SAPDoc.ClientVisible = false;
@@ -198,14 +202,14 @@ namespace DX_WebTemplate
                         
                         BtnSave.ClientVisible = true;
 
-                        if(rfp_details.Status == release_cash_status.STS_Id)
-                        {
-                            btnPrint.ClientVisible = true;
-                            btnCash.ClientVisible = false;
-                            
-                        }
                     }
-                    
+                    if (rfp_details.Status == release_cash_status.STS_Id)
+                    {
+                        btnPrint.ClientVisible = true;
+                        btnCash.ClientVisible = false;
+
+                    }
+
                     SqlMain.SelectParameters["ID"].DefaultValue = rfp_id.ToString();
                     SqlWorkflowSequence.SelectParameters["WF_Id"].DefaultValue = rfp_details.WF_Id.ToString();
                     SqlFAPWF.SelectParameters["WF_Id"].DefaultValue = rfp_details.FAPWF_Id.ToString();
@@ -217,7 +221,6 @@ namespace DX_WebTemplate
                     if (rfp_details.Status == 1 && rfp_details.User_ID != empCode)
                     {
                         var BtnSaveUser = formRFP.FindItemOrGroupByName("BtnSaveDetailsUser") as LayoutItem;
-                        var upload = formRFP.FindItemOrGroupByName("uploader_cashier") as LayoutItem;
 
                         if (BtnSaveUser != null)
                         {

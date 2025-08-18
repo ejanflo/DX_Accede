@@ -321,11 +321,18 @@
     <asp:SqlDataSource ID="sqlName" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT [FullName], [EmpCode] FROM [ITP_S_UserMaster]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="sqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [CompanyMaster] WHERE ([WASSId] IS NOT NULL)"></asp:SqlDataSource>
     <asp:SqlDataSource ID="sqlStatus" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_Status]"></asp:SqlDataSource>
-    <asp:SqlDataSource ID="sqlAllApproval" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT Document_Id, Status, STS_Description, DateAssigned, DateAction, AppDocTypeId, AppId, Remarks, UserId, CompanyId, TranType, WF_Id, WFD_Id, WFA_Id, Travel_Id, NoTravel_Id, RFP_Id, Location
-FROM     vw_ACCEDE_I_AllAccedeForApproval
-WHERE  (UserId = @UserId) AND (Document_Id = Travel_Id OR Document_Id = NoTravel_Id OR
-Document_Id = RFP_Id)
-ORDER BY DateAssigned">
+    <asp:SqlDataSource ID="sqlAllApproval" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT Document_Id, Status, STS_Description, DateAssigned, DateAction, AppDocTypeId, AppId, 
+       Remarks, UserId, CompanyId, TranType, WF_Id, WFD_Id, WFA_Id, 
+       Travel_Id, NoTravel_Id, RFP_Id, Location
+FROM vw_ACCEDE_I_AllAccedeForApproval
+WHERE UserId = @UserId
+  AND (Document_Id = Travel_Id OR Document_Id = NoTravel_Id OR Document_Id = RFP_Id)
+  AND (
+        AppDocTypeId &lt;&gt; 1011 
+        OR (TranType &lt;&gt; 2 AND TranType &lt;&gt; 3)
+      )
+ORDER BY DateAssigned;
+">
         <SelectParameters>
             <asp:SessionParameter Name="UserId" SessionField="userID" Type="String" />
         </SelectParameters>

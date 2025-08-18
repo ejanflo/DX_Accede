@@ -72,6 +72,52 @@ namespace DX_WebTemplate
                                 txt_vendor.Text = vendor.VendorName.ToString();
                             }
 
+                            txt_InvoiceNo.Text = exp.InvoiceNonPO_No.ToString();
+
+                            var vendorDetails = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == exp.ExpenseName).FirstOrDefault();
+                            if (vendorDetails != null)
+                            {
+                                string tin = vendorDetails.TaxID.ToString();
+
+                                if (tin.Length > 9)
+                                {
+                                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6, 3)}-{tin.Substring(9)}";
+                                    txt_TIN.Text = formattedTin;
+                                }
+                                else if (tin.Length > 6)
+                                {
+                                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6)}";
+                                    txt_TIN.Text = formattedTin;
+                                }
+                                else if (tin.Length > 3)
+                                {
+                                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3)}";
+                                    txt_TIN.Text = formattedTin;
+                                }
+                                else
+                                {
+                                    txt_TIN.Text = tin; // less than 3 digits, no formatting
+                                }
+
+                                string Clean(string input)
+                                {
+                                    if (string.IsNullOrWhiteSpace(input))
+                                        return "";
+
+                                    // remove line breaks and trim
+                                    string cleanedVendorstr = input.Replace("\r", " ").Replace("\n", " ").Trim();
+
+                                    return ", " + cleanedVendorstr;
+                                }
+
+                                memo_VendorAddress.Text =
+                                    (vendorDetails.Address1 ?? "").Replace("\r", " ").Replace("\n", " ").Trim()
+                                    + Clean(vendorDetails.City ?? "")
+                                    + Clean(vendorDetails.State ?? "");
+
+
+                            }
+
                             SqlIO.SelectParameters["CompanyId"].DefaultValue = exp.ExpChargedTo_CompanyId.ToString();
 
                             SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = exp.ExpChargedTo_CompanyId.ToString();
@@ -94,7 +140,7 @@ namespace DX_WebTemplate
 
                             if (myLayoutGroup != null)
                             {
-                                myLayoutGroup.Caption = exp.DocNo.ToString() + " (View)";
+                                myLayoutGroup.Caption = "Invoice Document -" + exp.DocNo.ToString() + " (View)";
                             }
 
                             var RFPCA = _DataContext.ACCEDE_T_RFPMains
@@ -655,7 +701,7 @@ namespace DX_WebTemplate
                         .Where(x => x.AppDocTypeId == Convert.ToInt32(rfp_app_docType.DCT_Id))
                         .Where(x => x.AppId == 1032)
                         .Where(x => x.Document_Id == rfp_main.ID)
-                        .Where(x => x.Status == 1)
+                        .Where(x => x.Status == wfDetails.Status)
                         .FirstOrDefault();
 
                         var next_seq = 0;

@@ -73,11 +73,13 @@ namespace DX_WebTemplate
 
                             if (myLayoutGroup != null)
                             {
-                                myLayoutGroup.Caption = exp.DocNo.ToString() + " (View)";
+                                myLayoutGroup.Caption = "Invoice Document -" + exp.DocNo.ToString() + " (View)";
                             }
 
-                            var vendor = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == exp.ExpenseName).FirstOrDefault();
-                            txt_Vendor.Text = vendor.VendorName.ToString().Trim();
+                            string raw = exp.ExpenseName.ToString();
+                            string cleaned = raw.Replace("\r", "").Replace("\n", "");
+                            var payee = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == cleaned).FirstOrDefault();
+                            txt_Vendor.Text = payee.VendorName.ToString();
 
                             //var RFPCA = _DataContext.ACCEDE_T_RFPMains
                             //    .Where(x => x.Exp_ID == expDetails.ID)
@@ -98,6 +100,58 @@ namespace DX_WebTemplate
                                 totalExp += Convert.ToDecimal(item.NetAmount);
                             }
                             expenseTotal.Text = totalExp.ToString("#,##0.00") + "  PHP ";
+
+                            var vendor = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == exp.ExpenseName.ToString().Trim()).FirstOrDefault();
+                            if (vendor != null)
+                            {
+                                txt_Vendor.Text = vendor.VendorName.ToString();
+                            }
+
+                            txt_InvoiceNo.Text = exp.InvoiceNonPO_No.ToString();
+
+                            var vendorDetails = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == exp.ExpenseName).FirstOrDefault();
+                            if (vendorDetails != null)
+                            {
+                                string tin = vendorDetails.TaxID.ToString();
+
+                                if (tin.Length > 9)
+                                {
+                                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6, 3)}-{tin.Substring(9)}";
+                                    txt_TIN.Text = formattedTin;
+                                }
+                                else if (tin.Length > 6)
+                                {
+                                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6)}";
+                                    txt_TIN.Text = formattedTin;
+                                }
+                                else if (tin.Length > 3)
+                                {
+                                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3)}";
+                                    txt_TIN.Text = formattedTin;
+                                }
+                                else
+                                {
+                                    txt_TIN.Text = tin; // less than 3 digits, no formatting
+                                }
+
+                                string Clean(string input)
+                                {
+                                    if (string.IsNullOrWhiteSpace(input))
+                                        return "";
+
+                                    // remove line breaks and trim
+                                    string cleanedVendorstr = input.Replace("\r", " ").Replace("\n", " ").Trim();
+
+                                    return ", " + cleanedVendorstr;
+                                }
+
+                                memo_VendorAddress.Text =
+                                    (vendorDetails.Address1 ?? "").Replace("\r", " ").Replace("\n", " ").Trim()
+                                    + Clean(vendorDetails.City ?? "")
+                                    + Clean(vendorDetails.State ?? "");
+
+
+                            }
                             //decimal dueComp = totalCA - totalExp;
 
                             //if (dueComp < 0)
@@ -288,40 +342,42 @@ namespace DX_WebTemplate
 
                     if (!string.IsNullOrEmpty(remarksInput))
                     {
-                        foreach (var rs in _DataContext.ITP_T_WorkflowActivities
+                        foreach (var exp in _DataContext.ITP_T_WorkflowActivities
                             .Where(x => x.Document_Id == doc_id)
                             .Where(x => x.AppDocTypeId == expDocType.DCT_Id)
                             .Where(x => x.AppId == 1032)
                             .Where(x => x.Status == 1))
                         {
-                            rs.Status = 15;
-                            rs.DateAction = DateTime.Now;
-                            rs.Remarks = Session["AuthUser"].ToString() + ": " + remarksInput;
-                            approver_org_id = Convert.ToInt32(rs.OrgRole_Id.ToString());
+                            exp.Status = 15;
+                            exp.DateAction = DateTime.Now;
+                            exp.Remarks = Session["AuthUser"].ToString() + ": " + remarksInput;
+                            approver_org_id = Convert.ToInt32(exp.OrgRole_Id.ToString());
                         }
 
-                        var reimRFP = _DataContext.ACCEDE_T_RFPMains
-                            .Where(x => x.IsExpenseReim == true)
+                        var ptvRFP = _DataContext.ACCEDE_T_RFPMains
+                            .Where(x => x.IsExpenseReim != true)
+                            .Where(x => x.IsExpenseCA != true)
                             .Where(x => x.Status != 4)
                             .Where(x => x.Exp_ID == doc_id)
                             .Where(x => x.isTravel != true)
                             .FirstOrDefault();
 
-                        if (reimRFP != null)
+                        if (ptvRFP != null)
                         {
+                            ptvRFP.Status = 15;
                             var rfpDocType = _DataContext.ITP_S_DocumentTypes
                                 .Where(x => x.DCT_Name == "ACDE RFP")
                                 .FirstOrDefault();
 
-                            foreach (var rs in _DataContext.ITP_T_WorkflowActivities
-                            .Where(x => x.Document_Id == reimRFP.ID)
+                            foreach (var rfp in _DataContext.ITP_T_WorkflowActivities
+                            .Where(x => x.Document_Id == ptvRFP.ID)
                             .Where(x => x.AppDocTypeId == rfpDocType.DCT_Id)
                             .Where(x => x.AppId == 1032)
                             .Where(x => x.Status == 1))
                             {
-                                rs.Status = 15;
-                                rs.DateAction = DateTime.Now;
-                                rs.Remarks = Session["AuthUser"].ToString() + ": " + remarksInput;
+                                rfp.Status = 15;
+                                rfp.DateAction = DateTime.Now;
+                                rfp.Remarks = Session["AuthUser"].ToString() + ": " + remarksInput;
                             }
                         }
 

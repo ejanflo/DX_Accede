@@ -168,6 +168,33 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox drpdown_vendor;
 
         /// <summary>
+        /// txt_TIN control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox txt_TIN;
+
+        /// <summary>
+        /// memo_VendorAddress control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxMemo memo_VendorAddress;
+
+        /// <summary>
+        /// txt_InvoiceNo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox txt_InvoiceNo;
+
+        /// <summary>
         /// exp_Currency control.
         /// </summary>
         /// <remarks>

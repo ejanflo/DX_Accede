@@ -614,7 +614,7 @@
                             <dx:EmptyLayoutItem ColSpan="3" ColumnSpan="3" Width="100%">
                             </dx:EmptyLayoutItem>
 
-                            <dx:LayoutItem Caption="" ColSpan="1" Name="PrintBtn" ClientVisible="False" Width="20%">
+                            <dx:LayoutItem Caption="" ColSpan="1" Name="PrintBtn" Width="20%">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxButton ID="btnPrint" runat="server" BackColor="#E67C03" ClientInstanceName="btnPrint" EnableTheming="True" Font-Bold="False" Text="Print" Theme="iOS" OnClick="btnPrint_Click">
@@ -788,8 +788,43 @@
                                 </LayoutItemNestedControlCollection>
                                 <CaptionSettings HorizontalAlign="Right" />
                             </dx:LayoutItem>
+                            <dx:LayoutItem Caption="TIN" ColSpan="1">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxTextBox ID="txt_TIN" runat="server" ClientInstanceName="txt_TIN" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
+                                            <Border BorderStyle="None" />
+                                            <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                        </dx:ASPxTextBox>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                                <CaptionSettings HorizontalAlign="Right" />
+                            </dx:LayoutItem>
+                            <dx:LayoutItem Caption="Address" ColSpan="1">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxMemo ID="memo_VendorAddress" runat="server" ClientInstanceName="memo_VendorAddress" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
+                                            <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                <RequiredField ErrorText="*Required" IsRequired="True" />
+                                            </ValidationSettings>
+                                            <Border BorderStyle="None" />
+                                            <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                        </dx:ASPxMemo>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                                <CaptionSettings HorizontalAlign="Right" />
+                            </dx:LayoutItem>
                             <dx:EmptyLayoutItem ColSpan="1">
                             </dx:EmptyLayoutItem>
+                            <dx:LayoutItem Caption="Invoice No." ColSpan="1">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxTextBox ID="txt_InvoiceNo" runat="server" ClientInstanceName="txt_InvoiceNo" Font-Bold="True" Font-Size="Small" Width="100%">
+                                            <Border BorderStyle="None" />
+                                            <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                        </dx:ASPxTextBox>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                            </dx:LayoutItem>
                             <dx:LayoutItem Caption="Currency" ColSpan="1" FieldName="Exp_Currency" Name="ARNo">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">

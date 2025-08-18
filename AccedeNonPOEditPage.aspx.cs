@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Web;
 using System.Web.Services;
 using System.Web.UI;
@@ -54,35 +55,53 @@ namespace DX_WebTemplate
                     SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = mainExp.ExpChargedTo_CompanyId.ToString();
                     SqlCompLocation.SelectParameters["Comp_Id"].DefaultValue = mainExp.ExpChargedTo_CompanyId.ToString();
 
-                    //SqlUser.SelectParameters["Company_ID"].DefaultValue = mainExp.ExpChargedTo_CompanyId.ToString();
-                    //SqlUser.SelectParameters["DelegateTo_UserID"].DefaultValue = mainExp.ExpenseName.ToString();
-                    //SqlUser.SelectParameters["DateFrom"].DefaultValue = DateTime.Now.ToString();
-                    //SqlUser.SelectParameters["DateTo"].DefaultValue = DateTime.Now.ToString();
+                    var vendorDetails = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == mainExp.ExpenseName).FirstOrDefault();
+                    if (vendorDetails != null)
+                    {
+                        string tin = vendorDetails.TaxID.ToString();
 
-                    //SqlUserSelf.SelectParameters["EmpCode"].DefaultValue = EmpCode;
+                        if (tin.Length > 9)
+                        {
+                            string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6, 3)}-{tin.Substring(9)}";
+                            txt_TIN.Text = formattedTin;
+                        }
+                        else if (tin.Length > 6)
+                        {
+                            string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6)}";
+                            txt_TIN.Text = formattedTin;
+                        }
+                        else if (tin.Length > 3)
+                        {
+                            string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3)}";
+                            txt_TIN.Text = formattedTin;
+                        }
+                        else
+                        {
+                            txt_TIN.Text = tin; // less than 3 digits, no formatting
+                        }
 
-                    //SqlIO.SelectParameters["CompanyId"].DefaultValue = mainExp.ExpChargedTo_CompanyId.ToString();
+                        string Clean(string input)
+                        {
+                            if (string.IsNullOrWhiteSpace(input))
+                                return "";
 
+                            // remove line breaks and trim
+                            string cleaned = input.Replace("\r", " ").Replace("\n", " ").Trim();
+
+                            return ", " + cleaned;
+                        }
+
+                        memo_VendorAddress.Text =
+                            (vendorDetails.Address1 ?? "").Replace("\r", " ").Replace("\n", " ").Trim()
+                            + Clean(vendorDetails.City ?? "")
+                            + Clean(vendorDetails.State ?? "");
+
+
+                    }
 
                     var pay_released = _DataContext.ITP_S_Status
                         .Where(x => x.STS_Name == "Disbursed")
-                        .FirstOrDefault();
-
-                    //sqlRFPMainCA.SelectParameters["Payee"].DefaultValue = mainExp.ExpenseName.ToString();
-                    //sqlRFPMainCA.SelectParameters["Status"].DefaultValue = pay_released.STS_Id.ToString();
-
-                    var rfpCA = _DataContext.ACCEDE_T_RFPMains
-                        .Where(x => x.Exp_ID == mainExp.ID)
-                        .Where(x => x.IsExpenseCA == true)
-                        .Where(x => x.isTravel != true);
-
-                    //var totalCA = new decimal(0.00);
-                    //foreach (var item in rfpCA)
-                    //{
-                    //    totalCA += Convert.ToDecimal(item.Amount);
-
-                    //}
-                    
+                        .FirstOrDefault();                    
 
                     var expDetail = _DataContext.ACCEDE_T_ExpenseDetails
                         .Where(x => x.ExpenseMain_ID == mainExp.ID);
@@ -113,20 +132,7 @@ namespace DX_WebTemplate
                             errImg.Visible = true;
                         }
 
-                        //if (pay_type != null)
-                        //{
-                        //    pay_type.ClientVisible = true;
-
-                        //}
-
-                        //if (mainExp.PaymentType != null && mainExp.PaymentType != 0)
-                        //{
-                        //    drpdown_payType.Value = mainExp.PaymentType.ToString();
-                        //}
-                        //else
-                        //{
-                        //    drpdown_payType.SelectedIndex = 0;
-                        //}
+                        
                     }
                     else
                     {
@@ -314,7 +320,7 @@ namespace DX_WebTemplate
 
                     if (mainExp != null)
                     {
-                        myLayoutGroup.Caption = "INVOICE DOC. "+mainExp.DocNo + " (Edit)";
+                        myLayoutGroup.Caption = "Invoice Document -" + mainExp.DocNo + " (Edit)";
                     }
 
                     var payee = Session["userFullName"].ToString();
@@ -1399,14 +1405,15 @@ namespace DX_WebTemplate
             string costCenter, 
             string CTCompany_id, 
             string CTDept_id, 
-            string compLoc)
+            string compLoc,
+            string invoiceNum)
         {
             AccedeNonPOEditPage exp = new AccedeNonPOEditPage();
-            return exp.UpdateExpense(dateFile, repName, comp_id, expType, expCat, purpose, trav, wf, fapwf, currency, department, payType, btn, costCenter, CTCompany_id, CTDept_id, compLoc);
+            return exp.UpdateExpense(dateFile, repName, comp_id, expType, expCat, purpose, trav, wf, fapwf, currency, department, payType, btn, costCenter, CTCompany_id, CTDept_id, compLoc, invoiceNum);
         }
 
         public string UpdateExpense(string dateFile, string repName, string comp_id, string expType, string expCat,
-            string purpose, bool trav, string wf, string fapwf, string currency, string department, string payType, string btn, string costCenter, string CTCompany_id, string CTDept_id, string compLoc)
+            string purpose, bool trav, string wf, string fapwf, string currency, string department, string payType, string btn, string costCenter, string CTCompany_id, string CTDept_id, string compLoc, string invoiceNum)
         {
             try
             {
@@ -1483,6 +1490,7 @@ namespace DX_WebTemplate
                 exp.PaymentType = TryParseInt(payType);
                 exp.ExpComp_Location_Id = TryParseInt(compLoc);
                 exp.PaymentType = TryParseInt(payType);
+                exp.InvoiceNonPO_No = ToNullIfEmpty(invoiceNum);
 
                 //if (compLoc != "")
                 //{
@@ -3203,14 +3211,84 @@ namespace DX_WebTemplate
             grid.JSProperties["cpComputeUnalloc_edit"] = totalNetAmount;
         }
 
-        protected void io_edit_Callback(object sender, CallbackEventArgsBase e)
-        {
-            SqlIO.SelectParameters["CompanyId"].DefaultValue = e.Parameter.ToString();
-            SqlIO.DataBind();
+        //protected void io_edit_Callback(object sender, CallbackEventArgsBase e)
+        //{
+        //    SqlIO.SelectParameters["CompanyId"].DefaultValue = e.Parameter.ToString();
+        //    SqlIO.DataBind();
 
-            //io_edit.DataSourceID = null;
-            //io_edit.DataSource = SqlIO;
-            //io_edit.DataBind();
+        //    //io_edit.DataSourceID = null;
+        //    //io_edit.DataSource = SqlIO;
+        //    //io_edit.DataBind();
+        //}
+
+        [WebMethod]
+        public static VendorDetails CheckVendorDetailsAJAX(string vendor)
+        {
+            AccedeNonPOEditPage page = new AccedeNonPOEditPage();
+            return page.CheckVendorDetails(vendor);
+        }
+
+        public VendorDetails CheckVendorDetails(string vendor)
+        {
+            var vendorDetails = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == vendor).FirstOrDefault();
+            VendorDetails vendorClass = new VendorDetails();
+            if (vendorDetails!= null)
+            {
+                
+                string tin = vendorDetails.TaxID.ToString();
+
+                if (tin.Length > 9)
+                {
+                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6, 3)}-{tin.Substring(9)}";
+                    vendorClass.TIN = formattedTin;
+                }
+                else if (tin.Length > 6)
+                {
+                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6)}";
+                    vendorClass.TIN = formattedTin;
+                }
+                else if (tin.Length > 3)
+                {
+                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3)}";
+                    vendorClass.TIN = formattedTin;
+                }
+                else
+                {
+                    vendorClass.TIN = tin; // less than 3 digits, no formatting
+                }
+
+                string Clean(string input)
+                {
+                    if (string.IsNullOrWhiteSpace(input))
+                        return "";
+
+                    // remove line breaks and trim
+                    string cleaned = input.Replace("\r", " ").Replace("\n", " ").Trim();
+
+                    return ", " + cleaned;
+                }
+
+                vendorClass.Address =
+                    (vendorDetails.Address1 ?? "").Replace("\r", " ").Replace("\n", " ").Trim()
+                    + Clean(vendorDetails.City ?? "")
+                    + Clean(vendorDetails.State ?? "");
+
+            }
+            else
+            {
+                
+                vendorClass.TIN = "";
+                vendorClass.Address = "";
+                
+            }
+
+            return vendorClass;
+        }
+
+        public class VendorDetails
+        {
+            public string TIN { get; set; }
+            public string Address { get; set; }
         }
     }
 }

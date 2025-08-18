@@ -542,7 +542,8 @@
                 costCenter: getSafeValue(drpdown_CostCenter),
                 CTCompany_id: getSafeValue(exp_CTCompany),
                 CTDept_id: getSafeValue(exp_CTDepartment),
-                compLoc: getSafeValue(exp_CompLocation)
+                compLoc: getSafeValue(exp_CompLocation),
+                invoiceNum: getSafeValue(txt_InvoiceNo)
             };
         }
 
@@ -684,6 +685,26 @@
                 }
             });
 
+        }
+
+        function OnVendorChanged(vendor) {
+            $.ajax({
+                type: "POST",
+                url: "AccedeNonPOEditPage.aspx/CheckVendorDetailsAJAX",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({
+                    vendor: vendor
+                }),
+                success: function (response) {
+                    // Update the description text box with the response value
+                    txt_TIN.SetValue(response.d.TIN);
+                    memo_VendorAddress.SetValue(response.d.Address);
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                }
+            });
         }
 
         function onPayMethodChanged(pay) {
@@ -1434,7 +1455,7 @@ io_edit.PerformCallback(s.GetValue());
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings HorizontalAlign="Right" />
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Expense Category" ColSpan="1" FieldName="ExpenseCat">
+                                                <dx:LayoutItem Caption="Expense Category" ColSpan="1" FieldName="ExpenseCat" ClientVisible="False">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxComboBox ID="drpdown_ExpCategory" runat="server" ClientInstanceName="drpdown_ExpCategory" DataSourceID="SqlExpCat" EnableTheming="True" Font-Bold="True" Font-Size="Small" TextField="Description" ValueField="ID" Width="100%">
@@ -1523,6 +1544,9 @@ io_edit.PerformCallback(s.GetValue());
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxComboBox ID="drpdown_vendor" runat="server" ClientInstanceName="drpdown_vendor" EnableTheming="True" Font-Bold="True" Font-Size="Medium" Width="100%" DataSourceID="SqlVendor" TextField="VendorName" ValueField="VendorCode">
+                                                                <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	OnVendorChanged(s.GetValue());
+}" />
                                                                 <Items>
                                                                     <dx:ListEditItem Text="TRAINOCATE PHILIPPINES INC." Value="0" />
                                                                 </Items>
@@ -1538,8 +1562,43 @@ io_edit.PerformCallback(s.GetValue());
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings HorizontalAlign="Right" />
                                                 </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="TIN" ColSpan="1">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxTextBox ID="txt_TIN" runat="server" ClientInstanceName="txt_TIN" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                            </dx:ASPxTextBox>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionSettings HorizontalAlign="Right" />
+                                                </dx:LayoutItem>
+                                                <dx:LayoutItem Caption="Address" ColSpan="1">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxMemo ID="memo_VendorAddress" runat="server" ClientInstanceName="memo_VendorAddress" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
+                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                                    <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                </ValidationSettings>
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                            </dx:ASPxMemo>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                    <CaptionSettings HorizontalAlign="Right" />
+                                                </dx:LayoutItem>
                                                 <dx:EmptyLayoutItem ColSpan="1">
                                                 </dx:EmptyLayoutItem>
+                                                <dx:LayoutItem Caption="Invoice No." ColSpan="1" FieldName="InvoiceNonPO_No">
+                                                    <LayoutItemNestedControlCollection>
+                                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                                            <dx:ASPxTextBox ID="txt_InvoiceNo" runat="server" ClientInstanceName="txt_InvoiceNo" Font-Bold="True" Font-Size="Small" Width="100%">
+                                                                <Border BorderStyle="None" />
+                                                                <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                            </dx:ASPxTextBox>
+                                                        </dx:LayoutItemNestedControlContainer>
+                                                    </LayoutItemNestedControlCollection>
+                                                </dx:LayoutItem>
                                                 <dx:LayoutItem Caption="Currency" ColSpan="1" FieldName="Exp_Currency">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
@@ -2713,11 +2772,13 @@ var emp = &quot;&quot;;//exp_EmpId.GetValue() != null ? exp_EmpId.GetValue() : &
             </dx:EmptyLayoutItem>
             <dx:EmptyLayoutItem ColSpan="3" ColumnSpan="3" Width="100%">
             </dx:EmptyLayoutItem>
-            <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Right" Width="30%">
-                <LayoutItemNestedControlCollection>
-                    <dx:LayoutItemNestedControlContainer runat="server">
-                        <dx:ASPxButton ID="btnCreateSubmitFinal" runat="server" AutoPostBack="False" BackColor="#0D6943" ClientInstanceName="btnCreateSubmitFinal" HorizontalAlign="Right" Text="Create RFP &amp; Submit">
-                            <ClientSideEvents Click="async function(s, e) {
+            <dx:LayoutGroup ColCount="3" ColSpan="3" ColumnCount="3" ColumnSpan="3" GroupBoxDecoration="None" HorizontalAlign="Center" Width="100%">
+                <Items>
+                    <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Right" Width="30%">
+                        <LayoutItemNestedControlCollection>
+                            <dx:LayoutItemNestedControlContainer runat="server">
+                                <dx:ASPxButton ID="btnCreateSubmitFinal" runat="server" AutoPostBack="False" BackColor="#0D6943" ClientInstanceName="btnCreateSubmitFinal" HorizontalAlign="Right" Text="Create RFP &amp; Submit">
+                                    <ClientSideEvents Click="async function(s, e) {
     if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) { 
         LoadingPanel.Show();
         SubmitPopup2.Hide();
@@ -2726,16 +2787,16 @@ var emp = &quot;&quot;;//exp_EmpId.GetValue() != null ? exp_EmpId.GetValue() : &
         SubmitPopup2.Hide();
     }
 }" />
-                            <Border BorderColor="#0D6943" />
-                        </dx:ASPxButton>
-                    </dx:LayoutItemNestedControlContainer>
-                </LayoutItemNestedControlCollection>
-            </dx:LayoutItem>
-            <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Right" Width="30%" ClientVisible="False">
-                <LayoutItemNestedControlCollection>
-                    <dx:LayoutItemNestedControlContainer runat="server">
-                        <dx:ASPxButton ID="ASPxButton1" runat="server" AutoPostBack="False" BackColor="#0D6943" ClientInstanceName="btnSubmitFinal" HorizontalAlign="Right" Text="Submit">
-                            <ClientSideEvents Click="function(s, e) {
+                                    <Border BorderColor="#0D6943" />
+                                </dx:ASPxButton>
+                            </dx:LayoutItemNestedControlContainer>
+                        </LayoutItemNestedControlCollection>
+                    </dx:LayoutItem>
+                    <dx:LayoutItem Caption="" ClientVisible="False" ColSpan="1" HorizontalAlign="Right">
+                        <LayoutItemNestedControlCollection>
+                            <dx:LayoutItemNestedControlContainer runat="server">
+                                <dx:ASPxButton ID="ASPxButton1" runat="server" AutoPostBack="False" BackColor="#0D6943" ClientInstanceName="btnSubmitFinal" HorizontalAlign="Right" Text="Submit">
+                                    <ClientSideEvents Click="function(s, e) {
 	if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) { 
 	LoadingPanel.Show();
                SubmitPopup.Hide();
@@ -2745,23 +2806,25 @@ var emp = &quot;&quot;;//exp_EmpId.GetValue() != null ? exp_EmpId.GetValue() : &
 }
 }
 " />
-                            <Border BorderColor="#0D6943" />
-                        </dx:ASPxButton>
-                    </dx:LayoutItemNestedControlContainer>
-                </LayoutItemNestedControlCollection>
-            </dx:LayoutItem>
-            <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Right" Width="30%">
-                <LayoutItemNestedControlCollection>
-                    <dx:LayoutItemNestedControlContainer runat="server">
-                        <dx:ASPxButton ID="ASPxButton7" runat="server" AutoPostBack="False" BackColor="White" ForeColor="Gray" HorizontalAlign="Right" Text="Cancel">
-                            <ClientSideEvents Click="function(s, e) {
+                                    <Border BorderColor="#0D6943" />
+                                </dx:ASPxButton>
+                            </dx:LayoutItemNestedControlContainer>
+                        </LayoutItemNestedControlCollection>
+                    </dx:LayoutItem>
+                    <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Right">
+                        <LayoutItemNestedControlCollection>
+                            <dx:LayoutItemNestedControlContainer runat="server">
+                                <dx:ASPxButton ID="ASPxButton7" runat="server" AutoPostBack="False" BackColor="White" ForeColor="Gray" HorizontalAlign="Right" Text="Cancel">
+                                    <ClientSideEvents Click="function(s, e) {
 	SubmitPopup2.Hide();
 }" />
-                            <Border BorderColor="Gray" />
-                        </dx:ASPxButton>
-                    </dx:LayoutItemNestedControlContainer>
-                </LayoutItemNestedControlCollection>
-            </dx:LayoutItem>
+                                    <Border BorderColor="Gray" />
+                                </dx:ASPxButton>
+                            </dx:LayoutItemNestedControlContainer>
+                        </LayoutItemNestedControlCollection>
+                    </dx:LayoutItem>
+                </Items>
+            </dx:LayoutGroup>
             <dx:EmptyLayoutItem ColSpan="3" ColumnSpan="3" Width="100%">
             </dx:EmptyLayoutItem>
         </Items>

@@ -528,13 +528,13 @@
             </dx:LayoutGroup>
         </Items>
     </dx:ASPxFormLayout>
-    <dx:ASPxPopupControl ID="AddExpensePopup" runat="server" ClientInstanceName="AddExpensePopup" HeaderText="Add Expense" PopupAnimationType="None" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" Width="80%" CloseAction="CloseButton" CloseOnEscape="True" Modal="True"><ContentCollection>
+    <dx:ASPxPopupControl ID="AddExpensePopup" runat="server" ClientInstanceName="AddExpensePopup" HeaderText="Add Invoice Non-PO" PopupAnimationType="None" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" Width="80%" CloseAction="CloseButton" CloseOnEscape="True" Modal="True"><ContentCollection>
 <dx:PopupControlContentControl runat="server">
     <dx:ASPxFormLayout ID="ASPxFormLayout2" runat="server" Width="1000px">
         <Items>
             <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2">
                 <Items>
-                    <dx:LayoutGroup Caption="Expense Report Header" ColSpan="2" ColCount="2" ColumnCount="2" ColumnSpan="2" GroupBoxDecoration="HeadingLine">
+                    <dx:LayoutGroup Caption="Invoice Header" ColSpan="2" ColCount="2" ColumnCount="2" ColumnSpan="2" GroupBoxDecoration="HeadingLine">
                         <Items>
                             <dx:LayoutItem Caption="Charged To Company" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
@@ -649,10 +649,10 @@ drpdown_CompLocation.PerformCallback(s.GetValue());
                             </dx:LayoutItem>
 
 
-                            <dx:LayoutItem Caption="Expense Category" ColSpan="1">
+                            <dx:LayoutItem Caption="Expense Category" ColSpan="1" ClientVisible="False">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="drpdown_expCat" runat="server" Width="100%" DataSourceID="SqlExpCat" TextField="Description" ValueField="ID" ClientInstanceName="drpdown_expCat">
+                                        <dx:ASPxComboBox ID="drpdown_expCat" runat="server" Width="100%" DataSourceID="SqlExpCat" TextField="Description" ValueField="ID" ClientInstanceName="drpdown_expCat" SelectedIndex="0">
                                             <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreateForm">
                                                 <RequiredField ErrorText="Required field." IsRequired="True" />
                                             </ValidationSettings>
@@ -798,7 +798,7 @@ drpdown_CompLocation.PerformCallback(s.GetValue());
             </SelectParameters>
         </asp:SqlDataSource>
         <asp:SqlDataSource ID="sqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT [WASSId], [CompanyDesc], [CompanyShortName] FROM [CompanyMaster] WHERE ([WASSId] IS NOT NULL) ORDER BY [CompanyDesc]"></asp:SqlDataSource>
-        <asp:SqlDataSource ID="sqlExpense" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_ExpenseMain] WHERE (([UserId] = @UserId) AND ([ExpenseType_ID] = @ExpenseType_ID))">
+        <asp:SqlDataSource ID="sqlExpense" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_ExpenseMain] WHERE (([UserId] = @UserId) AND ([ExpenseType_ID] = @ExpenseType_ID)) ORDER BY [ID] DESC">
             <SelectParameters>
                 <asp:Parameter Name="UserId" Type="String" />
                 <asp:Parameter DefaultValue="3" Name="ExpenseType_ID" Type="Int32" />
