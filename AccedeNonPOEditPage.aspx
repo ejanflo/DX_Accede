@@ -65,6 +65,7 @@
 
             if (e.buttonID == 'btnEditExpDet') {
                 var item_id = s.GetRowKey(e.visibleIndex);
+                console.log("YAWFJAFJKAW");
 
                 viewExpDetailModal(item_id);
             } else {
@@ -74,7 +75,7 @@
                 }
 
                 if (e.buttonID == 'btnRemoveExp') {
-                    confirmText = "Are you sure you want to remove this Expense from your expense report?";
+                    confirmText = "Are you sure you want to remove this Line item?";
                 }
 
                 if (e.buttonID == 'btnRemoveReim') {
@@ -557,10 +558,8 @@
                 //io: getSafeValue(io_reim),
                 payee: getSafeValue(drpdown_vendor),
                 acctCharge: getSafeValue(drpdown_ExpCategory),
-                amount: getSafeValue(rfpAmount_reim),
-                remarks: getSafeValue(remarks_reim),
-                isTravelrfp: getSafeValue(rdButton_Trav_exp),
-                wbs: getSafeValue(wbs_reim),
+                //isTravelrfp: getSafeValue(rdButton_Trav_exp),
+                //wbs: getSafeValue(wbs_reim),
                 currency: getSafeValue(exp_Currency),
                 //classification: getSafeValue(drpdown_classification),
                 CTComp_id: getSafeValue(exp_CTCompany),
@@ -712,6 +711,7 @@
         }
 
         function viewExpDetailModal(expDetailID) {
+            console.log(expDetailID);
             $.ajax({
                 type: "POST",
                 url: "AccedeNonPOEditPage.aspx/DisplayExpDetailsAJAX",
@@ -727,7 +727,7 @@
                     particulars_edit.SetValue(response.d.particulars);
                     //supplier_edit.SetValue(response.d.supplier);
                     //tin_edit.SetValue(response.d.tin);
-                    invoice_edit.SetValue(response.d.invoice);
+                    //invoice_edit.SetValue(response.d.invoice);
                     total_edit.SetValue(response.d.grossAmnt);
                     dateAdded_edit.SetDate(new Date(response.d.dateAdded));
                     console.log(response.d.dateAdded);
@@ -737,9 +737,9 @@
                     //vat_edit.SetValue(response.d.vat);
                     //ewt_edit.SetValue(response.d.ewt);
                     //io_edit.SetValue(response.d.io);
-                    expItem_desc_edit.SetValue(response.d.remarks);
+                    expItem_desc_edit.SetValue(response.d.LineDesc);
                     //wbs_edit.SetValue(response.d.wbs);
-                    exp_category_edit.SetValue(response.d.acctCharge);
+                    //exp_category_edit.SetValue(response.d.acctCharge);
                     //txt_assign_edit.SetValue(response.d.Assignment);
                     //txt_allowance_edit.SetValue(response.d.Allowance);
                     //drpdown_EWTTaxType_edit.SetValue(response.d.EWTTaxType_Id);
@@ -755,7 +755,7 @@
                     //txt_SpecialGL_edit.SetValue(response.d.SpecialGL);
 
                     expensePopup_edit.Show();
-                    ExpAllocGrid_edit.Refresh();
+                    ExpAllocGrid_edit.PerformCallback(expDetailID);
                     DocuGrid_edit.Refresh();
 
                     var curr = exp_Currency.GetValue();
@@ -1039,33 +1039,22 @@
         }
 
         function ReimbursementTrap() {
-            var t_amount = "10";
-            $.ajax({
-                type: "POST",
-                url: "AccedeNonPOEditPage.aspx/CheckReimburseValidationAJAX",
-                data: JSON.stringify({
-                    t_amount: t_amount
-                }),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    // Handle success
-                    if (response.d == true)
-                        SubmitPopup2.Show();
-                    else
-                        SubmitPopup.Show();
-                },
-                failure: function (response) {
-                    // Handle failure
-                }
-            });
-        }
+            var totalRows = 0;
 
-        function ReimbursementTrap2() {
-            LoadingPanel.SetText("Generating RFP (Payment to Vendor)&hellip;");
-            LoadingPanel.Show();
-            setTimeout(function () {
-                var t_amount = "1";
+            // Safely get visible row count from DevExpress ASPxGridView
+            if (window.ExpenseGrid) {
+                if (typeof ExpenseGrid.GetVisibleRowsOnPage === "function") {
+                    totalRows = ExpenseGrid.GetVisibleRowsOnPage();
+                } else if (typeof ExpenseGrid.GetDataRowCount === "function") {
+                    // Fallback to total data row count if GetVisibleRowsOnPage is unavailable
+                    totalRows = ExpenseGrid.GetDataRowCount();
+                }
+            }
+
+            console.log(totalRows);
+
+            if (totalRows > 0) {
+                var t_amount = "10";
                 $.ajax({
                     type: "POST",
                     url: "AccedeNonPOEditPage.aspx/CheckReimburseValidationAJAX",
@@ -1076,23 +1065,69 @@
                     dataType: "json",
                     success: function (response) {
                         // Handle success
-                        if (response.d == true) {
-                            //LoadingPanel.Hide();
-                            AddReimbursement(0);
-                        }
-                        else {
-                            //LoadingPanel.Hide();
-                            //reimbursePopup2.Show();
-                            window.location.href = 'AccedeNonPOEditPage.aspx';
-                        }
-
+                        if (response.d == true)
+                            SubmitPopup2.Show();
+                        else
+                            SubmitPopup.Show();
                     },
                     failure: function (response) {
                         // Handle failure
                     }
                 });
-            }, 3000); // 3000 ms = 3 seconds
+            } else {
+                alert("No invoice line items found. Please add at least one line item before submitting.");
+            }
+            
+        }
 
+        function ReimbursementTrap2() {
+            var totalRows = 0;
+
+            // Safely get visible row count from DevExpress ASPxGridView
+            if (window.ExpenseGrid) {
+                if (typeof ExpenseGrid.GetVisibleRowsOnPage === "function") {
+                    totalRows = ExpenseGrid.GetVisibleRowsOnPage();
+                } else if (typeof ExpenseGrid.GetDataRowCount === "function") {
+                    // Fallback to total data row count if GetVisibleRowsOnPage is unavailable
+                    totalRows = ExpenseGrid.GetDataRowCount();
+                }
+            }
+            if (totalRows > 0) {
+                LoadingPanel.SetText("Generating RFP (Payment to Vendor)&hellip;");
+                LoadingPanel.Show();
+                setTimeout(function () {
+                    var t_amount = "1";
+                    $.ajax({
+                        type: "POST",
+                        url: "AccedeNonPOEditPage.aspx/CheckReimburseValidationAJAX",
+                        data: JSON.stringify({
+                            t_amount: t_amount
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            // Handle success
+                            if (response.d == true) {
+                                //LoadingPanel.Hide();
+                                AddReimbursement(0);
+                            }
+                            else {
+                                //LoadingPanel.Hide();
+                                //reimbursePopup2.Show();
+                                window.location.href = 'AccedeNonPOEditPage.aspx';
+                            }
+
+                        },
+                        failure: function (response) {
+                            // Handle failure
+                        }
+                    });
+                }, 3000); // 3000 ms = 3 seconds
+
+            } else {
+                alert("No invoice line items found. Please add at least one line item before submitting.");
+            }
+            
         }
 
         function computeNetAmount(stat) {
@@ -1327,7 +1362,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                         </dx:EmptyLayoutItem>
                         <dx:LayoutGroup Caption="" ColSpan="2" GroupBoxDecoration="None" ColCount="2" ColumnCount="2" ColumnSpan="2" Width="100%">
                             <Items>
-                                <dx:TabbedLayoutGroup ColSpan="1" Width="60%">
+                                <dx:TabbedLayoutGroup ColSpan="1" Width="60%" VerticalAlign="Top">
                                     <Items>
                                         <dx:LayoutGroup Caption="CHARGED TO DETAILS" ColSpan="1" GroupBoxDecoration="None" Width="100%">
                                             <Items>
@@ -1346,7 +1381,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings HorizontalAlign="Right" />
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Charged To Company" ColSpan="1" FieldName="ExpChargedTo_CompanyId">
+                                                <dx:LayoutItem Caption="Charged To Company" ColSpan="1" FieldName="InvChargedTo_CompanyId">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxComboBox ID="exp_CTCompany" runat="server" ClientInstanceName="exp_CTCompany" DataSourceID="SqlCompany" EnableTheming="True" Font-Bold="True" Font-Size="Small" OnCallback="exp_Company_Callback" TextField="CompanyDesc" ValueField="CompanyId" Width="100%">
@@ -1374,7 +1409,7 @@ io_edit.PerformCallback(s.GetValue());
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings HorizontalAlign="Right" />
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Location" ColSpan="1" FieldName="ExpComp_Location_Id">
+                                                <dx:LayoutItem Caption="Location" ColSpan="1" FieldName="InvComp_Location_Id">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxComboBox ID="exp_CompLocation" runat="server" ClientInstanceName="exp_CompLocation" DataSourceID="SqlCompLocation" EnableTheming="True" Font-Bold="True" Font-Size="Small" OnCallback="exp_CompLocation_Callback" TextField="Name" ValueField="ID" Width="100%">
@@ -1398,7 +1433,7 @@ io_edit.PerformCallback(s.GetValue());
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings HorizontalAlign="Right" />
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Charged To Department" ColSpan="1" FieldName="ExpChargedTo_DeptId">
+                                                <dx:LayoutItem Caption="Charged To Department" ColSpan="1" FieldName="InvChargedTo_DeptId">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxComboBox ID="exp_CTDepartment" runat="server" ClientInstanceName="exp_CTDepartment" DataSourceID="SqlCTDepartment" EnableTheming="True" Font-Bold="True" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" OnCallback="exp_CTDepartment_Callback" TextField="DepDesc" TextFormatString="{0} - {1}" ValueField="ID" Width="100%">
@@ -1439,7 +1474,7 @@ io_edit.PerformCallback(s.GetValue());
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings HorizontalAlign="Right" />
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Transaction Type" ColSpan="1" FieldName="ExpenseType_ID">
+                                                <dx:LayoutItem Caption="Transaction Type" ColSpan="1" FieldName="InvoiceType_ID">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxComboBox ID="drpdown_expenseType" runat="server" ClientInstanceName="drpdown_expenseType" DataSourceID="SqlTranType" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" TextField="Description" ValueField="ExpenseType_ID" Width="100%">
@@ -1514,6 +1549,8 @@ io_edit.PerformCallback(s.GetValue());
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings HorizontalAlign="Right" />
                                                 </dx:LayoutItem>
+                                                <dx:EmptyLayoutItem ColSpan="1">
+                                                </dx:EmptyLayoutItem>
                                             </Items>
                                             <ParentContainerStyle Font-Bold="True" Font-Size="Small">
                                             </ParentContainerStyle>
@@ -1540,7 +1577,7 @@ io_edit.PerformCallback(s.GetValue());
                                                 <dx:EmptyLayoutItem ColSpan="1">
                                                     <BorderBottom BorderColor="#CCCCCC" BorderStyle="Solid" BorderWidth="1px" />
                                                 </dx:EmptyLayoutItem>
-                                                <dx:LayoutItem Caption="Vendor" ColSpan="1" FieldName="ExpenseName">
+                                                <dx:LayoutItem Caption="Vendor" ColSpan="1" FieldName="VendorName">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxComboBox ID="drpdown_vendor" runat="server" ClientInstanceName="drpdown_vendor" EnableTheming="True" Font-Bold="True" Font-Size="Medium" Width="100%" DataSourceID="SqlVendor" TextField="VendorName" ValueField="VendorCode">
@@ -1589,10 +1626,13 @@ io_edit.PerformCallback(s.GetValue());
                                                 </dx:LayoutItem>
                                                 <dx:EmptyLayoutItem ColSpan="1">
                                                 </dx:EmptyLayoutItem>
-                                                <dx:LayoutItem Caption="Invoice No." ColSpan="1" FieldName="InvoiceNonPO_No">
+                                                <dx:LayoutItem Caption="Invoice No." ColSpan="1" FieldName="InvoiceNo">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxTextBox ID="txt_InvoiceNo" runat="server" ClientInstanceName="txt_InvoiceNo" Font-Bold="True" Font-Size="Small" Width="100%">
+                                                                <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                                    <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                </ValidationSettings>
                                                                 <Border BorderStyle="None" />
                                                                 <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                                             </dx:ASPxTextBox>
@@ -1619,7 +1659,7 @@ reim_Currency.SetValue(s.GetValue);
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings HorizontalAlign="Right" />
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Payment Type" ColSpan="1" Name="PayType">
+                                                <dx:LayoutItem Caption="Payment Type" ColSpan="1" Name="PayType" FieldName="PaymentType">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxComboBox ID="drpdown_payType" runat="server" ClientInstanceName="drpdown_payType" DataSourceID="SqlPayMethod" EnableTheming="True" Font-Bold="True" Font-Size="Small" TextField="PMethod_name" ValueField="ID" Width="100%" SelectedIndex="0">
@@ -1695,114 +1735,6 @@ alert('Please verify your workflow details.');
                                 </dx:TabbedLayoutGroup>
                                 <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2" Width="100%">
                                 </dx:EmptyLayoutItem>
-                                <dx:TabbedLayoutGroup ColSpan="2" ColumnSpan="2" Width="100%" ClientVisible="False">
-                                    <Items>
-                                        <dx:LayoutGroup Caption="CASH ADVANCES" ColSpan="2" ColumnSpan="2" Width="100%">
-                                            <Paddings PaddingBottom="15px" />
-                                            <Items>
-                                                <dx:LayoutItem Caption="" ColSpan="1">
-                                                    <LayoutItemNestedControlCollection>
-                                                        <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxGridView ID="CAGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="CAGrid" DataSourceID="sqlExpenseCA" EnableCallBacks="False" Font-Size="Small" KeyFieldName="ID" OnRowDeleting="CAGrid_RowDeleting" Width="100%">
-                                                                <ClientSideEvents CustomButtonClick="onCustomButtonClick" ToolbarItemClick="onToolbarItemClick" />
-                                                                <SettingsDetail AllowOnlyOneMasterRowExpanded="True" />
-                                                                <SettingsContextMenu Enabled="True">
-                                                                </SettingsContextMenu>
-                                                                <SettingsAdaptivity AdaptivityMode="HideDataCells">
-                                                                    <AdaptiveDetailLayoutProperties>
-                                                                        <SettingsAdaptivity AdaptivityMode="SingleColumnWindowLimit">
-                                                                        </SettingsAdaptivity>
-                                                                    </AdaptiveDetailLayoutProperties>
-                                                                </SettingsAdaptivity>
-                                                                <SettingsPager AlwaysShowPager="True">
-                                                                </SettingsPager>
-                                                                <Settings GridLines="Horizontal" ShowHeaderFilterButton="True" />
-                                                                <SettingsBehavior ConfirmDelete="True" EnableCustomizationWindow="True" />
-                                                                <SettingsDataSecurity AllowDelete="False" AllowEdit="False" AllowInsert="False" />
-                                                                <SettingsPopup>
-                                                                    <FilterControl AutoUpdatePosition="False">
-                                                                    </FilterControl>
-                                                                </SettingsPopup>
-                                                                <SettingsLoadingPanel Mode="Disabled" />
-                                                                <SettingsText CommandDelete="Remove" ConfirmDelete="Are you sure you want to remove this CA from your expense report?" />
-                                                                <Columns>
-                                                                    <dx:GridViewCommandColumn Caption="Action" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                                        <CustomButtons>
-                                                                            <dx:GridViewCommandColumnCustomButton ID="btnRemoveCA" Text="Remove">
-                                                                            </dx:GridViewCommandColumnCustomButton>
-                                                                        </CustomButtons>
-                                                                        <CellStyle Font-Bold="True">
-                                                                        </CellStyle>
-                                                                    </dx:GridViewCommandColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="5">
-                                                                        <EditFormSettings Visible="False" />
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="Company_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="13">
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="Department_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="14">
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="TranType" ShowInCustomizationForm="True" Visible="False" VisibleIndex="15">
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataCheckColumn FieldName="isTravel" ShowInCustomizationForm="True" Visible="False" VisibleIndex="16">
-                                                                    </dx:GridViewDataCheckColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="SAPCostCenter" ShowInCustomizationForm="True" VisibleIndex="8">
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn Caption="IO No." FieldName="IO_Num" ShowInCustomizationForm="True" VisibleIndex="9">
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataDateColumn FieldName="LastDayTransact" ShowInCustomizationForm="True" Visible="False" VisibleIndex="17">
-                                                                    </dx:GridViewDataDateColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="Amount" ShowInCustomizationForm="True" VisibleIndex="10">
-                                                                        <PropertiesTextEdit DisplayFormatString="#,##0.00">
-                                                                        </PropertiesTextEdit>
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="Purpose" ShowInCustomizationForm="True" VisibleIndex="11">
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="WF_Id" ShowInCustomizationForm="True" Visible="False" VisibleIndex="18">
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="Expr1" ShowInCustomizationForm="True" Visible="False" VisibleIndex="19">
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="Status" ShowInCustomizationForm="True" Visible="False" VisibleIndex="20">
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn FieldName="RFP_DocNum" ShowInCustomizationForm="True" Visible="False" VisibleIndex="21">
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataDateColumn FieldName="DateCreated" ShowInCustomizationForm="True" Visible="False" VisibleIndex="22">
-                                                                    </dx:GridViewDataDateColumn>
-                                                                    <dx:GridViewDataCheckColumn FieldName="IsExpenseCA" ShowInCustomizationForm="True" Visible="False" VisibleIndex="23">
-                                                                    </dx:GridViewDataCheckColumn>
-                                                                    <dx:GridViewDataComboBoxColumn Caption="Payment Method" FieldName="PayMethod" ShowInCustomizationForm="True" VisibleIndex="12">
-                                                                        <PropertiesComboBox DataSourceID="sqlPayMethod" TextField="PMethod_name" ValueField="ID">
-                                                                        </PropertiesComboBox>
-                                                                    </dx:GridViewDataComboBoxColumn>
-                                                                    <dx:GridViewDataComboBoxColumn FieldName="Payee" ShowInCustomizationForm="True" VisibleIndex="7">
-                                                                        <PropertiesComboBox DataSourceID="SqlUserAll" TextField="FullName" ValueField="EmpCode">
-                                                                        </PropertiesComboBox>
-                                                                    </dx:GridViewDataComboBoxColumn>
-                                                                </Columns>
-                                                                <Toolbars>
-                                                                    <dx:GridViewToolbar>
-                                                                        <Items>
-                                                                            <dx:GridViewToolbarItem Alignment="Left" Name="addCA" Text="Add">
-                                                                                <Image IconID="iconbuilder_actions_addcircled_svg_dark_16x16">
-                                                                                </Image>
-                                                                            </dx:GridViewToolbarItem>
-                                                                        </Items>
-                                                                    </dx:GridViewToolbar>
-                                                                </Toolbars>
-                                                                <TotalSummary>
-                                                                    <dx:ASPxSummaryItem FieldName="Amount" SummaryType="Sum" />
-                                                                </TotalSummary>
-                                                            </dx:ASPxGridView>
-                                                        </dx:LayoutItemNestedControlContainer>
-                                                    </LayoutItemNestedControlCollection>
-                                                </dx:LayoutItem>
-                                            </Items>
-                                            <ParentContainerStyle Font-Size="Small">
-                                            </ParentContainerStyle>
-                                        </dx:LayoutGroup>
-                                    </Items>
-                                </dx:TabbedLayoutGroup>
-                                <dx:EmptyLayoutItem ColSpan="2" ColumnSpan="2" Width="100%">
-                                </dx:EmptyLayoutItem>
                                 <dx:TabbedLayoutGroup ColSpan="2" ColumnSpan="2" Width="100%">
                                     <Items>
                                         <dx:LayoutGroup Caption="INVOICE LINE ITEMS" ColSpan="2" ColumnSpan="2" GroupBoxDecoration="None" Width="100%">
@@ -1811,7 +1743,7 @@ alert('Please verify your workflow details.');
                                                 <dx:LayoutItem Caption="" ColSpan="1">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxGridView ID="ExpenseGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="ExpenseGrid" DataSourceID="SqlExpDetails" EnableCallBacks="False" Font-Size="Small" KeyFieldName="ExpenseReportDetail_ID" Width="100%">
+                                                            <dx:ASPxGridView ID="ExpenseGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="ExpenseGrid" DataSourceID="SqlExpDetails" EnableCallBacks="False" Font-Size="Small" KeyFieldName="ID" Width="100%">
                                                                 <ClientSideEvents CustomButtonClick="onCustomButtonClick" ToolbarItemClick="onToolbarItemClick" />
                                                                 <SettingsDetail AllowOnlyOneMasterRowExpanded="True" />
                                                                 <SettingsContextMenu Enabled="True">
@@ -1841,20 +1773,14 @@ alert('Please verify your workflow details.');
                                                                             </dx:GridViewCommandColumnCustomButton>
                                                                         </CustomButtons>
                                                                     </dx:GridViewCommandColumn>
-                                                                    <dx:GridViewDataTextColumn Caption="ID" FieldName="ExpenseReportDetail_ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
+                                                                    <dx:GridViewDataTextColumn Caption="ID" FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="1">
                                                                         <EditFormSettings Visible="False" />
                                                                     </dx:GridViewDataTextColumn>
                                                                     <dx:GridViewDataDateColumn Caption="Date" FieldName="DateAdded" ShowInCustomizationForm="True" Visible="False" VisibleIndex="2">
                                                                         <PropertiesDateEdit DisplayFormatString="MMMM dd, yyyy">
                                                                         </PropertiesDateEdit>
                                                                     </dx:GridViewDataDateColumn>
-                                                                    <dx:GridViewDataTextColumn Caption="Supplier" FieldName="Supplier" ShowInCustomizationForm="True" VisibleIndex="5" Visible="False">
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn Caption="TIN" FieldName="TIN" ShowInCustomizationForm="True" Visible="False" VisibleIndex="13">
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn Caption="Invoice/OR No." FieldName="InvoiceOR" ShowInCustomizationForm="True" Visible="False" VisibleIndex="14">
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn Caption="Amount" FieldName="GrossAmount" ShowInCustomizationForm="True" VisibleIndex="10">
+                                                                    <dx:GridViewDataTextColumn Caption="Amount" FieldName="TotalAmount" ShowInCustomizationForm="True" VisibleIndex="10">
                                                                         <PropertiesTextEdit DisplayFormatString="#,##0.00">
                                                                         </PropertiesTextEdit>
                                                                     </dx:GridViewDataTextColumn>
@@ -1866,27 +1792,17 @@ alert('Please verify your workflow details.');
                                                                         <PropertiesTextEdit DisplayFormatString="#,##0.00">
                                                                         </PropertiesTextEdit>
                                                                     </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn Caption="Net Amount" FieldName="NetAmount" ShowInCustomizationForm="True" VisibleIndex="11" Visible="False">
+                                                                    <dx:GridViewDataTextColumn Caption="Net Amount" FieldName="NetAmount" ShowInCustomizationForm="True" VisibleIndex="11">
                                                                         <PropertiesTextEdit DisplayFormatString="#,##0.00">
                                                                         </PropertiesTextEdit>
                                                                     </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn Caption="Doc No." FieldName="DocNo" ShowInCustomizationForm="True" Visible="False" VisibleIndex="15">
-                                                                    </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataComboBoxColumn Caption="Account to be Charged" FieldName="AccountToCharged" ShowInCustomizationForm="True" Visible="False" VisibleIndex="6">
-                                                                        <PropertiesComboBox DataSourceID="sqlAccountCharged" TextField="GLAccount" ValueField="AccCharged_ID">
-                                                                        </PropertiesComboBox>
-                                                                    </dx:GridViewDataComboBoxColumn>
-                                                                    <dx:GridViewDataComboBoxColumn Caption="CostCenter/IO/WBS" FieldName="CostCenterIOWBS" ShowInCustomizationForm="True" Visible="False" VisibleIndex="7">
-                                                                        <PropertiesComboBox DataSourceID="sqlCostCenter" TextField="SAP_CostCenter" ValueField="SAP_CostCenter">
-                                                                        </PropertiesComboBox>
-                                                                    </dx:GridViewDataComboBoxColumn>
                                                                     <dx:GridViewDataComboBoxColumn Caption="Particulars" FieldName="Particulars" ShowInCustomizationForm="True" VisibleIndex="4">
                                                                         <PropertiesComboBox DataSourceID="SqlParticulars" TextField="P_Name" ValueField="ID">
                                                                         </PropertiesComboBox>
                                                                     </dx:GridViewDataComboBoxColumn>
-                                                                    <dx:GridViewDataTextColumn Caption="Line Description" FieldName="ExpDetail_remarks" ShowInCustomizationForm="True" VisibleIndex="12">
+                                                                    <dx:GridViewDataTextColumn Caption="Line Description" FieldName="LineDescription" ShowInCustomizationForm="True" VisibleIndex="12">
                                                                     </dx:GridViewDataTextColumn>
-                                                                    <dx:GridViewDataTextColumn Caption="Line No." FieldName="ExpLineNum" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                                    <dx:GridViewDataTextColumn Caption="Line No." FieldName="LineNum" ShowInCustomizationForm="True" VisibleIndex="3">
                                                                     </dx:GridViewDataTextColumn>
                                                                 </Columns>
                                                                 <Toolbars>
@@ -2181,7 +2097,7 @@ var emp = &quot;&quot;;//exp_EmpId.GetValue() != null ? exp_EmpId.GetValue() : &
                                                     <Items>
                                                         <dx:LayoutGroup Caption="WORKFLOW DETAILS" ColSpan="1" Width="50%">
                                                             <Items>
-                                                                <dx:LayoutItem Caption="Workflow" ColSpan="1">
+                                                                <dx:LayoutItem Caption="Workflow" ColSpan="1" FieldName="WF_Id">
                                                                     <LayoutItemNestedControlCollection>
                                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                                             <dx:ASPxComboBox ID="drpdown_WF" runat="server" ClientInstanceName="drpdown_WF" Height="39px" OnCallback="drpdown_WF_Callback" TextField="Name" ValueField="WF_Id" Width="100%" DataSourceID="SqlWFAmount">
@@ -2316,135 +2232,6 @@ var emp = &quot;&quot;;//exp_EmpId.GetValue() != null ? exp_EmpId.GetValue() : &
         </dx:ASPxLoadingPanel>
 
         <%-- This is where the document is rendered and viewed --%>
-        <dx:ASPxPopupControl ID="caPopup" runat="server" FooterText="" HeaderText="Select Cash Advance/s" Width="100%" ClientInstanceName="caPopup" Modal="True" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" AllowDragging="True" CloseAction="CloseButton" CssClass="rounded">
-            <CloseButtonImage IconID="outlookinspired_close_svg_white_16x16">
-            </CloseButtonImage>
-            <HeaderStyle BackColor="#006838" ForeColor="White" />
-            <ContentCollection>
-                <dx:PopupControlContentControl runat="server">
-                    <dx:ASPxFormLayout ID="ASPxFormLayout4" runat="server" Width="100%">
-                        <Items>
-                            <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2">
-                                <Items>
-                                    <dx:LayoutItem Caption="" ColSpan="2" ColumnSpan="2">
-                                        <LayoutItemNestedControlCollection>
-                                            <dx:LayoutItemNestedControlContainer runat="server">
-                                                <div id="scrollablecontainer2">
-                                                <dx:ASPxGridView ID="capopGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="capopGrid" DataSourceID="sqlRFPMainCA" Font-Size="Smaller" KeyFieldName="ID" OnRowUpdating="DocuGrid_RowUpdating" Width="100%" OnCustomCallback="capopGrid_CustomCallback">
-                                                    <ClientSideEvents ToolbarItemClick="onToolbarItemClick" />
-                                                    <SettingsAdaptivity AdaptivityMode="HideDataCells">
-                                                        <AdaptiveDetailLayoutProperties>
-                                                            <SettingsAdaptivity AdaptivityMode="SingleColumnWindowLimit">
-                                                            </SettingsAdaptivity>
-                                                        </AdaptiveDetailLayoutProperties>
-                                                    </SettingsAdaptivity>
-                                                    <SettingsPopup>
-                                                        <FilterControl AutoUpdatePosition="False">
-                                                        </FilterControl>
-                                                    </SettingsPopup>
-                                                    <Columns>
-                                                        <dx:GridViewCommandColumn SelectAllCheckboxMode="Page" ShowInCustomizationForm="True" ShowSelectCheckbox="True" VisibleIndex="0">
-                                                        </dx:GridViewCommandColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" VisibleIndex="1" Visible="False">
-                                                            <EditFormSettings Visible="False" />
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="TranType" ShowInCustomizationForm="True" VisibleIndex="12" Visible="False">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataCheckColumn FieldName="isTravel" ShowInCustomizationForm="True" VisibleIndex="13" Visible="False">
-                                                        </dx:GridViewDataCheckColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="SAPCostCenter" ShowInCustomizationForm="True" VisibleIndex="6">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="IO_Num" ShowInCustomizationForm="True" VisibleIndex="7" Caption="IO No.">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataDateColumn FieldName="LastDayTransact" ShowInCustomizationForm="True" VisibleIndex="10" Caption="Last Day of Transaction">
-                                                            <PropertiesDateEdit DisplayFormatString="MMMM dd, yyyy">
-                                                            </PropertiesDateEdit>
-                                                        </dx:GridViewDataDateColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Amount" ShowInCustomizationForm="True" VisibleIndex="8">
-                                                            <PropertiesTextEdit DisplayFormatString="#,##0.00">
-                                                            </PropertiesTextEdit>
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Purpose" ShowInCustomizationForm="True" VisibleIndex="9">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="WF_Id" ShowInCustomizationForm="True" VisibleIndex="14" Visible="False">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="User_ID" ShowInCustomizationForm="True" VisibleIndex="15" Visible="False">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Status" ShowInCustomizationForm="True" VisibleIndex="16" Visible="False">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="RFP_DocNum" ShowInCustomizationForm="True" VisibleIndex="17" Visible="False">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataDateColumn FieldName="DateCreated" ShowInCustomizationForm="True" VisibleIndex="11">
-                                                            <PropertiesDateEdit DisplayFormatString="MMMM dd, yyyy">
-                                                            </PropertiesDateEdit>
-                                                        </dx:GridViewDataDateColumn>
-                                                        <dx:GridViewDataCheckColumn FieldName="IsExpenseCA" ShowInCustomizationForm="True" VisibleIndex="18" Visible="False">
-                                                        </dx:GridViewDataCheckColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Exp_ID" ShowInCustomizationForm="True" VisibleIndex="19" Visible="False">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataComboBoxColumn Caption="Company" FieldName="Company_ID" ShowInCustomizationForm="True" VisibleIndex="3">
-                                                            <PropertiesComboBox DataSourceID="sqlCompany" TextField="CompanyShortName" ValueField="CompanyId">
-                                                            </PropertiesComboBox>
-                                                        </dx:GridViewDataComboBoxColumn>
-                                                        <dx:GridViewDataComboBoxColumn Caption="Department" FieldName="Department_ID" ShowInCustomizationForm="True" VisibleIndex="4">
-                                                            <PropertiesComboBox DataSourceID="SqlDepartmentAll" TextField="DepDesc" ValueField="ID">
-                                                            </PropertiesComboBox>
-                                                        </dx:GridViewDataComboBoxColumn>
-                                                        <dx:GridViewDataComboBoxColumn Caption="Payment Method" FieldName="PayMethod" ShowInCustomizationForm="True" VisibleIndex="5">
-                                                            <PropertiesComboBox DataSourceID="sqlPayMethod" TextField="PMethod_name" ValueField="ID">
-                                                            </PropertiesComboBox>
-                                                        </dx:GridViewDataComboBoxColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="RFP_DocNum" ShowInCustomizationForm="True" VisibleIndex="2" Caption="Doc No.">
-                                                        </dx:GridViewDataTextColumn>
-                                                    </Columns>
-                                                </dx:ASPxGridView>
-                                             </div>
-                                            </dx:LayoutItemNestedControlContainer>
-                                        </LayoutItemNestedControlCollection>
-                                    </dx:LayoutItem>
-                                </Items>
-                            </dx:LayoutGroup>
-                            <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" HorizontalAlign="Right" GroupBoxDecoration="None">
-                                <Items>
-                                    <dx:LayoutItem Caption="" ColSpan="1" Width="1px">
-                                        <LayoutItemNestedControlCollection>
-                                            <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxButton ID="popupSubmitBtn0" runat="server" Text="Add" BackColor="#006838" ClientInstanceName="popupSubmitBtn" Font-Size="Small" ForeColor="White" Font-Bold="True" ValidationGroup="PopupSubmit" UseSubmitBehavior="False" AutoPostBack="False">
-                                                    <ClientSideEvents Click="function(s, e) {
-	                if(capopGrid.GetSelectedRowCount() &gt; 0){
-                                      AddExpCA();                               
-}else{
-	                        alert('No rows selected');
-                               }
-                }" />
-                                                    <Border BorderColor="#006838" />
-                                                </dx:ASPxButton>
-                                            </dx:LayoutItemNestedControlContainer>
-                                        </LayoutItemNestedControlCollection>
-                                        <ParentContainerStyle Font-Size="Small">
-                                        </ParentContainerStyle>
-                                    </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="" ColSpan="1" Width="1px">
-                                        <LayoutItemNestedControlCollection>
-                                            <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxButton ID="popupCancelBtn0" runat="server" Text="Cancel" BackColor="White" ClientInstanceName="popupCancelBtn" Font-Size="Small" ForeColor="#878787" Font-Bold="True" AutoPostBack="False" UseSubmitBehavior="False">
-                                                    <ClientSideEvents Click="function(s, e) {
-	caPopup.Hide();
-}" />
-                                                    <Border BorderColor="#878787" />
-                                                </dx:ASPxButton>
-                                            </dx:LayoutItemNestedControlContainer>
-                                        </LayoutItemNestedControlCollection>
-                                        <ParentContainerStyle Font-Size="Small">
-                                        </ParentContainerStyle>
-                                    </dx:LayoutItem>
-                                </Items>
-                            </dx:LayoutGroup>
-                        </Items>
-                    </dx:ASPxFormLayout>
-                </dx:PopupControlContentControl>
-            </ContentCollection>
-        </dx:ASPxPopupControl>
 
        <%-- <asp:SqlDataSource ID="sqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_CostCenter] WHERE (([CompanyId] = @CompanyId) AND ([DepartmentId] = @DepartmentId))">
             <SelectParameters>
@@ -2453,226 +2240,6 @@ var emp = &quot;&quot;;//exp_EmpId.GetValue() != null ? exp_EmpId.GetValue() : &
             </SelectParameters>
     </asp:SqlDataSource>--%><%--<asp:SqlDataSource ID="sqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_CostCenter] ORDER BY [CostCenter]">
     </asp:SqlDataSource>--%>
-        <dx:ASPxPopupControl ID="reimbursePopup" runat="server" FooterText="" HeaderText="Request for Payment Details" Width="1146px" ClientInstanceName="reimbursePopup" Modal="True" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" AllowDragging="True" CloseAction="CloseButton" CssClass="rounded">
-            <CloseButtonImage IconID="outlookinspired_close_svg_white_16x16">
-            </CloseButtonImage>
-            <ClientSideEvents Closing="function(s, e) {
-	            ASPxClientEdit.ClearEditorsInContainerById('reimDiv')
-            }" />
-                        <HeaderStyle BackColor="#006838" ForeColor="White" />
-                        <ContentCollection>
-            <dx:PopupControlContentControl runat="server">
-                <div id="reimDiv">
-                        <dx:ASPxFormLayout ID="FormReimburse" runat="server" Width="100%" SettingsAdaptivity-AdaptivityMode="SingleColumnWindowLimit" ClientInstanceName="FormReimburse">
-<SettingsAdaptivity AdaptivityMode="SingleColumnWindowLimit"></SettingsAdaptivity>
-        <Items>
-            <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="HeadingLine" Width="100%">
-                <GroupBoxStyle>
-                    <Caption Font-Size="X-Large" BackColor="#FEFEFE">
-                    </Caption>
-                </GroupBoxStyle>
-                <Items>
-
-
-                    <dx:LayoutGroup Caption="" ColSpan="1" Width="50%">
-                        <Items>
-                            <dx:LayoutItem Caption="Company" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="company_reim" runat="server" ClientInstanceName="company_reim" DataSourceID="SqlCompany" TextField="CompanyShortName" ValueField="CompanyId" Width="100%" ReadOnly="True">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." IsRequired="True" />
-                                            </ValidationSettings>
-                                        </dx:ASPxComboBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Payment Method" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="reim_PayMethod" runat="server" ClientInstanceName="reim_PayMethod" DataSourceID="SqlPayMethod" TextField="PMethod_name" ValueField="ID" Width="100%" SelectedIndex="1">
-                                            <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	onPayMethodChanged(s.GetValue());
-}" />
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." IsRequired="True" />
-                                            </ValidationSettings>
-                                        </dx:ASPxComboBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Type of Transaction" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="ASPxTextBox5" runat="server" Text="Reimbursement" Width="100%" ReadOnly="True">
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="WBS" ClientVisible="False" ColSpan="1" Name="wbs">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="wbs_reim" runat="server" ClientInstanceName="wbs_reim" Width="100%">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." />
-                                            </ValidationSettings>
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                        </Items>
-                    </dx:LayoutGroup>
-                    <dx:LayoutGroup Caption="" ColSpan="1" Width="50%">
-                        <Items>
-                            <dx:LayoutItem Caption="Department" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="dept_reim" runat="server" DataSourceID="SqlDepartment" TextField="DepDesc" ValueField="ID" Width="100%" ClientInstanceName="dept_reim" OnCallback="dept_reim_Callback" SelectedIndex="0">
-                                            <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	onDeptChanged();
-}" />
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." IsRequired="True" />
-                                            </ValidationSettings>
-                                        </dx:ASPxComboBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Cost Center" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="costCenter_reim" runat="server" Width="100%" ClientInstanceName="costCenter_reim">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." IsRequired="True" />
-                                            </ValidationSettings>
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="IO" ColSpan="1" ClientVisible="False">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="io_reim" runat="server" Width="100%" ClientInstanceName="io_reim">
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Payee" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxTextBox ID="payee_reim" runat="server" Width="100%" ClientInstanceName="payee_reim">
-                                            <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="submitValid">
-                                                <RequiredField ErrorText="This field is required." IsRequired="True" />
-                                            </ValidationSettings>
-                                        </dx:ASPxTextBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Account to be charged" ColSpan="1" ClientVisible="False">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="acctCharge_reim" runat="server" DataSourceID="SqlExpCat" TextField="Description" ValueField="ID" Width="100%" ClientInstanceName="acctCharge_reim" ReadOnly="True">
-                                        </dx:ASPxComboBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                        </Items>
-                    </dx:LayoutGroup>
-                    <dx:LayoutItem Caption="Nature of Disbursement/Purpose" ColSpan="2" ColumnSpan="2" Width="100%">
-                        <LayoutItemNestedControlCollection>
-                            <dx:LayoutItemNestedControlContainer runat="server">
-                                <dx:ASPxMemo ID="purpose_reim" runat="server" ClientInstanceName="purpose_reim" Height="71px" ReadOnly="True" Width="100%">
-                                </dx:ASPxMemo>
-                            </dx:LayoutItemNestedControlContainer>
-                        </LayoutItemNestedControlCollection>
-                        <CaptionSettings HorizontalAlign="Left" Location="Top" />
-                    </dx:LayoutItem>
-                    <dx:LayoutGroup Caption="" ColSpan="2" ColumnSpan="2" Width="100%" ColCount="2" ColumnCount="2">
-                        <Items>
-                            <dx:LayoutItem Caption="Amount" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxSpinEdit ID="rfpAmount_reim" runat="server" ClientInstanceName="rfpAmount_reim" DecimalPlaces="2" DisplayFormatString="N" Number="0" ReadOnly="True">
-                                        </dx:ASPxSpinEdit>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Currency" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxComboBox ID="reim_Currency" runat="server" ClientInstanceName="reim_Currency" DataSourceID="SqlCurrency" EnableTheming="True" Font-Bold="False" Font-Size="Small" ReadOnly="True" TextField="CurrDescription" ValueField="CurrDescription" Width="100%">
-                                            <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
-                                                <RequiredField ErrorText="*Required" IsRequired="True" />
-                                            </ValidationSettings>
-                                        </dx:ASPxComboBox>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="Remarks" ClientVisible="False" ColSpan="2" ColumnSpan="2" Width="100%">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxMemo ID="remarks_reim" runat="server" ClientInstanceName="remarks_reim" Height="71px" Width="100%">
-                                        </dx:ASPxMemo>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                                <CaptionSettings HorizontalAlign="Right" />
-                            </dx:LayoutItem>
-                        </Items>
-                    </dx:LayoutGroup>
-                    <dx:LayoutGroup ColCount="3" ColSpan="2" ColumnCount="3" ColumnSpan="2" GroupBoxDecoration="None" HorizontalAlign="Right" Width="100%">
-                        <Items>
-                            <dx:LayoutItem Caption="" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxButton ID="popupSubmitBtn1" runat="server" AutoPostBack="False" BackColor="#006838" ClientInstanceName="popupSubmitBtn" Font-Bold="True" Font-Size="Small" ForeColor="White" HorizontalAlign="Right" Text="Save" UseSubmitBehavior="False" ValidationGroup="PopupSubmit">
-                                            <ClientSideEvents Click="function(s, e) {
-	AddReimbursement();
-}" />
-                                            <Border BorderColor="#006838" />
-                                        </dx:ASPxButton>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                            </dx:LayoutItem>
-                            <dx:LayoutItem Caption="" ColSpan="1">
-                                <LayoutItemNestedControlCollection>
-                                    <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxButton ID="popupCancelBtn1" runat="server" AutoPostBack="False" BackColor="White" ClientInstanceName="popupCancelBtn" Font-Bold="True" Font-Size="Small" ForeColor="#878787" HorizontalAlign="Right" Text="Cancel" UseSubmitBehavior="False">
-                                            <ClientSideEvents Click="function(s, e) {
-                     ASPxClientEdit.ClearEditorsInContainerById('reimDiv');
-                     reimbursePopup.Hide();
-            }" />
-                                            <Border BorderColor="#878787" />
-                                        </dx:ASPxButton>
-                                    </dx:LayoutItemNestedControlContainer>
-                                </LayoutItemNestedControlCollection>
-                            </dx:LayoutItem>
-                        </Items>
-                    </dx:LayoutGroup>
-                </Items>
-                <SettingsItemCaptions HorizontalAlign="Right" />
-            </dx:LayoutGroup>
-        </Items>
-        <SettingsItemCaptions ChangeCaptionLocationInAdaptiveMode="False" />
-        <BackgroundImage HorizontalPosition="center" ImageUrl="../Content/Images/flat-mountains.svg'" Repeat="NoRepeat" />
-    </dx:ASPxFormLayout>
-
-                  
-
-
-                </div>
-                            </dx:PopupControlContentControl>
-            </ContentCollection>
-        </dx:ASPxPopupControl>
 
           <dx:ASPxPopupControl ID="SubmitPopup" runat="server" HeaderText="Submit Invoice Non-PO document?" Modal="True" AllowDragging="True" AutoUpdatePosition="True" ClientInstanceName="SubmitPopup" CloseAction="CloseButton" CloseOnEscape="True" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" PopupAnimationType="None">
         <SettingsAdaptivity Mode="Always" VerticalAlign="WindowCenter" />
@@ -3945,7 +3512,7 @@ ExpAllocGrid.PerformCallback();
                                                 <dx:LayoutItem ColSpan="1" Width="100%" ShowCaption="False">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxGridView ID="ExpAllocGrid_edit" runat="server" AutoGenerateColumns="False" ClientInstanceName="ExpAllocGrid_edit" KeyFieldName="ExpenseDetailMap_ID" OnCustomCallback="ExpAllocGrid_edit_CustomCallback" OnRowDeleting="ExpAllocGrid_edit_RowDeleting" OnRowInserting="ExpAllocGrid_edit_RowInserting" Width="100%" OnRowUpdating="ExpAllocGrid_edit_RowUpdating" DataSourceID="SqlExpMap">
+                                                            <dx:ASPxGridView ID="ExpAllocGrid_edit" runat="server" AutoGenerateColumns="False" ClientInstanceName="ExpAllocGrid_edit" KeyFieldName="InvoiceDetailMap_ID" OnCustomCallback="ExpAllocGrid_edit_CustomCallback" OnRowDeleting="ExpAllocGrid_edit_RowDeleting" OnRowInserting="ExpAllocGrid_edit_RowInserting" Width="100%" OnRowUpdating="ExpAllocGrid_edit_RowUpdating" DataSourceID="SqlInvMap">
                                                                 <ClientSideEvents EndCallback="onEndCallback" />
                                                                 <SettingsPager Mode="EndlessPaging">
                                                                 </SettingsPager>
@@ -3981,6 +3548,8 @@ ExpAllocGrid.PerformCallback();
                                                                     <dx:GridViewDataTextColumn FieldName="VAT" ShowInCustomizationForm="True" Visible="False" VisibleIndex="8">
                                                                     </dx:GridViewDataTextColumn>
                                                                     <dx:GridViewDataTextColumn Caption="Remarks" FieldName="EDM_Remarks" ShowInCustomizationForm="True" VisibleIndex="9">
+                                                                    </dx:GridViewDataTextColumn>
+                                                                    <dx:GridViewDataTextColumn FieldName="InvoiceReportDetail_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="10">
                                                                     </dx:GridViewDataTextColumn>
                                                                 </Columns>
                                                                 <TotalSummary>
@@ -4531,7 +4100,7 @@ computeNetAmount(&quot;edit&quot;);
     </div>
 </div>
     
-    <asp:SqlDataSource ID="SqlMain" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_ExpenseMain] WHERE ([ID] = @ID)">
+    <asp:SqlDataSource ID="SqlMain" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_InvoiceMain] WHERE ([ID] = @ID)">
         <SelectParameters>
             <asp:Parameter Name="ID" Type="Int32" />
         </SelectParameters>
@@ -4601,9 +4170,9 @@ computeNetAmount(&quot;edit&quot;);
             <asp:Parameter Name="UserId" Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlExpDetails" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_ExpenseDetails] WHERE ([ExpenseMain_ID] = @ExpenseMain_ID)">
+    <asp:SqlDataSource ID="SqlExpDetails" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_InvoiceLineDetails] WHERE ([InvMain_ID] = @InvMain_ID)">
         <SelectParameters>
-            <asp:Parameter Name="ExpenseMain_ID" Type="Int32" />
+            <asp:Parameter Name="InvMain_ID" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlDocs" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" DeleteCommand="DELETE FROM [ITP_T_FileAttachment] WHERE [ID] = @original_ID" InsertCommand="INSERT INTO [ITP_T_FileAttachment] ([FileName], [Description], [DateUploaded], [FileSize]) VALUES (@FileName, @Description, @DateUploaded, @FileSize)" OldValuesParameterFormatString="original_{0}" SelectCommand="SELECT [ID], [FileName], [Description], [DateUploaded], [FileSize] FROM [ITP_T_FileAttachment] WHERE (([App_ID] = @App_ID) AND ([Doc_ID] = @Doc_ID) AND ([DocType_Id] = @DocType_Id))" UpdateCommand="UPDATE [ITP_T_FileAttachment] SET [FileName] = @FileName, [Description] = @Description, [DateUploaded] = @DateUploaded, [FileSize] = @FileSize WHERE [ID] = @original_ID">
@@ -4647,9 +4216,9 @@ computeNetAmount(&quot;edit&quot;);
             <asp:Parameter Name="UserId" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlExpMap" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_ExpenseDetailsMap] WHERE ([ExpenseReportDetail_ID] = @ExpenseReportDetail_ID)" DeleteCommand="DELETE FROM [ACCEDE_T_ExpenseDetailsMap] WHERE [ExpenseDetailMap_ID] = @ExpenseDetailMap_ID" InsertCommand="INSERT INTO [ACCEDE_T_ExpenseDetailsMap] ([AccountToCharged], [CostCenterIOWBS], [VAT], [EWT], [NetAmount], [ExpenseReportDetail_ID], [Preparer_ID], [EDM_Remarks]) VALUES (@AccountToCharged, @CostCenterIOWBS, @VAT, @EWT, @NetAmount, @ExpenseReportDetail_ID, @Preparer_ID, @EDM_Remarks)" UpdateCommand="UPDATE [ACCEDE_T_ExpenseDetailsMap] SET [AccountToCharged] = @AccountToCharged, [CostCenterIOWBS] = @CostCenterIOWBS, [VAT] = @VAT, [EWT] = @EWT, [NetAmount] = @NetAmount, [ExpenseReportDetail_ID] = @ExpenseReportDetail_ID, [Preparer_ID] = @Preparer_ID, [EDM_Remarks] = @EDM_Remarks WHERE [ExpenseDetailMap_ID] = @ExpenseDetailMap_ID">
+    <asp:SqlDataSource ID="SqlInvMap" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_InvoiceLineDetailsMap] WHERE ([InvoiceReportDetail_ID] = @InvoiceReportDetail_ID)" DeleteCommand="DELETE FROM [ACCEDE_T_InvoiceLineDetailsMap] WHERE [InvoiceDetailMap_ID] = @InvoiceDetailMap_ID" InsertCommand="INSERT INTO [ACCEDE_T_InvoiceLineDetailsMap] ([AccountToCharged], [CostCenterIOWBS], [VAT], [EWT], [NetAmount], [InvoiceReportDetail_ID], [Preparer_ID], [EDM_Remarks]) VALUES (@AccountToCharged, @CostCenterIOWBS, @VAT, @EWT, @NetAmount, @InvoiceReportDetail_ID, @Preparer_ID, @EDM_Remarks)" UpdateCommand="UPDATE [ACCEDE_T_InvoiceLineDetailsMap] SET [AccountToCharged] = @AccountToCharged, [CostCenterIOWBS] = @CostCenterIOWBS, [VAT] = @VAT, [EWT] = @EWT, [NetAmount] = @NetAmount, [InvoiceReportDetail_ID] = @InvoiceReportDetail_ID, [Preparer_ID] = @Preparer_ID, [EDM_Remarks] = @EDM_Remarks WHERE [InvoiceDetailMap_ID] = @InvoiceDetailMap_ID">
         <DeleteParameters>
-            <asp:Parameter Name="ExpenseDetailMap_ID" Type="Int32" />
+            <asp:Parameter Name="InvoiceDetailMap_ID" Type="Int32" />
         </DeleteParameters>
         <InsertParameters>
             <asp:Parameter Name="AccountToCharged" Type="Int32" />
@@ -4657,12 +4226,12 @@ computeNetAmount(&quot;edit&quot;);
             <asp:Parameter Name="VAT" Type="Decimal" />
             <asp:Parameter Name="EWT" Type="Decimal" />
             <asp:Parameter Name="NetAmount" Type="Decimal" />
-            <asp:Parameter Name="ExpenseReportDetail_ID" Type="Int32" />
+            <asp:Parameter Name="InvoiceReportDetail_ID" Type="Int32" />
             <asp:Parameter Name="Preparer_ID" Type="String" />
             <asp:Parameter Name="EDM_Remarks" Type="String" />
         </InsertParameters>
         <SelectParameters>
-            <asp:SessionParameter Name="ExpenseReportDetail_ID" SessionField="ExpDetailsID" Type="Int32" />
+            <asp:Parameter Name="InvoiceReportDetail_ID" Type="Int32" />
         </SelectParameters>
         <UpdateParameters>
             <asp:Parameter Name="AccountToCharged" Type="Int32" />
@@ -4670,10 +4239,10 @@ computeNetAmount(&quot;edit&quot;);
             <asp:Parameter Name="VAT" Type="Decimal" />
             <asp:Parameter Name="EWT" Type="Decimal" />
             <asp:Parameter Name="NetAmount" Type="Decimal" />
-            <asp:Parameter Name="ExpenseReportDetail_ID" Type="Int32" />
+            <asp:Parameter Name="InvoiceReportDetail_ID" Type="Int32" />
             <asp:Parameter Name="Preparer_ID" Type="String" />
             <asp:Parameter Name="EDM_Remarks" Type="String" />
-            <asp:Parameter Name="ExpenseDetailMap_ID" Type="Int32" />
+            <asp:Parameter Name="InvoiceDetailMap_ID" Type="Int32" />
         </UpdateParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlParticulars" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_Particulars]"></asp:SqlDataSource>

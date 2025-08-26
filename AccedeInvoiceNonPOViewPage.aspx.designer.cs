@@ -105,13 +105,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox ASPxTextBox14;
 
         /// <summary>
-        /// ASPxTextBox4 control.
+        /// txt_TranType control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox ASPxTextBox4;
+        protected global::DevExpress.Web.ASPxTextBox txt_TranType;
 
         /// <summary>
         /// ASPxTextBox6 control.

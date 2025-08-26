@@ -101,7 +101,7 @@ namespace DX_WebTemplate
             string encryptedID = Encrypt(expID); // Implement the Encrypt method securely
             
 
-            Session["NonPOExpenseId"] = e.Parameters.Split('|').First();
+            Session["NonPOInvoiceId"] = e.Parameters.Split('|').First();
             if (e.Parameters.Split('|').Last() == "btnEdit")
             {
                 ASPxWebControl.RedirectOnCallback("AccedeNonPOEditPage.aspx");
@@ -200,27 +200,28 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static bool AddExpenseReportAJAX(string expName, string expDate, string Comp, string CostCenter, string expCat, string Purpose, bool isTrav, string currency, string department, string payType, string classification, string CTComp_id, string CTDept_id, string CompLoc)
+        public static bool AddInvoiceReportAJAX(string expName, string expDate, string Comp, string CostCenter, string expCat, string Purpose, bool isTrav, string currency, string department, string payType, string CTComp_id, string CTDept_id, string CompLoc)
         {
             AccedeInvoiceNonPODashboard accede = new AccedeInvoiceNonPODashboard();
 
-            return accede.AddExpenseReport(expName, expDate, Comp, CostCenter, expCat, Purpose, isTrav, currency, department, payType, classification, CTComp_id, CTDept_id, CompLoc);
+            return accede.AddInvoiceReport(expName, expDate, Comp, CostCenter, expCat, Purpose, isTrav, currency, department, payType, CTComp_id, CTDept_id, CompLoc);
         }
 
-        public bool AddExpenseReport(string expName, string expDate, string Comp, string CostCenter, string expCat, string Purpose, bool isTrav, string currency, string department, string payType, string classification, string CTComp_id, string CTDept_id, string CompLoc)
+        public bool AddInvoiceReport(string expName, string expDate, string Comp, string CostCenter, string expCat, string Purpose, bool isTrav, string currency, string department, string payType, string CTComp_id, string CTDept_id, string CompLoc)
         {
-            var expDoctype = context.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense").FirstOrDefault();
+            var expDoctype = context.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE InvoiceNPO").FirstOrDefault();
             try
             {
                 GenerateDocNo generateDocNo = new GenerateDocNo();
                 generateDocNo.RunStoredProc_GenerateDocNum(Convert.ToInt32(expDoctype.DCT_Id), Convert.ToInt32(Comp), 1032);
                 var docNo = generateDocNo.GetLatest_DocNum(Convert.ToInt32(expDoctype.DCT_Id), Convert.ToInt32(Comp), 1032);
 
-                ACCEDE_T_ExpenseMain main = new ACCEDE_T_ExpenseMain();
+                ACCEDE_T_InvoiceMain main = new ACCEDE_T_InvoiceMain();
                 {
-                    main.ExpenseName = expName;
+                    main.VendorName = expName;
                     main.ReportDate = Convert.ToDateTime(expDate);
-                    main.ExpenseType_ID = Convert.ToInt32(payType);
+                    main.PaymentType = Convert.ToInt32(payType);
+                    main.InvoiceType_ID = 3; // Assuming 3 is the ID for Payment to Vendor
                     //if(Comp != "")
                     //{
                     //    main.CompanyId = Convert.ToInt32(Comp);
@@ -236,21 +237,19 @@ namespace DX_WebTemplate
                     main.UserId = Session["userID"].ToString();
                     main.DocNo = docNo;
                     main.DateCreated = DateTime.Now;
-                    main.isTravel = isTrav;
                     main.Exp_Currency = currency;
                     //if(department != "")
                     //{
                     //    main.Dept_Id = Convert.ToInt32(department);
                     //}
-                    main.ExpenseClassification = Convert.ToInt32(classification);
-                    main.ExpChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
-                    main.ExpChargedTo_DeptId = Convert.ToInt32(CTDept_id);
-                    main.ExpComp_Location_Id = Convert.ToInt32(CompLoc);
+                    main.InvChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
+                    main.InvChargedTo_DeptId = Convert.ToInt32(CTDept_id);
+                    main.InvComp_Location_Id = Convert.ToInt32(CompLoc);
                 }
-                context.ACCEDE_T_ExpenseMains.InsertOnSubmit(main);
+                context.ACCEDE_T_InvoiceMains.InsertOnSubmit(main);
                 context.SubmitChanges();
 
-                Session["NonPOExpenseId"] = main.ID;
+                Session["NonPOInvoiceId"] = main.ID;
 
             }
             catch (Exception ex)

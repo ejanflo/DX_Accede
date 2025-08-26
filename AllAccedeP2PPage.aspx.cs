@@ -1,10 +1,13 @@
-﻿using DevExpress.Web;
+﻿using DevExpress.DataProcessing.InMemoryDataProcessor;
+using DevExpress.Web;
+using DevExpress.XtraRichEdit.Fields;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
+using System.Web.DynamicData;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -46,6 +49,8 @@ namespace DX_WebTemplate
                         docno = Convert.ToString(context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.DocNo).FirstOrDefault() ?? string.Empty);
                     else if (appname == "ACDE Expense Travel")
                         docno = Convert.ToString(context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.Doc_No).FirstOrDefault() ?? string.Empty);
+                    else if (appname == "ACDE InvoiceNPO")
+                        docno = Convert.ToString(context.ACCEDE_T_InvoiceMains.Where(x => x.ID == id).Select(x => x.DocNo).FirstOrDefault() ?? string.Empty);
                 }
 
                 e.DisplayText = docno;
@@ -81,7 +86,10 @@ namespace DX_WebTemplate
                         else
                         {
                             string useridRaw = context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.ExpenseName).FirstOrDefault();
-                            string userid = new string(useridRaw?.Where(char.IsDigit).ToArray());
+                            string raw = useridRaw.ToString();
+                            string cleaned = raw.Replace("\r", "").Replace("\n", "");
+
+                            string userid = new string(cleaned?.Where(char.IsDigit).ToArray());
                             if (!string.IsNullOrEmpty(userid))
                             {
                                 empname = context.ACCEDE_S_Vendors.Where(x => x.VendorCode == userid).Select(x => x.VendorName).FirstOrDefault()?.ToUpper() ?? string.Empty;
@@ -96,6 +104,18 @@ namespace DX_WebTemplate
                         if (!string.IsNullOrEmpty(userid))
                         {
                             empname = context.ITP_S_UserMasters.Where(x => x.EmpCode == userid).Select(x => x.FullName).FirstOrDefault()?.ToUpper() ?? string.Empty;
+                        }
+                    }
+                    else if (appname == "ACDE InvoiceNPO")
+                    {
+                        string useridRaw = context.ACCEDE_T_InvoiceMains.Where(x => x.ID == id).Select(x => x.VendorName).FirstOrDefault();
+                        string raw = useridRaw.ToString();
+                        string cleaned = raw.Replace("\r", "").Replace("\n", "");
+
+                        string userid = new string(cleaned?.Where(char.IsDigit).ToArray());
+                        if (!string.IsNullOrEmpty(userid))
+                        {
+                            empname = context.ACCEDE_S_Vendors.Where(x => x.VendorCode == userid).Select(x => x.VendorName).FirstOrDefault()?.ToUpper() ?? string.Empty;
                         }
                     }
                 }
@@ -118,7 +138,7 @@ namespace DX_WebTemplate
                     }
                     else if (appname == "ACDE Expense")
                     {
-                        int depid = Convert.ToInt32(context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.Dept_Id).FirstOrDefault());
+                        int depid = Convert.ToInt32(context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.ExpChargedTo_DeptId).FirstOrDefault());
                         if (depid != 0)
                             department = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == depid).Select(x => x.DepDesc).FirstOrDefault().ToUpper();
                     }
@@ -127,6 +147,12 @@ namespace DX_WebTemplate
                         string depid = Convert.ToString(context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.Dep_Code).FirstOrDefault());
                         if (!string.IsNullOrEmpty(depid))
                             department = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(depid)).Select(x => x.DepDesc).FirstOrDefault().ToUpper();
+                    }
+                    else if (appname == "ACDE InvoiceNPO")
+                    {
+                        int depid = Convert.ToInt32(context.ACCEDE_T_InvoiceMains.Where(x => x.ID == id).Select(x => x.InvChargedTo_DeptId).FirstOrDefault());
+                        if (depid != 0)
+                            department = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == depid).Select(x => x.DepDesc).FirstOrDefault().ToUpper();
                     }
                 }
 
@@ -164,6 +190,8 @@ namespace DX_WebTemplate
                         purpose = Convert.ToString(context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.Purpose).FirstOrDefault() ?? string.Empty);
                     else if (appname == "ACDE Expense Travel")
                         purpose = Convert.ToString(context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.Purpose).FirstOrDefault() ?? string.Empty);
+                    else if (appname == "ACDE InvoiceNPO")
+                        purpose = Convert.ToString(context.ACCEDE_T_InvoiceMains.Where(x => x.ID == id).Select(x => x.Purpose).FirstOrDefault() ?? string.Empty);
                 }
 
                 e.DisplayText = purpose;
@@ -191,6 +219,12 @@ namespace DX_WebTemplate
                     else if (appname == "ACDE Expense Travel")
                     {
                         string userid = Convert.ToString(context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.Preparer_Id).FirstOrDefault());
+                        if (!string.IsNullOrEmpty(userid))
+                            preparer = context.ITP_S_UserMasters.Where(x => x.EmpCode == userid).Select(x => x.FullName).FirstOrDefault().ToUpper();
+                    }
+                    else if (appname == "ACDE InvoiceNPO")
+                    {
+                        string userid = context.ACCEDE_T_InvoiceMains.Where(x => x.ID == id).Select(x => x.UserId).FirstOrDefault();
                         if (!string.IsNullOrEmpty(userid))
                             preparer = context.ITP_S_UserMasters.Where(x => x.EmpCode == userid).Select(x => x.FullName).FirstOrDefault().ToUpper();
                     }
@@ -255,12 +289,18 @@ namespace DX_WebTemplate
                         string redirectUrl = $"~/AccedeP2PViewPage.aspx?secureToken={encryptedID}";
                         ASPxWebControl.RedirectOnCallback(redirectUrl);
                     }
+                    
                 }
                 else if (app == "ACDE Expense Travel")
                 {
                     Session["prep"] = context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).Select(x => x.Preparer_Id).FirstOrDefault();
                     Session["empid"] = context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).Select(x => x.Employee_Id).FirstOrDefault();
                     ASPxWebControl.RedirectOnCallback("~/TravelExpenseReview.aspx");
+                }
+                else if (app == "ACDE InvoiceNPO")
+                {
+                    string redirectUrl = $"~/AccedeNonPO_P2PView.aspx?secureToken={encryptedID}";
+                    ASPxWebControl.RedirectOnCallback(redirectUrl);
                 }
 
             }

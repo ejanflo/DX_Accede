@@ -71,7 +71,6 @@
             var isTrav = rdButton_Trav.GetValue();
             var currency = txt_Currency.GetValue();
             var department = drpdown_Department.GetValue() != null ? drpdown_Department.GetValue() : "";
-            var classification = drpdown_classification.GetValue();
             var CTComp_id = drpdown_CTComp.GetValue();
             var CTDept_id = drpdown_CTDepartment.GetValue();
             var CompLoc = drpdown_CompLocation.GetValue();
@@ -80,7 +79,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "AccedeInvoiceNonPODashboard.aspx/AddExpenseReportAJAX",
+                url: "AccedeInvoiceNonPODashboard.aspx/AddInvoiceReportAJAX",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: JSON.stringify({
@@ -94,7 +93,6 @@
                     currency: currency,
                     department: department,
                     payType: payType,
-                    classification: classification,
                     CTComp_id: CTComp_id,
                     CTDept_id: CTDept_id,
                     CompLoc: CompLoc
@@ -455,7 +453,7 @@
                                                     <CellStyle HorizontalAlign="Left">
                                                     </CellStyle>
                                                 </dx:GridViewCommandColumn>
-                                                <dx:GridViewDataComboBoxColumn Caption="Company" FieldName="ExpChargedTo_CompanyId" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                <dx:GridViewDataComboBoxColumn Caption="Company" FieldName="InvChargedTo_CompanyId" ShowInCustomizationForm="True" VisibleIndex="5">
                                                     <PropertiesComboBox DataSourceID="sqlCompany" TextField="CompanyShortName" ValueField="WASSId">
                                                     </PropertiesComboBox>
                                                 </dx:GridViewDataComboBoxColumn>
@@ -463,8 +461,8 @@
                                                     <PropertiesComboBox DataSourceID="sqlExpenseType" TextField="Description" ValueField="ExpenseType_ID">
                                                     </PropertiesComboBox>
                                                 </dx:GridViewDataComboBoxColumn>
-                                                <dx:GridViewDataComboBoxColumn Caption="Name" FieldName="UserId" ShowInCustomizationForm="True" VisibleIndex="4">
-                                                    <PropertiesComboBox DataSourceID="sqlName" TextField="FullName" ValueField="EmpCode">
+                                                <dx:GridViewDataComboBoxColumn Caption="Vendor" FieldName="VendorName" ShowInCustomizationForm="True" VisibleIndex="4">
+                                                    <PropertiesComboBox DataSourceID="SqlVendor" TextField="VendorName" ValueField="VendorCode">
                                                     </PropertiesComboBox>
                                                 </dx:GridViewDataComboBoxColumn>
                                                 <dx:GridViewDataComboBoxColumn FieldName="Status" ShowInCustomizationForm="True" VisibleIndex="8">
@@ -798,10 +796,9 @@ drpdown_CompLocation.PerformCallback(s.GetValue());
             </SelectParameters>
         </asp:SqlDataSource>
         <asp:SqlDataSource ID="sqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT [WASSId], [CompanyDesc], [CompanyShortName] FROM [CompanyMaster] WHERE ([WASSId] IS NOT NULL) ORDER BY [CompanyDesc]"></asp:SqlDataSource>
-        <asp:SqlDataSource ID="sqlExpense" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_ExpenseMain] WHERE (([UserId] = @UserId) AND ([ExpenseType_ID] = @ExpenseType_ID)) ORDER BY [ID] DESC">
+        <asp:SqlDataSource ID="sqlExpense" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_InvoiceMain] WHERE ([UserId] = @UserId)">
             <SelectParameters>
                 <asp:Parameter Name="UserId" Type="String" />
-                <asp:Parameter DefaultValue="3" Name="ExpenseType_ID" Type="Int32" />
             </SelectParameters>
         </asp:SqlDataSource>
         <asp:SqlDataSource ID="sqlStatus" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_Status]"></asp:SqlDataSource>
@@ -844,9 +841,9 @@ drpdown_CompLocation.PerformCallback(s.GetValue());
             <asp:SessionParameter Name="Exp_ID" SessionField="AccedeExpenseID" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlExpDetails" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_ExpenseDetails] WHERE ([ExpenseMain_ID] = @ExpenseMain_ID)">
+    <asp:SqlDataSource ID="SqlExpDetails" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_InvoiceLineDetails] WHERE ([InvMain_ID] = @InvMain_ID)">
         <SelectParameters>
-            <asp:SessionParameter Name="ExpenseMain_ID" SessionField="AccedeExpenseID" Type="Int32" />
+            <asp:Parameter Name="InvMain_ID" Type="Int32" />
         </SelectParameters>
      </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlReim" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_RFPMain] WHERE (([IsExpenseReim] = @IsExpenseReim) AND ([TranType] = @TranType) AND ([Exp_ID] = @Exp_ID))">

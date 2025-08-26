@@ -60,13 +60,25 @@ namespace DX_WebTemplate
                     }
                     else
                     {
-                        var regularExp = _DataContext.ACCEDE_T_ExpenseMains
-                                         .FirstOrDefault(x => x.ID == rfp_details.Exp_ID);
-                        // Do something with regularExp
-                        if (regularExp != null)
-                            lbl_expLink.Text = regularExp.DocNo.ToString();
+                        if(rfp_details.TranType == 3)
+                        {
+                            var invoice = _DataContext.ACCEDE_T_InvoiceMains.FirstOrDefault(x => x.ID == Convert.ToInt32(rfp_details.Exp_ID));
+                            if (invoice != null)
+                                lbl_expLink.Text = invoice.DocNo.ToString();
+                            else
+                                ExpBtn.Visible = false;
+                        }
                         else
-                            ExpBtn.Visible = false;
+                        {
+                            var regularExp = _DataContext.ACCEDE_T_ExpenseMains
+                                             .FirstOrDefault(x => x.ID == rfp_details.Exp_ID);
+                            // Do something with regularExp
+                            if (regularExp != null)
+                                lbl_expLink.Text = regularExp.DocNo.ToString();
+                            else
+                                ExpBtn.Visible = false;
+                        }
+                            
                     }
 
                     if(rfp_details.TranType == 3)
@@ -109,6 +121,10 @@ namespace DX_WebTemplate
                         }
                         else
                         {
+                            if(rfp_details.TranType == 3)
+                            {
+                                expDoc.Caption = "Link to Invoice Details";
+                            }
                             rdButton_Trav.Checked = false;
                             rdButton_NonTrav.Checked = true;
                             tType.ClientVisible = false;

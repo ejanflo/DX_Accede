@@ -328,10 +328,10 @@
     <asp:SqlDataSource ID="sqlStatus" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_Status]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="sqlAllApproval" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT Document_Id, Status, STS_Description, DateAssigned, DateAction, AppDocTypeId, AppId, 
        Remarks, UserId, CompanyId, TranType, WF_Id, WFD_Id, WFA_Id, 
-       Travel_Id, NoTravel_Id, RFP_Id, Location
+       Travel_Id, NoTravel_Id, RFP_Id, Location, Inv_Id
 FROM vw_ACCEDE_I_AllAccedeP2P
 WHERE UserId = @UserId
-  AND (Document_Id = Travel_Id OR Document_Id = NoTravel_Id OR Document_Id = RFP_Id)
+  AND (Document_Id = Travel_Id OR Document_Id = NoTravel_Id OR Document_Id = RFP_Id OR Document_Id = Inv_Id)
   AND (
         AppDocTypeId &lt;&gt; 1011 
         OR (TranType &lt;&gt; 2 AND TranType &lt;&gt; 3)

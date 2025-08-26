@@ -229,7 +229,7 @@
                     //vat_edit.SetValue(response.d.vat);
                     //ewt_edit.SetValue(response.d.ewt);
                     //io_edit.SetValue(response.d.io);
-                    expLine_LineDesc.SetValue(response.d.remarks);
+                    expLine_LineDesc.SetValue(response.d.LineDesc);
                     //wbs_edit.SetValue(response.d.wbs);
                     expLine_ExpCat.SetValue(response.d.acctCharge);
                     //txt_assign_edit.SetValue(response.d.Assignment);
@@ -687,10 +687,10 @@
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Transaction Type" ColSpan="1" FieldName="ExpTypeName">
+                                    <dx:LayoutItem Caption="Transaction Type" ColSpan="1">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxTextBox ID="ASPxTextBox4" runat="server" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
+                                                <dx:ASPxTextBox ID="txt_TranType" runat="server" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%" ClientInstanceName="txt_TranType">
                                                     <Border BorderStyle="None" />
                                                     <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
                                                 </dx:ASPxTextBox>
@@ -829,7 +829,7 @@
                                     </dx:EmptyLayoutItem>
                                     <dx:LayoutGroup Caption="RFP DETAILS" ClientVisible="False" ColSpan="1" Name="ReimLayout">
                                         <Items>
-                                            <dx:LayoutItem Caption="" ColSpan="1" FieldName="ExpDocNo">
+                                            <dx:LayoutItem Caption="" ColSpan="1">
                                                 <LayoutItemNestedControlCollection>
                                                     <dx:LayoutItemNestedControlContainer runat="server">
                                                         <asp:Panel ID="pnlExpLink" runat="server" CssClass="exp-link-container">
@@ -868,43 +868,33 @@ linkToRFP();
                                     <dx:LayoutItem Caption="" ColSpan="1">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxGridView ID="ExpGrid" runat="server" Width="100%" AutoGenerateColumns="False" DataSourceID="SqlExpDetails" KeyFieldName="ExpenseReportDetail_ID">
+                                                <dx:ASPxGridView ID="ExpGrid" runat="server" Width="100%" AutoGenerateColumns="False" DataSourceID="SqlExpDetails" KeyFieldName="ID">
                                                     <ClientSideEvents CustomButtonClick="onCustomButtonClick" />
                                                     <SettingsPopup>
                                                         <FilterControl AutoUpdatePosition="False">
                                                         </FilterControl>
                                                     </SettingsPopup>
                                                     <Columns>
-                                                        <dx:GridViewDataTextColumn FieldName="ExpenseReportDetail_ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="7">
+                                                        <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="7">
                                                             <EditFormSettings Visible="False" />
                                                         </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataDateColumn FieldName="DateAdded" ShowInCustomizationForm="True" Visible="False" VisibleIndex="8">
                                                         </dx:GridViewDataDateColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Supplier" ShowInCustomizationForm="True" VisibleIndex="2">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="TIN" ShowInCustomizationForm="True" Visible="False" VisibleIndex="9">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="InvoiceOR" ShowInCustomizationForm="True" Visible="False" VisibleIndex="10">
-                                                        </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataTextColumn FieldName="P_Name" ShowInCustomizationForm="True" VisibleIndex="1" Caption="Particulars">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="AccountToCharged" ShowInCustomizationForm="True" Visible="False" VisibleIndex="11">
+                                                        <dx:GridViewDataTextColumn FieldName="AcctToCharged" ShowInCustomizationForm="True" Visible="False" VisibleIndex="11">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="CostCenterIOWBS" ShowInCustomizationForm="True" Visible="False" VisibleIndex="12">
-                                                        </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="GrossAmount" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                        <dx:GridViewDataTextColumn FieldName="TotalAmount" ShowInCustomizationForm="True" VisibleIndex="6" Caption="Total Amount">
                                                             <PropertiesTextEdit DisplayFormatString="#,##0.00">
                                                             </PropertiesTextEdit>
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="VAT" ShowInCustomizationForm="True" VisibleIndex="4">
+                                                        <dx:GridViewDataTextColumn FieldName="Qty" ShowInCustomizationForm="True" VisibleIndex="4">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="EWT" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                        <dx:GridViewDataTextColumn FieldName="UnitPrice" ShowInCustomizationForm="True" VisibleIndex="5">
                                                         </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataTextColumn FieldName="NetAmount" ShowInCustomizationForm="True" Visible="False" VisibleIndex="13">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataCheckColumn FieldName="IsUploaded" ShowInCustomizationForm="True" Visible="False" VisibleIndex="14">
-                                                        </dx:GridViewDataCheckColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="ExpenseMain_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="15">
+                                                        <dx:GridViewDataTextColumn FieldName="InvMain_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="15">
                                                         </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataTextColumn FieldName="Preparer_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="16">
                                                         </dx:GridViewDataTextColumn>
@@ -923,7 +913,7 @@ linkToRFP();
                                                             <CellStyle HorizontalAlign="Left">
                                                             </CellStyle>
                                                         </dx:GridViewCommandColumn>
-                                                        <dx:GridViewDataTextColumn Caption="Remarks" FieldName="ExpDetail_remarks" ShowInCustomizationForm="True" VisibleIndex="6">
+                                                        <dx:GridViewDataTextColumn Caption="Line Description" FieldName="LineDescription" ShowInCustomizationForm="True" VisibleIndex="3">
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:ASPxGridView>
@@ -2634,7 +2624,7 @@ RecallClick(); RecallPopup.Hide();
                                                 <dx:LayoutItem ColSpan="1" Width="100%" ShowCaption="False">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxGridView ID="ExpAllocGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="ExpAllocGrid" KeyFieldName="ExpenseDetailMap_ID" OnCustomCallback="ExpAllocGrid_CustomCallback" Width="100%" DataSourceID="SqlExpMap">
+                                                            <dx:ASPxGridView ID="ExpAllocGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="ExpAllocGrid" KeyFieldName="InvoiceDetailMap_ID" OnCustomCallback="ExpAllocGrid_CustomCallback" Width="100%" DataSourceID="SqlExpMap">
                                                                 <SettingsPager Mode="EndlessPaging">
                                                                 </SettingsPager>
                                                                 <SettingsEditing Mode="Inline">
@@ -2734,7 +2724,7 @@ RecallClick(); RecallPopup.Hide();
         <dx:ASPxLoadingPanel ID="LoadingPanel" runat="server" Text="Loading&amp;hellip;" Theme="MaterialCompact" ClientInstanceName="LoadingPanel" Modal="True">
     </dx:ASPxLoadingPanel>
     </div>
-    <asp:SqlDataSource ID="sqlMain" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_ExpApprovalView] WHERE ([ID] = @ID)">
+    <asp:SqlDataSource ID="sqlMain" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_InvApprovalView] WHERE ([ID] = @ID)">
         <SelectParameters>
             <asp:Parameter Name="ID" Type="Int32" />
         </SelectParameters>
@@ -2755,24 +2745,21 @@ RecallClick(); RecallPopup.Hide();
             <asp:Parameter DefaultValue="" Name="Exp_ID" Type="Int32" />
         </SelectParameters>
      </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlExpDetails" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_ExpenseDetails] WHERE ([ExpenseMain_ID] = @ExpenseMain_ID)">
+    <asp:SqlDataSource ID="SqlExpDetails" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_InvLineDetails] WHERE ([InvMain_ID] = @InvMain_ID) ORDER BY [LineNum]">
         <SelectParameters>
-            <asp:Parameter Name="ExpenseMain_ID" Type="Int32" />
+            <asp:Parameter Name="InvMain_ID" Type="Int32" />
         </SelectParameters>
      </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlReimDetails" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_RFPMainView] WHERE (([Exp_ID] = @Exp_ID) AND ([IsExpenseReim] = @IsExpenseReim) AND ([Status] &lt;&gt; @Status))">
-    <SelectParameters>
-        <asp:Parameter Name="Exp_ID" Type="Int32" />
-        <asp:Parameter DefaultValue="True" Name="IsExpenseReim" Type="Boolean" />
-        <asp:Parameter DefaultValue="4" Name="Status" Type="Int32" />
-    </SelectParameters>
- </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlWFActivity" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_ExpWFActivity] WHERE (([AppId] = @AppId) AND ([Document_Id] = @Document_Id) AND ([isTravel] &lt;&gt; @isTravel) AND ([DCT_Name] = @DCT_Name)) ORDER BY [DateAssigned]">
         <SelectParameters>
-            <asp:Parameter DefaultValue="1032" Name="AppId" Type="Int32" />
-            <asp:Parameter DefaultValue="" Name="Document_Id" Type="Int32" />
-            <asp:Parameter DefaultValue="True" Name="isTravel" Type="Boolean" />
-            <asp:Parameter DefaultValue="ACDE Expense" Name="DCT_Name" Type="String" />
+            <asp:Parameter Name="Exp_ID" Type="Int32" />
+            <asp:Parameter DefaultValue="True" Name="IsExpenseReim" Type="Boolean" />
+            <asp:Parameter DefaultValue="4" Name="Status" Type="Int32" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlWFActivity" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_InvWFActivity] WHERE ([Document_Id] = @Document_Id)">
+        <SelectParameters>
+            <asp:Parameter Name="Document_Id" Type="Int32" />
         </SelectParameters>
      </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlDocs" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_T_FileAttachment] WHERE (([Doc_ID] = @Doc_ID) AND ([App_ID] = @App_ID) AND ([DocType_Id] = @DocType_Id))">
@@ -2792,9 +2779,9 @@ RecallClick(); RecallPopup.Hide();
             <asp:Parameter Name="Doc_ID" Type="Int32" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlExpMap" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_ExpenseDetailsMap] WHERE ([ExpenseReportDetail_ID] = @ExpenseReportDetail_ID)">
+    <asp:SqlDataSource ID="SqlExpMap" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_InvoiceLineDetailsMap] WHERE ([InvoiceReportDetail_ID] = @InvoiceReportDetail_ID)">
         <SelectParameters>
-            <asp:Parameter Name="ExpenseReportDetail_ID" Type="Int32" />
+            <asp:Parameter Name="InvoiceReportDetail_ID" Type="Int32" />
         </SelectParameters>
      </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlExpDetailAttach" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_ExpDetailsFileAttach] WHERE ([ExpDetail_Id] = @ExpDetail_Id)">

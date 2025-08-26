@@ -708,15 +708,6 @@ namespace DX_WebTemplate
         protected global::System.Web.UI.WebControls.SqlDataSource SqlExpDetails;
 
         /// <summary>
-        /// SqlReimDetails control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.SqlDataSource SqlReimDetails;
-
-        /// <summary>
         /// SqlWFActivity control.
         /// </summary>
         /// <remarks>
@@ -724,6 +715,15 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlWFActivity;
+
+        /// <summary>
+        /// SqlReimDetails control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlReimDetails;
 
         /// <summary>
         /// SqlDocs control.

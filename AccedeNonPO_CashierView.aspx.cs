@@ -48,41 +48,48 @@ namespace DX_WebTemplate
                                 .Where(x => x.WFA_Id == Convert.ToInt32(actID))
                                 .FirstOrDefault();
 
-                            var expDetails = _DataContext.ACCEDE_T_ExpenseMains
+                            var invDetails = _DataContext.ACCEDE_T_InvoiceMains
                                 .Where(x => x.ID == Convert.ToInt32(actDetails.Document_Id))
                                 .FirstOrDefault();
 
-                            sqlMain.SelectParameters["ID"].DefaultValue = expDetails.ID.ToString();
-                            SqlDocs.SelectParameters["Doc_ID"].DefaultValue = expDetails.ID.ToString();
-                            SqlCA.SelectParameters["Exp_ID"].DefaultValue = expDetails.ID.ToString();
-                            SqlReimDetails.SelectParameters["Exp_ID"].DefaultValue = expDetails.ID.ToString();
-                            SqlExpDetails.SelectParameters["ExpenseMain_ID"].DefaultValue = expDetails.ID.ToString();
-                            SqlWFActivity.SelectParameters["Document_Id"].DefaultValue = expDetails.ID.ToString();
+                            sqlMain.SelectParameters["ID"].DefaultValue = invDetails.ID.ToString();
+                            SqlDocs.SelectParameters["Doc_ID"].DefaultValue = invDetails.ID.ToString();
+                            SqlCA.SelectParameters["Exp_ID"].DefaultValue = invDetails.ID.ToString();
+                            SqlReimDetails.SelectParameters["Exp_ID"].DefaultValue = invDetails.ID.ToString();
+                            SqlExpDetails.SelectParameters["InvMain_ID"].DefaultValue = invDetails.ID.ToString();
+                            SqlWFActivity.SelectParameters["Document_Id"].DefaultValue = invDetails.ID.ToString();
 
-                            var exp = _DataContext.ACCEDE_T_ExpenseMains
-                                .Where(x => x.ID == expDetails.ID)
+                            var app_docType = _DataContext.ITP_S_DocumentTypes
+                                .Where(x => x.DCT_Name == "ACDE InvoiceNPO")
+                                .Where(x => x.App_Id == 1032)
                                 .FirstOrDefault();
 
-                            SqlWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp.WF_Id).ToString();
-                            SqlFAPWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp.FAPWF_Id).ToString();
+                            SqlDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType.DCT_Id.ToString();
 
-                            var status_id = exp.Status.ToString();
-                            var user_id = exp.UserId.ToString();
+                            //var inv = _DataContext.ACCEDE_T_InvoiceMains
+                            //    .Where(x => x.ID == invDetails.ID)
+                            //    .FirstOrDefault();
+
+                            SqlWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(invDetails.WF_Id).ToString();
+                            SqlFAPWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(invDetails.FAPWF_Id).ToString();
+
+                            var status_id = invDetails.Status.ToString();
+                            var user_id = invDetails.UserId.ToString();
 
                             var myLayoutGroup = FormExpApprovalView.FindItemOrGroupByName("ExpTitle") as LayoutGroup;
                             var btnDisburse = FormExpApprovalView.FindItemOrGroupByName("disburseBtn") as LayoutItem;
 
                             if (myLayoutGroup != null)
                             {
-                                myLayoutGroup.Caption = "Invoice Document -" + exp.DocNo.ToString() + " (View)";
+                                myLayoutGroup.Caption = "Invoice Document -" + invDetails.DocNo.ToString() + " (View)";
                             }
 
-                            string raw = exp.ExpenseName.ToString();
+                            string raw = invDetails.VendorName.ToString();
                             string cleaned = raw.Replace("\r", "").Replace("\n", "");
                             var payee = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == cleaned).FirstOrDefault();
                             txt_Vendor.Text = payee.VendorName.ToString();
 
-                            var ExpDetails = _DataContext.ACCEDE_T_ExpenseDetails.Where(x => x.ExpenseMain_ID == expDetails.ID);
+                            var ExpDetails = _DataContext.ACCEDE_T_InvoiceLineDetails.Where(x => x.InvMain_ID == invDetails.ID);
                             decimal totalExp = 0;
                             foreach (var item in ExpDetails)
                             {
@@ -90,9 +97,9 @@ namespace DX_WebTemplate
                             }
                             expenseTotal.Text = totalExp.ToString("#,##0.00") + "  PHP ";
 
-                            txt_InvoiceNo.Text = exp.InvoiceNonPO_No.ToString();
+                            txt_InvoiceNo.Text = invDetails.InvoiceNo?.ToString();
 
-                            var vendorDetails = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == exp.ExpenseName).FirstOrDefault();
+                            var vendorDetails = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == invDetails.VendorName).FirstOrDefault();
                             if (vendorDetails != null)
                             {
                                 string tin = vendorDetails.TaxID.ToString();
@@ -161,7 +168,7 @@ namespace DX_WebTemplate
                                             .Where(x => x.IsExpenseReim != true)
                                             .Where(x => x.IsExpenseCA != true)
                                             .Where(x => x.Status != 4)
-                                            .Where(x => x.Exp_ID == Convert.ToInt32(exp.ID))
+                                            .Where(x => x.Exp_ID == Convert.ToInt32(invDetails.ID))
                                             .Where(x => x.isTravel != true)
                                             .FirstOrDefault();
 
@@ -234,7 +241,7 @@ namespace DX_WebTemplate
                                 .Where(x => x.isTravel != true)
                                 .FirstOrDefault();
 
-                    var exp_main = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(wfDetails.Document_Id)).FirstOrDefault();
+                    var inv_main = _DataContext.ACCEDE_T_InvoiceMains.Where(x => x.ID == Convert.ToInt32(wfDetails.Document_Id)).FirstOrDefault();
 
                     var release_cash_status = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Disbursed").FirstOrDefault();
                     var completed_status = _DataContext.ITP_S_Status
@@ -267,7 +274,7 @@ namespace DX_WebTemplate
                         reimActDetails.ActedBy_User_Id = Session["userID"].ToString();
                     }
 
-                    exp_main.Status = completed_status.STS_Id;
+                    inv_main.Status = completed_status.STS_Id;
                     rfp_main.Status = release_cash_status.STS_Id;
 
                     Session["passRFPID"] = rfp_main.ID.ToString();
@@ -328,7 +335,7 @@ namespace DX_WebTemplate
                     .Where(x => x.WFA_Id == Convert.ToInt32(actID))
                     .FirstOrDefault();
 
-                var expMain = _DataContext.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(actDetails.Document_Id)).FirstOrDefault();
+                var invMain = _DataContext.ACCEDE_T_InvoiceMains.Where(x => x.ID == Convert.ToInt32(actDetails.Document_Id)).FirstOrDefault();
 
                 foreach (var file in UploadController.UploadedFiles)
                 {
@@ -351,7 +358,7 @@ namespace DX_WebTemplate
                     }
 
                     var app_docType = _DataContext.ITP_S_DocumentTypes
-                        .Where(x => x.DCT_Name == "ACDE Expense")
+                        .Where(x => x.DCT_Name == "ACDE InvoiceNPO")
                         .Where(x => x.App_Id == 1032)
                         .FirstOrDefault();
 
@@ -367,7 +374,7 @@ namespace DX_WebTemplate
                         docs.Description = file.FileName.Split('.').First();
                         docs.FileSize = filesizeStr;
                         docs.Doc_No = Session["DocNo"].ToString();
-                        docs.Company_ID = Convert.ToInt32(expMain.ExpChargedTo_CompanyId);
+                        docs.Company_ID = Convert.ToInt32(invMain.InvChargedTo_CompanyId);
                         docs.DateUploaded = DateTime.Now;
                         docs.DocType_Id = app_docType != null ? app_docType.DCT_Id : 0;
                     }
@@ -383,7 +390,7 @@ namespace DX_WebTemplate
 
         protected void ExpAllocGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
         {
-            SqlExpMap.SelectParameters["ExpenseReportDetail_ID"].DefaultValue = e.Parameters.ToString();
+            SqlExpMap.SelectParameters["InvoiceReportDetail_ID"].DefaultValue = e.Parameters.ToString();
             SqlExpMap.DataBind();
 
             ExpAllocGrid.DataBind();
