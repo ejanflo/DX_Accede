@@ -377,7 +377,7 @@
             //var ClassType = drpdown_classification.GetValue();
             $.ajax({
                 type: "POST",
-                url: "ExpenseApprovalView.aspx/btnDisapproveClickAjax",
+                url: "AccedeNonPO_AuditView.aspx/btnDisapproveClickAjax",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: JSON.stringify({
