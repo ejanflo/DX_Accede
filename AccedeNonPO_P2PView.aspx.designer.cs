@@ -213,6 +213,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox txt_vendor;
 
         /// <summary>
+        /// txt_vendorName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox txt_vendorName;
+
+        /// <summary>
         /// txt_TIN control.
         /// </summary>
         /// <remarks>
@@ -762,6 +771,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox expLine_Qty;
 
         /// <summary>
+        /// expLine_UOM control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox expLine_UOM;
+
+        /// <summary>
         /// expLine_UnitPrice control.
         /// </summary>
         /// <remarks>
@@ -778,6 +796,24 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxTextBox expLine_Total;
+
+        /// <summary>
+        /// expLine_ewt control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox expLine_ewt;
+
+        /// <summary>
+        /// expLine_vat control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox expLine_vat;
 
         /// <summary>
         /// expLine_NetAmnt control.
@@ -1023,6 +1059,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxSpinEdit qty_edit;
 
         /// <summary>
+        /// exp_UOM_edit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox exp_UOM_edit;
+
+        /// <summary>
         /// unit_price_edit control.
         /// </summary>
         /// <remarks>
@@ -1039,6 +1084,24 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxSpinEdit total_edit;
+
+        /// <summary>
+        /// ewt_edit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxSpinEdit ewt_edit;
+
+        /// <summary>
+        /// vat_edit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxSpinEdit vat_edit;
 
         /// <summary>
         /// net_amount_edit control.
@@ -1381,5 +1444,14 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlCompLocation;
+
+        /// <summary>
+        /// SqlUOM control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource SqlUOM;
     }
 }

@@ -359,7 +359,7 @@
                     expLine_ExpType.SetValue(response.d.particulars);
                     //supplier_edit.SetValue(response.d.supplier);
                     //tin_edit.SetValue(response.d.tin);
-                    expLine_Invoice.SetValue(response.d.invoice);
+                    expLine_Invoice.SetValue(response.d.InvoiceOR);
                     expLine_Total.SetValue(response.d.grossAmnt);
                     //dateAdded_edit.SetDate(new Date(response.d.dateAdded));
                     //console.log(response.d.dateAdded);
@@ -369,7 +369,7 @@
                     //vat_edit.SetValue(response.d.vat);
                     //ewt_edit.SetValue(response.d.ewt);
                     //io_edit.SetValue(response.d.io);
-                    expLine_LineDesc.SetValue(response.d.remarks);
+                    expLine_LineDesc.SetValue(response.d.LineDesc);
                     //wbs_edit.SetValue(response.d.wbs);
                     expLine_ExpCat.SetValue(response.d.acctCharge);
                     //txt_assign_edit.SetValue(response.d.Assignment);
@@ -380,6 +380,9 @@
                     //txt_InvTCode_edit.SetValue(response.d.InvoiceTaxCode);
                     expLine_Qty.SetValue(response.d.Qty);
                     expLine_UnitPrice.SetValue(response.d.UnitPrice);
+                    expLine_UOM.SetValue(response.d.uom);
+                    expLine_ewt.SetValue(response.d.ewt);
+                    expLine_vat.SetValue(response.d.vat);
                     //txt_Asset_edit.SetValue(response.d.Asset);
                     //txt_SubAsset_edit.SetValue(response.d.SubAssetCode);
                     //txt_AltRecon_edit.SetValue(response.d.AltRecon);
@@ -407,22 +410,20 @@
 
                 }),
                 success: function (response) {
-                    console.log("ok");
 
                     particulars_edit.SetValue(response.d.particulars);
                     //supplier_edit.SetValue(response.d.supplier);
                     //tin_edit.SetValue(response.d.tin);
-                    invoice_edit.SetValue(response.d.invoice);
+                    invoice_edit.SetValue(response.d.InvoiceOR);
                     total_edit.SetValue(response.d.grossAmnt);
                     dateAdded_edit.SetDate(new Date(response.d.dateAdded));
-                    console.log(response.d.dateAdded);
                     //accountCharged_edit.SetValue(response.d.acctCharge);
                     //costCenter_edit.SetValue(response.d.costCenter);
                     net_amount_edit.SetValue(response.d.netAmnt);
                     //vat_edit.SetValue(response.d.vat);
                     //ewt_edit.SetValue(response.d.ewt);
                     //io_edit.SetValue(response.d.io);
-                    expItem_desc_edit.SetValue(response.d.remarks);
+                    expItem_desc_edit.SetValue(response.d.LineDesc);
                     //wbs_edit.SetValue(response.d.wbs);
                     exp_category_edit.SetValue(response.d.acctCharge);
                     //txt_assign_edit.SetValue(response.d.Assignment);
@@ -433,6 +434,9 @@
                     //txt_InvTCode_edit.SetValue(response.d.InvoiceTaxCode);
                     qty_edit.SetValue(response.d.Qty);
                     unit_price_edit.SetValue(response.d.UnitPrice);
+                    exp_UOM_edit.SetValue(response.d.uom);
+                    ewt_edit.SetValue(response.d.ewt);
+                    vat_edit.SetValue(response.d.vat);
                     //txt_Asset_edit.SetValue(response.d.Asset);
                     //txt_SubAsset_edit.SetValue(response.d.SubAssetCode);
                     //txt_AltRecon_edit.SetValue(response.d.AltRecon);
@@ -444,7 +448,7 @@
                     DocuGrid_edit.Refresh();
 
                     var curr = drpdown_Currency.GetValue();
-                    Unalloc_amnt_edit.SetValue(curr + " " + response.d.totalAllocAmnt.toFixed(2));
+                    Unalloc_amnt_edit.SetValue(curr + " " + response.d.totalAllocAmnt.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
                 },
                 error: function (xhr, status, error) {
                     console.log("Error:", error);
@@ -660,22 +664,26 @@
             if (stat == "add") {
                 var qty = qty_add.GetValue() != null ? qty_add.GetValue() : 0;
                 var unit_price = unit_price_add.GetValue() != null ? unit_price_add.GetValue() : 0;
+                var ewt = ewt_add.GetValue() != null ? ewt_add.GetValue() : 0;
                 //var vat_amnt = vat.GetValue() != null ? vat.GetValue() : 0;
 
                 var total = qty * unit_price.toFixed(2);
+                var net = total - ewt.toFixed(2);
 
                 total_add.SetValue(total);
-                net_amount_add.SetValue(total);
+                net_amount_add.SetValue(net);
                 ExpAllocGrid.PerformCallback();
             } else {
                 var gross = total_edit.GetValue() != null ? total_edit.GetValue() : 0;
                 var qty = qty_edit.GetValue() != null ? qty_edit.GetValue() : 0;
                 var unit = unit_price_edit.GetValue() != null ? unit_price_edit.GetValue() : 0;
+                var ewt = ewt_edit.GetValue() != null ? ewt_edit.GetValue() : 0;
 
-                var net_amnt = ((qty) * unit).toFixed(2);
+                var total = ((qty) * unit).toFixed(2);
+                var net = total - ewt.toFixed(2);
 
-                net_amount_edit.SetValue(net_amnt);
-                total_edit.SetValue(net_amnt);
+                net_amount_edit.SetValue(net);
+                total_edit.SetValue(total);
                 ExpAllocGrid_edit.PerformCallback();
             }
 
@@ -847,6 +855,9 @@
                 var altRecon = txt_AltRecon_edit.GetValue() != null ? txt_AltRecon_edit.GetValue() : "";
                 var SLCode = txt_SLCode_edit.GetValue() != null ? txt_SLCode_edit.GetValue() : "";
                 var SpecialGL = txt_SpecialGL_edit.GetValue() != null ? txt_SpecialGL_edit.GetValue() : "";
+                var uom = exp_UOM_edit.GetValue() != null ? exp_UOM_edit.GetValue() : "";
+                var ewt = ewt_edit.GetValue() != null ? ewt_edit.GetValue() : "0";
+                var vat = vat_edit.GetValue() != null ? vat_edit.GetValue() : "0";
 
                 //await SaveExpenseReport("Save2");
                 LoadingPanel.Show();
@@ -882,7 +893,10 @@
                         subasset: subasset,
                         altRecon: altRecon,
                         SLCode: SLCode,
-                        SpecialGL: SpecialGL
+                        SpecialGL: SpecialGL,
+                        uom: uom,
+                        ewt: ewt,
+                        vat: vat
 
                     }),
                     contentType: "application/json; charset=utf-8",
@@ -921,9 +935,9 @@
                 var alloc_amnt = s.cpComputeUnalloc;
                 var curr = drpdown_Currency.GetValue();
 
-                var total_unalloc = (total - alloc_amnt).toFixed(2);
+                var total_unalloc = (total - alloc_amnt);
 
-                Unalloc_amnt.SetValue(curr + " " + total_unalloc);
+                Unalloc_amnt.SetValue(curr + " " + total_unalloc.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
                 if (total_unalloc < 0) {
                     var layoutControl = window["Unalloc_amnt"];
                     var labelElement = layoutControl.GetMainElement();
@@ -960,7 +974,7 @@
             if (s.cpComputeUnalloc == 0) {
                 var gross = total_add.GetValue();
                 var curr = drpdown_Currency.GetValue();
-                Unalloc_amnt.SetValue(curr + " " + gross.toFixed(2));
+                Unalloc_amnt.SetValue(curr + " " + gross.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
             }
 
             if (s.cpComputeUnalloc_edit) {
@@ -969,8 +983,8 @@
                 var alloc_amnt = s.cpComputeUnalloc_edit;
                 var curr = drpdown_Currency.GetValue();
 
-                var total_unalloc = (gross - alloc_amnt).toFixed(2);
-                Unalloc_amnt_edit.SetValue(curr + " " + total_unalloc);
+                var total_unalloc = (gross - alloc_amnt);
+                Unalloc_amnt_edit.SetValue(curr + " " + total_unalloc.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
 
                 s.cpComputeUnalloc_edit = null;  // Clear the custom property
             }
@@ -978,7 +992,7 @@
             if (s.cpComputeUnalloc_edit == 0) {
                 var gross = total_edit.GetValue();
                 var curr = drpdown_Currency.GetValue();
-                Unalloc_amnt_edit.SetValue(curr + " " + gross.toFixed(2));
+                Unalloc_amnt_edit.SetValue(curr + " " + gross.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
             }
         }
 
@@ -1555,7 +1569,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                     </dx:LayoutItem>
                                     <dx:EmptyLayoutItem ColSpan="1">
                                     </dx:EmptyLayoutItem>
-                                    <dx:LayoutItem Caption="Vendor" ColSpan="1">
+                                    <dx:LayoutItem Caption="Vendor Code" ColSpan="1" FieldName="VendorCode">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxTextBox ID="txt_vendor" runat="server" ClientInstanceName="txt_vendor" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
@@ -1569,7 +1583,20 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                         </LayoutItemNestedControlCollection>
                                         <CaptionSettings HorizontalAlign="Right" />
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="TIN" ColSpan="1">
+                                    <dx:LayoutItem ColSpan="1" FieldName="VendorName">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxTextBox ID="txt_vendorName" runat="server" ClientInstanceName="txt_vendorName" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True">
+                                                    <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
+                                                        <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                    </ValidationSettings>
+                                                    <Border BorderStyle="None" />
+                                                    <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
+                                                </dx:ASPxTextBox>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                    </dx:LayoutItem>
+                                    <dx:LayoutItem Caption="TIN" ColSpan="1" FieldName="VendorTIN">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxTextBox ID="txt_TIN" runat="server" ClientInstanceName="txt_TIN" Font-Bold="True" Font-Size="Small" ReadOnly="True" Width="100%">
@@ -1580,7 +1607,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                         </LayoutItemNestedControlCollection>
                                         <CaptionSettings HorizontalAlign="Right" />
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Address" ColSpan="1">
+                                    <dx:LayoutItem Caption="Address" ColSpan="1" FieldName="VendorAddress">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxMemo ID="memo_VendorAddress" runat="server" ClientInstanceName="memo_VendorAddress" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" ReadOnly="True" Width="100%">
@@ -1596,7 +1623,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                     </dx:LayoutItem>
                                     <dx:EmptyLayoutItem ColSpan="1">
                                     </dx:EmptyLayoutItem>
-                                    <dx:LayoutItem Caption="Invoice No." ColSpan="1">
+                                    <dx:LayoutItem Caption="Invoice No." ColSpan="1" ClientVisible="False">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxTextBox ID="txt_InvoiceNo" runat="server" ClientInstanceName="txt_InvoiceNo" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True">
@@ -1785,7 +1812,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                     <dx:LayoutItem Caption="" ColSpan="1">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxGridView ID="ExpGrid" runat="server" Width="100%" AutoGenerateColumns="False" DataSourceID="SqlExpDetails" KeyFieldName="ExpenseReportDetail_ID" OnCustomButtonInitialize="ExpGrid_CustomButtonInitialize">
+                                                <dx:ASPxGridView ID="ExpGrid" runat="server" Width="100%" AutoGenerateColumns="False" DataSourceID="SqlExpDetails" KeyFieldName="ID" OnCustomButtonInitialize="ExpGrid_CustomButtonInitialize">
                                                     <ClientSideEvents CustomButtonClick="onCustomButtonClick" />
                                                     <SettingsPopup>
                                                         <FilterControl AutoUpdatePosition="False">
@@ -3514,7 +3541,7 @@ DisapproveClick(); DisapprovePopup.Hide();
                                         <ParentContainerStyle Font-Size="Small">
                                         </ParentContainerStyle>
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Invoice/OR No." ColSpan="1" ClientVisible="False">
+                                    <dx:LayoutItem Caption="Invoice/OR No." ColSpan="1">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxTextBox ID="expLine_Invoice" runat="server" ClientInstanceName="expLine_Invoice" Font-Bold="False" Font-Size="Small" Width="100%" ReadOnly="True">
@@ -3620,8 +3647,6 @@ DisapproveClick(); DisapprovePopup.Hide();
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
                                     </dx:LayoutItem>
-                                    <dx:EmptyLayoutItem ColSpan="1">
-                                    </dx:EmptyLayoutItem>
                                     <dx:LayoutItem Caption="Line Description" ColSpan="1">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
@@ -3655,6 +3680,19 @@ DisapproveClick(); DisapprovePopup.Hide();
                                         <ParentContainerStyle Font-Size="Small">
                                         </ParentContainerStyle>
                                     </dx:LayoutItem>
+                                    <dx:LayoutItem Caption="UOM" ColSpan="1">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxTextBox ID="expLine_UOM" runat="server" ClientInstanceName="expLine_UOM" DisplayFormatString="#,##0.00" Font-Bold="False" Font-Size="Small" HorizontalAlign="Right" ReadOnly="True" Width="100%">
+                                                    <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
+                                                        <RequiredField ErrorText="*Required" />
+                                                    </ValidationSettings>
+                                                    <Border BorderStyle="None" />
+                                                    <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
+                                                </dx:ASPxTextBox>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                    </dx:LayoutItem>
                                     <dx:LayoutItem Caption="Unit Price" ColSpan="1" HorizontalAlign="Left">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
@@ -3684,6 +3722,32 @@ DisapproveClick(); DisapprovePopup.Hide();
                                         </LayoutItemNestedControlCollection>
                                         <ParentContainerStyle Font-Size="Small">
                                         </ParentContainerStyle>
+                                    </dx:LayoutItem>
+                                    <dx:LayoutItem Caption="EWT" ColSpan="1">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxTextBox ID="expLine_ewt" runat="server" ClientInstanceName="expLine_ewt" DisplayFormatString="#,##0.00" Font-Bold="False" Font-Size="Small" HorizontalAlign="Right" ReadOnly="True" Width="100%">
+                                                    <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
+                                                        <RequiredField ErrorText="*Required" />
+                                                    </ValidationSettings>
+                                                    <Border BorderStyle="None" />
+                                                    <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
+                                                </dx:ASPxTextBox>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                    </dx:LayoutItem>
+                                    <dx:LayoutItem Caption="VAT" ColSpan="1">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxTextBox ID="expLine_vat" runat="server" ClientInstanceName="expLine_vat" DisplayFormatString="#,##0.00" Font-Bold="False" Font-Size="Small" HorizontalAlign="Right" ReadOnly="True" Width="100%">
+                                                    <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
+                                                        <RequiredField ErrorText="*Required" />
+                                                    </ValidationSettings>
+                                                    <Border BorderStyle="None" />
+                                                    <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
+                                                </dx:ASPxTextBox>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
                                     </dx:LayoutItem>
                                     <dx:LayoutItem Caption="Net Amount" ColSpan="1">
                                         <LayoutItemNestedControlCollection>
@@ -3798,7 +3862,7 @@ DisapproveClick(); DisapprovePopup.Hide();
                                             <dx:LayoutItem ColSpan="1" Width="100%" ShowCaption="False">
                                                 <LayoutItemNestedControlCollection>
                                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                                        <dx:ASPxGridView ID="ExpAllocGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="ExpAllocGrid" KeyFieldName="ExpenseDetailMap_ID" OnCustomCallback="ExpAllocGrid_CustomCallback" Width="100%" DataSourceID="SqlExpMap">
+                                                        <dx:ASPxGridView ID="ExpAllocGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="ExpAllocGrid" KeyFieldName="InvoiceDetailMap_ID" OnCustomCallback="ExpAllocGrid_CustomCallback" Width="100%" DataSourceID="SqlExpMap">
                                                             <SettingsPager Mode="EndlessPaging">
                                                             </SettingsPager>
                                                             <SettingsEditing Mode="Inline">
@@ -3982,12 +4046,12 @@ DisapproveClick(); DisapprovePopup.Hide();
                                         <ParentContainerStyle Font-Size="Small">
                                         </ParentContainerStyle>
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Invoice/OR No." ColSpan="1" ClientVisible="False">
+                                    <dx:LayoutItem Caption="Invoice/OR No." ColSpan="1">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxTextBox ID="invoice_edit" runat="server" ClientInstanceName="invoice_edit" Font-Bold="False" Font-Size="Small" Width="100%">
                                                     <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
-                                                        <RequiredField ErrorText="*Required" />
+                                                        <RequiredField ErrorText="*Required" IsRequired="True" />
                                                     </ValidationSettings>
                                                     <Border BorderStyle="None" />
                                                     <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
@@ -4133,6 +4197,25 @@ DisapproveClick(); DisapprovePopup.Hide();
                                         <ParentContainerStyle Font-Size="Small">
                                         </ParentContainerStyle>
                                     </dx:LayoutItem>
+                                    <dx:LayoutItem Caption="UOM" ColSpan="1">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxComboBox ID="exp_UOM_edit" runat="server" ClientInstanceName="exp_UOM_edit" DataSourceID="SqlUOM" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{1}" TextField="UOFMCode" TextFormatString="{0} - {1}" ValueField="UOFMCode" Width="100%">
+                                                    <Columns>
+                                                        <dx:ListBoxColumn Caption="UOM" FieldName="UOFMCode" Name="UOM">
+                                                        </dx:ListBoxColumn>
+                                                        <dx:ListBoxColumn Caption="Description" FieldName="UOFMDesc">
+                                                        </dx:ListBoxColumn>
+                                                    </Columns>
+                                                    <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
+                                                        <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                    </ValidationSettings>
+                                                    <Border BorderStyle="None" />
+                                                    <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
+                                                </dx:ASPxComboBox>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                    </dx:LayoutItem>
                                     <dx:LayoutItem Caption="Unit Price" ColSpan="1" HorizontalAlign="Left">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
@@ -4174,6 +4257,46 @@ DisapproveClick(); DisapprovePopup.Hide();
                                         </LayoutItemNestedControlCollection>
                                         <ParentContainerStyle Font-Size="Small">
                                         </ParentContainerStyle>
+                                    </dx:LayoutItem>
+                                    <dx:LayoutItem Caption="EWT" ColSpan="1">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxSpinEdit ID="ewt_edit" runat="server" AllowNull="False" ClientInstanceName="ewt_edit" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="False" Font-Size="Small" HorizontalAlign="Right" Increment="100" MaxValue="99999999999999" Number="0.00" Width="100%">
+                                                    <SpinButtons ClientVisible="False">
+                                                    </SpinButtons>
+                                                    <ClientSideEvents ValueChanged="function(s, e) {
+//netAmount.SetValue(s.GetValue());
+	
+computeNetAmount(&quot;edit&quot;);
+}" />
+                                                    <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
+                                                        <RequiredField ErrorText="*Required" />
+                                                    </ValidationSettings>
+                                                    <Border BorderStyle="None" />
+                                                    <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
+                                                </dx:ASPxSpinEdit>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
+                                    </dx:LayoutItem>
+                                    <dx:LayoutItem Caption="VAT" ColSpan="1">
+                                        <LayoutItemNestedControlCollection>
+                                            <dx:LayoutItemNestedControlContainer runat="server">
+                                                <dx:ASPxSpinEdit ID="vat_edit" runat="server" AllowNull="False" ClientInstanceName="vat_edit" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="False" Font-Size="Small" HorizontalAlign="Right" Increment="100" MaxValue="99999999999999" Number="0.00" Width="100%">
+                                                    <SpinButtons ClientVisible="False">
+                                                    </SpinButtons>
+                                                    <ClientSideEvents ValueChanged="function(s, e) {
+//netAmount.SetValue(s.GetValue());
+//ExpAllocGrid.PerformCallback();
+//computeNetAmount(&quot;add&quot;);
+}" />
+                                                    <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
+                                                        <RequiredField ErrorText="*Required" />
+                                                    </ValidationSettings>
+                                                    <Border BorderStyle="None" />
+                                                    <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
+                                                </dx:ASPxSpinEdit>
+                                            </dx:LayoutItemNestedControlContainer>
+                                        </LayoutItemNestedControlCollection>
                                     </dx:LayoutItem>
                                     <dx:LayoutItem Caption="Net Amount" ColSpan="1">
                                         <LayoutItemNestedControlCollection>
@@ -4287,7 +4410,7 @@ DisapproveClick(); DisapprovePopup.Hide();
                                             <dx:LayoutItem ColSpan="1" Width="100%" ShowCaption="False">
                                                 <LayoutItemNestedControlCollection>
                                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                                        <dx:ASPxGridView ID="ExpAllocGrid_edit" runat="server" AutoGenerateColumns="False" ClientInstanceName="ExpAllocGrid_edit" KeyFieldName="ExpenseDetailMap_ID" OnCustomCallback="ExpAllocGrid_edit_CustomCallback" OnRowDeleting="ExpAllocGrid_edit_RowDeleting" OnRowInserting="ExpAllocGrid_edit_RowInserting" Width="100%" OnRowUpdating="ExpAllocGrid_edit_RowUpdating" DataSourceID="SqlExpMap">
+                                                        <dx:ASPxGridView ID="ExpAllocGrid_edit" runat="server" AutoGenerateColumns="False" ClientInstanceName="ExpAllocGrid_edit" KeyFieldName="InvoiceDetailMap_ID" OnCustomCallback="ExpAllocGrid_edit_CustomCallback" OnRowDeleting="ExpAllocGrid_edit_RowDeleting" OnRowInserting="ExpAllocGrid_edit_RowInserting" Width="100%" OnRowUpdating="ExpAllocGrid_edit_RowUpdating" DataSourceID="SqlExpMap">
                                                             <ClientSideEvents EndCallback="onEndCallback" />
                                                             <SettingsPager Mode="EndlessPaging">
                                                             </SettingsPager>
@@ -4544,6 +4667,11 @@ DisapproveClick(); DisapprovePopup.Hide();
     <asp:SqlDataSource ID="SqlExpCat" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACDE_T_MasterCodes] WHERE ([Code] = @Code)">
         <SelectParameters>
             <asp:Parameter DefaultValue="ExpCat" Name="Code" Type="String" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlUOM" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [RS_T_UOFMTemp] WHERE ([isActive] = @isActive) ORDER BY [UOFMCode]">
+        <SelectParameters>
+            <asp:Parameter DefaultValue="True" Name="isActive" Type="Boolean" />
         </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlCurrency" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACDE_T_Currency]"></asp:SqlDataSource>

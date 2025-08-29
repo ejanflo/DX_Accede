@@ -71,57 +71,57 @@ namespace DX_WebTemplate
 
                             SqlDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType.DCT_Id.ToString();
 
-                            var vendor = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == exp.VendorName.ToString().Trim()).FirstOrDefault();
-                            if (vendor != null)
-                            {
-                                txt_vendor.Text = vendor.VendorName.ToString();
-                            }
+                            //var vendor = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == exp.VendorName.ToString().Trim()).FirstOrDefault();
+                            //if (vendor != null)
+                            //{
+                            //    txt_vendor.Text = vendor.VendorName.ToString();
+                            //}
 
-                            txt_InvoiceNo.Text = exp.InvoiceNo?.ToString();
+                            //txt_InvoiceNo.Text = exp.InvoiceNo?.ToString();
 
-                            var vendorDetails = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == exp.VendorName).FirstOrDefault();
-                            if (vendorDetails != null)
-                            {
-                                string tin = vendorDetails.TaxID.ToString();
+                            //var vendorDetails = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == exp.VendorName).FirstOrDefault();
+                            //if (vendorDetails != null)
+                            //{
+                            //    string tin = vendorDetails.TaxID.ToString();
 
-                                if (tin.Length > 9)
-                                {
-                                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6, 3)}-{tin.Substring(9)}";
-                                    txt_TIN.Text = formattedTin;
-                                }
-                                else if (tin.Length > 6)
-                                {
-                                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6)}";
-                                    txt_TIN.Text = formattedTin;
-                                }
-                                else if (tin.Length > 3)
-                                {
-                                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3)}";
-                                    txt_TIN.Text = formattedTin;
-                                }
-                                else
-                                {
-                                    txt_TIN.Text = tin; // less than 3 digits, no formatting
-                                }
+                            //    if (tin.Length > 9)
+                            //    {
+                            //        string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6, 3)}-{tin.Substring(9)}";
+                            //        txt_TIN.Text = formattedTin;
+                            //    }
+                            //    else if (tin.Length > 6)
+                            //    {
+                            //        string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6)}";
+                            //        txt_TIN.Text = formattedTin;
+                            //    }
+                            //    else if (tin.Length > 3)
+                            //    {
+                            //        string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3)}";
+                            //        txt_TIN.Text = formattedTin;
+                            //    }
+                            //    else
+                            //    {
+                            //        txt_TIN.Text = tin; // less than 3 digits, no formatting
+                            //    }
 
-                                string Clean(string input)
-                                {
-                                    if (string.IsNullOrWhiteSpace(input))
-                                        return "";
+                            //    string Clean(string input)
+                            //    {
+                            //        if (string.IsNullOrWhiteSpace(input))
+                            //            return "";
 
-                                    // remove line breaks and trim
-                                    string cleanedVendorstr = input.Replace("\r", " ").Replace("\n", " ").Trim();
+                            //        // remove line breaks and trim
+                            //        string cleanedVendorstr = input.Replace("\r", " ").Replace("\n", " ").Trim();
 
-                                    return ", " + cleanedVendorstr;
-                                }
+                            //        return ", " + cleanedVendorstr;
+                            //    }
 
-                                memo_VendorAddress.Text =
-                                    (vendorDetails.Address1 ?? "").Replace("\r", " ").Replace("\n", " ").Trim()
-                                    + Clean(vendorDetails.City ?? "")
-                                    + Clean(vendorDetails.State ?? "");
+                            //    memo_VendorAddress.Text =
+                            //        (vendorDetails.Address1 ?? "").Replace("\r", " ").Replace("\n", " ").Trim()
+                            //        + Clean(vendorDetails.City ?? "")
+                            //        + Clean(vendorDetails.State ?? "");
 
 
-                            }
+                            //}
 
                             SqlIO.SelectParameters["CompanyId"].DefaultValue = exp.InvChargedTo_CompanyId.ToString();
 
@@ -153,8 +153,8 @@ namespace DX_WebTemplate
                                 .Where(x => x.isTravel != true)
                                 .Where(x => x.IsExpenseCA == true);
 
-                            var ExpDetails = _DataContext.ACCEDE_T_ExpenseDetails
-                                .Where(x => x.ExpenseMain_ID == Convert.ToInt32(actDetails.Document_Id));
+                            var ExpDetails = _DataContext.ACCEDE_T_InvoiceLineDetails
+                                .Where(x => x.InvMain_ID == Convert.ToInt32(actDetails.Document_Id));
 
                             decimal totalExp = 0;
                             foreach (var item in ExpDetails)
@@ -189,6 +189,8 @@ namespace DX_WebTemplate
                                     reim.ClientVisible = true;
                                     link_rfp.Value = ptvRFP.RFP_DocNum;
                                 }
+
+                                txt_SAPDoc.Text = ptvRFP.SAPDocNo != null ? ptvRFP.SAPDocNo : "";
                             }
 
                             //APPROVE AND FORWARD BUTTON AND GENERATE AAF WF

@@ -87,13 +87,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox drpdown_CTComp;
 
         /// <summary>
-        /// drpdown_vendor control.
+        /// date_expDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox drpdown_vendor;
+        protected global::DevExpress.Web.ASPxDateEdit date_expDate;
 
         /// <summary>
         /// drpdown_CompLocation control.
@@ -105,6 +105,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox drpdown_CompLocation;
 
         /// <summary>
+        /// drpdown_vendor control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox drpdown_vendor;
+
+        /// <summary>
         /// drpdown_CTDepartment control.
         /// </summary>
         /// <remarks>
@@ -114,13 +123,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox drpdown_CTDepartment;
 
         /// <summary>
-        /// date_expDate control.
+        /// txt_vendorName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxDateEdit date_expDate;
+        protected global::DevExpress.Web.ASPxTextBox txt_vendorName;
 
         /// <summary>
         /// drpdown_CostCenter control.
@@ -132,6 +141,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox drpdown_CostCenter;
 
         /// <summary>
+        /// txt_vendorTIN control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox txt_vendorTIN;
+
+        /// <summary>
         /// drpdown_PayType control.
         /// </summary>
         /// <remarks>
@@ -139,6 +157,15 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxComboBox drpdown_PayType;
+
+        /// <summary>
+        /// memo_vendorAddress control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxMemo memo_vendorAddress;
 
         /// <summary>
         /// txt_Currency control.

@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using static DX_WebTemplate.AccedeNonPOEditPage;
 
 namespace DX_WebTemplate
 {
@@ -200,14 +201,14 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static bool AddInvoiceReportAJAX(string expName, string expDate, string Comp, string CostCenter, string expCat, string Purpose, bool isTrav, string currency, string department, string payType, string CTComp_id, string CTDept_id, string CompLoc)
+        public static bool AddInvoiceReportAJAX(string expName, string expDate, string Comp, string CostCenter, string expCat, string Purpose, bool isTrav, string currency, string department, string payType, string CTComp_id, string CTDept_id, string CompLoc, string vendorName, string vendorTIN, string vendorAddress)
         {
             AccedeInvoiceNonPODashboard accede = new AccedeInvoiceNonPODashboard();
 
-            return accede.AddInvoiceReport(expName, expDate, Comp, CostCenter, expCat, Purpose, isTrav, currency, department, payType, CTComp_id, CTDept_id, CompLoc);
+            return accede.AddInvoiceReport(expName, expDate, Comp, CostCenter, expCat, Purpose, isTrav, currency, department, payType, CTComp_id, CTDept_id, CompLoc, vendorName, vendorTIN, vendorAddress);
         }
 
-        public bool AddInvoiceReport(string expName, string expDate, string Comp, string CostCenter, string expCat, string Purpose, bool isTrav, string currency, string department, string payType, string CTComp_id, string CTDept_id, string CompLoc)
+        public bool AddInvoiceReport(string expName, string expDate, string Comp, string CostCenter, string expCat, string Purpose, bool isTrav, string currency, string department, string payType, string CTComp_id, string CTDept_id, string CompLoc, string vendorName, string vendorTIN, string vendorAddress)
         {
             var expDoctype = context.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE InvoiceNPO").FirstOrDefault();
             try
@@ -218,9 +219,9 @@ namespace DX_WebTemplate
 
                 ACCEDE_T_InvoiceMain main = new ACCEDE_T_InvoiceMain();
                 {
-                    main.VendorName = expName;
+                    main.VendorCode = expName;
                     main.ReportDate = Convert.ToDateTime(expDate);
-                    main.PaymentType = Convert.ToInt32(payType);
+                    main.PaymentType = 3;//Convert.ToInt32(payType);
                     main.InvoiceType_ID = 3; // Assuming 3 is the ID for Payment to Vendor
                     //if(Comp != "")
                     //{
@@ -245,6 +246,9 @@ namespace DX_WebTemplate
                     main.InvChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
                     main.InvChargedTo_DeptId = Convert.ToInt32(CTDept_id);
                     main.InvComp_Location_Id = Convert.ToInt32(CompLoc);
+                    main.VendorName = vendorName;
+                    main.VendorTIN = vendorTIN;
+                    main.VendorAddress = vendorAddress;
                 }
                 context.ACCEDE_T_InvoiceMains.InsertOnSubmit(main);
                 context.SubmitChanges();
@@ -413,6 +417,83 @@ namespace DX_WebTemplate
             drpdown_CompLocation.DataBind();
         }
 
+        
+
+        [WebMethod]
+        public static VendorDetails CheckVendorDetailsAJAX(string vendor)
+        {
+            AccedeInvoiceNonPODashboard page = new AccedeInvoiceNonPODashboard();
+            return page.CheckVendorDetails(vendor);
+        }
+
+        public VendorDetails CheckVendorDetails(string vendor)
+        {
+            var vendorDetails = context.ACCEDE_S_Vendors.Where(x => x.VendorCode == vendor).FirstOrDefault();
+            VendorDetails vendorClass = new VendorDetails();
+            if (vendorDetails != null)
+            {
+
+                string tin = vendorDetails.TaxID != null ? vendorDetails.TaxID.ToString() : "";
+
+                if (tin != "" && tin.Length > 9)
+                {
+                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6, 3)}-{tin.Substring(9)}";
+                    vendorClass.TIN = formattedTin;
+                }
+                else if (tin != "" && tin.Length > 6)
+                {
+                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6)}";
+                    vendorClass.TIN = formattedTin;
+                }
+                else if (tin != "" && tin.Length > 3)
+                {
+                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3)}";
+                    vendorClass.TIN = formattedTin;
+                }
+                else
+                {
+                    vendorClass.TIN = tin; // less than 3 digits, no formatting
+                }
+
+                string Clean(string input)
+                {
+                    if (string.IsNullOrWhiteSpace(input))
+                        return "";
+
+                    // remove line breaks and trim
+                    string cleaned = input.Replace("\r", " ").Replace("\n", " ").Trim();
+
+                    return ", " + cleaned;
+                }
+
+                vendorClass.Address =
+                    (vendorDetails.Address1 ?? "").Replace("\r", " ").Replace("\n", " ").Trim()
+                    + Clean(vendorDetails.City ?? "")
+                    + Clean(vendorDetails.State ?? "");
+
+                vendorClass.Name = vendorDetails.VendorName != null ? vendorDetails.VendorName.ToString() : "";
+
+
+                if (vendor.Contains("OTV"))
+                {
+                    vendorClass.isOneTime = true;
+                }
+                else
+                {
+                    vendorClass.isOneTime = false;
+                }
+
+            }
+            else
+            {
+
+                vendorClass.TIN = "";
+                vendorClass.Address = "";
+
+            }
+
+            return vendorClass;
+        }
     }
 
 }

@@ -55,49 +55,62 @@ namespace DX_WebTemplate
                     SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = mainInv.InvChargedTo_CompanyId.ToString();
                     SqlCompLocation.SelectParameters["Comp_Id"].DefaultValue = mainInv.InvChargedTo_CompanyId.ToString();
 
-                    var vendorDetails = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == mainInv.VendorName).FirstOrDefault();
-                    if (vendorDetails != null)
+                    var vendorDetails = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == mainInv.VendorCode).FirstOrDefault();
+                    if (vendorDetails.VendorCode.Contains("OTV"))
                     {
-                        string tin = vendorDetails.TaxID.ToString();
-
-                        if (tin.Length > 9)
-                        {
-                            string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6, 3)}-{tin.Substring(9)}";
-                            txt_TIN.Text = formattedTin;
-                        }
-                        else if (tin.Length > 6)
-                        {
-                            string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6)}";
-                            txt_TIN.Text = formattedTin;
-                        }
-                        else if (tin.Length > 3)
-                        {
-                            string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3)}";
-                            txt_TIN.Text = formattedTin;
-                        }
-                        else
-                        {
-                            txt_TIN.Text = tin; // less than 3 digits, no formatting
-                        }
-
-                        string Clean(string input)
-                        {
-                            if (string.IsNullOrWhiteSpace(input))
-                                return "";
-
-                            // remove line breaks and trim
-                            string cleaned = input.Replace("\r", " ").Replace("\n", " ").Trim();
-
-                            return ", " + cleaned;
-                        }
-
-                        memo_VendorAddress.Text =
-                            (vendorDetails.Address1 ?? "").Replace("\r", " ").Replace("\n", " ").Trim()
-                            + Clean(vendorDetails.City ?? "")
-                            + Clean(vendorDetails.State ?? "");
-
-
+                        txt_TIN.ReadOnly = false;
+                        txt_vendorName.ReadOnly = false;
+                        memo_VendorAddress.ReadOnly = false;
                     }
+                    else
+                    {
+                        txt_TIN.ReadOnly = true;
+                        txt_vendorName.ReadOnly = true;
+                        memo_VendorAddress.ReadOnly = true;
+                    }
+                    //if (vendorDetails != null)
+                    //{
+                    //    string tin = vendorDetails.TaxID.ToString();
+
+                    //    if (tin.Length > 9)
+                    //    {
+                    //        string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6, 3)}-{tin.Substring(9)}";
+                    //        txt_TIN.Text = formattedTin;
+                    //    }
+                    //    else if (tin.Length > 6)
+                    //    {
+                    //        string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6)}";
+                    //        txt_TIN.Text = formattedTin;
+                    //    }
+                    //    else if (tin.Length > 3)
+                    //    {
+                    //        string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3)}";
+                    //        txt_TIN.Text = formattedTin;
+                    //    }
+                    //    else
+                    //    {
+                    //        txt_TIN.Text = tin; // less than 3 digits, no formatting
+                    //    }
+
+                    //    string Clean(string input)
+                    //    {
+                    //        if (string.IsNullOrWhiteSpace(input))
+                    //            return "";
+
+                    //        // remove line breaks and trim
+                    //        string cleaned = input.Replace("\r", " ").Replace("\n", " ").Trim();
+
+                    //        return ", " + cleaned;
+                    //    }
+
+                    //    memo_VendorAddress.Text =
+                    //        (vendorDetails.Address1 ?? "").Replace("\r", " ").Replace("\n", " ").Trim()
+                    //        + Clean(vendorDetails.City ?? "")
+                    //        + Clean(vendorDetails.State ?? "");
+
+
+                    //}
+
 
                     var pay_released = _DataContext.ITP_S_Status
                         .Where(x => x.STS_Name == "Disbursed")
@@ -121,28 +134,28 @@ namespace DX_WebTemplate
                         .Where(x => x.Exp_ID == Convert.ToInt32(Session["NonPOInvoiceId"]))
                         .Where(x => x.isTravel != true);
 
-                    if (ptvRFP.Count() == 0)
-                    {
-                        var reim = ExpenseEditForm.FindItemOrGroupByName("reimItem") as LayoutItem;
-                        //var pay_type = ExpenseEditForm.FindItemOrGroupByName("PayType") as LayoutItem;
-                        if (reim != null)
-                        {
-                            reim.ClientVisible = true;
-                            ReimburseGrid.Visible = false;
-                            errImg.Visible = true;
-                        }
+                    //if (ptvRFP.Count() == 0)
+                    //{
+                    //    var reim = ExpenseEditForm.FindItemOrGroupByName("reimItem") as LayoutItem;
+                    //    //var pay_type = ExpenseEditForm.FindItemOrGroupByName("PayType") as LayoutItem;
+                    //    if (reim != null)
+                    //    {
+                    //        reim.ClientVisible = true;
+                    //        ReimburseGrid.Visible = false;
+                    //        errImg.Visible = true;
+                    //    }
 
                         
-                    }
-                    else
-                    {
-                        var reim = ExpenseEditForm.FindItemOrGroupByName("ReimLayout") as LayoutGroup;
-                        if (reim != null)
-                        {
-                            reim.ClientVisible = true;
-                            link_rfp.Value = ptvRFP.First().RFP_DocNum;
-                        }
-                    }
+                    //}
+                    //else
+                    //{
+                    //    var reim = ExpenseEditForm.FindItemOrGroupByName("ReimLayout") as LayoutGroup;
+                    //    if (reim != null)
+                    //    {
+                    //        reim.ClientVisible = true;
+                    //        link_rfp.Value = ptvRFP.First().RFP_DocNum;
+                    //    }
+                    //}
 
                     //// - - SET WORKFLOWS - - ////
                     //// - - Setting FAP workflow - - ////
@@ -677,7 +690,10 @@ namespace DX_WebTemplate
             string AltRecon,
             string SLCode,
             string SpecialGL,
-            string invoiceTCode
+            string invoiceTCode,
+            string uom,
+            string ewt,
+            string vat
             )
         {
             AccedeNonPOEditPage exp = new AccedeNonPOEditPage();
@@ -702,7 +718,10 @@ namespace DX_WebTemplate
                 AltRecon,
                 SLCode,
                 SpecialGL,
-                invoiceTCode
+                invoiceTCode,
+                uom,
+                ewt,
+                vat
                 );
         }
 
@@ -727,7 +746,10 @@ namespace DX_WebTemplate
             string AltRecon,
             string SLCode,
             string SpecialGL,
-            string invoiceTCode
+            string invoiceTCode,
+            string uom,
+            string ewt,
+            string vat
             )
         {
             try
@@ -768,7 +790,7 @@ namespace DX_WebTemplate
                         .Where(x => x.IsExpenseCA == true)
                         .Where(x => x.isTravel != true);
 
-                    var LastExpDetail = _DataContext.ACCEDE_T_ExpenseDetails.Where(x => x.ExpenseMain_ID == Convert.ToInt32(Session["NonPOInvoiceId"])).OrderByDescending(x => x.ExpLineNum).FirstOrDefault();
+                    var LastExpDetail = _DataContext.ACCEDE_T_InvoiceLineDetails.Where(x => x.InvMain_ID == Convert.ToInt32(Session["NonPOInvoiceId"])).OrderByDescending(x => x.LineNum).FirstOrDefault();
 
                     //if (rfpCA.Count() > 0)
                     //{
@@ -783,10 +805,10 @@ namespace DX_WebTemplate
                     {
                         inv.DateAdded = Convert.ToDateTime(dateAdd);
 
-                        //if (invoice_no != "")
-                        //{
-                        //    exp.InvoiceOR = invoice_no;
-                        //}
+                        if (invoice_no != "")
+                        {
+                            inv.InvoiceNo = invoice_no;
+                        }
 
                         //exp.CostCenterIOWBS = cost_center;
                         inv.TotalAmount = Convert.ToDecimal(gross_amount);
@@ -803,10 +825,13 @@ namespace DX_WebTemplate
                         inv.Preparer_ID = Session["userID"].ToString();
                         //inv.ExpDtl_Currency = currency;
                         inv.LineDescription = itemDesc;
+                        inv.EWT = Convert.ToDecimal(ewt);
+                        inv.VAT = Convert.ToDecimal(vat);
+                        inv.UOM = uom;
 
                         if (LastExpDetail != null)
                         {
-                            inv.LineNum = LastExpDetail.ExpLineNum + 1;
+                            inv.LineNum = LastExpDetail.LineNum + 1;
                         }
                         else
                         {
@@ -1100,17 +1125,17 @@ namespace DX_WebTemplate
                 if (btnCommand == "btnRemoveExp")
                 {
                     var exp_det = _DataContext.ACCEDE_T_InvoiceLineDetails
-                        .Where(x => x.InvMain_ID == item_id)
+                        .Where(x => x.ID == item_id)
                         .FirstOrDefault();
 
                     if (exp_det.LineNum != null)
                     {
-                        var allExp = _DataContext.ACCEDE_T_ExpenseDetails.Where(x => x.ExpenseMain_ID == Convert.ToInt32(exp_det.InvMain_ID));
+                        var allExp = _DataContext.ACCEDE_T_InvoiceLineDetails.Where(x => x.InvMain_ID == Convert.ToInt32(exp_det.InvMain_ID));
                         foreach (var item in allExp)
                         {
-                            if (item.ExpLineNum > exp_det.LineNum)
+                            if (item.LineNum > exp_det.LineNum)
                             {
-                                item.ExpLineNum = item.ExpLineNum - 1;
+                                item.LineNum = item.LineNum - 1;
                             }
                         }
                     }
@@ -1423,14 +1448,17 @@ namespace DX_WebTemplate
             string CTCompany_id, 
             string CTDept_id, 
             string compLoc,
-            string invoiceNum)
+            string invoiceNum,
+            string vendorCode,
+            string vendorTIN,
+            string vendorAddress)
         {
             AccedeNonPOEditPage exp = new AccedeNonPOEditPage();
-            return exp.UpdateExpense(dateFile, repName, comp_id, expType, expCat, purpose, trav, wf, fapwf, currency, department, payType, btn, costCenter, CTCompany_id, CTDept_id, compLoc, invoiceNum);
+            return exp.UpdateExpense(dateFile, repName, comp_id, expType, expCat, purpose, trav, wf, fapwf, currency, department, payType, btn, costCenter, CTCompany_id, CTDept_id, compLoc, invoiceNum, vendorCode, vendorTIN, vendorAddress);
         }
 
         public string UpdateExpense(string dateFile, string repName, string comp_id, string expType, string expCat,
-            string purpose, bool trav, string wf, string fapwf, string currency, string department, string payType, string btn, string costCenter, string CTCompany_id, string CTDept_id, string compLoc, string invoiceNum)
+            string purpose, bool trav, string wf, string fapwf, string currency, string department, string payType, string btn, string costCenter, string CTCompany_id, string CTDept_id, string compLoc, string invoiceNum, string vendorCode, string vendorTIN, string vendorAddress)
         {
             try
             {
@@ -1508,6 +1536,9 @@ namespace DX_WebTemplate
                 inv.InvComp_Location_Id = TryParseInt(compLoc);
                 inv.PaymentType = TryParseInt(payType);
                 inv.InvoiceNo = ToNullIfEmpty(invoiceNum);
+                inv.VendorCode = ToNullIfEmpty(vendorCode);
+                inv.VendorTIN = ToNullIfEmpty(vendorTIN);
+                inv.VendorAddress = ToNullIfEmpty(vendorAddress);
 
                 //if (compLoc != "")
                 //{
@@ -2120,7 +2151,7 @@ namespace DX_WebTemplate
                 inv_det_class.particulars = inv_details.Particulars?.ToString() ?? inv_det_class.particulars;
                 inv_det_class.acctCharge = inv_details.AcctToCharged ?? inv_det_class.acctCharge;
                 //exp_det_class.tin = inv_details.TIN ?? exp_det_class.tin;
-                //exp_det_class.invoice = inv_details.InvoiceOR ?? exp_det_class.invoice;
+                inv_det_class.InvoiceOR = inv_details.InvoiceNo ?? inv_det_class.InvoiceOR;
                 //exp_det_class.costCenter = inv_details.CostCenterIOWBS ?? exp_det_class.costCenter;
                 inv_det_class.grossAmnt = inv_details.TotalAmount != null ? Convert.ToDecimal(inv_details.TotalAmount) : inv_det_class.grossAmnt;
                 //exp_det_class.vat = inv_details.VAT != null ? Convert.ToDecimal(inv_details.VAT) : exp_det_class.vat;
@@ -2148,7 +2179,9 @@ namespace DX_WebTemplate
                 //exp_det_class.SpecialGL = exp_details_nonpo.SpecialGL ?? exp_det_class.SpecialGL;
                 inv_det_class.Qty = inv_details.Qty ?? inv_det_class.Qty;
                 inv_det_class.UnitPrice = inv_details.UnitPrice ?? inv_det_class.UnitPrice;
-
+                inv_det_class.ewt = inv_details.EWT ?? inv_det_class.ewt;
+                inv_det_class.vat = inv_details.VAT ?? inv_det_class.vat;
+                inv_det_class.uom = inv_details.UOM ?? inv_det_class.uom;
                 inv_det_class.totalAllocAmnt = totalAmnt;
 
                 Session["InvDetailsID"] = invDetailID.ToString();
@@ -2262,7 +2295,10 @@ namespace DX_WebTemplate
             string subasset,
             string altRecon,
             string SLCode,
-            string SpecialGL
+            string SpecialGL,
+            string uom,
+            string ewt,
+            string vat
             )
         {
             AccedeNonPOEditPage exp = new AccedeNonPOEditPage();
@@ -2294,7 +2330,10 @@ namespace DX_WebTemplate
                 subasset,
                 altRecon,
                 SLCode,
-                SpecialGL);
+                SpecialGL,
+                uom,
+                ewt,
+                vat);
         }
 
         public string SaveExpDetails(
@@ -2325,7 +2364,10 @@ namespace DX_WebTemplate
             string subasset,
             string altRecon,
             string SLCode,
-            string SpecialGL
+            string SpecialGL,
+            string uom,
+            string ewt,
+            string vat
             )
         {
             try
@@ -2355,7 +2397,7 @@ namespace DX_WebTemplate
                     {
                         expDetail.DateAdded = Convert.ToDateTime(dateAdd);
                         //expDetail.TIN = string.IsNullOrEmpty(tin_no) ? (string)null : tin_no;
-                        //expDetail.InvoiceOR = string.IsNullOrEmpty(invoice_no) ? (string)null : invoice_no;
+                        expDetail.InvoiceNo = string.IsNullOrEmpty(invoice_no) ? (string)null : invoice_no;
                         //expDetail.CostCenterIOWBS = cost_center;
                         expDetail.TotalAmount = Convert.ToDecimal(gross_amount);
                         expDetail.NetAmount = Convert.ToDecimal(net_amount);
@@ -2370,6 +2412,9 @@ namespace DX_WebTemplate
                         expDetail.LineDescription = remarks;
                         expDetail.Qty = Convert.ToDecimal(qty);
                         expDetail.UnitPrice = Convert.ToDecimal(unit_price);
+                        expDetail.EWT = Convert.ToDecimal(ewt);
+                        expDetail.VAT = Convert.ToDecimal(vat);
+                        expDetail.UOM = uom;
                     }
 
                     //var expDetailNonPO = _DataContext.ACCEDE_T_ExpenseDetailsInvNonPOs.Where(x => x.ExpDetailMain_ID == Convert.ToInt32(Session["ExpDetailsID"])).FirstOrDefault();
@@ -2440,14 +2485,18 @@ namespace DX_WebTemplate
                     totalExpense += Convert.ToDecimal(exp.NetAmount);
                 }
 
-                if(totalExpense > 0)
+                if(totalExpense > 0 && ptvRFP!=null)
                 {
                     ptvRFP.Amount = totalExpense;
                 }
                 else
                 {
-                    ptvRFP.Amount = totalExpense;
-                    ptvRFP.Status = 4;
+                    if (ptvRFP != null)
+                    {
+                        ptvRFP.Amount = totalExpense;
+                        ptvRFP.Status = 4;
+                    }
+                    
                 }
 
 
@@ -2633,6 +2682,7 @@ namespace DX_WebTemplate
         {
             public string dateAdded { get; set; }
             public string particulars { get; set; }
+            public string InvoiceOR { get; set; }
             public int acctCharge { get; set; }
             public decimal grossAmnt { get; set; }
             public decimal netAmnt { get; set; }
@@ -2655,6 +2705,9 @@ namespace DX_WebTemplate
             public string SpecialGL { get; set; }
             public decimal Qty { get; set; }
             public decimal UnitPrice { get; set; }
+            public string uom { get; set; }
+            public decimal ewt { get; set; }
+            public decimal vat { get; set; }
         }
 
         protected void exp_Department_Callback(object sender, CallbackEventArgsBase e)
@@ -3274,47 +3327,69 @@ namespace DX_WebTemplate
         public VendorDetails CheckVendorDetails(string vendor)
         {
             var vendorDetails = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == vendor).FirstOrDefault();
+            var vendorDetailsInv = _DataContext.ACCEDE_T_InvoiceMains.Where(x => x.ID == Convert.ToInt32(Session["NonPOInvoiceId"])).FirstOrDefault();
             VendorDetails vendorClass = new VendorDetails();
-            if (vendorDetails!= null)
+            if (vendorDetails!= null && vendorDetailsInv != null)
             {
-                
-                string tin = vendorDetails.TaxID.ToString();
 
-                if (tin.Length > 9)
+                if(vendorDetailsInv.VendorCode == vendor && vendor.Contains("OTV"))
                 {
-                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6, 3)}-{tin.Substring(9)}";
-                    vendorClass.TIN = formattedTin;
-                }
-                else if (tin.Length > 6)
-                {
-                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6)}";
-                    vendorClass.TIN = formattedTin;
-                }
-                else if (tin.Length > 3)
-                {
-                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3)}";
-                    vendorClass.TIN = formattedTin;
+                    vendorClass.Name = vendorDetailsInv.VendorName;
+                    vendorClass.TIN = vendorDetailsInv.VendorTIN;
+                    vendorClass.Address = vendorDetailsInv.VendorAddress;
                 }
                 else
                 {
-                    vendorClass.TIN = tin; // less than 3 digits, no formatting
+                    string tin = vendorDetails.TaxID != null ? vendorDetails.TaxID.ToString() : "";
+
+                    if (tin != "" && tin.Length > 9)
+                    {
+                        string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6, 3)}-{tin.Substring(9)}";
+                        vendorClass.TIN = formattedTin;
+                    }
+                    else if (tin != "" && tin.Length > 6)
+                    {
+                        string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6)}";
+                        vendorClass.TIN = formattedTin;
+                    }
+                    else if (tin != "" && tin.Length > 3)
+                    {
+                        string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3)}";
+                        vendorClass.TIN = formattedTin;
+                    }
+                    else
+                    {
+                        vendorClass.TIN = tin; // less than 3 digits, no formatting
+                    }
+
+                    string Clean(string input)
+                    {
+                        if (string.IsNullOrWhiteSpace(input))
+                            return "";
+
+                        // remove line breaks and trim
+                        string cleaned = input.Replace("\r", " ").Replace("\n", " ").Trim();
+
+                        return ", " + cleaned;
+                    }
+
+                    vendorClass.Address =
+                        (vendorDetails.Address1 ?? "").Replace("\r", " ").Replace("\n", " ").Trim()
+                        + Clean(vendorDetails.City ?? "")
+                        + Clean(vendorDetails.State ?? "");
+
+                    vendorClass.Name = vendorDetails.VendorName != null ? vendorDetails.VendorName.ToString() : "";
                 }
 
-                string Clean(string input)
+                    
+                if (vendor.Contains("OTV"))
                 {
-                    if (string.IsNullOrWhiteSpace(input))
-                        return "";
-
-                    // remove line breaks and trim
-                    string cleaned = input.Replace("\r", " ").Replace("\n", " ").Trim();
-
-                    return ", " + cleaned;
+                    vendorClass.isOneTime = true;
                 }
-
-                vendorClass.Address =
-                    (vendorDetails.Address1 ?? "").Replace("\r", " ").Replace("\n", " ").Trim()
-                    + Clean(vendorDetails.City ?? "")
-                    + Clean(vendorDetails.State ?? "");
+                else
+                {
+                    vendorClass.isOneTime = false;
+                }
 
             }
             else
@@ -3332,6 +3407,8 @@ namespace DX_WebTemplate
         {
             public string TIN { get; set; }
             public string Address { get; set; }
+            public bool isOneTime { get; set; }
+            public string Name { get; set; }
         }
     }
 }

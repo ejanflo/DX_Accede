@@ -107,7 +107,7 @@ namespace DX_WebTemplate
                     }
                     else if (appname == "ACDE InvoiceNPO")
                     {
-                        string useridRaw = context.ACCEDE_T_InvoiceMains.Where(x => x.ID == id).Select(x => x.VendorName).FirstOrDefault();
+                        string useridRaw = context.ACCEDE_T_InvoiceMains.Where(x => x.ID == id).Select(x => x.VendorCode).FirstOrDefault();
                         string raw = useridRaw.ToString();
                         string cleaned = raw.Replace("\r", "").Replace("\n", "");
 
@@ -115,6 +115,11 @@ namespace DX_WebTemplate
                         if (!string.IsNullOrEmpty(userid))
                         {
                             empname = context.ACCEDE_S_Vendors.Where(x => x.VendorCode == userid).Select(x => x.VendorName).FirstOrDefault()?.ToUpper() ?? string.Empty;
+
+                            if (empname == "")
+                            {
+                                empname = context.ACCEDE_T_InvoiceMains.Where(x => x.ID == id).Select(x => x.VendorName).FirstOrDefault()?.ToUpper() ?? string.Empty;
+                            }
                         }
                     }
                 }

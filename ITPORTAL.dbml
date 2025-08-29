@@ -806,30 +806,6 @@
       <Column Name="isActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
     </Type>
   </Table>
-  <Table Name="dbo.vw_ACCEDE_I_RAWFActivity" Member="vw_ACCEDE_I_RAWFActivities">
-    <Type Name="vw_ACCEDE_I_RAWFActivity">
-      <Column Name="WFA_Id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="Status" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="DateAssigned" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
-      <Column Name="DateAction" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
-      <Column Name="OrgRole_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="WF_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="WFD_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="DateCreated" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
-      <Column Name="Document_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Remarks" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="AppId" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="CompanyId" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="OrgRole_Id_Orig" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="IsDelegated" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="ActedBy_User_Id" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="IsRA" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="UserId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="DCT_Name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.ACCEDE_T_ExpenseDetailFileAttach" Member="ACCEDE_T_ExpenseDetailFileAttaches">
     <Type Name="ACCEDE_T_ExpenseDetailFileAttach">
       <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -1286,36 +1262,6 @@
       <Column Name="InvoiceNonPO_No" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
     </Type>
   </Table>
-  <Table Name="dbo.ACCEDE_T_InvoiceLineDetails" Member="ACCEDE_T_InvoiceLineDetails">
-    <Type Name="ACCEDE_T_InvoiceLineDetail">
-      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="DateAdded" Type="System.DateTime" DbType="Date" CanBeNull="true" />
-      <Column Name="Particulars" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="AcctToCharged" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="TotalAmount" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
-      <Column Name="NetAmount" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
-      <Column Name="InvMain_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Preparer_ID" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="updatedBy" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="Remarks" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
-      <Column Name="LineNum" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="LineDescription" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
-      <Column Name="Qty" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
-      <Column Name="UnitPrice" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
-      <Column Name="Assignment" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="Allowance" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="SLCode" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="EWTTaxType_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="EWTTaxAmount" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
-      <Column Name="EWTTaxCode" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
-      <Column Name="InvoiceTaxCode" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
-      <Column Name="Asset" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
-      <Column Name="SubAssetCode" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="TransactionType" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="AltRecon" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="SpecialGL" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.ACCEDE_T_InvoiceLineDetailsMap" Member="ACCEDE_T_InvoiceLineDetailsMaps">
     <Type Name="ACCEDE_T_InvoiceLineDetailsMap">
       <Column Name="InvoiceDetailMap_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -1361,6 +1307,67 @@
       <Column Name="InvComp_SAP_Id" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
       <Column Name="InvComp_Location_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="InvoiceNo" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="VendorCode" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="VendorTIN" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="VendorAddress" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ACCEDE_T_InvoiceLineDetails" Member="ACCEDE_T_InvoiceLineDetails">
+    <Type Name="ACCEDE_T_InvoiceLineDetail">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="DateAdded" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="InvoiceNo" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Particulars" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="AcctToCharged" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="TotalAmount" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="NetAmount" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="InvMain_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Preparer_ID" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="updatedBy" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Remarks" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="LineNum" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LineDescription" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="Qty" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="UOM" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="VAT" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="EWT" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="UnitPrice" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="Assignment" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Allowance" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="SLCode" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="EWTTaxType_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="EWTTaxAmount" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
+      <Column Name="EWTTaxCode" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
+      <Column Name="InvoiceTaxCode" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
+      <Column Name="Asset" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
+      <Column Name="SubAssetCode" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="TransactionType" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="AltRecon" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="SpecialGL" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.vw_ACCEDE_I_RAWFActivity" Member="vw_ACCEDE_I_RAWFActivities">
+    <Type Name="vw_ACCEDE_I_RAWFActivity">
+      <Column Name="WFA_Id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Status" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DateAssigned" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="DateAction" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="OrgRole_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="WF_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="WFD_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="Document_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Remarks" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="AppId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CompanyId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="OrgRole_Id_Orig" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDelegated" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="ActedBy_User_Id" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="IsRA" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="UserId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="DCT_Name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
     </Type>
   </Table>
 </Database>

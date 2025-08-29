@@ -76,49 +76,49 @@ namespace DX_WebTemplate
                             
                             txt_InvoiceNo.Text = inv.InvoiceNo?.ToString();
 
-                            var vendorDetails = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == inv.VendorName).FirstOrDefault();
-                            if (vendorDetails != null)
-                            {
-                                string tin = vendorDetails.TaxID.ToString();
+                            //var vendorDetails = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == inv.VendorName).FirstOrDefault();
+                            //if (vendorDetails != null)
+                            //{
+                            //    string tin = vendorDetails.TaxID.ToString();
 
-                                if (tin.Length > 9)
-                                {
-                                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6, 3)}-{tin.Substring(9)}";
-                                    txt_TIN.Text = formattedTin;
-                                }
-                                else if (tin.Length > 6)
-                                {
-                                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6)}";
-                                    txt_TIN.Text = formattedTin;
-                                }
-                                else if (tin.Length > 3)
-                                {
-                                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3)}";
-                                    txt_TIN.Text = formattedTin;
-                                }
-                                else
-                                {
-                                    txt_TIN.Text = tin; // less than 3 digits, no formatting
-                                }
+                            //    if (tin.Length > 9)
+                            //    {
+                            //        string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6, 3)}-{tin.Substring(9)}";
+                            //        txt_TIN.Text = formattedTin;
+                            //    }
+                            //    else if (tin.Length > 6)
+                            //    {
+                            //        string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6)}";
+                            //        txt_TIN.Text = formattedTin;
+                            //    }
+                            //    else if (tin.Length > 3)
+                            //    {
+                            //        string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3)}";
+                            //        txt_TIN.Text = formattedTin;
+                            //    }
+                            //    else
+                            //    {
+                            //        txt_TIN.Text = tin; // less than 3 digits, no formatting
+                            //    }
 
-                                string Clean(string input)
-                                {
-                                    if (string.IsNullOrWhiteSpace(input))
-                                        return "";
+                            //    string Clean(string input)
+                            //    {
+                            //        if (string.IsNullOrWhiteSpace(input))
+                            //            return "";
 
-                                    // remove line breaks and trim
-                                    string cleanedVendorstr = input.Replace("\r", " ").Replace("\n", " ").Trim();
+                            //        // remove line breaks and trim
+                            //        string cleanedVendorstr = input.Replace("\r", " ").Replace("\n", " ").Trim();
 
-                                    return ", " + cleanedVendorstr;
-                                }
+                            //        return ", " + cleanedVendorstr;
+                            //    }
 
-                                memo_VendorAddress.Text =
-                                    (vendorDetails.Address1 ?? "").Replace("\r", " ").Replace("\n", " ").Trim()
-                                    + Clean(vendorDetails.City ?? "")
-                                    + Clean(vendorDetails.State ?? "");
+                            //    memo_VendorAddress.Text =
+                            //        (vendorDetails.Address1 ?? "").Replace("\r", " ").Replace("\n", " ").Trim()
+                            //        + Clean(vendorDetails.City ?? "")
+                            //        + Clean(vendorDetails.State ?? "");
 
 
-                            }
+                            //}
 
                             SqlIO.SelectParameters["CompanyId"].DefaultValue = inv.InvChargedTo_CompanyId.ToString();
 
@@ -1359,7 +1359,7 @@ namespace DX_WebTemplate
                 exp_det_class.particulars = exp_details.Particulars?.ToString() ?? exp_det_class.particulars;
                 exp_det_class.acctCharge = exp_details.AcctToCharged ?? exp_det_class.acctCharge;
                 //exp_det_class.tin = exp_details.TIN ?? exp_det_class.tin;
-                //exp_det_class.invoice = exp_details.InvoiceOR ?? exp_det_class.invoice;
+                exp_det_class.InvoiceOR = exp_details.InvoiceNo ?? exp_det_class.InvoiceOR;
                 //exp_det_class.costCenter = exp_details.CostCenterIOWBS ?? exp_det_class.costCenter;
                 exp_det_class.grossAmnt = exp_details.TotalAmount != null ? Convert.ToDecimal(exp_details.TotalAmount) : exp_det_class.grossAmnt;
                 //exp_det_class.vat = exp_details.VAT != null ? Convert.ToDecimal(exp_details.VAT) : exp_det_class.vat;
@@ -1387,6 +1387,9 @@ namespace DX_WebTemplate
                 //exp_det_class.SpecialGL = exp_details_nonpo.SpecialGL ?? exp_det_class.SpecialGL;
                 exp_det_class.Qty = exp_details.Qty ?? exp_det_class.Qty;
                 exp_det_class.UnitPrice = exp_details.UnitPrice ?? exp_det_class.UnitPrice;
+                exp_det_class.uom = exp_details.UOM ?? exp_det_class.uom;
+                exp_det_class.ewt = exp_details.EWT ?? exp_det_class.ewt;
+                exp_det_class.vat = exp_details.VAT ?? exp_det_class.vat;
 
                 exp_det_class.totalAllocAmnt = totalAmnt;
 

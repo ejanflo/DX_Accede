@@ -38,12 +38,20 @@ namespace DX_WebTemplate
 
                     //Recommending Approval
                     var recAppr1 = "Ronald T. Garcia";
-                    var recAppr1Pos = "Recommending Approver 1";
+                    var recAppr1Pos = "Line Approver 1";
                     var recAppr1Date = DateTime.Now;
 
                     var recAppr2 = "Ian James V. Gaspar";
-                    var recAppr2Pos = "Recommending Approver 2";
+                    var recAppr2Pos = "Line Approver 2";
                     var recAppr2Date = DateTime.Now;
+
+                    var recAppr3 = "Ian James V. Gaspar";
+                    var recAppr3Pos = "Line Approver 3";
+                    var recAppr3Date = DateTime.Now;
+
+                    var recAppr4 = "Ian James V. Gaspar";
+                    var recAppr4Pos = "Line Approver 4";
+                    var recAppr4Date = DateTime.Now;
 
                     //FAP Approver
                     var finAppr1 = "Ni Wang Kho";
@@ -62,11 +70,20 @@ namespace DX_WebTemplate
                     var finAppr4Pos = "FAP Approver No. 4";
                     var finAppr4Date = DateTime.Now;
 
+                    //Forward Approver
+                    var forAppr1 = "Jane Smith";
+                    var forAppr1Pos = "";
+                    var forAppr1Date = DateTime.Now;
+
+                    var forAppr2 = "John S. Doe";
+                    var forAppr2Pos = "";
+                    var forAppr2Date = DateTime.Now;
+
                     var id = Convert.ToInt32(Session["passRFPID"]); //Pass session RFP_ID
                     var rfp = context.ACCEDE_T_RFPMains.Where(x => x.ID == id).FirstOrDefault();
 
                     //Requestor Request Date
-                    var reqApprDate = Convert.ToDateTime(rfp.DateCreated).ToString("MM/dd/yyyy");
+                    var reqApprDate = Convert.ToDateTime(rfp.DateCreated);
 
                     companyid = rfp.Company_ID.ToString();
 
@@ -112,26 +129,81 @@ namespace DX_WebTemplate
 
                         // Set the RA 
 
-                        var ra1 = context.vw_ACCEDE_I_RAWFActivities.Where(x => x.Document_Id == id).Where(x => x.Status == 7)
-                            .Where(x => x.IsRA == true)
-                            .Where(x => x.WF_Id == rfp.WF_Id)
-                            .Where(x=>x.DCT_Name == "ACDE RFP")
-                            .OrderBy(x => x.WFA_Id)
-                            .FirstOrDefault();
+                        //var ra1 = context.vw_ACCEDE_I_RAWFActivities.Where(x => x.Document_Id == id).Where(x => x.Status == 7)
+                        //    //.Where(x => x.IsRA == true)
+                        //    .Where(x => x.WF_Id == rfp.WF_Id)
+                        //    .Where(x=>x.DCT_Name == "ACDE RFP")
+                        //    .OrderBy(x => x.WFA_Id)
+                        //    .FirstOrDefault();
 
-                        var ra2 = context.vw_ACCEDE_I_RAWFActivities.Where(x => x.Document_Id == id).Where(x => x.Status == 7)
-                            .Where(x => x.IsRA == true)
-                            .Where(x => x.WF_Id == rfp.WF_Id)
-                            .Where(x => x.DCT_Name == "ACDE RFP")
-                            .OrderBy(x => x.WFA_Id)
-                            .Skip(1) // Skip the first row (index 0)
-                            .Take(1) // Take only one row (index 1)
-                            .SingleOrDefault(); // Retrieve the single result;
+                        //var ra2 = context.vw_ACCEDE_I_RAWFActivities.Where(x => x.Document_Id == id).Where(x => x.Status == 7)
+                        //    //.Where(x => x.IsRA == true)
+                        //    .Where(x => x.WF_Id == rfp.WF_Id)
+                        //    .Where(x => x.DCT_Name == "ACDE RFP")
+                        //    .Where(x => x.ActedBy_User_Id != ra1.ActedBy_User_Id)
+                        //    .OrderBy(x => x.WFA_Id);
+                        //    //.Skip(1) // Skip the first row (index 0)
+                        //    //.Take(1) // Take only one row (index 1)
+                        //    //.SingleOrDefault(); // Retrieve the single result;
+
+                        // Set the RA (distinct approvers by first occurrence, but use their latest action)
+                        var raBase = context.vw_ACCEDE_I_RAWFActivities
+                            .Where(x => x.Document_Id == id
+                                     && x.Status == 7
+                                     && x.WF_Id == rfp.WF_Id
+                                     && x.DCT_Name == "ACDE RFP");
+
+                        // Determine the first two distinct approvers in sequence (by smallest WFA_Id)
+                        var orderedApproverIds = raBase
+                            .GroupBy(a => a.ActedBy_User_Id)
+                            .Select(g => new
+                            {
+                                UserId = g.Key,
+                                FirstWfa = g.Min(a => a.WFA_Id)
+                            })
+                            .OrderBy(x => x.FirstWfa)
+                            .Select(x => x.UserId)
+                            .ToList();
+
+                        var ra1UserId = orderedApproverIds.FirstOrDefault();
+                        var ra2UserId = orderedApproverIds.Skip(1).FirstOrDefault();
+                        var ra3UserId = orderedApproverIds.Skip(2).FirstOrDefault();
+                        var ra4UserId = orderedApproverIds.Skip(3).FirstOrDefault();
+
+                        // For each approver, get the most recent approval activity
+                        var ra1 = ra1UserId == null
+                            ? null
+                            : raBase.Where(a => a.ActedBy_User_Id == ra1UserId)
+                                    .OrderByDescending(a => a.DateAction)
+                                    .ThenByDescending(a => a.WFA_Id)
+                                    .FirstOrDefault();
+
+                        var ra2 = ra2UserId == null
+                            ? null
+                            : raBase.Where(a => a.ActedBy_User_Id == ra2UserId)
+                                    .OrderByDescending(a => a.DateAction)
+                                    .ThenByDescending(a => a.WFA_Id)
+                                    .FirstOrDefault();
+
+                        var ra3 = ra3UserId == null
+                            ? null
+                            : raBase.Where(a => a.ActedBy_User_Id == ra3UserId)
+                                    .OrderByDescending(a => a.DateAction)
+                                    .ThenByDescending(a => a.WFA_Id)
+                                    .FirstOrDefault();
+
+                        var ra4 = ra4UserId == null
+                            ? null
+                            : raBase.Where(a => a.ActedBy_User_Id == ra4UserId)
+                                    .OrderByDescending(a => a.DateAction)
+                                    .ThenByDescending(a => a.WFA_Id)
+                                    .FirstOrDefault();
 
                         if (ra1 != null)
                         {
                             recAppr1 = context.ITP_S_UserMasters.Where(x => x.EmpCode == ra1.ActedBy_User_Id)
-                            .FirstOrDefault().FullName;
+                                .Select(x => x.FullName)
+                                .FirstOrDefault();
                             recAppr1Date = Convert.ToDateTime(ra1.DateAction);
                         }
                         else
@@ -141,7 +213,9 @@ namespace DX_WebTemplate
 
                         if (ra2 != null)
                         {
-                            recAppr2 = context.ITP_S_UserMasters.Where(x => x.EmpCode == ra2.ActedBy_User_Id).FirstOrDefault().FullName;
+                            recAppr2 = context.ITP_S_UserMasters.Where(x => x.EmpCode == ra2.ActedBy_User_Id)
+                                .Select(x => x.FullName)
+                                .FirstOrDefault();
                             recAppr2Date = Convert.ToDateTime(ra2.DateAction);
                         }
                         else
@@ -150,43 +224,70 @@ namespace DX_WebTemplate
                             recAppr2Date = Convert.ToDateTime("01/01/0001");
                         }
 
+                        if (ra3 != null)
+                        {
+                            recAppr3 = context.ITP_S_UserMasters.Where(x => x.EmpCode == ra3.ActedBy_User_Id)
+                            .FirstOrDefault().FullName;
+                            recAppr3Date = Convert.ToDateTime(ra3.DateAction);
+                        }
+                        else
+                        {
+                            recAppr3 = "";
+                            recAppr3Date = Convert.ToDateTime("01/01/0001");
+                        }
+
+                        if (ra4 != null)
+                        {
+                            recAppr4 = context.ITP_S_UserMasters.Where(x => x.EmpCode == ra4.ActedBy_User_Id).FirstOrDefault().FullName;
+                            recAppr4Date = Convert.ToDateTime(ra4.DateAction);
+                        }
+                        else
+                        {
+                            recAppr4 = "";
+                            recAppr4Date = Convert.ToDateTime("01/01/0001");
+                        }
+
                         var fin1 = context.vw_ACCEDE_I_WorkflowActivities.Where(x => x.Document_Id == id).Where(x => x.Status == 7)
-                            .Where(x => x.IsRA == false || x.IsRA == null)
-                            .Where(x => !x.WF_Name.Contains("ACDE AUDIT"))
-                            .Where(x => !x.WF_Name.Contains("ACDE P2P"))
-                            .Where(x => !x.WF_Name.Contains("ACDE CASHIER"))
-                            .Where(x => x.DCT_Name == "ACDE RFP")
+                            .Where(x=>x.WF_Id == rfp.FAPWF_Id)
+                            //.Where(x => x.IsRA == false || x.IsRA == null)
+                            //.Where(x => !x.WF_Name.Contains("ACDE AUDIT"))
+                            //.Where(x => !x.WF_Name.Contains("ACDE P2P"))
+                            //.Where(x => !x.WF_Name.Contains("ACDE CASHIER"))
+                            //.Where(x => x.DCT_Name == "ACDE RFP")
                             .OrderBy(x => x.WFA_Id)
                             .FirstOrDefault();
 
                         var fin2 = context.vw_ACCEDE_I_WorkflowActivities.Where(x => x.Document_Id == id).Where(x => x.Status == 7)
-                            .Where(x => x.IsRA == false || x.IsRA == null)
-                            .Where(x => !x.WF_Name.Contains("ACDE AUDIT"))
-                            .Where(x => !x.WF_Name.Contains("ACDE P2P"))
-                            .Where(x => !x.WF_Name.Contains("ACDE CASHIER"))
-                            .Where(x => x.DCT_Name == "ACDE RFP")
+                            .Where(x => x.WF_Id == rfp.FAPWF_Id)
+                            //.Where(x => x.IsRA == false || x.IsRA == null)
+                            //.Where(x => !x.WF_Name.Contains("ACDE AUDIT"))
+                            //.Where(x => !x.WF_Name.Contains("ACDE P2P"))
+                            //.Where(x => !x.WF_Name.Contains("ACDE CASHIER"))
+                            //.Where(x => x.DCT_Name == "ACDE RFP")
                             .OrderBy(x => x.WFA_Id)
                             .Skip(1) // Skip the first row (index 0)
                             .Take(1) // Take only one row (index 1)
                             .SingleOrDefault(); // Retrieve the single result;
 
                         var fin3 = context.vw_ACCEDE_I_WorkflowActivities.Where(x => x.Document_Id == id).Where(x => x.Status == 7)
-                            .Where(x => x.IsRA == false || x.IsRA == null)
-                            .Where(x => !x.WF_Name.Contains("ACDE AUDIT"))
-                            .Where(x => !x.WF_Name.Contains("ACDE P2P"))
-                            .Where(x => !x.WF_Name.Contains("ACDE CASHIER"))
-                            .Where(x => x.DCT_Name == "ACDE RFP")
+                            .Where(x => x.WF_Id == rfp.FAPWF_Id)
+                            //.Where(x => x.IsRA == false || x.IsRA == null)
+                            //.Where(x => !x.WF_Name.Contains("ACDE AUDIT"))
+                            //.Where(x => !x.WF_Name.Contains("ACDE P2P"))
+                            //.Where(x => !x.WF_Name.Contains("ACDE CASHIER"))
+                            //.Where(x => x.DCT_Name == "ACDE RFP")
                             .OrderBy(x => x.WFA_Id)
                             .Skip(2) // Skip the first row (index 0)
                             .Take(1) // Take only one row (index 1)
                             .SingleOrDefault(); // Retrieve the single result;
 
                         var fin4 = context.vw_ACCEDE_I_WorkflowActivities.Where(x => x.Document_Id == id).Where(x => x.Status == 7)
-                            .Where(x => x.IsRA == false || x.IsRA == null)
-                            .Where(x => !x.WF_Name.Contains("ACDE AUDIT"))
-                            .Where(x => !x.WF_Name.Contains("ACDE P2P"))
-                            .Where(x => !x.WF_Name.Contains("ACDE CASHIER"))
-                            .Where(x => x.DCT_Name == "ACDE RFP")
+                            .Where(x => x.WF_Id == rfp.FAPWF_Id)
+                            //.Where(x => x.IsRA == false || x.IsRA == null)
+                            //.Where(x => !x.WF_Name.Contains("ACDE AUDIT"))
+                            //.Where(x => !x.WF_Name.Contains("ACDE P2P"))
+                            //.Where(x => !x.WF_Name.Contains("ACDE CASHIER"))
+                            //.Where(x => x.DCT_Name == "ACDE RFP")
                             .OrderBy(x => x.WFA_Id)
                             .Skip(3) // Skip the first row (index 0)
                             .Take(1) // Take only one row (index 1)
@@ -239,6 +340,73 @@ namespace DX_WebTemplate
                         {
                             finAppr4 = "";
                             finAppr4Date = Convert.ToDateTime("01/01/0001");
+                        }
+
+                        // Set the Forward Approver
+                        var forBase = context.vw_ACCEDE_I_WorkflowActivities
+                            .Where(x => x.Document_Id == id
+                                     && x.Status == 7
+                                     && x.WF_Id != rfp.WF_Id
+                                     && x.WF_Id != rfp.FAPWF_Id
+                                     && x.WF_Name.Contains("ACDE AUDIT") == false
+                                     && x.WF_Name.Contains("ACDE P2P") == false
+                                     && x.WF_Name.Contains("ACDE CASHIER") == false
+                                     && x.DCT_Name == "ACDE RFP");
+
+                        // Determine the first two distinct approvers in sequence (by smallest WFA_Id)
+                        var ForOrderedApproverIds = forBase
+                            .GroupBy(a => a.ActedBy_User_Id)
+                            .Select(g => new
+                            {
+                                UserId = g.Key,
+                                FirstWfa = g.Min(a => a.WFA_Id)
+                            })
+                            .OrderBy(x => x.FirstWfa)
+                            .Select(x => x.UserId)
+                            .ToList();
+
+                        var for1UserId = ForOrderedApproverIds.FirstOrDefault();
+                        var for2UserId = ForOrderedApproverIds.Skip(1).FirstOrDefault();
+
+                        // For each approver, get the most recent approval activity
+                        var for1 = for1UserId == null
+                            ? null
+                            : forBase.Where(a => a.ActedBy_User_Id == for1UserId)
+                                    .OrderByDescending(a => a.DateAction)
+                                    .ThenByDescending(a => a.WFA_Id)
+                                    .FirstOrDefault();
+
+                        var for2 = for2UserId == null
+                            ? null
+                            : forBase.Where(a => a.ActedBy_User_Id == for2UserId)
+                                    .OrderByDescending(a => a.DateAction)
+                                    .ThenByDescending(a => a.WFA_Id)
+                                    .FirstOrDefault();
+
+                        if (for1 != null)
+                        {
+                            forAppr1 = context.ITP_S_UserMasters.Where(x => x.EmpCode == for1.ActedBy_User_Id)
+                                .Select(x => x.FullName)
+                                .FirstOrDefault();
+                            forAppr1Date = Convert.ToDateTime(ra1.DateAction);
+                        }
+                        else
+                        {
+                            forAppr1 = "";
+                            forAppr1Date = Convert.ToDateTime("01/01/0001");
+                        }
+
+                        if (for2 != null)
+                        {
+                            forAppr2 = context.ITP_S_UserMasters.Where(x => x.EmpCode == for2.ActedBy_User_Id)
+                                .Select(x => x.FullName)
+                                .FirstOrDefault();
+                            forAppr2Date = Convert.ToDateTime(for2.DateAction);
+                        }
+                        else
+                        {
+                            forAppr2 = "";
+                            forAppr2Date = Convert.ToDateTime("01/01/0001");
                         }
 
                         //Payment method in text
@@ -314,11 +482,20 @@ namespace DX_WebTemplate
                         report.Parameters["chargeDept"].Value = chargeDept.ToUpper();
                         report.Parameters["classification"].Value = classification.ToUpper();
                         report.Parameters["foreignDomestic"].Value = foreignDomestic.ToUpper();
+                        report.Parameters["reqApprDate"].Value = reqApprDate;
 
                         report.Parameters["recAppr1"].Value = recAppr1.ToUpper();
                         report.Parameters["recAppr2"].Value = recAppr2.ToUpper();
-                        report.Parameters["recAppr1Pos"].Value = recAppr1Pos.ToUpper(); ;
-                        report.Parameters["recAppr2Pos"].Value = recAppr2Pos.ToUpper(); ;
+                        report.Parameters["recAppr3"].Value = recAppr3.ToUpper();
+                        report.Parameters["recAppr4"].Value = recAppr4.ToUpper();
+                        report.Parameters["recAppr1Pos"].Value = recAppr1Pos.ToUpper(); 
+                        report.Parameters["recAppr2Pos"].Value = recAppr2Pos.ToUpper();
+                        report.Parameters["recAppr3Pos"].Value = recAppr3Pos.ToUpper();
+                        report.Parameters["recAppr4Pos"].Value = recAppr4Pos.ToUpper();
+                        report.Parameters["recAppr1Date"].Value = recAppr1Date;
+                        report.Parameters["recAppr2Date"].Value = recAppr2Date;
+                        report.Parameters["recAppr3Date"].Value = recAppr3Date;
+                        report.Parameters["recAppr4Date"].Value = recAppr4Date;
 
                         report.Parameters["finAppr1"].Value = finAppr1.ToUpper();
                         report.Parameters["finAppr2"].Value = finAppr2.ToUpper();
@@ -332,9 +509,13 @@ namespace DX_WebTemplate
                         report.Parameters["finAppr2Date"].Value = finAppr2Date;
                         report.Parameters["finAppr3Date"].Value = finAppr3Date;
                         report.Parameters["finAppr4Date"].Value = finAppr4Date;
-                        report.Parameters["reqApprDate"].Value = reqApprDate;
-                        report.Parameters["recAppr1Date"].Value = recAppr1Date;
-                        report.Parameters["recAppr2Date"].Value = recAppr2Date;
+
+                        report.Parameters["forAppr1"].Value = forAppr1.ToUpper();
+                        report.Parameters["forAppr2"].Value = forAppr2.ToUpper();
+                        report.Parameters["forAppr1Pos"].Value = forAppr1Pos.ToUpper();
+                        report.Parameters["forAppr2Pos"].Value = forAppr2Pos.ToUpper();
+                        report.Parameters["forAppr1Date"].Value = forAppr1Date;
+                        report.Parameters["forAppr2Date"].Value = forAppr2Date;
 
                         report.Parameters["payMethodStr"].Value = payMethod != null ? payMethod.PMethod_name.ToString() : "";
                         report.Parameters["tranTypeStr"].Value = tranType != null ? tranType.ToString() : "";
