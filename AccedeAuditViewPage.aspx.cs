@@ -67,6 +67,8 @@ namespace DX_WebTemplate
                         SqlWFActivity.SelectParameters["Document_Id"].DefaultValue = exp_details.ID.ToString();
                         SqlCADetails.SelectParameters["Exp_ID"].DefaultValue = exp_details.ID.ToString();
                         SqlReimDetails.SelectParameters["Exp_ID"].DefaultValue = exp_details.ID.ToString();
+                        SqlCompany.SelectParameters["UserId"].DefaultValue = exp_details.ExpenseName.ToString();
+                        SqlCompLocation.SelectParameters["Comp_Id"].DefaultValue = exp_details.ExpChargedTo_CompanyId.ToString();
 
                         SqlWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp_details.WF_Id).ToString();
                         SqlFAPWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp_details.FAPWF_Id).ToString();
@@ -242,13 +244,13 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static string btnApproveClickAjax(string approve_remarks, string secureToken)
+        public static string btnApproveClickAjax(string approve_remarks, string secureToken, string ctDept, string costCenter, string classification)
         {
             AccedeAuditViewPage rfp = new AccedeAuditViewPage();
-            return rfp.btnApproveClick(approve_remarks, secureToken);
+            return rfp.btnApproveClick(approve_remarks, secureToken, ctDept, costCenter, classification);
         }
 
-        public string btnApproveClick(string approve_remarks, string secureToken)
+        public string btnApproveClick(string approve_remarks, string secureToken, string ctDept, string costCenter, string classification)
         {
             try
             {
@@ -282,6 +284,10 @@ namespace DX_WebTemplate
                         .Where(x => x.DCT_Name == "ACDE RFP" || x.DCT_Description == "Accede Request For Payment")
                         .Select(x => x.DCT_Id)
                         .FirstOrDefault();
+
+                    exp_main.ExpChargedTo_DeptId = Convert.ToInt32(ctDept);
+                    exp_main.CostCenter = costCenter;
+                    exp_main.ExpenseClassification = Convert.ToInt32(classification);
 
                     //CHECK IF THERE IS REIMBURSEMENT
                     if (rfp_main_reimburse != null)
@@ -578,13 +584,13 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static bool btnReturnClickAjax(string return_remarks, string secureToken)
+        public static bool btnReturnClickAjax(string return_remarks, string secureToken, string ctDept, string costCenter, string classification)
         {
             AccedeAuditViewPage rfp = new AccedeAuditViewPage();
-            return rfp.btnReturnClick(return_remarks, secureToken);
+            return rfp.btnReturnClick(return_remarks, secureToken, ctDept, costCenter, classification);
         }
 
-        public bool btnReturnClick(string remarks, string secureToken)
+        public bool btnReturnClick(string remarks, string secureToken, string ctDept, string costCenter, string classification)
         {
             try
             {
@@ -606,6 +612,10 @@ namespace DX_WebTemplate
                     var returned_audit = _DataContext.ITP_S_Status
                         .Where(x => x.STS_Name == "Returned by Audit")
                         .FirstOrDefault();
+
+                    exp_main.ExpChargedTo_DeptId = Convert.ToInt32(ctDept);
+                    exp_main.CostCenter = costCenter;
+                    exp_main.ExpenseClassification = Convert.ToInt32(classification);
 
                     if (returned_audit != null)
                     {
@@ -701,15 +711,15 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static string btnApproveForwardAJAX(string forwardWF, string remarks, string secureToken)
+        public static string btnApproveForwardAJAX(string forwardWF, string remarks, string secureToken, string ctDept, string costCenter, string classification)
         {
             AccedeAuditViewPage rfp = new AccedeAuditViewPage();
 
-            return rfp.btnApproveForward(forwardWF, remarks, secureToken);
+            return rfp.btnApproveForward(forwardWF, remarks, secureToken, ctDept, costCenter, classification);
 
         }
 
-        public string btnApproveForward(string forwardWF, string remarks, string secureToken)
+        public string btnApproveForward(string forwardWF, string remarks, string secureToken, string ctDept, string costCenter, string classification)
         {
             try
             {
@@ -758,6 +768,10 @@ namespace DX_WebTemplate
 
                     var org_id = fin_wfDetail_data.OrgRole_Id;
                     var date2day = DateTime.Now;
+
+                    exp_main.ExpChargedTo_DeptId = Convert.ToInt32(ctDept);
+                    exp_main.CostCenter = costCenter;
+                    exp_main.ExpenseClassification = Convert.ToInt32(classification);
 
                     //DELEGATE CHECK and change org_id if there are any delegation
                     foreach (var del in _DataContext.ITP_S_TaskDelegations
@@ -1038,6 +1052,176 @@ namespace DX_WebTemplate
             SqlCAFileAttach.DataBind();
 
             CADocuGrid.DataBind();
+        }
+
+        protected void drpdown_CTDepartment_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var comp_id = e.Parameter.ToString();
+            SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = comp_id;
+            SqlCTDepartment.DataBind();
+
+            drpdown_CTDepartment.DataSourceID = null;
+            drpdown_CTDepartment.DataSource = SqlCTDepartment;
+            drpdown_CTDepartment.DataBind();
+        }
+
+        protected void drpdown_CostCenter_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var param = e.Parameter.Split('|');
+            var comp = param[0];
+            var dept = param[1];
+
+            SqlCostCenterCT.SelectParameters["Company_ID"].DefaultValue = comp;
+            SqlCostCenterCT.DataBind();
+
+            var dept_details = _DataContext.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(dept)).FirstOrDefault();
+
+            drpdown_CostCenter.DataSourceID = null;
+            drpdown_CostCenter.DataSource = SqlCostCenterCT;
+            drpdown_CostCenter.DataBind();
+
+            drpdown_CostCenter.Value = dept_details.SAP_CostCenter.ToString();
+        }
+
+        protected void ExpAllocGrid_edit_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            decimal totalNetAmount = 0;
+
+            // Check if the grid is bound to a DataTable, List, or other collection
+            for (int i = 0; i < ExpAllocGrid_edit.VisibleRowCount; i++)
+            {
+                // Get the value of NetAmount from each visible row
+                object netAmountObj = ExpAllocGrid_edit.GetRowValues(i, "NetAmount");
+
+                if (netAmountObj != null && netAmountObj != DBNull.Value)
+                {
+                    decimal netAmount = Convert.ToDecimal(netAmountObj);
+                    totalNetAmount += netAmount;
+                }
+            }
+            //if (totalNetAmount > Convert.ToDecimal(grossAmount_edit.Value))
+            //{
+            //    ExpAllocGrid_edit.Styles.Footer.ForeColor = System.Drawing.Color.Red;
+            //}
+            ASPxGridView grid = (ASPxGridView)sender;
+
+            grid.JSProperties["cpComputeUnalloc_edit"] = totalNetAmount;
+        }
+
+        protected void ExpAllocGrid_edit_RowDeleting(object sender, DevExpress.Web.Data.ASPxDataDeletingEventArgs e)
+        {
+            //decimal totalAmnt = new decimal(0.00);
+            int deletedRowIndex = Convert.ToInt32(e.Keys[ExpAllocGrid_edit.KeyFieldName].ToString());
+            var expAllocs = _DataContext.ACCEDE_T_ExpenseDetailsMaps
+                .Where(x => x.ExpenseDetailMap_ID == Convert.ToInt32(deletedRowIndex))
+                .FirstOrDefault();
+            //ASPxGridView grid = (ASPxGridView)sender;
+            //foreach (var item in expAllocs)
+            //{
+            //    totalAmnt += Convert.ToDecimal(item.NetAmount);
+            //}
+            //grid.JSProperties["cpComputeUnalloc_edit"] = totalAmnt;
+
+            decimal totalNetAmount = 0;
+            decimal finalTotalAmnt = 0;
+            for (int i = 0; i < ExpAllocGrid_edit.VisibleRowCount; i++)
+            {
+                // Get the value of NetAmount from each visible row
+                object netAmountObj = ExpAllocGrid_edit.GetRowValues(i, "NetAmount");
+
+                if (netAmountObj != null && netAmountObj != DBNull.Value)
+                {
+                    decimal netAmount = Convert.ToDecimal(netAmountObj);
+                    totalNetAmount += netAmount;
+                }
+            }
+            //if (totalNetAmount > Convert.ToDecimal(grossAmount.Value))
+            //{
+            //    ExpAllocGrid.Styles.Footer.ForeColor = System.Drawing.Color.Red;
+            //}
+
+            finalTotalAmnt = totalNetAmount - Convert.ToDecimal(expAllocs.NetAmount);
+            ASPxGridView grid = (ASPxGridView)sender;
+            grid.JSProperties["cpComputeUnalloc_edit"] = finalTotalAmnt;
+        }
+
+        protected void ExpAllocGrid_edit_RowInserting(object sender, DevExpress.Web.Data.ASPxDataInsertingEventArgs e)
+        {
+            var expAllocs = _DataContext.ACCEDE_T_ExpenseDetailsMaps
+                .Where(x => x.ExpenseReportDetail_ID == Convert.ToInt32(Session["ExpDetailsID"]));
+
+            decimal totalAmnt = new decimal(0.00);
+
+            ASPxGridView grid = (ASPxGridView)sender;
+
+            foreach (var item in expAllocs)
+            {
+                totalAmnt += Convert.ToDecimal(item.NetAmount);
+            }
+
+            totalAmnt = totalAmnt + Convert.ToDecimal(e.NewValues["NetAmount"]);
+            if (totalAmnt > Convert.ToDecimal(grossAmount_edit.Value))
+            {
+                grid.Styles.Footer.ForeColor = System.Drawing.Color.Red;
+
+                // Set a custom JS property to pass the alert message to the client side
+                grid.JSProperties["cpAllocationExceeded"] = true;
+
+                e.Cancel = true;
+
+            }
+            else
+            {
+                e.NewValues["ExpenseReportDetail_ID"] = Convert.ToInt32(Session["ExpDetailsID"]);
+                e.NewValues["Preparer_ID"] = Convert.ToInt32(Session["userID"]);
+
+                grid.JSProperties["cpComputeUnalloc_edit"] = totalAmnt;
+            }
+
+
+        }
+
+        protected void ExpAllocGrid_edit_RowUpdating(object sender, DevExpress.Web.Data.ASPxDataUpdatingEventArgs e)
+        {
+            decimal totalNetAmount = 0;
+            var RowIndex = e.NewValues["ExpenseDetailMap_ID"].ToString();
+            var newAmnt = e.NewValues["NetAmount"].ToString();
+            // Check if the grid is bound to a DataTable, List, or other collection
+            for (int i = 0; i < ExpAllocGrid_edit.VisibleRowCount; i++)
+            {
+                // Get the value of NetAmount from each visible row
+                object netAmountObj = ExpAllocGrid_edit.GetRowValues(i, "NetAmount");
+                object ID_Obj = ExpAllocGrid_edit.GetRowValues(i, "ExpenseDetailMap_ID");
+
+                if (netAmountObj != null && netAmountObj != DBNull.Value)
+                {
+                    decimal netAmount = Convert.ToDecimal(netAmountObj);
+                    if (RowIndex.ToString() == ID_Obj.ToString())
+                    {
+                        netAmount = Convert.ToDecimal(newAmnt);
+                    }
+                    totalNetAmount += netAmount;
+                }
+            }
+            //if (totalNetAmount > Convert.ToDecimal(grossAmount_edit.Value))
+            //{
+            //    ExpAllocGrid_edit.Styles.Footer.ForeColor = System.Drawing.Color.Red;
+            //}
+            ASPxGridView grid = (ASPxGridView)sender;
+
+            grid.JSProperties["cpComputeUnalloc_edit"] = totalNetAmount;
+        }
+
+        protected void exp_CompLocation_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var comp_id = e.Parameter.ToString();
+
+            SqlCompLocation.SelectParameters["Comp_Id"].DefaultValue = comp_id;
+            SqlCompLocation.DataBind();
+
+            exp_CompLocation.DataSourceID = null;
+            exp_CompLocation.DataSource = SqlCompLocation;
+            exp_CompLocation.DataBind();
         }
     }
     

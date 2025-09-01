@@ -1468,22 +1468,30 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                         </FilterControl>
                                                     </SettingsPopup>
                                                     <Columns>
-                                                        <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="9">
+                                                        <dx:GridViewDataTextColumn FieldName="ID" ReadOnly="True" ShowInCustomizationForm="True" Visible="False" VisibleIndex="10">
                                                             <EditFormSettings Visible="False" />
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataDateColumn FieldName="DateAdded" ShowInCustomizationForm="True" Visible="False" VisibleIndex="10">
+                                                        <dx:GridViewDataDateColumn FieldName="DateAdded" ShowInCustomizationForm="True" Visible="False" VisibleIndex="11">
                                                         </dx:GridViewDataDateColumn>
                                                         <dx:GridViewDataTextColumn FieldName="P_Name" ShowInCustomizationForm="True" VisibleIndex="1" Caption="Particulars">
                                                         </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataTextColumn FieldName="AcctToCharged" ShowInCustomizationForm="True" Visible="False" VisibleIndex="13">
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="TotalAmount" ShowInCustomizationForm="True" VisibleIndex="7">
+                                                        <dx:GridViewDataTextColumn FieldName="TotalAmount" ShowInCustomizationForm="True" VisibleIndex="8">
+                                                            <PropertiesTextEdit DisplayFormatString="N">
+                                                            </PropertiesTextEdit>
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="Qty" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                        <dx:GridViewDataTextColumn FieldName="Qty" ShowInCustomizationForm="True" VisibleIndex="3">
+                                                            <PropertiesTextEdit DisplayFormatString="N">
+                                                            </PropertiesTextEdit>
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="UnitPrice" ShowInCustomizationForm="True" VisibleIndex="6">
+                                                        <dx:GridViewDataTextColumn FieldName="UnitPrice" ShowInCustomizationForm="True" VisibleIndex="4">
+                                                            <PropertiesTextEdit DisplayFormatString="N">
+                                                            </PropertiesTextEdit>
                                                         </dx:GridViewDataTextColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="NetAmount" ShowInCustomizationForm="True" VisibleIndex="8">
+                                                        <dx:GridViewDataTextColumn FieldName="NetAmount" ShowInCustomizationForm="True" VisibleIndex="9">
+                                                            <PropertiesTextEdit DisplayFormatString="N">
+                                                            </PropertiesTextEdit>
                                                         </dx:GridViewDataTextColumn>
                                                         <dx:GridViewDataTextColumn FieldName="InvMain_ID" ShowInCustomizationForm="True" Visible="False" VisibleIndex="16">
                                                         </dx:GridViewDataTextColumn>
@@ -1513,7 +1521,17 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                                             <CellStyle HorizontalAlign="Left">
                                                             </CellStyle>
                                                         </dx:GridViewCommandColumn>
-                                                        <dx:GridViewDataTextColumn FieldName="LineDescription" ShowInCustomizationForm="True" VisibleIndex="4">
+                                                        <dx:GridViewDataTextColumn FieldName="LineDescription" ShowInCustomizationForm="True" VisibleIndex="2">
+                                                        </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewDataTextColumn FieldName="UOM" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                        </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewDataTextColumn FieldName="EWT" ShowInCustomizationForm="True" VisibleIndex="6">
+                                                            <PropertiesTextEdit DisplayFormatString="N">
+                                                            </PropertiesTextEdit>
+                                                        </dx:GridViewDataTextColumn>
+                                                        <dx:GridViewDataTextColumn FieldName="VAT" ShowInCustomizationForm="True" VisibleIndex="7">
+                                                            <PropertiesTextEdit DisplayFormatString="N">
+                                                            </PropertiesTextEdit>
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:ASPxGridView>

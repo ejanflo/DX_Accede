@@ -971,7 +971,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                                     <dx:LayoutItem Caption="Charged To Company" ColSpan="1" Name="edit_CTComp" FieldName="ExpChargedTo_CompanyId" ClientVisible="False">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
-                                                <dx:ASPxComboBox ID="drpdown_CTComp" runat="server" ClientInstanceName="drpdown_CTComp" DataSourceID="SqlCompanyCT" TextField="CompanyShortName" ValueField="CompanyId" Width="100%" Font-Bold="True">
+                                                <dx:ASPxComboBox ID="drpdown_CTComp" runat="server" ClientInstanceName="drpdown_CTComp" DataSourceID="SqlCompanyCT" TextField="CompanyShortName" ValueField="CompanyId" Width="100%" Font-Bold="True" ReadOnly="True">
                                                     <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	drpdown_CTDepartment.PerformCallback(s.GetValue());
 //OnCompanyChanged(s.GetValue());
