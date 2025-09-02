@@ -85,8 +85,12 @@ namespace DX_WebTemplate
                     {
                         string raw = rfp_details.Payee.ToString();
                         string cleaned = raw.Replace("\r", "").Replace("\n", "");
-                        var payee = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == cleaned).FirstOrDefault();
-                        txt_Payee.Text = payee.VendorName.ToString();
+                        var vendors = SAPVendor.GetVendorData("")
+                                .GroupBy(x => new { x.VENDCODE, x.VENDNAME })
+                                .Select(g => g.First())
+                                .ToList();
+                        var payee = vendors.Where(x => x.VENDCODE == cleaned).FirstOrDefault();
+                        txt_Payee.Text = payee.VENDNAME.ToString();
                     }
                     else
                     {

@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Web;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using static DX_WebTemplate.AccedeNonPOEditPage;
+using static DX_WebTemplate.SAPVendor;
 
 namespace DX_WebTemplate
 {
@@ -29,6 +31,30 @@ namespace DX_WebTemplate
                     SqlUserCompany.SelectParameters["UserId"].DefaultValue = EmpCode;
                     SqlUserSelf.SelectParameters["EmpCode"].DefaultValue = EmpCode;
                     sqlExpense.SelectParameters["UserId"].DefaultValue = EmpCode;
+
+
+                    string matparams = "";
+
+                    drpdown_vendor.DataSourceID = null;
+
+                    // ✅ bind directly from SAP OData
+                    var vendors = SAPVendor.GetVendorData(matparams);
+
+                    drpdown_vendor.DataSource = vendors
+                        .GroupBy(x => new { x.VENDCODE, x.VENDNAME })
+                        .Select(g => g.First())
+                        .ToList();
+
+                    drpdown_vendor.ValueField = "VENDCODE";   // the unique key / value you want to use
+                    drpdown_vendor.TextField = "VENDNAME";   // what the user sees in the dropdown
+                       
+                    drpdown_vendor.Columns.Clear();
+
+                    drpdown_vendor.Columns.Add("VENDCODE");
+                    drpdown_vendor.Columns.Add("VENDNAME");
+                    drpdown_vendor.DataBindItems();
+
+                    drpdown_vendor.ValidationSettings.RequiredField.IsRequired = true;
 
                     //drpdown_EmpId.Value = EmpCode.ToString();
                     //drpdown_EmpId.DataBindItems();
@@ -420,79 +446,80 @@ namespace DX_WebTemplate
         
 
         [WebMethod]
-        public static VendorDetails CheckVendorDetailsAJAX(string vendor)
+        public static VendorSet CheckVendorDetailsAJAX(string vendor)
         {
             AccedeInvoiceNonPODashboard page = new AccedeInvoiceNonPODashboard();
             return page.CheckVendorDetails(vendor);
         }
 
-        public VendorDetails CheckVendorDetails(string vendor)
+        public VendorSet CheckVendorDetails(string vendor)
         {
-            var vendorDetails = context.ACCEDE_S_Vendors.Where(x => x.VendorCode == vendor).FirstOrDefault();
-            VendorDetails vendorClass = new VendorDetails();
-            if (vendorDetails != null)
-            {
+            //var vendorDetails = context.ACCEDE_S_Vendors.Where(x => x.VendorCode == vendor).FirstOrDefault();
+            var vendorDetails = SAPVendor.GetVendorData("").Where(x => x.VENDCODE == vendor).FirstOrDefault();
+            //VendorSet vendorClass = new VendorSet();
+            //if (vendorsDetails != null)
+            //{
 
-                string tin = vendorDetails.TaxID != null ? vendorDetails.TaxID.ToString() : "";
+            //    string tin = vendorsDetails.VENDTIN != null ? vendorsDetails.VENDTIN.ToString() : "";
 
-                if (tin != "" && tin.Length > 9)
-                {
-                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6, 3)}-{tin.Substring(9)}";
-                    vendorClass.TIN = formattedTin;
-                }
-                else if (tin != "" && tin.Length > 6)
-                {
-                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6)}";
-                    vendorClass.TIN = formattedTin;
-                }
-                else if (tin != "" && tin.Length > 3)
-                {
-                    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3)}";
-                    vendorClass.TIN = formattedTin;
-                }
-                else
-                {
-                    vendorClass.TIN = tin; // less than 3 digits, no formatting
-                }
+            //    //if (tin != "" && tin.Length > 9)
+            //    //{
+            //    //    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6, 3)}-{tin.Substring(9)}";
+            //    //    vendorClass.TIN = formattedTin;
+            //    //}
+            //    //else if (tin != "" && tin.Length > 6)
+            //    //{
+            //    //    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6)}";
+            //    //    vendorClass.TIN = formattedTin;
+            //    //}
+            //    //else if (tin != "" && tin.Length > 3)
+            //    //{
+            //    //    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3)}";
+            //    //    vendorClass.TIN = formattedTin;
+            //    //}
+            //    //else
+            //    //{
+            //    //    vendorClass.TIN = tin; // less than 3 digits, no formatting
+            //    //}
 
-                string Clean(string input)
-                {
-                    if (string.IsNullOrWhiteSpace(input))
-                        return "";
+            //    string Clean(string input)
+            //    {
+            //        if (string.IsNullOrWhiteSpace(input))
+            //            return "";
 
-                    // remove line breaks and trim
-                    string cleaned = input.Replace("\r", " ").Replace("\n", " ").Trim();
+            //        // remove line breaks and trim
+            //        string cleaned = input.Replace("\r", " ").Replace("\n", " ").Trim();
 
-                    return ", " + cleaned;
-                }
+            //        return ", " + cleaned;
+            //    }
 
-                vendorClass.Address =
-                    (vendorDetails.Address1 ?? "").Replace("\r", " ").Replace("\n", " ").Trim()
-                    + Clean(vendorDetails.City ?? "")
-                    + Clean(vendorDetails.State ?? "");
+            //    vendorClass.Address =
+            //        (vendorDetails.Address1 ?? "").Replace("\r", " ").Replace("\n", " ").Trim()
+            //        + Clean(vendorDetails.City ?? "")
+            //        + Clean(vendorDetails.State ?? "");
 
-                vendorClass.Name = vendorDetails.VendorName != null ? vendorDetails.VendorName.ToString() : "";
+            //    vendorClass.Name = vendorDetails.VendorName != null ? vendorDetails.VendorName.ToString() : "";
 
 
-                if (vendor.Contains("OTV"))
-                {
-                    vendorClass.isOneTime = true;
-                }
-                else
-                {
-                    vendorClass.isOneTime = false;
-                }
+            //    if (vendor.Contains("OTV"))
+            //    {
+            //        vendorClass.isOneTime = true;
+            //    }
+            //    else
+            //    {
+            //        vendorClass.isOneTime = false;
+            //    }
 
-            }
-            else
-            {
+            //}
+            //else
+            //{
 
-                vendorClass.TIN = "";
-                vendorClass.Address = "";
+            //    //vendorClass.TIN = "";
+            //    //vendorClass.Address = "";
 
-            }
+            //}
 
-            return vendorClass;
+            return vendorDetails;
         }
     }
 

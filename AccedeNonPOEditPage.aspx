@@ -55,7 +55,7 @@
             if (e.item.name === "addExpense") {
 
                 //costCenter.SetValue(drpdown_CostCenter.GetValue());
-                ExpAllocGrid.PerformCallback();
+                //ExpAllocGrid.PerformCallback();
                 expensePopup1.Show();
 
             }
@@ -208,6 +208,7 @@
             if (ASPxClientEdit.ValidateGroup('PopupSubmit')) {
                 LoadingPanel.SetText("Saving Line item&hellip;");
                 LoadingPanel.Show();
+
                 var dateAdd = date_dateFiled.GetValue();
                 //var tin_no = tin.GetValue() != null ? tin.GetValue() : "";
                 var invoice_no = invoice_add.GetValue() != null ? invoice_add.GetValue() : "";
@@ -240,61 +241,88 @@
                 var ewt = ewt_add.GetValue() != null ? ewt_add.GetValue() : "0";
                 var vat = vat_add.GetValue() != null ? vat_add.GetValue() : "0";
 
-                SaveExpenseReport("Save2");
-                LoadingPanel.Show();
+                var totalAlloc = GetTotalNetAmount(ExpAllocGrid);
 
-                $.ajax({
-                    type: "POST",
-                    url: "AccedeNonPOEditPage.aspx/AddExpDetailsAJAX",
-                    data: JSON.stringify({
-                        dateAdd: dateAdd,
-                        invoice_no: invoice_no,
-                        gross_amount: gross_amount,
-                        net_amount: net_amount,
-                        particu: particu,
-                        expCat: expCat,
-                        currency: currency,
-                        qty: qty,
-                        unit_price: unit_price,
-                        itemDesc: itemDesc,
-                        assign: assign,
-                        allowance: allowance,
-                        EWTTaxType: EWTTaxType,
-                        EWTTAmount: EWTTAmount,
-                        EWTTCode: EWTTCode,
-                        asset: asset,
-                        subasset: subasset,
-                        AltRecon: AltRecon,
-                        SLCode: SLCode,
-                        SpecialGL: SpecialGL,
-                        invoiceTCode: invoiceTCode,
-                        uom: uom,
-                        ewt: ewt,
-                        vat: vat
-                    }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                        // Handle success
-                        if (response.d == "success") {
-                            LoadingPanel.SetText("Updating document&hellip;");
-                            LoadingPanel.Show();
-                            window.location.href = 'AccedeNonPOEditPage.aspx';
-                        }
-                        else {
-                            //alert(response.d);
-                            //LoadingPanel.Hide();
-                            LoadingPanel.SetText("Updating document&hellip;");
-                            LoadingPanel.Show();
-                            window.location.href = 'AccedeNonPOEditPage.aspx';
-                        }
+                if (totalAlloc < gross_amount) {
+                    alert("The total allocation is less than the gross amount entered. Please review and adjust the allocation amounts.");
+                    LoadingPanel.Hide();
+                } else if (totalAlloc > gross_amount) {
+                    alert("The total allocation exceeds the gross amount entered. Please review and adjust the allocation amounts.");
+                    LoadingPanel.Hide();
+                } else {
+                    SaveExpenseReport("Save2");
+                    LoadingPanel.Show();
 
-                    },
-                    failure: function (response) {
-                        // Handle failure
-                    }
-                });
+                    $.ajax({
+                        type: "POST",
+                        url: "AccedeNonPOEditPage.aspx/AddExpDetailsAJAX",
+                        data: JSON.stringify({
+                            dateAdd: dateAdd,
+                            invoice_no: invoice_no,
+                            gross_amount: gross_amount,
+                            net_amount: net_amount,
+                            particu: particu,
+                            expCat: expCat,
+                            currency: currency,
+                            qty: qty,
+                            unit_price: unit_price,
+                            itemDesc: itemDesc,
+                            assign: assign,
+                            allowance: allowance,
+                            EWTTaxType: EWTTaxType,
+                            EWTTAmount: EWTTAmount,
+                            EWTTCode: EWTTCode,
+                            asset: asset,
+                            subasset: subasset,
+                            AltRecon: AltRecon,
+                            SLCode: SLCode,
+                            SpecialGL: SpecialGL,
+                            invoiceTCode: invoiceTCode,
+                            uom: uom,
+                            ewt: ewt,
+                            vat: vat
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            // Handle success
+                            if (response.d == "success") {
+                                LoadingPanel.SetText("Updating document&hellip;");
+                                LoadingPanel.Show();
+                                window.location.href = 'AccedeNonPOEditPage.aspx';
+                            }
+                            else {
+                                //alert(response.d);
+                                //LoadingPanel.Hide();
+                                LoadingPanel.SetText("Updating document&hellip;");
+                                LoadingPanel.Show();
+                                window.location.href = 'AccedeNonPOEditPage.aspx';
+                            }
+
+                        },
+                        failure: function (response) {
+                            // Handle failure
+                        }
+                    });
+                }
+
+                
             }
+        }
+
+        function GetTotalNetAmount(grid) {
+            var total = 0;
+            var rowCount = grid.GetVisibleRowsOnPage();
+            var colIndex = grid.GetColumnByField("NetAmount").index;
+
+            for (var i = 0; i < rowCount; i++) {
+                var row = grid.GetRow(i);
+                if (row && row.cells[colIndex]) {
+                    var val = row.cells[colIndex].innerText.trim();
+                    if (val) total += parseFloat(val.replace(/,/g, ""));
+                }
+            }
+            return total;
         }
 
         function onTravelClick() {
@@ -706,11 +734,11 @@
                 }),
                 success: function (response) {
                     // Update the description text box with the response value
-                    txt_TIN.SetValue(response.d.TIN);
-                    memo_VendorAddress.SetValue(response.d.Address);
-                    txt_vendorName.SetValue(response.d.Name);
+                    txt_TIN.SetValue(response.d.VENDTIN);
+                    memo_VendorAddress.SetValue(response.d.VENDSTREET+", "+response.d.VENDCITY+", "+response.d.VENDPOSTAL);
+                    txt_vendorName.SetValue(response.d.VENDNAME);
 
-                    if (response.d.isOneTime == true) {
+                    if (vendor.includes("OTV")) {
                         txt_TIN.SetReadOnly(false);
                         memo_VendorAddress.SetReadOnly(false);
                         txt_vendorName.SetReadOnly(false);
@@ -868,6 +896,7 @@
 
         async function EditExpDetails() {
             if (ASPxClientEdit.ValidateGroup('PopupSubmit')) {
+                
                 var dateAdd = date_dateFiled.GetValue();
                 //var tin_no = tin_edit.GetValue() != null ? tin_edit.GetValue() : "";
                 var invoice_no = invoice_edit.GetValue() != null ? invoice_edit.GetValue() : "";
@@ -1613,7 +1642,7 @@ io_edit.PerformCallback(s.GetValue());
                                                 <dx:LayoutItem Caption="Vendor Code" ColSpan="1" FieldName="VendorCode">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxComboBox ID="drpdown_vendor" runat="server" ClientInstanceName="drpdown_vendor" EnableTheming="True" Font-Bold="True" Font-Size="Small" Width="100%" DataSourceID="SqlVendor" TextField="VendorName" ValueField="VendorCode" DisplayFormatString="{0}" NullValueItemDisplayText="{0} - {1}" TextFormatString="{0} - {1}">
+                                                            <dx:ASPxComboBox ID="drpdown_vendor" runat="server" ClientInstanceName="drpdown_vendor" EnableTheming="True" Font-Bold="True" Font-Size="Small" Width="100%" DisplayFormatString="{0}" NullValueItemDisplayText="{0} - {1}" TextFormatString="{0} - {1}">
                                                                 <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	OnVendorChanged(s.GetValue());
 }" />
@@ -2921,7 +2950,7 @@ AddExpDetails();
                                                         </SpinButtons>
                                                         <ClientSideEvents ValueChanged="function(s, e) {
 	//netAmount.SetValue(s.GetValue());
-	ExpAllocGrid.PerformCallback();
+	//ExpAllocGrid.PerformCallback();
 	computeNetAmount(&quot;add&quot;);
 }" />
                                                         <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
@@ -3091,7 +3120,7 @@ AddExpDetails();
                                                                 <dx:LayoutItemNestedControlContainer runat="server">
                                                                     <dx:ASPxUploadControl ID="UploadControllerExpD0" runat="server" AutoStartUpload="True" ShowProgressPanel="True" UploadMode="Auto" Width="100%" OnFileUploadComplete="UploadControllerExpD0_FileUploadComplete">
                                                                         <ClientSideEvents FilesUploadComplete="function(s, e) {
-	ExpAllocGrid.Refresh();
+	//ExpAllocGrid.Refresh();
 ExpAllocGrid.PerformCallback();
 }
 " />
@@ -3513,7 +3542,7 @@ ExpAllocGrid.PerformCallback();
                                                         </SpinButtons>
                                                         <ClientSideEvents ValueChanged="function(s, e) {
 	//netAmount.SetValue(s.GetValue());
-	ExpAllocGrid.PerformCallback();
+	//ExpAllocGrid.PerformCallback();
 	computeNetAmount(&quot;add&quot;);
 }" />
                                                         <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">

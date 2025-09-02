@@ -726,6 +726,7 @@
     <Compile Include="RFPViewPage.aspx.designer.cs">
       <DependentUpon>RFPViewPage.aspx</DependentUpon>
     </Compile>
+    <Compile Include="SAPVendor.cs" />
     <Compile Include="Security\EmulateUser.aspx.cs">
       <DependentUpon>EmulateUser.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

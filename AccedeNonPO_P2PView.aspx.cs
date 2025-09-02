@@ -72,11 +72,15 @@ namespace DX_WebTemplate
                                 .FirstOrDefault();
 
                             SqlDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType.DCT_Id.ToString();
+                            var vendors = SAPVendor.GetVendorData("")
+                                .GroupBy(x => new { x.VENDCODE, x.VENDNAME })
+                                .Select(g => g.First())
+                                .ToList();
 
-                            var vendor = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == inv.VendorName.ToString().Trim()).FirstOrDefault();
+                            var vendor = vendors.Where(x => x.VENDCODE == inv.VendorCode.ToString().Trim()).FirstOrDefault();
                             if (vendor != null)
                             {
-                                txt_vendor.Text = vendor.VendorName.ToString();
+                                txt_vendor.Text = vendor.VENDNAME.ToString();
                             }
 
                             txt_InvoiceNo.Text = inv.InvoiceNo?.ToString();

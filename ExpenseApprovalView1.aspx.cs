@@ -140,11 +140,11 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static string btnApproveClickAjax(string approve_remarks)
-        {
-            AccedeAuditViewPage rfp = new AccedeAuditViewPage();
-            return rfp.btnApproveClick(approve_remarks,"");
-        }
+        //public static string btnApproveClickAjax(string approve_remarks)
+        //{
+        //    AccedeAuditViewPage rfp = new AccedeAuditViewPage();
+        //    return rfp.btnApproveClick(approve_remarks,"");
+        //}
 
         public string btnApproveClick(string approve_remarks)
         {

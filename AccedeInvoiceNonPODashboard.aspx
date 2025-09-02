@@ -78,9 +78,9 @@
                 }),
                 success: function (response) {
                     // Update the description text box with the response value
-                    txt_vendorTIN.SetValue(response.d.TIN);
-                    memo_vendorAddress.SetValue(response.d.Address);
-                    txt_vendorName.SetValue(response.d.Name);
+                    txt_vendorTIN.SetValue(response.d.VENDTIN);
+                    memo_vendorAddress.SetValue(response.d.VENDSTREET+", "+response.d.VENDSTREET2+", "+response.d.VENDCITY);
+                    txt_vendorName.SetValue(response.d.VENDNAME);
 
                     if (response.d.isOneTime == true) {
                         txt_vendorTIN.SetReadOnly(false);
@@ -624,7 +624,7 @@
                                 <dx:LayoutItem Caption="Vendor Code" ColSpan="1">
                                     <LayoutItemNestedControlCollection>
                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                            <dx:ASPxComboBox ID="drpdown_vendor" runat="server" ClientInstanceName="drpdown_vendor" TextField="VendorName" ValueField="VendorCode" Width="100%" OnCallback="drpdown_EmpId_Callback" DataSourceID="SqlVendor" DropDownWidth="500px" NullValueItemDisplayText="{0}" TextFormatString="{0} - {1}" DisplayFormatString="{0}">
+                                            <dx:ASPxComboBox ID="drpdown_vendor" runat="server" ClientInstanceName="drpdown_vendor" Width="100%" OnCallback="drpdown_EmpId_Callback" DropDownWidth="500px" NullValueItemDisplayText="{0}" TextFormatString="{0} - {1}" DisplayFormatString="{0}">
                                                 <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	    OnVendorChanged(s.GetValue());
     }" />
@@ -710,7 +710,7 @@
                                 <dx:LayoutItem Caption="Address" ColSpan="1">
                                     <LayoutItemNestedControlCollection>
                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                            <dx:ASPxMemo ID="memo_vendorAddress" runat="server" ClientInstanceName="memo_vendorAddress" Width="100%">
+                                            <dx:ASPxMemo ID="memo_vendorAddress" runat="server" ClientInstanceName="memo_vendorAddress" Width="100%" AutoResizeWithContainer="True">
                                                 <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreateForm">
                                                     <RequiredField ErrorText="Required field." IsRequired="True" />
                                                 </ValidationSettings>

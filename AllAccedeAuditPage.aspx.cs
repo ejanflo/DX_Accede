@@ -85,11 +85,15 @@ namespace DX_WebTemplate
                             string useridRaw = context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.ExpenseName).FirstOrDefault();
                             string raw = useridRaw.ToString();
                             string cleaned = raw.Replace("\r", "").Replace("\n", "");
+                            var vendors = SAPVendor.GetVendorData("")
+                                .GroupBy(x => new { x.VENDCODE, x.VENDNAME })
+                                .Select(g => g.First())
+                                .ToList();
 
                             string userid = new string(cleaned?.Where(char.IsDigit).ToArray());
                             if (!string.IsNullOrEmpty(userid))
                             {
-                                empname = context.ACCEDE_S_Vendors.Where(x => x.VendorCode == userid).Select(x => x.VendorName).FirstOrDefault()?.ToUpper() ?? string.Empty;
+                                empname = vendors.Where(x => x.VENDCODE == userid).Select(x => x.VENDNAME).FirstOrDefault()?.ToUpper() ?? string.Empty;
                             }
                         }
 
@@ -108,11 +112,15 @@ namespace DX_WebTemplate
                         string useridRaw = context.ACCEDE_T_InvoiceMains.Where(x => x.ID == id).Select(x => x.VendorCode).FirstOrDefault();
                         string raw = useridRaw.ToString();
                         string cleaned = raw.Replace("\r", "").Replace("\n", "");
+                        var vendors = SAPVendor.GetVendorData("")
+                                .GroupBy(x => new { x.VENDCODE, x.VENDNAME })
+                                .Select(g => g.First())
+                                .ToList();
 
                         string userid = new string(cleaned?.Where(char.IsDigit).ToArray());
                         if (!string.IsNullOrEmpty(userid))
                         {
-                            empname = context.ACCEDE_S_Vendors.Where(x => x.VendorCode == userid).Select(x => x.VendorName).FirstOrDefault()?.ToUpper() ?? string.Empty;
+                            empname = vendors.Where(x => x.VENDCODE == userid).Select(x => x.VENDNAME).FirstOrDefault()?.ToUpper() ?? string.Empty;
 
                             if (empname == "")
                             {

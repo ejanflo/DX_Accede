@@ -68,10 +68,15 @@ namespace DX_WebTemplate
 
                             SqlCostCenterCT.SelectParameters["Company_ID"].DefaultValue = inv.InvChargedTo_CompanyId.ToString();
 
-                            var vendor = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == inv.VendorName.ToString().Trim()).FirstOrDefault();
+                            var vendors = SAPVendor.GetVendorData("")
+                                .GroupBy(x => new { x.VENDCODE, x.VENDNAME })
+                                .Select(g => g.First())
+                                .ToList();
+
+                            var vendor = vendors.Where(x => x.VENDCODE == inv.VendorCode.ToString().Trim()).FirstOrDefault();
                             if(vendor != null)
                             {
-                                txt_vendor.Text = vendor.VendorName.ToString();
+                                txt_vendor.Text = vendor.VENDNAME.ToString();
                             }
                             
                             txt_InvoiceNo.Text = inv.InvoiceNo?.ToString();

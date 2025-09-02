@@ -86,7 +86,12 @@ namespace DX_WebTemplate
 
                             string raw = invDetails.VendorName.ToString();
                             string cleaned = raw.Replace("\r", "").Replace("\n", "");
-                            var payee = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == cleaned).FirstOrDefault();
+                            var vendors = SAPVendor.GetVendorData("")
+                                .GroupBy(x => new { x.VENDCODE, x.VENDNAME })
+                                .Select(g => g.First())
+                                .ToList();
+
+                            var payee = vendors.Where(x => x.VENDCODE == cleaned).FirstOrDefault();
                             //txt_Vendor.Text = payee.VendorName.ToString();
 
                             var ExpDetails = _DataContext.ACCEDE_T_InvoiceLineDetails.Where(x => x.InvMain_ID == invDetails.ID);
