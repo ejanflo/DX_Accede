@@ -97,8 +97,8 @@
 
         function OnCTDeptChanged(dept_id) {
             drpdown_CostCenter.PerformCallback(exp_CTCompany.GetValue() + "|" + dept_id);
-            costCenter.PerformCallback(exp_CTCompany.GetValue());
-            costCenter_edit.PerformCallback(exp_CTCompany.GetValue());
+            drpdown_CostCenter.PerformCallback(exp_CTCompany.GetValue());
+            //costCenter_edit.PerformCallback(exp_CTCompany.GetValue());
         }
 
         function OnDeptChanged(dept_id) {
@@ -1453,11 +1453,15 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
 exp_CTDepartment.PerformCallback(s.GetValue());
 drpdown_CostCenter.PerformCallback(s.GetValue()+&quot;|&quot;+exp_CTDepartment.GetValue());
 //exp_EmpId.PerformCallback(s.GetValue());
-var classType = drpdown_classification.GetValue() != null ? drpdown_classification.GetValue() : &quot;&quot;;
-drpdwn_FAPWF.PerformCallback(s.GetValue()+&quot;|&quot;+classType );
+//var classType = drpdown_classification.GetValue() != null ? drpdown_classification.GetValue() : &quot;&quot;;
+drpdwn_FAPWF.PerformCallback(s.GetValue()+&quot;|&quot;+&quot;&quot; );
 exp_CompLocation.PerformCallback(s.GetValue());
-IO.PerformCallback(s.GetValue());
-io_edit.PerformCallback(s.GetValue());
+//IO.PerformCallback(s.GetValue());
+//io_edit.PerformCallback(s.GetValue());
+drpdown_vendor.PerformCallback(s.GetValue());
+txt_vendorName.SetValue(&quot;&quot;);
+txt_TIN.SetValue(&quot;&quot;);
+memo_VendorAddress.SetValue(&quot;&quot;);
 }" />
                                                                 <ClearButton DisplayMode="Always">
                                                                 </ClearButton>
@@ -1642,7 +1646,7 @@ io_edit.PerformCallback(s.GetValue());
                                                 <dx:LayoutItem Caption="Vendor Code" ColSpan="1" FieldName="VendorCode">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxComboBox ID="drpdown_vendor" runat="server" ClientInstanceName="drpdown_vendor" EnableTheming="True" Font-Bold="True" Font-Size="Small" Width="100%" DisplayFormatString="{0}" NullValueItemDisplayText="{0} - {1}" TextFormatString="{0} - {1}">
+                                                            <dx:ASPxComboBox ID="drpdown_vendor" runat="server" ClientInstanceName="drpdown_vendor" EnableTheming="True" Font-Bold="True" Font-Size="Small" Width="100%" DisplayFormatString="{0}" NullValueItemDisplayText="{0} - {1}" TextFormatString="{0} - {1}" OnCallback="drpdown_vendor_Callback">
                                                                 <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	OnVendorChanged(s.GetValue());
 }" />

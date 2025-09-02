@@ -11,6 +11,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.Remoting.Contexts;
 using System.Web;
 using System.Web.Services;
 using System.Web.UI;
@@ -56,7 +57,11 @@ namespace DX_WebTemplate
                     SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = mainInv.InvChargedTo_CompanyId.ToString();
                     SqlCompLocation.SelectParameters["Comp_Id"].DefaultValue = mainInv.InvChargedTo_CompanyId.ToString();
 
-                    var vendorList = SAPVendor.GetVendorData("")
+                    var compCode = _DataContext.CompanyMasters.Where(x => x.WASSId == Convert.ToInt32(mainInv.InvChargedTo_CompanyId)).Select(x => x.SAP_Id).FirstOrDefault();
+
+                    // build SAP OData params
+                    string matparams = $"sap-client=300&$filter=VENDCOCODE eq '{compCode}'";
+                    var vendorList = SAPVendor.GetVendorData(matparams)
                         .GroupBy(x => new { x.VENDCODE, x.VENDNAME })
                         .Select(g => g.First())
                         .ToList();
@@ -3436,6 +3441,32 @@ namespace DX_WebTemplate
             public string Address { get; set; }
             public bool isOneTime { get; set; }
             public string Name { get; set; }
+        }
+
+        protected void drpdown_vendor_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var comp = e.Parameter.ToString();
+
+            var compCode = _DataContext.CompanyMasters.Where(x => x.WASSId == Convert.ToInt32(comp)).Select(x => x.SAP_Id).FirstOrDefault();
+
+            // build SAP OData params
+            string matparams = $"sap-client=300&$filter=VENDCOCODE eq '{compCode}'";
+
+            // ✅ bind directly from SAP OData
+            var vendors = GetVendorData(matparams);
+
+            drpdown_vendor.DataSource = vendors;
+
+            drpdown_vendor.ValueField = "VENDCODE"; // the unique key / value you want to use
+            drpdown_vendor.TextField = "VENDNAME";  // what the user sees in the dropdown
+            drpdown_vendor.Columns.Clear();
+
+            drpdown_vendor.Columns.Add("VENDCODE");
+            drpdown_vendor.Columns.Add("VENDNAME");
+            drpdown_vendor.TextFormatString = "{0} - {1}";
+            drpdown_vendor.DataBindItems();
+
+            drpdown_vendor.ValidationSettings.RequiredField.IsRequired = true;
         }
     }
 }

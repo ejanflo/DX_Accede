@@ -33,28 +33,28 @@ namespace DX_WebTemplate
                     sqlExpense.SelectParameters["UserId"].DefaultValue = EmpCode;
 
 
-                    string matparams = "";
+                    //string matparams = "";
 
-                    drpdown_vendor.DataSourceID = null;
+                    //drpdown_vendor.DataSourceID = null;
 
-                    // ✅ bind directly from SAP OData
-                    var vendors = SAPVendor.GetVendorData(matparams);
+                    //// ✅ bind directly from SAP OData
+                    //var vendors = SAPVendor.GetVendorData(matparams);
 
-                    drpdown_vendor.DataSource = vendors
-                        .GroupBy(x => new { x.VENDCODE, x.VENDNAME })
-                        .Select(g => g.First())
-                        .ToList();
+                    //drpdown_vendor.DataSource = vendors
+                    //    .GroupBy(x => new { x.VENDCODE, x.VENDNAME })
+                    //    .Select(g => g.First())
+                    //    .ToList();
 
-                    drpdown_vendor.ValueField = "VENDCODE";   // the unique key / value you want to use
-                    drpdown_vendor.TextField = "VENDNAME";   // what the user sees in the dropdown
+                    //drpdown_vendor.ValueField = "VENDCODE";   // the unique key / value you want to use
+                    //drpdown_vendor.TextField = "VENDNAME";   // what the user sees in the dropdown
                        
-                    drpdown_vendor.Columns.Clear();
+                    //drpdown_vendor.Columns.Clear();
 
-                    drpdown_vendor.Columns.Add("VENDCODE");
-                    drpdown_vendor.Columns.Add("VENDNAME");
-                    drpdown_vendor.DataBindItems();
+                    //drpdown_vendor.Columns.Add("VENDCODE");
+                    //drpdown_vendor.Columns.Add("VENDNAME");
+                    //drpdown_vendor.DataBindItems();
 
-                    drpdown_vendor.ValidationSettings.RequiredField.IsRequired = true;
+                    //drpdown_vendor.ValidationSettings.RequiredField.IsRequired = true;
 
                     //drpdown_EmpId.Value = EmpCode.ToString();
                     //drpdown_EmpId.DataBindItems();
@@ -520,6 +520,32 @@ namespace DX_WebTemplate
             //}
 
             return vendorDetails;
+        }
+
+        protected void drpdown_vendor_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var comp = e.Parameter.ToString();
+
+            var compCode = context.CompanyMasters.Where(x => x.WASSId == Convert.ToInt32(comp)).Select(x => x.SAP_Id).FirstOrDefault();
+
+            // build SAP OData params
+            string matparams = $"sap-client=300&$filter=VENDCOCODE eq '{compCode}'";
+
+            // ✅ bind directly from SAP OData
+            var vendors = GetVendorData(matparams);
+
+            drpdown_vendor.DataSource = vendors;
+               
+            drpdown_vendor.ValueField = "VENDCODE"; // the unique key / value you want to use
+            drpdown_vendor.TextField = "VENDNAME";  // what the user sees in the dropdown
+            drpdown_vendor.Columns.Clear();
+
+            drpdown_vendor.Columns.Add("VENDCODE");
+            drpdown_vendor.Columns.Add("VENDNAME");
+            drpdown_vendor.TextFormatString = "{0} - {1}";
+            drpdown_vendor.DataBindItems();
+
+            drpdown_vendor.ValidationSettings.RequiredField.IsRequired = true;
         }
     }
 

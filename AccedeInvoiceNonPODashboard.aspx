@@ -79,7 +79,7 @@
                 success: function (response) {
                     // Update the description text box with the response value
                     txt_vendorTIN.SetValue(response.d.VENDTIN);
-                    memo_vendorAddress.SetValue(response.d.VENDSTREET+", "+response.d.VENDSTREET2+", "+response.d.VENDCITY);
+                    memo_vendorAddress.SetValue(response.d.VENDSTREET + ", " + response.d.VENDCITY + ", " + response.d.VENDPOSTAL);
                     txt_vendorName.SetValue(response.d.VENDNAME);
 
                     if (response.d.isOneTime == true) {
@@ -591,6 +591,7 @@
     OnCompanyChanged(s.GetValue());
     drpdown_Comp.SetValue(s.GetValue());
     drpdown_CompLocation.PerformCallback(s.GetValue());
+drpdown_vendor.PerformCallback(s.GetValue());
     }" />
                                                 <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreateForm">
                                                     <RequiredField ErrorText="Required field." IsRequired="True" />
@@ -624,7 +625,7 @@
                                 <dx:LayoutItem Caption="Vendor Code" ColSpan="1">
                                     <LayoutItemNestedControlCollection>
                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                            <dx:ASPxComboBox ID="drpdown_vendor" runat="server" ClientInstanceName="drpdown_vendor" Width="100%" OnCallback="drpdown_EmpId_Callback" DropDownWidth="500px" NullValueItemDisplayText="{0}" TextFormatString="{0} - {1}" DisplayFormatString="{0}">
+                                            <dx:ASPxComboBox ID="drpdown_vendor" runat="server" ClientInstanceName="drpdown_vendor" Width="100%" OnCallback="drpdown_vendor_Callback" DropDownWidth="500px" NullValueItemDisplayText="{0}" TextFormatString="{0} - {1}" DisplayFormatString="{0}">
                                                 <ClientSideEvents SelectedIndexChanged="function(s, e) {
 	    OnVendorChanged(s.GetValue());
     }" />
