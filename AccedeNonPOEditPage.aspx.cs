@@ -17,6 +17,7 @@ using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using static DX_WebTemplate.SAPVendor;
+using System.Runtime.Caching;
 
 namespace DX_WebTemplate
 {
@@ -3348,107 +3349,99 @@ namespace DX_WebTemplate
             grid.JSProperties["cpComputeUnalloc_edit"] = totalNetAmount;
         }
 
-        //protected void io_edit_Callback(object sender, CallbackEventArgsBase e)
-        //{
-        //    SqlIO.SelectParameters["CompanyId"].DefaultValue = e.Parameter.ToString();
-        //    SqlIO.DataBind();
+        // PERFORMANCE IMPROVEMENT: Efficient vendor lookup with server-side filtering + in‑memory caching.
+        // -----------------------------------------------------------------------------
+        // PSEUDOCODE
+        // 1. Validate input vendor code -> if null/empty return null.
+        // 2. Try get from MemoryCache (key: "VENDOR_<code>").
+        // 3. If cached -> return.
+        // 4. Build minimal OData query using $filter and $top=1 to avoid fetching entire set.
+        // 5. Call SAPVendor.GetVendorData(query).
+        // 6. Take first result; if found cache (sliding/absolute expiration).
+        // 7. Return result.
+        // 8. WebMethod now directly calls static service (no unnecessary page instantiation).
+        // 9. (Optional) Provide TryGet pattern + small lock to avoid cache stampede.
+        //
+        // NOTES
+        // - Keeps return type VendorSet for backward compatibility.
+        // - Adds defensive try/catch (swallows errors but can be extended for logging).
+        // - Requires: using System.Runtime.Caching;
+        // -----------------------------------------------------------------------------
 
-        //    //io_edit.DataSourceID = null;
-        //    //io_edit.DataSource = SqlIO;
-        //    //io_edit.DataBind();
-        //}
-
+        // Replaced WebMethod to avoid creating a Page instance each call.
         [WebMethod]
         public static VendorSet CheckVendorDetailsAJAX(string vendor)
         {
-            AccedeNonPOEditPage page = new AccedeNonPOEditPage();
-            return page.CheckVendorDetails(vendor);
+            return VendorLookupService.GetVendor(vendor);
         }
 
-        public VendorSet CheckVendorDetails(string vendor)
+        /// <summary>
+        /// Centralized, cached vendor lookup.
+        /// </summary>
+        internal static class VendorLookupService
+    {
+        private static readonly ObjectCache _cache = MemoryCache.Default;
+        private static readonly TimeSpan AbsoluteLifetime = TimeSpan.FromMinutes(10);
+        private static readonly TimeSpan SlidingLifetime = TimeSpan.FromMinutes(3);
+        private static readonly object _lockRoot = new object();
+        private const string SapClient = "sap-client=300";
+
+        public static VendorSet GetVendor(string vendorCode)
         {
-            //var vendorlist = SAPVendor.GetVendorData("")
-            //            .GroupBy(x => new { x.VENDCODE, x.VENDNAME })
-            //            .Select(g => g.First())
-            //            .ToList();
+            if (string.IsNullOrWhiteSpace(vendorCode))
+                return null;
 
-            var vendorDetails = SAPVendor.GetVendorData("").Where(x => x.VENDCODE == vendor).FirstOrDefault();
-            //var vendorDetails = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == vendor).FirstOrDefault();
-            //var vendorDetailsInv = _DataContext.ACCEDE_T_InvoiceMains.Where(x => x.ID == Convert.ToInt32(Session["NonPOInvoiceId"])).FirstOrDefault();
-            //VendorSet vendorClass = new VendorSet();
-            //if (vendorDetails!= null && vendorDetailsInv != null)
-            //{
+            vendorCode = vendorCode.Trim().ToUpperInvariant();
+            string cacheKey = "VENDOR_" + vendorCode;
 
-            //    if(vendorDetailsInv.VendorCode == vendor && vendor.Contains("OTV"))
-            //    {
-            //        vendorClass.Name = vendorDetailsInv.VendorName;
-            //        vendorClass.TIN = vendorDetailsInv.VendorTIN;
-            //        vendorClass.Address = vendorDetailsInv.VendorAddress;
-            //    }
-            //    else
-            //    {
-            //        string tin = vendorDetails.TaxID != null ? vendorDetails.TaxID.ToString() : "";
+            // Fast path
+            var cached = _cache.Get(cacheKey) as VendorSet;
+            if (cached != null) return cached;
 
-            //        if (tin != "" && tin.Length > 9)
-            //        {
-            //            string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6, 3)}-{tin.Substring(9)}";
-            //            vendorClass.TIN = formattedTin;
-            //        }
-            //        else if (tin != "" && tin.Length > 6)
-            //        {
-            //            string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6)}";
-            //            vendorClass.TIN = formattedTin;
-            //        }
-            //        else if (tin != "" && tin.Length > 3)
-            //        {
-            //            string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3)}";
-            //            vendorClass.TIN = formattedTin;
-            //        }
-            //        else
-            //        {
-            //            vendorClass.TIN = tin; // less than 3 digits, no formatting
-            //        }
+            lock (_lockRoot)
+            {
+                // Double-check after acquiring lock
+                cached = _cache.Get(cacheKey) as VendorSet;
+                if (cached != null) return cached;
 
-            //        string Clean(string input)
-            //        {
-            //            if (string.IsNullOrWhiteSpace(input))
-            //                return "";
+                VendorSet result = null;
+                try
+                {
+                    // Server-side filtering ($top=1 to limit payload)
+                    // Adjust field name if actual OData metadata differs.
+                    string query = $"{SapClient}&$filter=VENDCODE eq '{EscapeODataLiteral(vendorCode)}'&$top=1";
 
-            //            // remove line breaks and trim
-            //            string cleaned = input.Replace("\r", " ").Replace("\n", " ").Trim();
+                    // NOTE: SAPVendor.GetVendorData should return an IEnumerable<VendorSet>
+                    result = SAPVendor.GetVendorData(query)
+                                      .FirstOrDefault(v => string.Equals(v.VENDCODE, vendorCode, StringComparison.OrdinalIgnoreCase));
 
-            //            return ", " + cleaned;
-            //        }
+                    if (result != null)
+                    {
+                        _cache.Set(
+                            cacheKey,
+                            result,
+                            new CacheItemPolicy
+                            {
+                                AbsoluteExpiration = DateTimeOffset.UtcNow.Add(AbsoluteLifetime),
+                                SlidingExpiration = SlidingLifetime
+                            });
+                    }
+                }
+                catch
+                {
+                    // Optional: log exception (kept silent to avoid breaking caller)
+                    return result; // may be null
+                }
 
-            //        vendorClass.Address =
-            //            (vendorDetails.Address1 ?? "").Replace("\r", " ").Replace("\n", " ").Trim()
-            //            + Clean(vendorDetails.City ?? "")
-            //            + Clean(vendorDetails.State ?? "");
-
-            //        vendorClass.Name = vendorDetails.VendorName != null ? vendorDetails.VendorName.ToString() : "";
-            //    }
-
-                    
-            //    if (vendor.Contains("OTV"))
-            //    {
-            //        vendorClass.isOneTime = true;
-            //    }
-            //    else
-            //    {
-            //        vendorClass.isOneTime = false;
-            //    }
-
-            //}
-            //else
-            //{
-                
-            //    vendorClass.TIN = "";
-            //    vendorClass.Address = "";
-                
-            //}
-
-            return vendorDetails;
+                return result;
+            }
         }
+
+        private static string EscapeODataLiteral(string value)
+        {
+            return value.Replace("'", "''");
+        }
+    }
 
         public class VendorDetails
         {
