@@ -8,15 +8,16 @@
         }
         .scrollablecontainer{
             overflow: auto;
-            height: 70vh; /* full viewport height */
+            height: 60vh; /* full viewport height */
             width: 60vw;  /* full viewport width */
             border: 1px solid #ccc;
             padding: 10px;
         }
 
     </style>
-        <script>
+    <script>
         function OnCustomButtonClick(s, e) {
+            loadPanel.SetText("Loading document&hellip;")
             loadPanel.Show();
             expenseGrid.PerformCallback(s.GetRowKey(e.visibleIndex) + "|" + e.buttonID);
             //if (e.buttonID == "btnPrint") {
@@ -66,11 +67,57 @@
             //}
         }
 
-            function OnVendorChanged(vendor) {
-                console.log(vendor);
+        //function OnVendorChanged(vendor) {
+        //        console.log(vendor);
+        //    $.ajax({
+        //        type: "POST",
+        //        url: "AccedeInvoiceNonPODashboard.aspx/CheckVendorDetailsAJAX",
+        //        contentType: "application/json; charset=utf-8",
+        //        dataType: "json",
+        //        data: JSON.stringify({
+        //            vendor: vendor
+        //        }),
+        //        success: function (response) {
+        //            // Update the description text box with the response value
+        //            txt_vendorTIN.SetValue(response.d.VENDTIN);
+        //            memo_vendorAddress.SetValue(response.d.VENDSTREET + ", " + response.d.VENDCITY + ", " + response.d.VENDPOSTAL);
+        //            txt_vendorName.SetValue(response.d.VENDNAME);
+
+        //            if (vendor.includes("OTV")) {
+        //                txt_vendorTIN.SetReadOnly(false);
+        //                memo_vendorAddress.SetReadOnly(false);
+        //                txt_vendorName.SetReadOnly(false);
+        //            } else {
+        //                txt_vendorTIN.SetReadOnly(true);
+        //                memo_vendorAddress.SetReadOnly(true);
+        //                txt_vendorName.SetReadOnly(true);
+        //            }
+        //        },
+        //        error: function (xhr, status, error) {
+        //            console.log("Error:", error);
+        //        }
+        //    });
+
+            //}
+
+        function OnVendorChanged(vendor) {
+            // Show loading panel immediately
+            loadPanel.SetText("Loading vendor details...");
+            loadPanel.Show();
+
+            if (vendor.includes("OTV")) {
+                txt_vendorTIN.SetReadOnly(false);
+                memo_vendorAddress.SetReadOnly(false);
+                txt_vendorName.SetReadOnly(false);
+            } else {
+                txt_vendorTIN.SetReadOnly(true);
+                memo_vendorAddress.SetReadOnly(true);
+                txt_vendorName.SetReadOnly(true);
+            }
+
             $.ajax({
                 type: "POST",
-                url: "AccedeInvoiceNonPODashboard.aspx/CheckVendorDetailsAJAX",
+                url: "AccedeNonPOEditPage.aspx/CheckVendorDetailsAJAX",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: JSON.stringify({
@@ -82,24 +129,19 @@
                     memo_vendorAddress.SetValue(response.d.VENDSTREET + ", " + response.d.VENDCITY + ", " + response.d.VENDPOSTAL);
                     txt_vendorName.SetValue(response.d.VENDNAME);
 
-                    if (vendor.includes("OTV")) {
-                        txt_vendorTIN.SetReadOnly(false);
-                        memo_vendorAddress.SetReadOnly(false);
-                        txt_vendorName.SetReadOnly(false);
-                    } else {
-                        txt_vendorTIN.SetReadOnly(true);
-                        memo_vendorAddress.SetReadOnly(true);
-                        txt_vendorName.SetReadOnly(true);
-                    }
+                    // Hide loading panel after successful operation
+                    loadPanel.Hide();
                 },
                 error: function (xhr, status, error) {
                     console.log("Error:", error);
+                    // Also hide loading panel in case of error
+                    loadPanel.Hide();
                 }
             });
-
         }
 
         function SaveExpense() {
+            loadPanel.SetText("Redirecting&hellip;")
             loadPanel.Show();
             var expName = drpdown_vendor.GetValue();
             var expDate = date_expDate.GetValue();
@@ -158,7 +200,7 @@
 
 
         }
-        </script>
+    </script>
     <dx:ASPxFormLayout ID="ASPxFormLayout1" runat="server" Font-Bold="False" Height="144px" Width="100%">
         <Items>
             <dx:LayoutGroup Caption="My Invoices (Non-PO)" ColSpan="1" GroupBoxDecoration="HeadingLine" Width="100%">

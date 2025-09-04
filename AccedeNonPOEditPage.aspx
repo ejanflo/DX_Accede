@@ -724,18 +724,20 @@
         }
 
         function OnVendorChanged(vendor) {
+            // Show loading panel immediately
+            LoadingPanel.SetText("Loading vendor details...");
+            LoadingPanel.Show();
+
             if (vendor.includes("OTV")) {
-                //console.log("OTV ANG VENDOR!!!");
                 txt_TIN.SetReadOnly(false);
                 memo_VendorAddress.SetReadOnly(false);
                 txt_vendorName.SetReadOnly(false);
-
             } else {
-                //console.log("DILI OTV ANG VENDOR!!!");
                 txt_TIN.SetReadOnly(true);
                 memo_VendorAddress.SetReadOnly(true);
                 txt_vendorName.SetReadOnly(true);
             }
+
             $.ajax({
                 type: "POST",
                 url: "AccedeNonPOEditPage.aspx/CheckVendorDetailsAJAX",
@@ -747,13 +749,16 @@
                 success: function (response) {
                     // Update the description text box with the response value
                     txt_TIN.SetValue(response.d.VENDTIN);
-                    memo_VendorAddress.SetValue(response.d.VENDSTREET+", "+response.d.VENDCITY+", "+response.d.VENDPOSTAL);
+                    memo_VendorAddress.SetValue(response.d.VENDSTREET + ", " + response.d.VENDCITY + ", " + response.d.VENDPOSTAL);
                     txt_vendorName.SetValue(response.d.VENDNAME);
 
-                    
+                    // Hide loading panel after successful operation
+                    LoadingPanel.Hide();
                 },
                 error: function (xhr, status, error) {
                     console.log("Error:", error);
+                    // Also hide loading panel in case of error
+                    LoadingPanel.Hide();
                 }
             });
         }
