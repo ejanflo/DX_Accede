@@ -724,6 +724,18 @@
         }
 
         function OnVendorChanged(vendor) {
+            if (vendor.includes("OTV")) {
+                //console.log("OTV ANG VENDOR!!!");
+                txt_TIN.SetReadOnly(false);
+                memo_VendorAddress.SetReadOnly(false);
+                txt_vendorName.SetReadOnly(false);
+
+            } else {
+                //console.log("DILI OTV ANG VENDOR!!!");
+                txt_TIN.SetReadOnly(true);
+                memo_VendorAddress.SetReadOnly(true);
+                txt_vendorName.SetReadOnly(true);
+            }
             $.ajax({
                 type: "POST",
                 url: "AccedeNonPOEditPage.aspx/CheckVendorDetailsAJAX",
@@ -738,15 +750,7 @@
                     memo_VendorAddress.SetValue(response.d.VENDSTREET+", "+response.d.VENDCITY+", "+response.d.VENDPOSTAL);
                     txt_vendorName.SetValue(response.d.VENDNAME);
 
-                    if (vendor.includes("OTV")) {
-                        txt_TIN.SetReadOnly(false);
-                        memo_VendorAddress.SetReadOnly(false);
-                        txt_vendorName.SetReadOnly(false);
-                    } else {
-                        txt_TIN.SetReadOnly(true);
-                        memo_VendorAddress.SetReadOnly(true);
-                        txt_vendorName.SetReadOnly(true);
-                    }
+                    
                 },
                 error: function (xhr, status, error) {
                     console.log("Error:", error);
@@ -929,64 +933,75 @@
                 var ewt = ewt_edit.GetValue() != null ? ewt_edit.GetValue() : "0";
                 var vat = vat_edit.GetValue() != null ? vat_edit.GetValue() : "0";
 
-                await SaveExpenseReport("Save2");
-                LoadingPanel.Show();
+                var totalAlloc = GetTotalNetAmount(ExpAllocGrid);
 
-                $.ajax({
-                    type: "POST",
-                    url: "AccedeNonPOEditPage.aspx/SaveExpDetailsAJAX",
-                    data: JSON.stringify({
-                        dateAdd: dateAdd,
-                        //tin_no: tin_no,
-                        invoice_no: invoice_no,
-                        //cost_center: cost_center,
-                        gross_amount: gross_amount,
-                        net_amount: net_amount,
-                        //supp: supp,
-                        particu: particu,
-                        acctCharge: acctCharge,
-                        //vat_amnt: vat_amnt,
-                        //ewt_amnt: ewt_amnt,
-                        currency: currency,
-                        //io: io,
-                        //wbs: wbs,
-                        remarks: remarks,
-                        EWTTAmount: EWTTAmount,
-                        assign: assign,
-                        allowance: allowance,
-                        EWTTType: EWTTType,
-                        EWTTCode: EWTTCode,
-                        InvTCode: InvTCode,
-                        qty: qty,
-                        unit_price: unit_price,
-                        asset: asset,
-                        subasset: subasset,
-                        altRecon: altRecon,
-                        SLCode: SLCode,
-                        SpecialGL: SpecialGL,
-                        uom: uom,
-                        ewt: ewt,
-                        vat: vat
+                if (totalAlloc < gross_amount) {
+                    alert("The total allocation is less than the gross amount entered. Please review and adjust the allocation amounts.");
+                    LoadingPanel.Hide();
+                } else if (totalAlloc > gross_amount) {
+                    alert("The total allocation exceeds the gross amount entered. Please review and adjust the allocation amounts.");
+                    LoadingPanel.Hide();
+                } else {
+                    await SaveExpenseReport("Save2");
+                    LoadingPanel.Show();
 
-                    }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                        // Handle success
-                        if (response.d == "success") {
-                            LoadingPanel.SetText("Updating document&hellip;");
-                            LoadingPanel.Show();
-                            window.location.href = 'AccedeNonPOEditPage.aspx';
-                        } else {
-                            alert(response.d);
-                            LoadingPanel.Hide();
+                    $.ajax({
+                        type: "POST",
+                        url: "AccedeNonPOEditPage.aspx/SaveExpDetailsAJAX",
+                        data: JSON.stringify({
+                            dateAdd: dateAdd,
+                            //tin_no: tin_no,
+                            invoice_no: invoice_no,
+                            //cost_center: cost_center,
+                            gross_amount: gross_amount,
+                            net_amount: net_amount,
+                            //supp: supp,
+                            particu: particu,
+                            acctCharge: acctCharge,
+                            //vat_amnt: vat_amnt,
+                            //ewt_amnt: ewt_amnt,
+                            currency: currency,
+                            //io: io,
+                            //wbs: wbs,
+                            remarks: remarks,
+                            EWTTAmount: EWTTAmount,
+                            assign: assign,
+                            allowance: allowance,
+                            EWTTType: EWTTType,
+                            EWTTCode: EWTTCode,
+                            InvTCode: InvTCode,
+                            qty: qty,
+                            unit_price: unit_price,
+                            asset: asset,
+                            subasset: subasset,
+                            altRecon: altRecon,
+                            SLCode: SLCode,
+                            SpecialGL: SpecialGL,
+                            uom: uom,
+                            ewt: ewt,
+                            vat: vat
+
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            // Handle success
+                            if (response.d == "success") {
+                                LoadingPanel.SetText("Updating document&hellip;");
+                                LoadingPanel.Show();
+                                window.location.href = 'AccedeNonPOEditPage.aspx';
+                            } else {
+                                alert(response.d);
+                                LoadingPanel.Hide();
+                            }
+
+                        },
+                        failure: function (response) {
+                            // Handle failure
                         }
+                    });
+                }
 
-                    },
-                    failure: function (response) {
-                        // Handle failure
-                    }
-                });
             }
         }
 
@@ -1671,10 +1686,10 @@ memo_VendorAddress.SetValue(&quot;&quot;);
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings HorizontalAlign="Right" />
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem ColSpan="1" FieldName="VendorName">
+                                                <dx:LayoutItem ColSpan="1" FieldName="VendorName" Name="vendorName">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxTextBox ID="txt_vendorName" runat="server" ClientInstanceName="txt_vendorName" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True">
+                                                            <dx:ASPxTextBox ID="txt_vendorName" runat="server" ClientInstanceName="txt_vendorName" Font-Bold="True" Font-Size="Small" Width="100%">
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
@@ -1684,12 +1699,12 @@ memo_VendorAddress.SetValue(&quot;&quot;);
                                                         </dx:LayoutItemNestedControlContainer>
                                                     </LayoutItemNestedControlCollection>
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="TIN" ColSpan="1" FieldName="VendorTIN">
+                                                <dx:LayoutItem Caption="TIN" ColSpan="1" FieldName="VendorTIN" Name="vendorTIN">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxTextBox ID="txt_TIN" runat="server" ClientInstanceName="txt_TIN" Font-Bold="True" Font-Size="Small" Width="100%" ReadOnly="True">
+                                                            <dx:ASPxTextBox ID="txt_TIN" runat="server" ClientInstanceName="txt_TIN" Font-Bold="True" Font-Size="Small" Width="100%">
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
-                                                                    <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                                    <RequiredField ErrorText="*Required" />
                                                                 </ValidationSettings>
                                                                 <Border BorderStyle="None" />
                                                                 <BorderBottom BorderColor="Black" BorderStyle="Solid" BorderWidth="1px" />
@@ -1698,10 +1713,10 @@ memo_VendorAddress.SetValue(&quot;&quot;);
                                                     </LayoutItemNestedControlCollection>
                                                     <CaptionSettings HorizontalAlign="Right" />
                                                 </dx:LayoutItem>
-                                                <dx:LayoutItem Caption="Address" ColSpan="1" FieldName="VendorAddress">
+                                                <dx:LayoutItem Caption="Address" ColSpan="1" FieldName="VendorAddress" Name="vendorAddress">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxMemo ID="memo_VendorAddress" runat="server" ClientInstanceName="memo_VendorAddress" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" Width="100%" ReadOnly="True">
+                                                            <dx:ASPxMemo ID="memo_VendorAddress" runat="server" ClientInstanceName="memo_VendorAddress" Font-Bold="True" Font-Size="Small" HorizontalAlign="Left" Width="100%">
                                                                 <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="ExpenseEdit">
                                                                     <RequiredField ErrorText="*Required" IsRequired="True" />
                                                                 </ValidationSettings>
@@ -1732,7 +1747,7 @@ memo_VendorAddress.SetValue(&quot;&quot;);
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxComboBox ID="exp_Currency" runat="server" ClientInstanceName="exp_Currency" DataSourceID="SqlCurrency" EnableTheming="True" Font-Bold="True" Font-Size="Small" TextField="CurrDescription" ValueField="CurrDescription" Width="100%">
                                                                 <ClientSideEvents SelectedIndexChanged="function(s, e) {
-onCurrencyChanged();
+//onCurrencyChanged();
 reim_Currency.SetValue(s.GetValue);
 }" />
                                                                 <ClearButton DisplayMode="Always">
@@ -2314,6 +2329,9 @@ var emp = &quot;&quot;;//exp_EmpId.GetValue() != null ? exp_EmpId.GetValue() : &
                     </ParentContainerStyle>
                 </dx:LayoutGroup>
             </Items>
+            <ClientSideEvents Init="function(s, e) {
+	OnVendorChanged(drpdown_vendor.GetValue());
+}" />
         </dx:ASPxFormLayout>
         </div>
         <dx:ASPxLoadingPanel ID="LoadingPanel" runat="server" Theme="MaterialCompact" ClientInstanceName="LoadingPanel" ShowImage="true" ShowText="true" Text="     Processing..." Modal="True">

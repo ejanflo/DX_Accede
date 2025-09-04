@@ -1518,7 +1518,7 @@ io_edit.PerformCallback(s.GetValue());
                                                         <dx:LayoutItemNestedControlContainer runat="server">
                                                             <dx:ASPxComboBox ID="exp_Currency" runat="server" ClientInstanceName="exp_Currency" DataSourceID="SqlCurrency" EnableTheming="True" Font-Bold="True" Font-Size="Small" TextField="CurrDescription" ValueField="CurrDescription" Width="100%">
                                                                 <ClientSideEvents SelectedIndexChanged="function(s, e) {
-onCurrencyChanged();
+//onCurrencyChanged();
 reim_Currency.SetValue(s.GetValue);
 }" />
                                                                 <ClearButton DisplayMode="Always">

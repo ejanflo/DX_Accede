@@ -82,18 +82,33 @@ namespace DX_WebTemplate
 
                     drpdown_vendor.ValidationSettings.RequiredField.IsRequired = true;
                     var vendorDetails = vendorList.Where(x => x.VENDCODE == mainInv.VendorCode).FirstOrDefault();
-                    if (vendorDetails.VENDCODE.Contains("OTV"))
-                    {
-                        txt_TIN.ReadOnly = false;
-                        txt_vendorName.ReadOnly = false;
-                        memo_VendorAddress.ReadOnly = false;
-                    }
-                    else
-                    {
-                        txt_TIN.ReadOnly = true;
-                        txt_vendorName.ReadOnly = true;
-                        memo_VendorAddress.ReadOnly = true;
-                    }
+
+                    //var vendNameItem = ExpenseEditForm.FindItemOrGroupByName("vendorName") as LayoutItem;
+                    //var vendTINItem = ExpenseEditForm.FindItemOrGroupByName("vendorTIN") as LayoutItem;
+                    //var vendAddressItem = ExpenseEditForm.FindItemOrGroupByName("vendorAddress") as LayoutItem;
+
+                    //// Get the actual controls inside the LayoutItem
+                    //var vendName = vendNameItem?.GetNestedControl() as ASPxTextBox;
+                    //var vendTIN = vendTINItem?.GetNestedControl() as ASPxTextBox;
+                    //var vendAddress = vendAddressItem?.GetNestedControl() as ASPxMemo;
+
+                    //if (!IsPostBack && !IsCallback)
+                    //{
+                    //    if (vendorDetails.VENDCODE.Contains("OTV"))
+                    //    {
+                    //        vendName.ReadOnly = false;
+                    //        vendTIN.ReadOnly = false;
+                    //        vendAddress.ReadOnly = false;
+                    //    }
+                    //    else
+                    //    {
+                    //        vendName.ReadOnly = true;
+                    //        vendTIN.ReadOnly = true;
+                    //        vendAddress.ReadOnly = true;
+                    //    }
+                    //}
+                    
+
                     //if (vendorDetails != null)
                     //{
                     //    string tin = vendorDetails.TaxID.ToString();
@@ -3352,12 +3367,12 @@ namespace DX_WebTemplate
 
         public VendorSet CheckVendorDetails(string vendor)
         {
-            var vendorlist = SAPVendor.GetVendorData("")
-                        .GroupBy(x => new { x.VENDCODE, x.VENDNAME })
-                        .Select(g => g.First())
-                        .ToList();
+            //var vendorlist = SAPVendor.GetVendorData("")
+            //            .GroupBy(x => new { x.VENDCODE, x.VENDNAME })
+            //            .Select(g => g.First())
+            //            .ToList();
 
-            var vendorDetails = vendorlist.Where(x => x.VENDCODE == vendor).FirstOrDefault();
+            var vendorDetails = SAPVendor.GetVendorData("").Where(x => x.VENDCODE == vendor).FirstOrDefault();
             //var vendorDetails = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == vendor).FirstOrDefault();
             //var vendorDetailsInv = _DataContext.ACCEDE_T_InvoiceMains.Where(x => x.ID == Convert.ToInt32(Session["NonPOInvoiceId"])).FirstOrDefault();
             //VendorSet vendorClass = new VendorSet();

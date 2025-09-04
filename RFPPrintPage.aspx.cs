@@ -102,7 +102,7 @@ namespace DX_WebTemplate
                                 .Select(g => g.First())
                                 .ToList();
                             var payee = vendors.Where(x => x.VENDCODE == cleaned).FirstOrDefault();
-                            fullname = payee.VENDNAME.ToString();
+                            fullname = "";//payee.VENDNAME.ToString();
 
                             requestor = context.ITP_S_UserMasters
                                     .Where(x => x.EmpCode == Convert.ToString(rfp.User_ID))
@@ -392,7 +392,7 @@ namespace DX_WebTemplate
                             forAppr1 = context.ITP_S_UserMasters.Where(x => x.EmpCode == for1.ActedBy_User_Id)
                                 .Select(x => x.FullName)
                                 .FirstOrDefault();
-                            forAppr1Date = Convert.ToDateTime(ra1.DateAction);
+                            forAppr1Date = Convert.ToDateTime(for1.DateAction);
                         }
                         else
                         {

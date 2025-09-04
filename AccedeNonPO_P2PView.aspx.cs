@@ -54,9 +54,15 @@ namespace DX_WebTemplate
                                 .Where(x => x.WFA_Id == Convert.ToInt32(actID))
                                 .FirstOrDefault();
 
+                            var app_docType = _DataContext.ITP_S_DocumentTypes
+                                .Where(x => x.DCT_Name == "ACDE InvoiceNPO")
+                                .Where(x => x.App_Id == 1032)
+                                .FirstOrDefault();
+
                             Session["ExpId"] = actDetails.Document_Id;
                             sqlMain.SelectParameters["ID"].DefaultValue = actDetails.Document_Id.ToString();
                             SqlDocs.SelectParameters["Doc_ID"].DefaultValue = actDetails.Document_Id.ToString();
+                            SqlDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType != null ? app_docType.DCT_Id.ToString() : null;
                             SqlCADetails.SelectParameters["Exp_ID"].DefaultValue = actDetails.Document_Id.ToString();
                             SqlReimDetails.SelectParameters["Exp_ID"].DefaultValue = actDetails.Document_Id.ToString();
                             SqlExpDetails.SelectParameters["InvMain_ID"].DefaultValue = actDetails.Document_Id.ToString();
@@ -66,10 +72,7 @@ namespace DX_WebTemplate
                                 .Where(x => x.ID == Convert.ToInt32(actDetails.Document_Id))
                                 .FirstOrDefault();
 
-                            var app_docType = _DataContext.ITP_S_DocumentTypes
-                                .Where(x => x.DCT_Name == "ACDE InvoiceNPO")
-                                .Where(x => x.App_Id == 1032)
-                                .FirstOrDefault();
+                            
 
                             SqlDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType.DCT_Id.ToString();
                             var vendors = SAPVendor.GetVendorData("")

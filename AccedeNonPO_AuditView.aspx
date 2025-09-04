@@ -312,7 +312,7 @@
                     if (funcResult == "success") {
                         LoadingPanel.SetText('You approved this request. Redirecting&hellip;');
                         LoadingPanel.Show();
-                        window.location.href = 'AllAccedeP2PPage.aspx';
+                        window.location.href = 'AllAccedeAuditPage.aspx';
 
                     }
                     else {
@@ -360,7 +360,7 @@
                     if (funcResult == "success") {
                         LoadingPanel.SetText('You returned this request. Redirecting&hellip;');
                         LoadingPanel.Show();
-                        window.location.href = 'AllAccedeApprovalPage.aspx';
+                        window.location.href = 'AllAccedeAuditPage.aspx';
 
                     } else {
                         alert(response.d);
@@ -403,7 +403,7 @@
                     if (funcResult == "success") {
                         LoadingPanel.SetText('You disapproved this request. Redirecting&hellip;');
                         LoadingPanel.Show();
-                        window.location.href = 'AllAccedeApprovalPage.aspx';
+                        window.location.href = 'AllAccedeAuditPage.aspx';
                     } else {
 
                         alert(response.d);

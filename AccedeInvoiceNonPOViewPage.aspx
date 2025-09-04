@@ -2852,7 +2852,7 @@ RecallClick(); RecallPopup.Hide();
         <SelectParameters>
             <asp:Parameter Name="Doc_ID" Type="Int32" />
             <asp:Parameter DefaultValue="1032" Name="App_ID" Type="Int32" />
-            <asp:Parameter DefaultValue="1016" Name="DocType_Id" Type="Int32" />
+            <asp:Parameter Name="DocType_Id" Type="Int32" />
         </SelectParameters>
      </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlCAWFActivity" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_RFPWFActivity] WHERE ([Document_Id] = @Document_Id)">

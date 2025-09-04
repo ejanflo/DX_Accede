@@ -82,7 +82,7 @@
                     memo_vendorAddress.SetValue(response.d.VENDSTREET + ", " + response.d.VENDCITY + ", " + response.d.VENDPOSTAL);
                     txt_vendorName.SetValue(response.d.VENDNAME);
 
-                    if (response.d.isOneTime == true) {
+                    if (vendor.includes("OTV")) {
                         txt_vendorTIN.SetReadOnly(false);
                         memo_vendorAddress.SetReadOnly(false);
                         txt_vendorName.SetReadOnly(false);
@@ -689,7 +689,7 @@ drpdown_vendor.PerformCallback(s.GetValue());
                                         <dx:LayoutItemNestedControlContainer runat="server">
                                             <dx:ASPxTextBox ID="txt_vendorTIN" runat="server" ClientInstanceName="txt_vendorTIN" Width="100%">
                                                 <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreateForm">
-                                                    <RequiredField ErrorText="Required field." IsRequired="True" />
+                                                    <RequiredField ErrorText="Required field." />
                                                 </ValidationSettings>
                                             </dx:ASPxTextBox>
                                         </dx:LayoutItemNestedControlContainer>
