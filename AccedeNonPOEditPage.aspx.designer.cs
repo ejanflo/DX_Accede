@@ -1032,6 +1032,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxButton ASPxButton13;
 
         /// <summary>
+        /// LineId_edit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox LineId_edit;
+
+        /// <summary>
         /// dateAdded_edit control.
         /// </summary>
         /// <remarks>

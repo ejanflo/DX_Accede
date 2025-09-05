@@ -242,8 +242,9 @@
                 var vat = vat_add.GetValue() != null ? vat_add.GetValue() : "0";
 
                 var totalAlloc = GetTotalNetAmount(ExpAllocGrid);
+                var rowCount = ExpAllocGrid.GetVisibleRowsOnPage();
 
-                if (totalAlloc < gross_amount) {
+                if (totalAlloc < gross_amount && rowCount > 0) {
                     alert("The total allocation is less than the gross amount entered. Please review and adjust the allocation amounts.");
                     LoadingPanel.Hide();
                 } else if (totalAlloc > gross_amount) {
@@ -728,6 +729,10 @@
             LoadingPanel.SetText("Loading vendor details...");
             LoadingPanel.Show();
 
+            txt_TIN.SetValue("");
+            memo_VendorAddress.SetValue("");
+            txt_vendorName.SetValue("");
+
             if (vendor.includes("OTV")) {
                 txt_TIN.SetReadOnly(false);
                 memo_VendorAddress.SetReadOnly(false);
@@ -763,6 +768,19 @@
             });
         }
 
+        function OnVendorChangedNoLoader(vendor) {
+
+            if (vendor.includes("OTV")) {
+                txt_TIN.SetReadOnly(false);
+                memo_VendorAddress.SetReadOnly(false);
+                txt_vendorName.SetReadOnly(false);
+            } else {
+                txt_TIN.SetReadOnly(true);
+                memo_VendorAddress.SetReadOnly(true);
+                txt_vendorName.SetReadOnly(true);
+            }
+        }
+
         function onPayMethodChanged(pay) {
             onAmountChanged(pay);
         }
@@ -781,6 +799,7 @@
                 success: function (response) {
                     console.log("ok");
 
+                    LineId_edit.SetValue(response.d.id);
                     particulars_edit.SetValue(response.d.particulars);
                     //supplier_edit.SetValue(response.d.supplier);
                     //tin_edit.SetValue(response.d.tin);
@@ -892,7 +911,7 @@
 
                 var total_unalloc = (gross - alloc_amnt).toFixed(2);
                 Unalloc_amnt_edit.SetValue(curr + " " + total_unalloc.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-
+                
                 s.cpComputeUnalloc_edit = null;  // Clear the custom property
             }
 
@@ -939,8 +958,9 @@
                 var vat = vat_edit.GetValue() != null ? vat_edit.GetValue() : "0";
 
                 var totalAlloc = GetTotalNetAmount(ExpAllocGrid);
+                var rowCount = ExpAllocGrid.GetVisibleRowsOnPage();
 
-                if (totalAlloc < gross_amount) {
+                if (totalAlloc < gross_amount && rowCount > 0) {
                     alert("The total allocation is less than the gross amount entered. Please review and adjust the allocation amounts.");
                     LoadingPanel.Hide();
                 } else if (totalAlloc > gross_amount) {
@@ -1232,7 +1252,7 @@
 
                 net_amount_edit.SetValue(net.toFixed(2));
                 total_edit.SetValue(total);
-                ExpAllocGrid_edit.PerformCallback();
+                ExpAllocGrid_edit.PerformCallback(LineId_edit.GetValue());
             }
 
         }
@@ -2335,7 +2355,7 @@ var emp = &quot;&quot;;//exp_EmpId.GetValue() != null ? exp_EmpId.GetValue() : &
                 </dx:LayoutGroup>
             </Items>
             <ClientSideEvents Init="function(s, e) {
-	OnVendorChanged(drpdown_vendor.GetValue());
+	OnVendorChangedNoLoader(drpdown_vendor.GetValue());
 }" />
         </dx:ASPxFormLayout>
         </div>
@@ -3338,6 +3358,19 @@ ExpAllocGrid.PerformCallback();
                             <Items>
                                 <dx:LayoutGroup Caption="" ColSpan="1" GroupBoxDecoration="None" Width="50%" HorizontalAlign="Left">
                                     <Items>
+                                        <dx:LayoutItem Caption="LineId" ClientVisible="False" ColSpan="1">
+                                            <LayoutItemNestedControlCollection>
+                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                    <dx:ASPxTextBox ID="LineId_edit" runat="server" ClientInstanceName="LineId_edit" Font-Bold="False" Font-Size="Small" Width="100%">
+                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
+                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                        </ValidationSettings>
+                                                        <Border BorderStyle="None" />
+                                                        <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
+                                                    </dx:ASPxTextBox>
+                                                </dx:LayoutItemNestedControlContainer>
+                                            </LayoutItemNestedControlCollection>
+                                        </dx:LayoutItem>
                                         <dx:LayoutItem Caption="Date" ColSpan="1" ClientVisible="False">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
