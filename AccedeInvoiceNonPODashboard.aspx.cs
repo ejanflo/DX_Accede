@@ -4,192 +4,456 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Linq;
-using System.Reflection.Emit;
+using System.Runtime.Caching;
 using System.Web;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using static DX_WebTemplate.AccedeNonPOEditPage;
 using static DX_WebTemplate.SAPVendor;
 
 namespace DX_WebTemplate
 {
     public partial class AccedeInvoiceNonPODashboard : System.Web.UI.Page
     {
-        // CREATE object of DATABASE-ITPORTAL
         ITPORTALDataContext context = new ITPORTALDataContext(ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString);
+
+        // ---------------- VENDOR CACHE (same pattern as AccedeNonPOEditPage) ----------------
+        private static readonly ObjectCache _cache = MemoryCache.Default;
+        private const string SapClientParam = "sap-client=300";
+        private static readonly object _vendorRefreshLock = new object();
+        private static readonly Dictionary<string, DateTime> _vendorLastRefreshUtc = new Dictionary<string, DateTime>(StringComparer.OrdinalIgnoreCase);
+        private static readonly TimeSpan VendorListMaxAge = TimeSpan.FromMinutes(30);
+
+        internal static class VendorDataSetCache
+        {
+            private static readonly object _sync = new object();
+            private static readonly DataTable _table;
+
+            static VendorDataSetCache()
+            {
+                _table = new DataTable("Vendors");
+                _table.Columns.Add("VENDCODE", typeof(string));
+                _table.Columns.Add("VENDNAME", typeof(string));
+                _table.Columns.Add("VENDCOCODE", typeof(string));
+                _table.Columns.Add("VENDTIN", typeof(string));
+                _table.Columns.Add("VENDSTREET", typeof(string));
+                _table.Columns.Add("VENDCITY", typeof(string));
+                _table.Columns.Add("VENDPOSTAL", typeof(string));
+                _table.PrimaryKey = new[] { _table.Columns["VENDCODE"] };
+            }
+
+            public static void AddOrUpdate(IEnumerable<VendorSet> vendors)
+            {
+                if (vendors == null) return;
+                lock (_sync)
+                {
+                    foreach (var v in vendors)
+                    {
+                        if (v == null || string.IsNullOrWhiteSpace(v.VENDCODE)) continue;
+                        var key = v.VENDCODE.Trim().ToUpperInvariant();
+                        var row = _table.Rows.Find(key);
+                        if (row == null)
+                        {
+                            row = _table.NewRow();
+                            row["VENDCODE"] = key;
+                            row["VENDNAME"] = v.VENDNAME;
+                            row["VENDCOCODE"] = v.VENDCOCODE;
+                            row["VENDTIN"] = v.VENDTIN;
+                            row["VENDSTREET"] = v.VENDSTREET;
+                            row["VENDCITY"] = v.VENDCITY;
+                            row["VENDPOSTAL"] = v.VENDPOSTAL;
+                            _table.Rows.Add(row);
+                        }
+                        else
+                        {
+                            row["VENDNAME"] = v.VENDNAME;
+                            row["VENDCOCODE"] = v.VENDCOCODE;
+                            row["VENDTIN"] = v.VENDTIN;
+                            row["VENDSTREET"] = v.VENDSTREET;
+                            row["VENDCITY"] = v.VENDCITY;
+                            row["VENDPOSTAL"] = v.VENDPOSTAL;
+                        }
+                    }
+                }
+            }
+
+            public static VendorSet Get(string vendorCode)
+            {
+                if (string.IsNullOrWhiteSpace(vendorCode)) return null;
+                var key = vendorCode.Trim().ToUpperInvariant();
+                lock (_sync)
+                {
+                    var row = _table.Rows.Find(key);
+                    if (row == null) return null;
+                    return new VendorSet
+                    {
+                        VENDCODE = (string)row["VENDCODE"],
+                        VENDNAME = row["VENDNAME"] as string,
+                        VENDCOCODE = row["VENDCOCODE"] as string,
+                        VENDTIN = row["VENDTIN"] as string,
+                        VENDSTREET = row["VENDSTREET"] as string,
+                        VENDCITY = row["VENDCITY"] as string,
+                        VENDPOSTAL = row["VENDPOSTAL"] as string
+                    };
+                }
+            }
+        }
+
+        internal static class VendorLookupService
+        {
+            private static readonly ObjectCache _localCache = MemoryCache.Default;
+            private static readonly TimeSpan AbsoluteLifetime = TimeSpan.FromMinutes(10);
+            private static readonly TimeSpan SlidingLifetime = TimeSpan.FromMinutes(3);
+            private static readonly object _lockRoot = new object();
+
+            public static VendorSet GetVendor(string vendorCode)
+            {
+                if (string.IsNullOrWhiteSpace(vendorCode))
+                    return null;
+
+                // 1. DataSet
+                var dsHit = VendorDataSetCache.Get(vendorCode);
+                if (dsHit != null) return dsHit;
+
+                var normalized = vendorCode.Trim().ToUpperInvariant();
+                string cacheKey = "VENDOR_SINGLE_" + normalized;
+
+                // 2. MemoryCache
+                var cached = _localCache.Get(cacheKey) as VendorSet;
+                if (cached != null) return cached;
+
+                lock (_lockRoot)
+                {
+                    cached = _localCache.Get(cacheKey) as VendorSet;
+                    if (cached != null) return cached;
+
+                    VendorSet result = null;
+                    try
+                    {
+                        string query = $"{SapClientParam}&$filter=VENDCODE eq '{normalized.Replace("'", "''")}'&$top=1";
+                        result = SAPVendor.GetVendorData(query)
+                                          .FirstOrDefault(v => string.Equals(v.VENDCODE?.Trim(), normalized, StringComparison.OrdinalIgnoreCase));
+                        if (result != null)
+                        {
+                            VendorDataSetCache.AddOrUpdate(new[] { result });
+                            _localCache.Set(
+                                cacheKey,
+                                result,
+                                new CacheItemPolicy
+                                {
+                                    AbsoluteExpiration = DateTimeOffset.UtcNow.Add(AbsoluteLifetime),
+                                    SlidingExpiration = SlidingLifetime
+                                });
+                        }
+                    }
+                    catch
+                    {
+                        return result;
+                    }
+                    return result;
+                }
+            }
+        }
+
+        private List<VendorSet> FetchVendorListFromSap(string compCode)
+        {
+            if (string.IsNullOrWhiteSpace(compCode))
+                return new List<VendorSet>();
+
+            string query = $"{SapClientParam}&$filter=VENDCOCODE eq '{compCode}'";
+            var list = SAPVendor.GetVendorData(query)
+                .GroupBy(v => v.VENDCODE?.Trim().ToUpperInvariant())
+                .Select(g => g.First())
+                .OrderBy(v => v.VENDNAME)
+                .ToList();
+
+            VendorDataSetCache.AddOrUpdate(list);
+            return list;
+        }
+
+        private List<VendorSet> GetOrRefreshVendorList(string compCode, bool force = false)
+        {
+            if (string.IsNullOrWhiteSpace(compCode))
+                return new List<VendorSet>();
+
+            string memKey = "VENDOR_LIST_" + compCode;
+            var now = DateTime.UtcNow;
+
+            if (!force)
+            {
+                if (_cache.Get(memKey) is List<VendorSet> cached &&
+                    _vendorLastRefreshUtc.TryGetValue(compCode, out var last) &&
+                    (now - last) < VendorListMaxAge &&
+                    cached.Count > 0)
+                {
+                    return cached;
+                }
+            }
+
+            lock (_vendorRefreshLock)
+            {
+                if (!force)
+                {
+                    if (_cache.Get(memKey) is List<VendorSet> cached2 &&
+                        _vendorLastRefreshUtc.TryGetValue(compCode, out var last2) &&
+                        (now - last2) < VendorListMaxAge &&
+                        cached2.Count > 0)
+                    {
+                        return cached2;
+                    }
+                }
+
+                var fresh = FetchVendorListFromSap(compCode);
+                _cache.Set(memKey, fresh, DateTimeOffset.UtcNow.AddMinutes(15));
+                _vendorLastRefreshUtc[compCode] = now;
+                return fresh;
+            }
+        }
+
+        private DateTime? GetLastVendorRefresh(string compCode)
+        {
+            if (_vendorLastRefreshUtc.TryGetValue(compCode ?? "", out var dt))
+                return dt;
+            return null;
+        }
+        // ---------------- END VENDOR CACHE ----------------
 
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
-                if (AnfloSession.Current.ValidCookieUser())
+                if (!AnfloSession.Current.ValidCookieUser())
                 {
-                    AnfloSession.Current.CreateSession(HttpContext.Current.User.ToString());
-                    var EmpCode = Session["userID"].ToString();
-
-                    SqlUserCompany.SelectParameters["UserId"].DefaultValue = EmpCode;
-                    SqlUserSelf.SelectParameters["EmpCode"].DefaultValue = EmpCode;
-                    sqlExpense.SelectParameters["UserId"].DefaultValue = EmpCode;
-
-
-                    //string matparams = "";
-
-                    //drpdown_vendor.DataSourceID = null;
-
-                    //// ✅ bind directly from SAP OData
-                    //var vendors = SAPVendor.GetVendorData(matparams);
-
-                    //drpdown_vendor.DataSource = vendors
-                    //    .GroupBy(x => new { x.VENDCODE, x.VENDNAME })
-                    //    .Select(g => g.First())
-                    //    .ToList();
-
-                    //drpdown_vendor.ValueField = "VENDCODE";   // the unique key / value you want to use
-                    //drpdown_vendor.TextField = "VENDNAME";   // what the user sees in the dropdown
-                       
-                    //drpdown_vendor.Columns.Clear();
-
-                    //drpdown_vendor.Columns.Add("VENDCODE");
-                    //drpdown_vendor.Columns.Add("VENDNAME");
-                    //drpdown_vendor.DataBindItems();
-
-                    //drpdown_vendor.ValidationSettings.RequiredField.IsRequired = true;
-
-                    //drpdown_EmpId.Value = EmpCode.ToString();
-                    //drpdown_EmpId.DataBindItems();
-
-                    //drpdown_EmpId.Value = EmpCode;
-                }
-                else
                     Response.Redirect("~/Logon.aspx");
+                    return;
+                }
 
+                AnfloSession.Current.CreateSession(HttpContext.Current.User.ToString());
+                var empCode = Session["userID"]?.ToString();
+                if (string.IsNullOrEmpty(empCode))
+                {
+                    Response.Redirect("~/Logon.aspx");
+                    return;
+                }
+
+                SqlUserCompany.SelectParameters["UserId"].DefaultValue = empCode;
+                SqlUserSelf.SelectParameters["EmpCode"].DefaultValue = empCode;
+                sqlExpense.SelectParameters["UserId"].DefaultValue = empCode;
             }
-            catch (Exception ex)
+            catch
             {
                 Response.Redirect("~/Logon.aspx");
             }
-
-        }
-
-        protected void expenseGrid_ToolbarItemClick(object source, DevExpress.Web.Data.ASPxGridViewToolbarItemClickEventArgs e)
-        {
-
         }
 
         private string Encrypt(string plainText)
         {
-            // Example: Use a proper encryption library like AES or RSA for actual implementations
-            // This is just a placeholder for encryption logic
             return Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(plainText));
         }
 
-        protected void expenseGrid_CustomCallback(object sender, DevExpress.Web.ASPxGridViewCustomCallbackEventArgs e)
+        protected void expenseGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
         {
-            //string[] args = e.Parameters.Split('|');
-            //string rowKey = args[0];
-            //string buttonId = args[1];
+            var parts = e.Parameters?.Split('|');
+            if (parts == null || parts.Length == 0) return;
+            string docId = parts[0];
+            string action = parts.Length > 1 ? parts[1] : "";
 
-            //object IDValue = expenseGrid.GetRowValuesByKeyValue(rowKey, "ID");
-            //object statValue = expenseGrid.GetRowValuesByKeyValue(rowKey, "Status");
-            //object companyValue = expenseGrid.GetRowValuesByKeyValue(rowKey, "Company_ID");
-            //object prepValue = expenseGrid.GetRowValuesByKeyValue(rowKey, "User_ID");
-            //object docnoValue = expenseGrid.GetRowValuesByKeyValue(rowKey, "DocNo");
+            Session["NonPOInvoiceId"] = docId;
 
-            //var query = from a in context.ITP_S_Status
-            //            where a.STS_Id == int.Parse(statValue.ToString())
-            //            select a.STS_Description;
-            //string stat = query.FirstOrDefault();
-
-            //Session["cID"] = IDValue;
-            //Session["comp"] = companyValue;
-            //Session["stat"] = stat;
-            //Session["prep"] = prepValue;
-            //Session["docno"] = docnoValue;
-
-            //if (buttonId == "btnView")
-            //{
-            //    expenseGrid.JSProperties["cp_btnid"] = "btnView";
-            //    expenseGrid.JSProperties["cp_url"] = "AccedeExpenseReportReview.aspx";
-            //}
-            //else if (buttonId == "btnEdit")
-            //{
-            //    Session["edit"] = true;
-            //    expenseGrid.JSProperties["cp_btnid"] = "btnEdit";
-            //    expenseGrid.JSProperties["cp_url"] = "AccedeExpenseReportSaves.aspx";
-            //}
-            //else if (buttonId == "btnPrint")
-            //{
-            //    expenseGrid.JSProperties["cp_btnid"] = "btnPrint";
-            //    expenseGrid.JSProperties["cp_url"] = "AccedeExpenseReportPrint.aspx";
-            //}
-
-            string expID = e.Parameters.Split('|').First();
-            string encryptedID = Encrypt(expID); // Implement the Encrypt method securely
-            
-
-            Session["NonPOInvoiceId"] = e.Parameters.Split('|').First();
-            if (e.Parameters.Split('|').Last() == "btnEdit")
+            switch (action)
             {
-                ASPxWebControl.RedirectOnCallback("AccedeNonPOEditPage.aspx");
+                case "btnEdit":
+                    ASPxWebControl.RedirectOnCallback("AccedeNonPOEditPage.aspx");
+                    break;
+                case "btnView":
+                    ASPxWebControl.RedirectOnCallback($"AccedeInvoiceNonPOViewPage.aspx?secureToken={Encrypt(docId)}");
+                    break;
+                case "btnPrint":
+                    Session["cID"] = docId;
+                    ASPxWebControl.RedirectOnCallback("AccedeExpenseReportPrinting.aspx");
+                    break;
             }
-            if (e.Parameters.Split('|').Last() == "btnView")
-            {
-                string redirectUrl = $"AccedeInvoiceNonPOViewPage.aspx?secureToken={encryptedID}";
-                ASPxWebControl.RedirectOnCallback(redirectUrl);
-            }
-            if (e.Parameters.Split('|').Last() == "btnPrint")
-            {
-                Session["cID"] = e.Parameters.Split('|').First();
-                ASPxWebControl.RedirectOnCallback("AccedeExpenseReportPrinting.aspx");
-            }
-
         }
 
-        protected void expenseGrid_CustomButtonInitialize(object sender, DevExpress.Web.ASPxGridViewCustomButtonEventArgs e)
+        protected void expenseGrid_CustomButtonInitialize(object sender, ASPxGridViewCustomButtonEventArgs e)
         {
+            if (e.VisibleIndex < 0) return;
 
-            if (e.VisibleIndex >= 0 && e.ButtonID == "btnEdit") // Ensure it's a data row and the button is the desired one
+            var statusVal = expenseGrid.GetRowValues(e.VisibleIndex, "Status")?.ToString();
+            if (string.IsNullOrEmpty(statusVal)) return;
+
+            var returnedAudit = context.ITP_S_Status.FirstOrDefault(x => x.STS_Name == "Returned by Audit");
+            var returnedP2P = context.ITP_S_Status.FirstOrDefault(x => x.STS_Name == "Returned by P2P");
+            var pendingAudit = context.ITP_S_Status.FirstOrDefault(x => x.STS_Name == "Pending at Audit");
+
+            if (e.ButtonID == "btnEdit")
             {
-                //Get the value of the "Status" column for the current row
-                object statusValue = expenseGrid.GetRowValues(e.VisibleIndex, "Status");
-
-                var returned_audit = context.ITP_S_Status.Where(x => x.STS_Name == "Returned by Audit").FirstOrDefault();
-                var returnP2PStats = context.ITP_S_Status.Where(x => x.STS_Name == "Returned by P2P").FirstOrDefault();
-
-                //Check if the status is "saved" and make the button visible accordingly
-                if (statusValue != null && (statusValue.ToString() == "15" || statusValue.ToString() == "13" || statusValue.ToString() == "3" || statusValue.ToString() == returned_audit.STS_Id.ToString() || statusValue.ToString() == returnP2PStats.STS_Id.ToString()))
-                    e.Visible = DevExpress.Utils.DefaultBoolean.True;
-                else
-                    e.Visible = DevExpress.Utils.DefaultBoolean.False;
+                e.Visible = (statusVal == "15" || statusVal == "13" || statusVal == "3"
+                             || statusVal == returnedAudit?.STS_Id.ToString()
+                             || statusVal == returnedP2P?.STS_Id.ToString())
+                    ? DevExpress.Utils.DefaultBoolean.True
+                    : DevExpress.Utils.DefaultBoolean.False;
             }
-
-            if (e.VisibleIndex >= 0 && e.ButtonID == "btnPrint") // Ensure it's a data row and the button is the desired one
+            else if (e.ButtonID == "btnPrint")
             {
-                //Get the value of the "Status" column for the current row
-                object statusValue = expenseGrid.GetRowValues(e.VisibleIndex, "Status");
-                var PendingAuditStat = context.ITP_S_Status.Where(x => x.STS_Name == "Pending at Audit").FirstOrDefault();
-                var liquidationDoc = context.ACCEDE_S_ExpenseTypes.Where(x => x.Description == "Liquidation").FirstOrDefault();
-                var doc_id = expenseGrid.GetRowValues(e.VisibleIndex, "ID").ToString();
-                var expDetails = context.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(doc_id)).FirstOrDefault();
-                //Check if the status is "saved" and make the button visible accordingly
-                if (statusValue != null && (statusValue.ToString() == PendingAuditStat.STS_Id.ToString()) /*&& expDetails.ExpenseType_ID == Convert.ToInt32(liquidationDoc.ExpenseType_ID)*/)
-                    e.Visible = DevExpress.Utils.DefaultBoolean.True;
-                else
-                    e.Visible = DevExpress.Utils.DefaultBoolean.False;
+                e.Visible = (statusVal == pendingAudit?.STS_Id.ToString())
+                    ? DevExpress.Utils.DefaultBoolean.True
+                    : DevExpress.Utils.DefaultBoolean.False;
             }
         }
 
         protected void ASPxGridView2_BeforePerformDataSelect(object sender, EventArgs e)
         {
-            Session["AccedeExpenseID"] = (sender as ASPxGridView).GetMasterRowKeyValue();
+            Session["AccedeExpenseID"] = (sender as ASPxGridView)?.GetMasterRowKeyValue();
+        }
+
+        [WebMethod]
+        public static string GetCosCenterFrmDeptAJAX(string dept_id)
+        {
+            var page = new AccedeInvoiceNonPODashboard();
+            return page.GetCosCenterFrmDept(dept_id);
+        }
+
+        public string GetCosCenterFrmDept(string dept_id)
+        {
+            if (!Int32.TryParse(dept_id, out int id)) return "";
+            var dept = context.ITP_S_OrgDepartmentMasters.FirstOrDefault(x => x.ID == id);
+            return dept?.SAP_CostCenter ?? "";
+        }
+
+        [WebMethod]
+        public static bool AddInvoiceReportAJAX(string expName, string expDate, string Comp, string CostCenter, string expCat,
+            string Purpose, bool isTrav, string currency, string department, string payType, string CTComp_id,
+            string CTDept_id, string CompLoc, string vendorName, string vendorTIN, string vendorAddress)
+        {
+            return new AccedeInvoiceNonPODashboard()
+                .AddInvoiceReport(expName, expDate, Comp, CostCenter, expCat, Purpose, isTrav, currency,
+                                  department, payType, CTComp_id, CTDept_id, CompLoc, vendorName, vendorTIN, vendorAddress);
+        }
+
+        public bool AddInvoiceReport(string expName, string expDate, string Comp, string CostCenter, string expCat,
+            string Purpose, bool isTrav, string currency, string department, string payType, string CTComp_id,
+            string CTDept_id, string CompLoc, string vendorName, string vendorTIN, string vendorAddress)
+        {
+            try
+            {
+                var docType = context.ITP_S_DocumentTypes.FirstOrDefault(x => x.DCT_Name == "ACDE InvoiceNPO");
+                if (docType == null) return false;
+
+                var gen = new GenerateDocNo();
+                gen.RunStoredProc_GenerateDocNum(Convert.ToInt32(docType.DCT_Id), Convert.ToInt32(Comp), 1032);
+                var docNo = gen.GetLatest_DocNum(Convert.ToInt32(docType.DCT_Id), Convert.ToInt32(Comp), 1032);
+
+                var main = new ACCEDE_T_InvoiceMain
+                {
+                    VendorCode = expName,
+                    ReportDate = Convert.ToDateTime(expDate),
+                    PaymentType = 3,
+                    InvoiceType_ID = 3,
+                    CostCenter = string.IsNullOrWhiteSpace(CostCenter) ? null : CostCenter,
+                    ExpenseCat = Int32.TryParse(expCat, out int ec) ? ec : (int?)null,
+                    Purpose = Purpose,
+                    Status = 13,
+                    UserId = HttpContext.Current.Session["userID"]?.ToString(),
+                    DocNo = docNo,
+                    DateCreated = DateTime.Now,
+                    Exp_Currency = currency,
+                    InvChargedTo_CompanyId = Int32.TryParse(CTComp_id, out int ctc) ? ctc : (int?)null,
+                    InvChargedTo_DeptId = Int32.TryParse(CTDept_id, out int ctd) ? ctd : (int?)null,
+                    InvComp_Location_Id = Int32.TryParse(CompLoc, out int cl) ? cl : (int?)null,
+                    VendorName = vendorName,
+                    VendorTIN = vendorTIN,
+                    VendorAddress = vendorAddress
+                };
+
+                context.ACCEDE_T_InvoiceMains.InsertOnSubmit(main);
+                context.SubmitChanges();
+
+                HttpContext.Current.Session["NonPOInvoiceId"] = main.ID;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        [WebMethod]
+        public static VendorSet CheckVendorDetailsAJAX(string vendor)
+        {
+            return VendorLookupService.GetVendor(vendor);
+        }
+
+        // Replaced to use centralized lookup (kept for any server-side internal use)
+        public VendorSet CheckVendorDetails(string vendor) => VendorLookupService.GetVendor(vendor);
+
+        protected void drpdown_vendor_Callback(object sender, CallbackEventArgsBase e)
+        {
+            var raw = e.Parameter ?? "";
+            var parts = raw.Split('|');
+            var companyIdStr = parts.Length > 0 ? parts[0] : "";
+            var flag = parts.Length > 1 ? parts[1] : "";
+            bool force = false;
+
+            if (!string.IsNullOrWhiteSpace(flag))
+            {
+                var f = flag.Trim().ToLowerInvariant();
+                force = f == "force" || f == "refresh" || f == "1" || f == "true";
+            }
+
+            if (!Int32.TryParse(companyIdStr, out int companyId))
+                return;
+
+            var compCode = context.CompanyMasters
+                .Where(x => x.WASSId == companyId)
+                .Select(x => x.SAP_Id)
+                .FirstOrDefault().ToString();
+
+            if (string.IsNullOrWhiteSpace(compCode))
+                return;
+
+            var vendors = GetOrRefreshVendorList(compCode, force);
+
+            drpdown_vendor.DataSource = vendors;
+            drpdown_vendor.ValueField = "VENDCODE";
+            drpdown_vendor.TextField = "VENDNAME";
+            drpdown_vendor.Columns.Clear();
+            drpdown_vendor.Columns.Add("VENDCODE");
+            drpdown_vendor.Columns.Add("VENDNAME");
+            drpdown_vendor.TextFormatString = "{0} - {1}";
+            drpdown_vendor.DataBindItems();
+            drpdown_vendor.ValidationSettings.RequiredField.IsRequired = true;
+
+            if (drpdown_vendor is ASPxComboBox combo)
+            {
+                var last = GetLastVendorRefresh(compCode);
+                if (last.HasValue)
+                    combo.JSProperties["cpVendorLastRefresh"] = last.Value.ToString("o");
+                combo.JSProperties["cpVendorCount"] = vendors.Count;
+                combo.JSProperties["cpVendorForced"] = force;
+            }
+        }
+
+        [WebMethod]
+        public static int RefreshVendorCacheAJAX(int companyId)
+        {
+            var page = new AccedeInvoiceNonPODashboard();
+            var compCode = page.context.CompanyMasters
+                .Where(x => x.WASSId == companyId)
+                .Select(x => x.SAP_Id)
+                .FirstOrDefault().ToString();
+            if (string.IsNullOrWhiteSpace(compCode))
+                return 0;
+            return page.GetOrRefreshVendorList(compCode, true).Count;
         }
 
         protected void drpdown_CostCenter_Callback(object sender, CallbackEventArgsBase e)
         {
-            var param = e.Parameter.Split('|');
+            var param = e.Parameter?.Split('|');
+            if (param == null || param.Length < 2) return;
             var comp = param[0];
             var dept = param[1];
+
             SqlCostCenter.SelectParameters["Company_ID"].DefaultValue = comp;
             SqlCostCenter.DataBind();
 
@@ -197,162 +461,18 @@ namespace DX_WebTemplate
             drpdown_CostCenter.DataSource = SqlCostCenter;
             drpdown_CostCenter.DataBind();
 
-            var dept_details = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(dept)).FirstOrDefault();
-            drpdown_CostCenter.Value = dept_details.SAP_CostCenter.ToString();
-            //if (drpdown_CostCenter.Items.Count == 1)
-            //{
-            //    drpdown_CostCenter.SelectedIndex = 0;
-            //}
-
-        }
-
-        [WebMethod]
-        public static string GetCosCenterFrmDeptAJAX(string dept_id)
-        {
-            AccedeInvoiceNonPODashboard accede = new AccedeInvoiceNonPODashboard();
-            return accede.GetCosCenterFrmDept(dept_id);
-        }
-
-        public string GetCosCenterFrmDept(string dept_id)
-        {
-            var deptCostCenter = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(dept_id)).FirstOrDefault();
-            if (deptCostCenter != null && deptCostCenter.SAP_CostCenter != null)
+            if (Int32.TryParse(dept, out int deptId))
             {
-                return deptCostCenter.SAP_CostCenter.ToString();
-            }
-            else
-            {
-                return "";
-            }
-        }
-
-        [WebMethod]
-        public static bool AddInvoiceReportAJAX(string expName, string expDate, string Comp, string CostCenter, string expCat, string Purpose, bool isTrav, string currency, string department, string payType, string CTComp_id, string CTDept_id, string CompLoc, string vendorName, string vendorTIN, string vendorAddress)
-        {
-            AccedeInvoiceNonPODashboard accede = new AccedeInvoiceNonPODashboard();
-
-            return accede.AddInvoiceReport(expName, expDate, Comp, CostCenter, expCat, Purpose, isTrav, currency, department, payType, CTComp_id, CTDept_id, CompLoc, vendorName, vendorTIN, vendorAddress);
-        }
-
-        public bool AddInvoiceReport(string expName, string expDate, string Comp, string CostCenter, string expCat, string Purpose, bool isTrav, string currency, string department, string payType, string CTComp_id, string CTDept_id, string CompLoc, string vendorName, string vendorTIN, string vendorAddress)
-        {
-            var expDoctype = context.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE InvoiceNPO").FirstOrDefault();
-            try
-            {
-                GenerateDocNo generateDocNo = new GenerateDocNo();
-                generateDocNo.RunStoredProc_GenerateDocNum(Convert.ToInt32(expDoctype.DCT_Id), Convert.ToInt32(Comp), 1032);
-                var docNo = generateDocNo.GetLatest_DocNum(Convert.ToInt32(expDoctype.DCT_Id), Convert.ToInt32(Comp), 1032);
-
-                ACCEDE_T_InvoiceMain main = new ACCEDE_T_InvoiceMain();
-                {
-                    main.VendorCode = expName;
-                    main.ReportDate = Convert.ToDateTime(expDate);
-                    main.PaymentType = 3;//Convert.ToInt32(payType);
-                    main.InvoiceType_ID = 3; // Assuming 3 is the ID for Payment to Vendor
-                    //if(Comp != "")
-                    //{
-                    //    main.CompanyId = Convert.ToInt32(Comp);
-                    //}
-
-                    if (CostCenter != "")
-                    {
-                        main.CostCenter = CostCenter;
-                    }
-                    main.ExpenseCat = Convert.ToInt32(expCat);
-                    main.Purpose = Purpose;
-                    main.Status = 13;
-                    main.UserId = Session["userID"].ToString();
-                    main.DocNo = docNo;
-                    main.DateCreated = DateTime.Now;
-                    main.Exp_Currency = currency;
-                    //if(department != "")
-                    //{
-                    //    main.Dept_Id = Convert.ToInt32(department);
-                    //}
-                    main.InvChargedTo_CompanyId = Convert.ToInt32(CTComp_id);
-                    main.InvChargedTo_DeptId = Convert.ToInt32(CTDept_id);
-                    main.InvComp_Location_Id = Convert.ToInt32(CompLoc);
-                    main.VendorName = vendorName;
-                    main.VendorTIN = vendorTIN;
-                    main.VendorAddress = vendorAddress;
-                }
-                context.ACCEDE_T_InvoiceMains.InsertOnSubmit(main);
-                context.SubmitChanges();
-
-                Session["NonPOInvoiceId"] = main.ID;
-
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        protected void CAGrid_BeforePerformDataSelect(object sender, EventArgs e)
-        {
-            Session["AccedeExpenseID"] = (sender as ASPxGridView).GetMasterRowKeyValue();
-        }
-
-        protected void expenseGrid_HtmlDataCellPrepared(object sender, ASPxGridViewTableDataCellEventArgs e)
-        {
-            if (e.DataColumn.FieldName == "Status")
-            {
-                var pay_released = context.ITP_S_Status.Where(x => x.STS_Name == "Disbursed").FirstOrDefault();
-                var pending_audit = context.ITP_S_Status.Where(x => x.STS_Name == "Pending at Audit").FirstOrDefault();
-                var return_audit = context.ITP_S_Status.Where(x => x.STS_Name == "Returned by Audit").FirstOrDefault();
-                var pendingP2P = context.ITP_S_Status.Where(x => x.STS_Name == "Pending at P2P").FirstOrDefault();
-                var return_p2p = context.ITP_S_Status.Where(x => x.STS_Name == "Returned by P2P").FirstOrDefault();
-
-                string value = e.CellValue.ToString();
-                if (value == "7" || value == "5")
-                {
-                    e.Cell.ForeColor = System.Drawing.ColorTranslator.FromHtml("#0D6943");//approved
-                    e.Cell.Font.Bold = true;
-                }
-                else if (value == "2" || value == "3" || value == "18" || value == "19")
-                {
-                    e.Cell.ForeColor = System.Drawing.ColorTranslator.FromHtml("#E67C0E");//rejected
-                    e.Cell.Font.Bold = true;
-                }
-                else if (value == return_audit.STS_Id.ToString() || value == return_p2p.STS_Id.ToString())
-                {
-                    e.Cell.ForeColor = System.Drawing.ColorTranslator.FromHtml("#E67C0E");//returned by audit/p2p
-                    e.Cell.Font.Bold = true;
-                }
-                else if (value == pending_audit.STS_Id.ToString() || value == pendingP2P.STS_Id.ToString())
-                {
-                    e.Cell.ForeColor = System.Drawing.ColorTranslator.FromHtml("#006DD6");//pending audit/p2p
-                    e.Cell.Font.Bold = true;
-                }
-                else if (value == "1")
-                {
-                    e.Cell.ForeColor = System.Drawing.ColorTranslator.FromHtml("#006DD6");//pending
-                    e.Cell.Font.Bold = true;
-                }
-                else if (value == "8")
-                {
-                    e.Cell.ForeColor = System.Drawing.ColorTranslator.FromHtml("#CC2A17");//disapproved
-                    e.Cell.Font.Bold = true;
-                }
-                else if (value == pay_released.STS_Id.ToString())
-                {
-                    e.Cell.ForeColor = System.Drawing.ColorTranslator.FromHtml("#0D6943");//disbursed
-                    e.Cell.Font.Bold = true;
-                }
-                else
-                {
-                    e.Cell.ForeColor = System.Drawing.Color.Gray;
-                    e.Cell.Font.Bold = true;
-                }
+                var deptDetails = context.ITP_S_OrgDepartmentMasters.FirstOrDefault(x => x.ID == deptId);
+                if (deptDetails?.SAP_CostCenter != null)
+                    drpdown_CostCenter.Value = deptDetails.SAP_CostCenter;
             }
         }
 
         protected void drpdown_Department_Callback(object sender, CallbackEventArgsBase e)
         {
-            sqlDept.SelectParameters["CompanyId"].DefaultValue = e.Parameter != null ? e.Parameter.ToString() : "";
-            sqlDept.SelectParameters["UserId"].DefaultValue = drpdown_vendor.Value != null ? drpdown_vendor.Value.ToString() : Session["userID"].ToString();
+            sqlDept.SelectParameters["CompanyId"].DefaultValue = e.Parameter ?? "";
+            sqlDept.SelectParameters["UserId"].DefaultValue = drpdown_vendor.Value != null ? drpdown_vendor.Value.ToString() : (Session["userID"]?.ToString() ?? "");
             sqlDept.DataBind();
 
             drpdown_Department.DataSourceID = null;
@@ -360,14 +480,35 @@ namespace DX_WebTemplate
             drpdown_Department.DataBindItems();
 
             if (drpdown_Department.Items.Count == 1)
-            {
                 drpdown_Department.SelectedIndex = 0;
-            }
+        }
+
+        protected void drpdown_CTDepartment_Callback(object sender, CallbackEventArgsBase e)
+        {
+            SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = e.Parameter ?? "";
+            SqlCTDepartment.DataBind();
+
+            drpdown_CTDepartment.DataSourceID = null;
+            drpdown_CTDepartment.DataSource = SqlCTDepartment;
+            drpdown_CTDepartment.DataBind();
+
+            if (drpdown_CTDepartment.Items.Count == 1)
+                drpdown_CTDepartment.SelectedIndex = 0;
+        }
+
+        protected void drpdown_CompLocation_Callback(object sender, CallbackEventArgsBase e)
+        {
+            SqlCompLocation.SelectParameters["Comp_Id"].DefaultValue = e.Parameter ?? "";
+            SqlCompLocation.DataBind();
+
+            drpdown_CompLocation.DataSourceID = null;
+            drpdown_CompLocation.DataSource = SqlCompLocation;
+            drpdown_CompLocation.DataBind();
         }
 
         protected void drpdown_Comp_Callback(object sender, CallbackEventArgsBase e)
         {
-            SqlUserCompany.SelectParameters["UserId"].DefaultValue = e.Parameter != null ? e.Parameter.ToString() : "";
+            SqlUserCompany.SelectParameters["UserId"].DefaultValue = e.Parameter ?? "";
             SqlUserCompany.DataBind();
 
             drpdown_vendor.DataSourceID = null;
@@ -377,176 +518,71 @@ namespace DX_WebTemplate
 
         protected void drpdown_EmpId_Callback(object sender, CallbackEventArgsBase e)
         {
-            //var comp_id = drpdown_Comp.Value != null ? Convert.ToInt32(drpdown_Comp.Value) : 0;
-            var comp_id = e.Parameter.ToString();
-            if (comp_id != "")
+            var compId = e.Parameter;
+            if (string.IsNullOrWhiteSpace(compId)) return;
+
+            SqlUser.SelectParameters["Company_ID"].DefaultValue = compId;
+            SqlUser.SelectParameters["DelegateTo_UserID"].DefaultValue = Session["userID"]?.ToString();
+            SqlUser.SelectParameters["DateFrom"].DefaultValue = DateTime.Now.ToString();
+            SqlUser.SelectParameters["DateTo"].DefaultValue = DateTime.Now.ToString();
+
+            var dv = SqlUser.Select(DataSourceSelectArguments.Empty) as DataView;
+            if (dv == null) return;
+
+            var dt = dv.ToTable();
+            var row = dt.NewRow();
+            row["DelegateFor_UserID"] = Session["userID"]?.ToString();
+            row["FullName"] = Session["userFullName"]?.ToString();
+            dt.Rows.Add(row);
+
+            drpdown_vendor.DataSource = dt;
+            drpdown_vendor.TextField = "FullName";
+            drpdown_vendor.ValueField = "DelegateFor_UserID";
+            drpdown_vendor.DataBind();
+            drpdown_vendor.Value = Session["userID"]?.ToString();
+        }
+
+        protected void CAGrid_BeforePerformDataSelect(object sender, EventArgs e)
+        {
+            Session["AccedeExpenseID"] = (sender as ASPxGridView)?.GetMasterRowKeyValue();
+        }
+
+        protected void expenseGrid_HtmlDataCellPrepared(object sender, ASPxGridViewTableDataCellEventArgs e)
+        {
+            if (e.DataColumn.FieldName != "Status") return;
+
+            var payReleased = context.ITP_S_Status.FirstOrDefault(x => x.STS_Name == "Disbursed");
+            var pendingAudit = context.ITP_S_Status.FirstOrDefault(x => x.STS_Name == "Pending at Audit");
+            var returnedAudit = context.ITP_S_Status.FirstOrDefault(x => x.STS_Name == "Returned by Audit");
+            var pendingP2P = context.ITP_S_Status.FirstOrDefault(x => x.STS_Name == "Pending at P2P");
+            var returnedP2P = context.ITP_S_Status.FirstOrDefault(x => x.STS_Name == "Returned by P2P");
+
+            string val = e.CellValue?.ToString();
+            if (string.IsNullOrEmpty(val)) return;
+
+            if (val == "7" || val == "5" || val == payReleased?.STS_Id.ToString())
             {
-                SqlUser.SelectParameters["Company_ID"].DefaultValue = comp_id.ToString();
-                SqlUser.SelectParameters["DelegateTo_UserID"].DefaultValue = Session["userID"].ToString();
-                SqlUser.SelectParameters["DateFrom"].DefaultValue = DateTime.Now.ToString();
-                SqlUser.SelectParameters["DateTo"].DefaultValue = DateTime.Now.ToString();
-
-                // Get the existing data from SqlDataSource
-                DataView dv = SqlUser.Select(DataSourceSelectArguments.Empty) as DataView;
-
-                if (dv != null)
-                {
-                    // Convert DataView to DataTable to modify it
-                    DataTable dt = dv.ToTable();
-
-                    // Add a new row manually
-                    DataRow newRow = dt.NewRow();
-                    newRow["DelegateFor_UserID"] = Session["userID"].ToString();
-                    newRow["FullName"] = Session["userFullName"].ToString();
-                    dt.Rows.Add(newRow);
-
-                    // Rebind the ComboBox with the updated list
-                    drpdown_vendor.DataSource = dt;
-                    drpdown_vendor.TextField = "FullName";   // Ensure text field is set correctly
-                    drpdown_vendor.ValueField = "DelegateFor_UserID"; // Ensure value field is set correctly
-
-                    drpdown_vendor.Value = Session["userID"].ToString();
-                    drpdown_vendor.DataBind();
-                }
+                e.Cell.ForeColor = System.Drawing.ColorTranslator.FromHtml("#0D6943");
             }
-
-
-
-        }
-
-        protected void drpdown_CTDepartment_Callback(object sender, CallbackEventArgsBase e)
-        {
-            var comp_id = e.Parameter.ToString();
-
-            SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = comp_id.ToString();
-            SqlCTDepartment.DataBind();
-
-            drpdown_CTDepartment.DataSourceID = null;
-            drpdown_CTDepartment.DataSource = SqlCTDepartment;
-            drpdown_CTDepartment.DataBind();
-
-            if (drpdown_CTDepartment.Items.Count == 1)
+            else if (val == "2" || val == "3" || val == "18" || val == "19"
+                     || val == returnedAudit?.STS_Id.ToString()
+                     || val == returnedP2P?.STS_Id.ToString())
             {
-                drpdown_CTDepartment.SelectedIndex = 0;
+                e.Cell.ForeColor = System.Drawing.ColorTranslator.FromHtml("#E67C0E");
             }
-        }
-
-        protected void drpdown_CompLocation_Callback(object sender, CallbackEventArgsBase e)
-        {
-            var comp_id = e.Parameter.ToString();
-
-            SqlCompLocation.SelectParameters["Comp_Id"].DefaultValue = comp_id;
-            SqlCompLocation.DataBind();
-
-            drpdown_CompLocation.DataSourceID = null;
-            drpdown_CompLocation.DataSource = SqlCompLocation;
-            drpdown_CompLocation.DataBind();
-        }
-
-        
-
-        [WebMethod]
-        public static VendorSet CheckVendorDetailsAJAX(string vendor)
-        {
-            AccedeInvoiceNonPODashboard page = new AccedeInvoiceNonPODashboard();
-            return page.CheckVendorDetails(vendor);
-        }
-
-        public VendorSet CheckVendorDetails(string vendor)
-        {
-            //var vendorDetails = context.ACCEDE_S_Vendors.Where(x => x.VendorCode == vendor).FirstOrDefault();
-            var vendorDetails = SAPVendor.GetVendorData("").Where(x => x.VENDCODE == vendor).FirstOrDefault();
-            //VendorSet vendorClass = new VendorSet();
-            //if (vendorsDetails != null)
-            //{
-
-            //    string tin = vendorsDetails.VENDTIN != null ? vendorsDetails.VENDTIN.ToString() : "";
-
-            //    //if (tin != "" && tin.Length > 9)
-            //    //{
-            //    //    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6, 3)}-{tin.Substring(9)}";
-            //    //    vendorClass.TIN = formattedTin;
-            //    //}
-            //    //else if (tin != "" && tin.Length > 6)
-            //    //{
-            //    //    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6)}";
-            //    //    vendorClass.TIN = formattedTin;
-            //    //}
-            //    //else if (tin != "" && tin.Length > 3)
-            //    //{
-            //    //    string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3)}";
-            //    //    vendorClass.TIN = formattedTin;
-            //    //}
-            //    //else
-            //    //{
-            //    //    vendorClass.TIN = tin; // less than 3 digits, no formatting
-            //    //}
-
-            //    string Clean(string input)
-            //    {
-            //        if (string.IsNullOrWhiteSpace(input))
-            //            return "";
-
-            //        // remove line breaks and trim
-            //        string cleaned = input.Replace("\r", " ").Replace("\n", " ").Trim();
-
-            //        return ", " + cleaned;
-            //    }
-
-            //    vendorClass.Address =
-            //        (vendorDetails.Address1 ?? "").Replace("\r", " ").Replace("\n", " ").Trim()
-            //        + Clean(vendorDetails.City ?? "")
-            //        + Clean(vendorDetails.State ?? "");
-
-            //    vendorClass.Name = vendorDetails.VendorName != null ? vendorDetails.VendorName.ToString() : "";
-
-
-            //    if (vendor.Contains("OTV"))
-            //    {
-            //        vendorClass.isOneTime = true;
-            //    }
-            //    else
-            //    {
-            //        vendorClass.isOneTime = false;
-            //    }
-
-            //}
-            //else
-            //{
-
-            //    //vendorClass.TIN = "";
-            //    //vendorClass.Address = "";
-
-            //}
-
-            return vendorDetails;
-        }
-
-        protected void drpdown_vendor_Callback(object sender, CallbackEventArgsBase e)
-        {
-            var comp = e.Parameter.ToString();
-
-            var compCode = context.CompanyMasters.Where(x => x.WASSId == Convert.ToInt32(comp)).Select(x => x.SAP_Id).FirstOrDefault();
-
-            // build SAP OData params
-            string matparams = $"sap-client=300&$filter=VENDCOCODE eq '{compCode}'";
-
-            // ✅ bind directly from SAP OData
-            var vendors = GetVendorData(matparams);
-
-            drpdown_vendor.DataSource = vendors;
-               
-            drpdown_vendor.ValueField = "VENDCODE"; // the unique key / value you want to use
-            drpdown_vendor.TextField = "VENDNAME";  // what the user sees in the dropdown
-            drpdown_vendor.Columns.Clear();
-
-            drpdown_vendor.Columns.Add("VENDCODE");
-            drpdown_vendor.Columns.Add("VENDNAME");
-            drpdown_vendor.TextFormatString = "{0} - {1}";
-            drpdown_vendor.DataBindItems();
-
-            drpdown_vendor.ValidationSettings.RequiredField.IsRequired = true;
+            else if (val == pendingAudit?.STS_Id.ToString() || val == pendingP2P?.STS_Id.ToString() || val == "1")
+            {
+                e.Cell.ForeColor = System.Drawing.ColorTranslator.FromHtml("#006DD6");
+            }
+            else if (val == "8")
+            {
+                e.Cell.ForeColor = System.Drawing.ColorTranslator.FromHtml("#CC2A17");
+            }
+            else
+            {
+                e.Cell.ForeColor = System.Drawing.Color.Gray;
+            }
+            e.Cell.Font.Bold = true;
         }
     }
-
 }

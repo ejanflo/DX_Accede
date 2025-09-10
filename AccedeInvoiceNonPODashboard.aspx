@@ -100,41 +100,62 @@
 
             //}
 
-        function OnVendorChanged(vendor) {
-            // Show loading panel immediately
-            loadPanel.SetText("Loading vendor details...");
-            loadPanel.Show();
+        function setVendorFieldsColor(color) {
+            // Decide a border color relative to font color (override if you want fixed mapping)
+            var borderColor = (color.toLowerCase() === "gray") ? "#9e9e9e" : "#000000";
 
-            if (vendor.includes("OTV")) {
-                txt_vendorTIN.SetReadOnly(false);
-                memo_vendorAddress.SetReadOnly(false);
+            // Helper to apply styles to a DevExpress editor (ASPxTextBox / ASPxMemo)
+            function applyStyles(editor) {
+                if (!editor) return;
+                var inputEl = editor.GetInputElement && editor.GetInputElement();
+                if (inputEl) {
+                    inputEl.style.color = color;
+                }
+                //var mainEl = editor.GetMainElement && editor.GetMainElement();
+                //if (mainEl && color.toLowerCase() === "gray") {
+                //    // Preserve existing border-bottom width/style while changing color
+                //    mainEl.style.border = "1px solid " + borderColor;
+                //}
+            }
+
+            applyStyles(txt_TIN);
+            applyStyles(memo_VendorAddress);
+            applyStyles(txt_vendorName);
+        }
+
+        function OnVendorChanged(vendor) {
+            loadPanel.SetText("Loading vendor details...");
+            //loadPanel.Show();
+
+            txt_TIN.SetValue("");
+            memo_VendorAddress.SetValue("");
+            txt_vendorName.SetValue("");
+
+            if (vendor && vendor.indexOf("OTV") !== -1) {
+                txt_TIN.SetReadOnly(false);
+                memo_VendorAddress.SetReadOnly(false);
                 txt_vendorName.SetReadOnly(false);
+                setVendorFieldsColor("black");
             } else {
-                txt_vendorTIN.SetReadOnly(true);
-                memo_vendorAddress.SetReadOnly(true);
+                txt_TIN.SetReadOnly(true);
+                memo_VendorAddress.SetReadOnly(true);
                 txt_vendorName.SetReadOnly(true);
+                setVendorFieldsColor("gray");
             }
 
             $.ajax({
                 type: "POST",
-                url: "AccedeNonPOEditPage.aspx/CheckVendorDetailsAJAX",
+                url: "AccedeInvoiceNonPODashboard.aspx/CheckVendorDetailsAJAX",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                data: JSON.stringify({
-                    vendor: vendor
-                }),
+                data: JSON.stringify({ vendor: vendor }),
                 success: function (response) {
-                    // Update the description text box with the response value
-                    txt_vendorTIN.SetValue(response.d.VENDTIN);
-                    memo_vendorAddress.SetValue(response.d.VENDSTREET + ", " + response.d.VENDCITY + ", " + response.d.VENDPOSTAL);
+                    txt_TIN.SetValue(response.d.VENDTIN);
+                    memo_VendorAddress.SetValue(response.d.VENDSTREET + ", " + response.d.VENDCITY + ", " + response.d.VENDPOSTAL);
                     txt_vendorName.SetValue(response.d.VENDNAME);
-
-                    // Hide loading panel after successful operation
                     loadPanel.Hide();
                 },
-                error: function (xhr, status, error) {
-                    console.log("Error:", error);
-                    // Also hide loading panel in case of error
+                error: function () {
                     loadPanel.Hide();
                 }
             });
@@ -157,8 +178,8 @@
             var CTDept_id = drpdown_CTDepartment.GetValue();
             var CompLoc = drpdown_CompLocation.GetValue();
             var vendorName = txt_vendorName.GetValue();
-            var vendorTIN = txt_vendorTIN.GetValue();
-            var vendorAddress = memo_vendorAddress.GetValue();
+            var vendorTIN = txt_TIN.GetValue();
+            var vendorAddress = memo_VendorAddress.GetValue();
 
             console.log(payType);
 
@@ -212,7 +233,7 @@
                             <dx:LayoutItem Caption="" ColSpan="1">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
-                                        <dx:ASPxGridView ID="expenseGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="expenseGrid" Width="100%" DataSourceID="sqlExpense" KeyFieldName="ID" OnToolbarItemClick="expenseGrid_ToolbarItemClick" OnCustomCallback="expenseGrid_CustomCallback" OnCustomButtonInitialize="expenseGrid_CustomButtonInitialize" OnHtmlDataCellPrepared="expenseGrid_HtmlDataCellPrepared">
+                                        <dx:ASPxGridView ID="expenseGrid" runat="server" AutoGenerateColumns="False" ClientInstanceName="expenseGrid" Width="100%" DataSourceID="sqlExpense" KeyFieldName="ID" OnCustomCallback="expenseGrid_CustomCallback" OnCustomButtonInitialize="expenseGrid_CustomButtonInitialize" OnHtmlDataCellPrepared="expenseGrid_HtmlDataCellPrepared">
                                             <ClientSideEvents CustomButtonClick="OnCustomButtonClick" ToolbarItemClick="onToolbarItemClick" EndCallback="function(s, e) {
 	if(s.cp_btnid == &quot;btnView&quot; ||s.cp_btnid == &quot;btnEdit&quot; ){
                        window.open(s.cp_url, '_self');
@@ -729,7 +750,7 @@ drpdown_vendor.PerformCallback(s.GetValue());
                                 <dx:LayoutItem Caption="TIN" ColSpan="1">
                                     <LayoutItemNestedControlCollection>
                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                            <dx:ASPxTextBox ID="txt_vendorTIN" runat="server" ClientInstanceName="txt_vendorTIN" Width="100%">
+                                            <dx:ASPxTextBox ID="txt_TIN" runat="server" ClientInstanceName="txt_TIN" Width="100%">
                                                 <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreateForm">
                                                     <RequiredField ErrorText="Required field." />
                                                 </ValidationSettings>
@@ -753,7 +774,7 @@ drpdown_vendor.PerformCallback(s.GetValue());
                                 <dx:LayoutItem Caption="Address" ColSpan="1">
                                     <LayoutItemNestedControlCollection>
                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                            <dx:ASPxMemo ID="memo_vendorAddress" runat="server" ClientInstanceName="memo_vendorAddress" Width="100%" AutoResizeWithContainer="True">
+                                            <dx:ASPxMemo ID="memo_VendorAddress" runat="server" ClientInstanceName="memo_VendorAddress" Width="100%" AutoResizeWithContainer="True">
                                                 <ValidationSettings Display="Dynamic" ErrorTextPosition="Bottom" SetFocusOnError="True" ValidationGroup="CreateForm">
                                                     <RequiredField ErrorText="Required field." IsRequired="True" />
                                                 </ValidationSettings>
@@ -927,7 +948,7 @@ drpdown_vendor.PerformCallback(s.GetValue());
             </SelectParameters>
         </asp:SqlDataSource>
         <asp:SqlDataSource ID="sqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT [WASSId], [CompanyDesc], [CompanyShortName] FROM [CompanyMaster] WHERE ([WASSId] IS NOT NULL) ORDER BY [CompanyDesc]"></asp:SqlDataSource>
-        <asp:SqlDataSource ID="sqlExpense" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_InvoiceMain] WHERE ([UserId] = @UserId)">
+        <asp:SqlDataSource ID="sqlExpense" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_InvoiceMain] WHERE ([UserId] = @UserId) ORDER BY [ID] DESC">
             <SelectParameters>
                 <asp:Parameter Name="UserId" Type="String" />
             </SelectParameters>

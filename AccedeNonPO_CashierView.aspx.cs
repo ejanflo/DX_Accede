@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using static DX_WebTemplate.AccedeNonPOEditPage;
 
 namespace DX_WebTemplate
 {
@@ -407,6 +408,55 @@ namespace DX_WebTemplate
             SqlExpDetailAttach.DataBind();
 
             DocuGrid1.DataBind();
+        }
+
+        [WebMethod]
+        public static InvDetailsNonPO DisplayExpDetailsAJAX(int expDetailID)
+        {
+            AccedeNonPO_CashierView exp = new AccedeNonPO_CashierView();
+            return exp.DisplayExpDetails(expDetailID);
+        }
+
+        public InvDetailsNonPO DisplayExpDetails(int invDetailID)
+        {
+            var invDetails = _DataContext.ACCEDE_T_InvoiceLineDetails.FirstOrDefault(x => x.ID == invDetailID);
+            if (invDetails == null) return new InvDetailsNonPO();
+
+            var particularsName = _DataContext.ACCEDE_S_Particulars
+                .Where(x => x.ID == invDetails.Particulars)
+                .Select(x => x.P_Name)
+                .FirstOrDefault();
+
+            decimal allocated = _DataContext.ACCEDE_T_InvoiceLineDetailsMaps
+                .Where(x => x.InvoiceReportDetail_ID == invDetailID)
+                .Select(x => (decimal?)x.NetAmount).Sum() ?? 0m;
+
+            decimal remaining = (invDetails.TotalAmount ?? 0m) - allocated;
+
+            var dto = new InvDetailsNonPO
+            {
+                dateAdded = invDetails.DateAdded.HasValue ? invDetails.DateAdded.Value.ToString("MM/dd/yyyy hh:mm:ss") : "",
+                particulars = particularsName ?? "",
+                acctCharge = Convert.ToInt32(invDetails.AcctToCharged),
+                InvoiceOR = invDetails.InvoiceNo ?? "",
+                grossAmnt = invDetails.TotalAmount ?? 0m,
+                netAmnt = invDetails.NetAmount ?? 0m,
+                expMainId = invDetails.InvMain_ID ?? 0,
+                preparerId = invDetails.Preparer_ID ?? "",
+                LineDesc = invDetails.LineDescription ?? "",
+                Qty = invDetails.Qty ?? 0m,
+                UnitPrice = invDetails.UnitPrice ?? 0m,
+                uom = invDetails.UOM ?? "",
+                ewt = invDetails.EWT ?? 0m,
+                vat = invDetails.VAT ?? 0m,
+                ewtperc = invDetails.EWTPerc ?? 0m,
+                netvat = invDetails.NOVAT ?? 0m,
+                isVatCompute = invDetails.isVatComputed ?? false,
+                totalAllocAmnt = remaining
+            };
+
+            Session["InvDetailsID"] = invDetailID.ToString();
+            return dto;
         }
     }
 }

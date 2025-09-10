@@ -16,418 +16,316 @@ namespace DX_WebTemplate
     {
         ITPORTALDataContext _DataContext = new ITPORTALDataContext(ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString);
         decimal dueComp = new decimal(0.00);
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Run initialization only once
+            if (IsPostBack) return;
+
             try
             {
-                if (AnfloSession.Current.ValidCookieUser())
-                {
-                    AnfloSession.Current.CreateSession(HttpContext.Current.User.ToString());
-
-
-                    if (!IsPostBack)
-                    {
-                        string encryptedID = Request.QueryString["secureToken"];
-                        if (!string.IsNullOrEmpty(encryptedID))
-                        {
-                            //Start ------------------ Page Security
-                            string empCode = Session["userID"].ToString();
-                            int appID = 26; //22-ITPORTAL; 13-CAR; 26-RS; 1027-RFP; 1028-UAR
-
-                            string url = Request.Url.AbsolutePath; // Get the current URL
-                            string pageName = Path.GetFileNameWithoutExtension(url); // Get the filename without extension
-
-
-                            //if (!AnfloSession.Current.hasPageAccess(empCode, appID, pageName))
-                            //{
-                            //    Session["appID"] = appID.ToString();
-                            //    Session["pageName"] = pageName.ToString();
-
-                            //    Response.Redirect("~/ErrorAccess.aspx");
-                            //}
-                            //End ------------------ Page Security
-
-                            int actID = Convert.ToInt32(Decrypt(encryptedID));
-
-                            var actDetails = _DataContext.ITP_T_WorkflowActivities
-                                .Where(x => x.WFA_Id == Convert.ToInt32(actID))
-                                .FirstOrDefault();
-
-                            var app_docType = _DataContext.ITP_S_DocumentTypes
-                                .Where(x => x.DCT_Name == "ACDE InvoiceNPO")
-                                .Where(x => x.App_Id == 1032)
-                                .FirstOrDefault();
-
-                            Session["ExpId"] = actDetails.Document_Id;
-                            sqlMain.SelectParameters["ID"].DefaultValue = actDetails.Document_Id.ToString();
-                            SqlDocs.SelectParameters["Doc_ID"].DefaultValue = actDetails.Document_Id.ToString();
-                            SqlDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType != null ? app_docType.DCT_Id.ToString() : null;
-                            SqlCADetails.SelectParameters["Exp_ID"].DefaultValue = actDetails.Document_Id.ToString();
-                            SqlReimDetails.SelectParameters["Exp_ID"].DefaultValue = actDetails.Document_Id.ToString();
-                            SqlExpDetails.SelectParameters["InvMain_ID"].DefaultValue = actDetails.Document_Id.ToString();
-                            SqlWFActivity.SelectParameters["Document_Id"].DefaultValue = actDetails.Document_Id.ToString();
-                            
-
-                            var inv = _DataContext.ACCEDE_T_InvoiceMains
-                                .Where(x => x.ID == Convert.ToInt32(actDetails.Document_Id))
-                                .FirstOrDefault();
-
-                            SqlCostCenterCT.SelectParameters["Company_ID"].DefaultValue = inv.InvChargedTo_CompanyId.ToString();
-
-                            var vendors = SAPVendor.GetVendorData("")
-                                .GroupBy(x => new { x.VENDCODE, x.VENDNAME })
-                                .Select(g => g.First())
-                                .ToList();
-
-                            var vendor = vendors.Where(x => x.VENDCODE == inv.VendorCode.ToString().Trim()).FirstOrDefault();
-                            if(vendor != null)
-                            {
-                                txt_vendor.Text = vendor.VENDNAME.ToString();
-                            }
-                            
-                            txt_InvoiceNo.Text = inv.InvoiceNo?.ToString();
-
-                            //var vendorDetails = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == inv.VendorName).FirstOrDefault();
-                            //if (vendorDetails != null)
-                            //{
-                            //    string tin = vendorDetails.TaxID.ToString();
-
-                            //    if (tin.Length > 9)
-                            //    {
-                            //        string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6, 3)}-{tin.Substring(9)}";
-                            //        txt_TIN.Text = formattedTin;
-                            //    }
-                            //    else if (tin.Length > 6)
-                            //    {
-                            //        string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6)}";
-                            //        txt_TIN.Text = formattedTin;
-                            //    }
-                            //    else if (tin.Length > 3)
-                            //    {
-                            //        string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3)}";
-                            //        txt_TIN.Text = formattedTin;
-                            //    }
-                            //    else
-                            //    {
-                            //        txt_TIN.Text = tin; // less than 3 digits, no formatting
-                            //    }
-
-                            //    string Clean(string input)
-                            //    {
-                            //        if (string.IsNullOrWhiteSpace(input))
-                            //            return "";
-
-                            //        // remove line breaks and trim
-                            //        string cleanedVendorstr = input.Replace("\r", " ").Replace("\n", " ").Trim();
-
-                            //        return ", " + cleanedVendorstr;
-                            //    }
-
-                            //    memo_VendorAddress.Text =
-                            //        (vendorDetails.Address1 ?? "").Replace("\r", " ").Replace("\n", " ").Trim()
-                            //        + Clean(vendorDetails.City ?? "")
-                            //        + Clean(vendorDetails.State ?? "");
-
-
-                            //}
-
-                            SqlIO.SelectParameters["CompanyId"].DefaultValue = inv.InvChargedTo_CompanyId.ToString();
-
-                            SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = inv.InvChargedTo_CompanyId.ToString();
-                            SqlCompany.SelectParameters["UserId"].DefaultValue = inv.VendorName.ToString();
-
-                            SqlWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(inv.WF_Id).ToString();
-                            SqlFAPWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(inv.FAPWF_Id).ToString();
-
-                            SqlCostCenterCT.SelectParameters["Company_ID"].DefaultValue = Convert.ToInt32(inv.InvChargedTo_CompanyId).ToString();
-
-                            var FinApproverVerify = _DataContext.vw_ACCEDE_FinApproverVerifies
-                                .Where(x => x.UserId == empCode)
-                                .Where(x => x.Role_Name == "Accede Finance Approver")
-                                .FirstOrDefault();
-
-                            var lbl_CTcomp = FormExpApprovalView.FindItemOrGroupByName("txt_CTComp") as LayoutItem;
-                            var lbl_CTdept = FormExpApprovalView.FindItemOrGroupByName("txt_CTDept") as LayoutItem;
-                            var lbl_CostCenter = FormExpApprovalView.FindItemOrGroupByName("txt_CostCenter") as LayoutItem;
-                            var edit_CTcomp = FormExpApprovalView.FindItemOrGroupByName("edit_CTComp") as LayoutItem;
-                            var edit_CTdept = FormExpApprovalView.FindItemOrGroupByName("edit_CTDept") as LayoutItem;
-                            var edit_CostCenter = FormExpApprovalView.FindItemOrGroupByName("edit_CostCenter") as LayoutItem;
-                            var lbl_classType = FormExpApprovalView.FindItemOrGroupByName("txt_ClassType") as LayoutItem;
-                            var edit_classType = FormExpApprovalView.FindItemOrGroupByName("edit_ClassType") as LayoutItem;
-                            var edit_curr = FormExpApprovalView.FindItemOrGroupByName("edit_Curr") as LayoutItem;
-                            var lbl_curr = FormExpApprovalView.FindItemOrGroupByName("txt_Curr") as LayoutItem;
-                            var edit_paytype = FormExpApprovalView.FindItemOrGroupByName("edit_PayType") as LayoutItem;
-                            var lbl_paytype = FormExpApprovalView.FindItemOrGroupByName("txt_PayType") as LayoutItem;
-
-                            var expType = _DataContext.ACCEDE_S_ExpenseTypes
-                                .Where(x => x.ExpenseType_ID == Convert.ToInt32(inv.InvoiceType_ID))
-                                .FirstOrDefault();
-
-                            if (FinApproverVerify != null && actDetails.WF_Id.ToString() == inv.FAPWF_Id.ToString())
-                            {
-                                //lbl_CTcomp.ClientVisible = false;
-                                lbl_CTcomp.ClientVisible = true;
-                                lbl_CTdept.ClientVisible = false;
-                                lbl_CostCenter.ClientVisible = false;
-                                lbl_curr.ClientVisible = false;
-                                lbl_paytype.ClientVisible = false;
-                                //edit_CTcomp.ClientVisible = true;
-                                edit_CTcomp.ClientVisible = false;
-                                edit_CTdept.ClientVisible = true;
-                                edit_CostCenter.ClientVisible = true;
-                                edit_curr.ClientVisible = true;
-                                edit_paytype.ClientVisible = true;
-
-                                //edit_classType.ClientVisible = true;
-                                //lbl_classType.ClientVisible = false;
-                            }
-                            else
-                            {
-                                lbl_CTcomp.ClientVisible = true;
-                                lbl_CTdept.ClientVisible = true;
-                                lbl_CostCenter.ClientVisible = true;
-                                lbl_curr.ClientVisible = true;
-                                lbl_paytype.ClientVisible = true;
-                                edit_CTcomp.ClientVisible = false;
-                                edit_CTdept.ClientVisible = false;
-                                edit_CostCenter.ClientVisible = false;
-                                edit_curr.ClientVisible = false;
-                                edit_paytype.ClientVisible = false;
-
-                                //edit_classType.ClientVisible = false;
-                                //lbl_classType.ClientVisible = true;
-                            }
-
-                            txt_ExpType.Text = expType.Description;
-
-                            //if (Convert.ToBoolean(exp.isTravel) != true)
-                            //{
-                            //    txt_ExpType.Text = expType.Description + " - Non Travel";
-                            //}
-                            //else
-                            //{
-                            //    txt_ExpType.Text = expType.Description;
-                            //}
-
-                            txt_ReportDate.Text = Convert.ToDateTime(inv.ReportDate).ToString("MMMM dd, yyyy");
-                            var myLayoutGroup = FormExpApprovalView.FindItemOrGroupByName("ExpTitle") as LayoutGroup;
-
-                            if (myLayoutGroup != null)
-                            {
-                                myLayoutGroup.Caption = "Invoice Document -" + inv.DocNo.ToString() + " (View)";
-                            }
-
-                            var RFPCA = _DataContext.ACCEDE_T_RFPMains
-                                .Where(x => x.Exp_ID == Convert.ToInt32(actDetails.Document_Id))
-                                .Where(x => x.isTravel != true)
-                                .Where(x => x.IsExpenseCA == true);
-
-                            //decimal totalCA = 0;
-                            //foreach (var item in RFPCA)
-                            //{
-                            //    totalCA += Convert.ToDecimal(item.Amount);
-                            //}
-                            //caTotal.Text = totalCA.ToString("#,##0.00") + "  " + exp.Exp_Currency + " ";
-
-                            var ExpDetails = _DataContext.ACCEDE_T_InvoiceLineDetails
-                                .Where(x => x.InvMain_ID == Convert.ToInt32(actDetails.Document_Id));
-
-                            decimal totalExp = 0;
-                            foreach (var item in ExpDetails)
-                            {
-                                totalExp += Convert.ToDecimal(item.NetAmount);
-                            }
-                            expenseTotal.Text = totalExp.ToString("#,##0.00") + "  " + inv.Exp_Currency + " ";
-
-                            //dueComp = totalCA - totalExp;
-                            //if (dueComp < 0)
-                            //{
-                            //    var dueField = FormExpApprovalView.FindItemOrGroupByName("due_lbl") as LayoutItem;
-                            //    dueField.Caption = "Net Due to Employee";
-                            //}
-                            //else
-                            //{
-                            //    var dueField = FormExpApprovalView.FindItemOrGroupByName("due_lbl") as LayoutItem;
-                            //    dueField.Caption = "Net Due to Company";
-
-                            //    //DO NOT DELETE THIS CODE
-                            //    if (dueComp > 0)
-                            //    {
-                            //        var AR_Reference = FormExpApprovalView.FindItemOrGroupByName("ARNo") as LayoutItem;
-                            //        AR_Reference.ClientVisible = true;
-                            //    }
-                            //}
-
-                            var ptvRFP = _DataContext.ACCEDE_T_RFPMains
-                                    .Where(x => x.IsExpenseReim != true)
-                                    .Where(x => x.IsExpenseCA != true)
-                                    .Where(x => x.Status != 4)
-                                    .Where(x => x.Exp_ID == Convert.ToInt32(inv.ID))
-                                    .Where(x => x.isTravel != true)
-                                    .FirstOrDefault();
-
-                            if (ptvRFP == null)
-                            {
-                                var reim = FormExpApprovalView.FindItemOrGroupByName("reimItem") as LayoutItem;
-                                if (reim != null)
-                                {
-                                    reim.ClientVisible = true;
-                                    //ReimburseGrid.Visible = false;
-                                }
-
-                            }
-                            else
-                            {
-                                var reim = FormExpApprovalView.FindItemOrGroupByName("ReimLayout") as LayoutGroup;
-                                if (reim != null)
-                                {
-                                    reim.ClientVisible = true;
-                                    link_rfp.Value = ptvRFP.RFP_DocNum;
-                                }
-                            }
-
-                            //APPROVE AND FORWARD BUTTON AND GENERATE AAF WF
-                            var wfDetails = _DataContext.ITP_S_WorkflowDetails
-                                .Where(x => x.WF_Id == actDetails.WF_Id)
-                                .Where(x => x.WFD_Id == actDetails.WFD_Id)
-                                .FirstOrDefault();
-
-                            if (wfDetails != null)
-                            {
-                                var nxWFDetails = _DataContext.ITP_S_WorkflowDetails
-                                .Where(x => x.WF_Id == actDetails.WF_Id)
-                                .Where(x => x.Sequence == (Convert.ToInt32(wfDetails.Sequence) + 1))
-                                .FirstOrDefault();
-
-
-                                var if_WF_isRA = _DataContext.ITP_S_WorkflowHeaders
-                                    .Where(x => x.WF_Id == wfDetails.WF_Id)
-                                    .FirstOrDefault();
-
-
-                                var aaf = FormExpApprovalView.FindItemOrGroupByName("AAF") as LayoutItem;
-
-                                if (nxWFDetails == null && if_WF_isRA.IsRA != true)
-                                {
-                                    aaf.ClientVisible = true;
-                                }
-
-                                var FinExecVerify = _DataContext.vw_ACCEDE_FinApproverVerifies
-                                    .Where(x => x.UserId == empCode)
-                                    .Where(x => x.Role_Name == "Accede Finance Executive")
-                                    .FirstOrDefault();
-
-                                var FinCFOVerify = _DataContext.vw_ACCEDE_FinApproverVerifies
-                                    .Where(x => x.UserId == empCode)
-                                    .Where(x => x.Role_Name == "Accede CFO")
-                                    .FirstOrDefault();
-
-                                if (FinExecVerify != null)
-                                {
-                                    var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
-                                        .Where(x => x.Name.Contains("forward cfo"))
-                                        .Where(x => x.App_Id == 1032)
-                                        .ToList();
-
-                                    if (forwardWFList.Any()) // Ensure there's data before binding
-                                    {
-                                        drpdown_ForwardWF.DataSource = forwardWFList;
-                                        drpdown_ForwardWF.ValueField = "WF_Id";
-                                        drpdown_ForwardWF.TextField = "Name";
-                                        drpdown_ForwardWF.DataBind();
-
-                                        if (drpdown_ForwardWF.Items.Count == 1)
-                                        {
-                                            drpdown_ForwardWF.SelectedIndex = 0;
-                                            SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
-
-                                        }
-                                    }
-                                }
-                                else if (FinCFOVerify != null)
-                                {
-                                    var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
-                                        .Where(x => x.Name.Contains("forward pres"))
-                                        .Where(x => x.App_Id == 1032)
-                                        .ToList();
-
-                                    if (forwardWFList.Any()) // Ensure there's data before binding
-                                    {
-                                        drpdown_ForwardWF.DataSource = forwardWFList;
-                                        drpdown_ForwardWF.ValueField = "WF_Id";
-                                        drpdown_ForwardWF.TextField = "Name";
-                                        drpdown_ForwardWF.DataBind();
-
-                                        if (drpdown_ForwardWF.Items.Count == 1)
-                                        {
-                                            drpdown_ForwardWF.SelectedIndex = 0;
-                                            SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
-
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
-                                        .Where(x => x.Name.Contains("forward exec"))
-                                        .Where(x => x.App_Id == 1032)
-                                        .ToList();
-
-                                    if (forwardWFList.Any()) // Ensure there's data before binding
-                                    {
-                                        drpdown_ForwardWF.DataSource = forwardWFList;
-                                        drpdown_ForwardWF.ValueField = "WF_Id";
-                                        drpdown_ForwardWF.TextField = "Name";
-                                        drpdown_ForwardWF.DataBind();
-
-                                        if (drpdown_ForwardWF.Items.Count == 1)
-                                        {
-                                            drpdown_ForwardWF.SelectedIndex = 0;
-                                            SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
-
-                                        }
-                                    }
-                                }
-                            }
-
-                            //dueTotal.Text = "PHP " + FormatDecimal(dueComp) + "  " + exp.Exp_Currency + " ";
-
-                            //grossAmount_edit.DisplayFormatString = "#,##0.00" + " " + exp.Exp_Currency;
-                            //netAmount_edit.DisplayFormatString = "#,##0.00" + " " + exp.Exp_Currency;
-                            //vat_edit.DisplayFormatString = "#,##0.00" + " " + exp.Exp_Currency;
-                            //ewt_edit.DisplayFormatString = "#,##0.00" + " " + exp.Exp_Currency;
-
-                            //gross_lbl.DisplayFormatString = "#,##0.00" + " " + exp.Exp_Currency;
-                            //net_lbl.DisplayFormatString = "#,##0.00" + " " + exp.Exp_Currency;
-                            //vat_lbl.DisplayFormatString = "#,##0.00" + " " + exp.Exp_Currency;
-                            //net_lbl.DisplayFormatString = "#,##0.00" + " " + exp.Exp_Currency;
-
-
-                        }
-                        else
-                        {
-                            Response.Redirect("~/AllAccedeApprovalPage.aspx");
-                        }
-                    }
-
-                }
-                else
+                if (!AnfloSession.Current.ValidCookieUser())
                 {
                     Response.Redirect("~/Logon.aspx");
+                    return;
                 }
 
+                AnfloSession.Current.CreateSession(HttpContext.Current.User.ToString());
+
+                string encryptedID = Request.QueryString["secureToken"];
+                if (string.IsNullOrWhiteSpace(encryptedID))
+                {
+                    Response.Redirect("~/AllAccedeApprovalPage.aspx");
+                    return;
+                }
+
+                if (!TryDecryptId(encryptedID, out int actID))
+                {
+                    Response.Redirect("~/AllAccedeApprovalPage.aspx");
+                    return;
+                }
+
+                var empCode = Session["userID"] as string;
+                if (string.IsNullOrEmpty(empCode))
+                {
+                    Response.Redirect("~/Logon.aspx");
+                    return;
+                }
+
+                // Get activity & invoice
+                var actDetails = _DataContext.ITP_T_WorkflowActivities.FirstOrDefault(x => x.WFA_Id == actID);
+                if (actDetails == null)
+                {
+                    Response.Redirect("~/AllAccedeApprovalPage.aspx");
+                    return;
+                }
+
+                var inv = _DataContext.ACCEDE_T_InvoiceMains.FirstOrDefault(x => x.ID == actDetails.Document_Id);
+                if (inv == null)
+                {
+                    Response.Redirect("~/AllAccedeApprovalPage.aspx");
+                    return;
+                }
+
+                // Load doc type (Invoice Non-PO)
+                var invoiceDocType = _DataContext.ITP_S_DocumentTypes
+                    .FirstOrDefault(x => x.DCT_Name == "ACDE InvoiceNPO" && x.App_Id == 1032);
+
+                // Set core datasource parameters + session
+                InitializeSqlParameters(actDetails, inv, invoiceDocType);
+                Session["ExpId"] = actDetails.Document_Id;
+
+                // Vendor (attempt direct fetch)
+                PopulateVendor(inv);
+
+                // Header/basic display setup
+                PopulateHeaderInfo(inv);
+
+                // Finance layout visibility
+                ConfigureFinanceVisibility(empCode, actDetails, inv);
+
+                // Expense type
+                var expType = _DataContext.ACCEDE_S_ExpenseTypes.FirstOrDefault(x => x.ExpenseType_ID == inv.InvoiceType_ID);
+                if (expType != null)
+                    txt_ExpType.Text = expType.Description;
+
+                // Caption
+                var myLayoutGroup = FormExpApprovalView.FindItemOrGroupByName("ExpTitle") as LayoutGroup;
+                if (myLayoutGroup != null)
+                    myLayoutGroup.Caption = "Invoice Document -" + inv.DocNo + " (View)";
+
+                // Totals
+                ComputeTotals(inv, actDetails);
+
+                // RFP / reimbursement related visibility
+                SetupRFPRelated(inv, actDetails);
+
+                // Forward workflow dropdowns / AAF
+                SetupForwardWorkflow(empCode, actDetails, inv);
             }
             catch (Exception)
             {
-                if (!IsPostBack)
+                Response.Redirect("~/Logon.aspx");
+            }
+        }
+
+        #region Helper Methods (Page_Load Optimization)
+
+        private bool TryDecryptId(string encrypted, out int id)
+        {
+            id = 0;
+            try
+            {
+                var raw = Decrypt(encrypted);
+                return int.TryParse(raw, out id);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private void InitializeSqlParameters(ITP_T_WorkflowActivity act, ACCEDE_T_InvoiceMain inv, ITP_S_DocumentType invoiceDocType)
+        {
+            SetSelectParameter(sqlMain, "ID", act.Document_Id);
+            SetSelectParameter(SqlDocs, "Doc_ID", act.Document_Id);
+            SetSelectParameter(SqlDocs, "DocType_Id", invoiceDocType?.DCT_Id);
+            SetSelectParameter(SqlCADetails, "Exp_ID", act.Document_Id);
+            SetSelectParameter(SqlReimDetails, "Exp_ID", act.Document_Id);
+            SetSelectParameter(SqlExpDetails, "InvMain_ID", act.Document_Id);
+            SetSelectParameter(SqlWFActivity, "Document_Id", act.Document_Id);
+            SetSelectParameter(SqlIO, "CompanyId", inv.InvChargedTo_CompanyId);
+            SetSelectParameter(SqlCTDepartment, "Company_ID", inv.InvChargedTo_CompanyId);
+            SetSelectParameter(SqlCompany, "UserId", inv.VendorName);
+            SetSelectParameter(SqlWFSequence, "WF_Id", inv.WF_Id);
+            SetSelectParameter(SqlFAPWFSequence, "WF_Id", inv.FAPWF_Id);
+            SetSelectParameter(SqlCostCenterCT, "Company_ID", inv.InvChargedTo_CompanyId);
+        }
+
+        private void SetSelectParameter(SqlDataSource ds, string name, object value)
+        {
+            if (ds?.SelectParameters[name] == null) return;
+            ds.SelectParameters[name].DefaultValue = value == null ? null : value.ToString();
+        }
+
+        private void PopulateVendor(ACCEDE_T_InvoiceMain inv)
+        {
+            if (inv == null) return;
+            try
+            {
+                var code = inv.VendorCode?.Trim();
+                if (!string.IsNullOrEmpty(code))
                 {
-                    Response.Redirect("~/Logon.aspx");
+                    // Attempt direct vendor fetch (preferred)
+                    var vendor = SAPVendor.GetVendorData(code).FirstOrDefault();
+                    if (vendor != null)
+                    {
+                        txt_vendor.Text = vendor.VENDNAME;
+                        return;
+                    }
                 }
-                //Response.Redirect("~/AllAccedeApprovalPage.aspx");
+
+                // Fallback: (original broad fetch) - commented to avoid loading all vendors each time
+                // var vendors = SAPVendor.GetVendorData("")
+                //     .GroupBy(x => new { x.VENDCODE, x.VENDNAME })
+                //     .Select(g => g.First())
+                //     .FirstOrDefault(v => v.VENDCODE == inv.VendorCode.Trim());
+                // if (vendors != null) txt_vendor.Text = vendors.VENDNAME;
+            }
+            catch
+            {
+                // Silent fail – keep UI usable
+            }
+        }
+
+        private void PopulateHeaderInfo(ACCEDE_T_InvoiceMain inv)
+        {
+            txt_InvoiceNo.Text = inv.InvoiceNo ?? "";
+            txt_ReportDate.Text = inv.ReportDate.HasValue
+                ? inv.ReportDate.Value.ToString("MMMM dd, yyyy")
+                : "";
+        }
+
+        private void ConfigureFinanceVisibility(string empCode, ITP_T_WorkflowActivity actDetails, ACCEDE_T_InvoiceMain inv)
+        {
+            // Get layout items once
+            LayoutItem lbl_CTcomp = FormExpApprovalView.FindItemOrGroupByName("txt_CTComp") as LayoutItem;
+            LayoutItem lbl_CTdept = FormExpApprovalView.FindItemOrGroupByName("txt_CTDept") as LayoutItem;
+            LayoutItem lbl_CostCenter = FormExpApprovalView.FindItemOrGroupByName("txt_CostCenter") as LayoutItem;
+            LayoutItem edit_CTcomp = FormExpApprovalView.FindItemOrGroupByName("edit_CTComp") as LayoutItem;
+            LayoutItem edit_CTdept = FormExpApprovalView.FindItemOrGroupByName("edit_CTDept") as LayoutItem;
+            LayoutItem edit_CostCenter = FormExpApprovalView.FindItemOrGroupByName("edit_CostCenter") as LayoutItem;
+            LayoutItem edit_curr = FormExpApprovalView.FindItemOrGroupByName("edit_Curr") as LayoutItem;
+            LayoutItem lbl_curr = FormExpApprovalView.FindItemOrGroupByName("txt_Curr") as LayoutItem;
+            LayoutItem edit_paytype = FormExpApprovalView.FindItemOrGroupByName("edit_PayType") as LayoutItem;
+            LayoutItem lbl_paytype = FormExpApprovalView.FindItemOrGroupByName("txt_PayType") as LayoutItem;
+
+            var finApprover = _DataContext.vw_ACCEDE_FinApproverVerifies
+                .FirstOrDefault(x => x.UserId == empCode && x.Role_Name == "Accede Finance Approver");
+
+            bool isFinanceStage = finApprover != null && actDetails.WF_Id == inv.FAPWF_Id;
+
+            if (isFinanceStage)
+            {
+                // Editable mode for finance approver (per original logic)
+                SafeVisible(lbl_CTcomp, true);
+                SafeVisible(lbl_CTdept, false);
+                SafeVisible(lbl_CostCenter, false);
+                SafeVisible(lbl_curr, false);
+                SafeVisible(lbl_paytype, false);
+
+                SafeVisible(edit_CTcomp, false);
+                SafeVisible(edit_CTdept, true);
+                SafeVisible(edit_CostCenter, true);
+                SafeVisible(edit_curr, true);
+                SafeVisible(edit_paytype, true);
+            }
+            else
+            {
+                SafeVisible(lbl_CTcomp, true);
+                SafeVisible(lbl_CTdept, true);
+                SafeVisible(lbl_CostCenter, true);
+                SafeVisible(lbl_curr, true);
+                SafeVisible(lbl_paytype, true);
+
+                SafeVisible(edit_CTcomp, false);
+                SafeVisible(edit_CTdept, false);
+                SafeVisible(edit_CostCenter, false);
+                SafeVisible(edit_curr, false);
+                SafeVisible(edit_paytype, false);
+            }
+        }
+
+        private void SafeVisible(LayoutItem item, bool visible)
+        {
+            if (item != null) item.ClientVisible = visible;
+        }
+
+        private void ComputeTotals(ACCEDE_T_InvoiceMain inv, ITP_T_WorkflowActivity actDetails)
+        {
+            var totalExp = _DataContext.ACCEDE_T_InvoiceLineDetails
+                .Where(x => x.InvMain_ID == actDetails.Document_Id)
+                .Select(x => (decimal?)x.NetAmount)
+                .Sum() ?? 0m;
+
+            expenseTotal.Text = totalExp.ToString("#,##0.00") + "  " + inv.Exp_Currency + " ";
+        }
+
+        private void SetupRFPRelated(ACCEDE_T_InvoiceMain inv, ITP_T_WorkflowActivity actDetails)
+        {
+            var ptvRFP = _DataContext.ACCEDE_T_RFPMains
+                .FirstOrDefault(x =>
+                    x.Exp_ID == inv.ID &&
+                    x.IsExpenseReim != true &&
+                    x.IsExpenseCA != true &&
+                    x.Status != 4 &&
+                    x.isTravel != true);
+
+            if (ptvRFP == null)
+            {
+                var reimItem = FormExpApprovalView.FindItemOrGroupByName("reimItem") as LayoutItem;
+                if (reimItem != null)
+                    reimItem.ClientVisible = true;
+            }
+            else
+            {
+                var reimGroup = FormExpApprovalView.FindItemOrGroupByName("ReimLayout") as LayoutGroup;
+                if (reimGroup != null)
+                {
+                    reimGroup.ClientVisible = true;
+                    link_rfp.Value = ptvRFP.RFP_DocNum;
+                }
+            }
+        }
+
+        private void SetupForwardWorkflow(string empCode, ITP_T_WorkflowActivity actDetails, ACCEDE_T_InvoiceMain inv)
+        {
+            // Show AAF button (Approve & Forward) only if at last sequence of Finance WF (original logic)
+            var currentDetail = _DataContext.ITP_S_WorkflowDetails
+                .FirstOrDefault(x => x.WF_Id == actDetails.WF_Id && x.WFD_Id == actDetails.WFD_Id);
+
+            if (currentDetail != null)
+            {
+                var next = _DataContext.ITP_S_WorkflowDetails
+                    .FirstOrDefault(x => x.WF_Id == actDetails.WF_Id &&
+                                         x.Sequence == currentDetail.Sequence + 1);
+
+                var aafItem = FormExpApprovalView.FindItemOrGroupByName("AAF") as LayoutItem;
+                if (aafItem != null)
+                    aafItem.ClientVisible = (next == null && currentDetail.WF_Id == inv.FAPWF_Id);
             }
 
+            // Role checks
+            var finExec = _DataContext.vw_ACCEDE_FinApproverVerifies
+                .FirstOrDefault(x => x.UserId == empCode && x.Role_Name == "Accede Finance Executive");
+            var finCfo = _DataContext.vw_ACCEDE_FinApproverVerifies
+                .FirstOrDefault(x => x.UserId == empCode && x.Role_Name == "Accede CFO");
 
+            string containsFilter;
+            if (finExec != null) containsFilter = "forward cfo";
+            else if (finCfo != null) containsFilter = "forward pres";
+            else containsFilter = "forward exec";
+
+            var forwardWFList = _DataContext.vw_ACCEDE_I_ApproveForwardWFs
+                .Where(x => x.Name.Contains(containsFilter) && x.App_Id == 1032)
+                .ToList();
+
+            if (forwardWFList.Any())
+            {
+                drpdown_ForwardWF.DataSource = forwardWFList;
+                drpdown_ForwardWF.ValueField = "WF_Id";
+                drpdown_ForwardWF.TextField = "Name";
+                drpdown_ForwardWF.DataBind();
+
+                if (drpdown_ForwardWF.Items.Count == 1)
+                {
+                    drpdown_ForwardWF.SelectedIndex = 0;
+                    SqlWFSequenceForward.SelectParameters["WF_Id"].DefaultValue = forwardWFList[0].WF_Id.ToString();
+                }
+            }
         }
+
+        #endregion
 
         private string Decrypt(string encryptedText)
         {
@@ -1401,6 +1299,9 @@ namespace DX_WebTemplate
                 exp_det_class.uom = exp_details.UOM ?? exp_det_class.uom;
                 exp_det_class.ewt = exp_details.EWT ?? exp_det_class.ewt;
                 exp_det_class.vat = exp_details.VAT ?? exp_det_class.vat;
+                exp_det_class.ewtperc = exp_details.EWTPerc ?? exp_det_class.ewtperc;
+                exp_det_class.netvat = exp_details.NOVAT ?? exp_det_class.netvat;
+                exp_det_class.isVatCompute = exp_details.isVatComputed ?? exp_det_class.isVatCompute;
 
                 exp_det_class.totalAllocAmnt = totalAmnt;
 
@@ -1409,6 +1310,304 @@ namespace DX_WebTemplate
             }
 
             return exp_det_class;
+        }
+
+        [WebMethod]
+        public static string SaveExpDetailsAJAX(
+            string dateAdd,
+            //string tin_no, 
+            string invoice_no,
+            //string cost_center,
+            string gross_amount,
+            string net_amount,
+            //string supp, 
+            string particu,
+            string acctCharge,
+            //string vat_amnt, 
+            //string ewt_amnt, 
+            string currency,
+            //string io, 
+            //string wbs,
+            string remarks,
+            string EWTTAmount,
+            string assign,
+            string allowance,
+            string EWTTType,
+            string EWTTCode,
+            string InvTCode,
+            string qty,
+            string unit_price,
+            string asset,
+            string subasset,
+            string altRecon,
+            string SLCode,
+            string SpecialGL,
+            string uom,
+            string ewt,
+            string vat,
+            string ewtperc,
+            string netvat,
+            string isVatCompute
+            )
+        {
+            AccedeNonPOApprovalView exp = new AccedeNonPOApprovalView();
+            return exp.SaveExpDetails(
+                dateAdd,
+                //tin_no, 
+                invoice_no,
+                //cost_center,
+                gross_amount,
+                net_amount,
+                //supp, 
+                particu,
+                acctCharge,
+                //vat_amnt, 
+                //ewt_amnt, 
+                currency,
+                // io, 
+                // wbs, 
+                remarks,
+                EWTTAmount,
+                assign,
+                allowance,
+                EWTTType,
+                EWTTCode,
+                InvTCode,
+                qty,
+                unit_price,
+                asset,
+                subasset,
+                altRecon,
+                SLCode,
+                SpecialGL,
+                uom,
+                ewt,
+                vat,
+                ewtperc,
+                netvat,
+                isVatCompute);
+        }
+
+        public string SaveExpDetails(
+            string dateAdd,
+            //string tin_no, 
+            string invoice_no,
+            //string cost_center,
+            string gross_amount,
+            string net_amount,
+            //string supp, 
+            string particu,
+            string acctCharge,
+            //string vat_amnt, 
+            //string ewt_amnt, 
+            string currency,
+            //string io, 
+            //string wbs,
+            string remarks,
+            string EWTTAmount,
+            string assign,
+            string allowance,
+            string EWTTType,
+            string EWTTCode,
+            string InvTCode,
+            string qty,
+            string unit_price,
+            string asset,
+            string subasset,
+            string altRecon,
+            string SLCode,
+            string SpecialGL,
+            string uom,
+            string ewt,
+            string vat,
+            string ewtperc,
+            string netvat,
+            string isVatCompute
+            )
+        {
+            try
+            {
+                decimal totalNetAmnt = new decimal(0.00);
+                var invDtlMap = _DataContext.ACCEDE_T_InvoiceLineDetailsMaps
+                    .Where(x => x.InvoiceReportDetail_ID == Convert.ToInt32(Session["InvDetailsID"]));
+
+                var expDetail = _DataContext.ACCEDE_T_InvoiceLineDetails
+                        .Where(x => x.ID == Convert.ToInt32(Session["InvDetailsID"]))
+                        .FirstOrDefault();
+
+                foreach (var item in invDtlMap)
+                {
+                    totalNetAmnt += Convert.ToDecimal(item.NetAmount);
+                }
+
+                decimal gross = Convert.ToDecimal(Convert.ToString(gross_amount));
+                if (totalNetAmnt < gross && invDtlMap.Count() > 0)
+                {
+                    string error = "The total allocation amount is less than the gross amount of " + gross.ToString("#,#00.00") + ". Please check the allocation amounts.";
+                    return error;
+                }
+                else
+                {
+                    
+
+                    if (expDetail != null)
+                    {
+                        expDetail.DateAdded = Convert.ToDateTime(dateAdd);
+                        //expDetail.TIN = string.IsNullOrEmpty(tin_no) ? (string)null : tin_no;
+                        expDetail.InvoiceNo = string.IsNullOrEmpty(invoice_no) ? (string)null : invoice_no;
+                        //expDetail.CostCenterIOWBS = cost_center;
+                        expDetail.TotalAmount = Convert.ToDecimal(gross_amount);
+                        expDetail.NetAmount = Convert.ToDecimal(net_amount);
+                        //expDetail.Supplier = string.IsNullOrEmpty(supp) ? (string)null : supp;
+                        expDetail.Particulars = Convert.ToInt32(particu);
+                        //expDetail.AcctToCharged = Convert.ToInt32(acctCharge);
+                        //expDetail.VAT = Convert.ToDecimal(vat_amnt);
+                        //expDetail.EWT = Convert.ToDecimal(ewt_amnt);
+                        //expDetail.ExpDtl_Currency = currency;
+                        //expDetail.ExpDtl_IO = string.IsNullOrEmpty(io) ? (string)null : io;
+                        //expDetail.ExpDtl_WBS = string.IsNullOrEmpty(wbs) ? (string)null : wbs;
+                        expDetail.LineDescription = remarks;
+                        expDetail.Qty = Convert.ToDecimal(qty);
+                        expDetail.UnitPrice = Convert.ToDecimal(unit_price);
+                        expDetail.EWT = Convert.ToDecimal(ewt);
+                        expDetail.VAT = Convert.ToDecimal(vat);
+                        expDetail.UOM = uom;
+                        expDetail.EWTPerc = Convert.ToDecimal(ewtperc);
+                        expDetail.NOVAT = Convert.ToDecimal(netvat);
+                        expDetail.isVatComputed = Convert.ToBoolean(isVatCompute);
+                    }
+
+                    //var expDetailNonPO = _DataContext.ACCEDE_T_ExpenseDetailsInvNonPOs.Where(x => x.ExpDetailMain_ID == Convert.ToInt32(Session["ExpDetailsID"])).FirstOrDefault();
+                    //if(expDetailNonPO != null)
+                    //{
+                    //    expDetailNonPO.EWTTaxAmount = Convert.ToDecimal(EWTTAmount);
+                    //    expDetailNonPO.EWTTaxType_Id = Convert.ToInt32(EWTTType);
+                    //    expDetailNonPO.EWTTaxCode = EWTTCode;
+                    //    expDetailNonPO.InvoiceTaxCode = InvTCode;
+                    //    expDetailNonPO.Asset = asset;
+                    //    expDetailNonPO.SubAssetCode = subasset;
+                    //    expDetailNonPO.AltRecon = altRecon;
+                    //    expDetailNonPO.SLCode = SLCode;
+                    //    expDetailNonPO.SpecialGL = SpecialGL;
+                    //}
+                    //else
+                    //{
+                    //    ACCEDE_T_ExpenseDetailsInvNonPO expNonPO = new ACCEDE_T_ExpenseDetailsInvNonPO();
+                    //    {
+                    //        expNonPO.EWTTaxAmount = Convert.ToDecimal(EWTTAmount);
+                    //        expNonPO.EWTTaxType_Id = Convert.ToInt32(EWTTType);
+                    //        expNonPO.EWTTaxCode = EWTTCode;
+                    //        expNonPO.InvoiceTaxCode = InvTCode;
+                    //        expNonPO.Asset = asset;
+                    //        expNonPO.SubAssetCode = subasset;
+                    //        expNonPO.AltRecon = altRecon;
+                    //        expNonPO.SLCode = SLCode;
+                    //        expNonPO.SpecialGL = SpecialGL;
+                    //    }
+
+                    //    _DataContext.ACCEDE_T_ExpenseDetailsInvNonPOs.InsertOnSubmit(expNonPO);
+
+                    //}
+
+
+                }
+
+                _DataContext.SubmitChanges();
+
+                var ptvRFP = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.Exp_ID == Convert.ToInt32(expDetail.InvMain_ID))
+                    .Where(x => x.isTravel != true)
+                    .Where(x => x.Status != 4)
+                    .Where(x => x.IsExpenseReim != true)
+                    .Where(x => x.IsExpenseCA != true)
+                    .FirstOrDefault();
+
+                //var rfpReim = _DataContext.ACCEDE_T_RFPMains
+                //    .Where(x => x.Exp_ID == Convert.ToInt32(Session["NonPOInvoiceId"]))
+                //    .Where(x => x.Status != 4).Where(x => x.IsExpenseReim == true)
+                //    .Where(x => x.isTravel != true)
+                //    .FirstOrDefault();
+
+                var expDetails = _DataContext.ACCEDE_T_InvoiceLineDetails
+                    .Where(x => x.InvMain_ID == Convert.ToInt32(expDetail.InvMain_ID));
+
+                //decimal totalReim = new decimal(0);
+                //decimal totalCA = new decimal(0);
+                decimal totalExpense = new decimal(0);
+
+                //foreach (var ca in rfpCA)
+                //{
+                //    totalCA += Convert.ToDecimal(ca.Amount);
+                //}
+
+                foreach (var exp in expDetails)
+                {
+                    totalExpense += Convert.ToDecimal(exp.NetAmount);
+                }
+
+                if (totalExpense > 0 && ptvRFP != null)
+                {
+                    ptvRFP.Amount = totalExpense;
+                }
+                else
+                {
+                    if (ptvRFP != null)
+                    {
+                        ptvRFP.Amount = totalExpense;
+                        ptvRFP.Status = 4;
+                    }
+
+                }
+
+
+                //totalReim = totalCA - totalExpense;
+                //if (totalReim < 0)
+                //{
+                //    if (rfpReim != null)
+                //    {
+                //        rfpReim.Amount = Math.Abs(totalReim);
+                //    }
+                //}
+                //else
+                //{
+                //    if (rfpReim != null)
+                //    {
+                //        rfpReim.Status = 4;
+                //    }
+
+                //}
+
+                _DataContext.SubmitChanges();
+                return "success";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        [WebMethod]
+        public static bool RedirectToRFPDetailsAJAX(string rfpDoc)
+        {
+            AccedeNonPOApprovalView exp = new AccedeNonPOApprovalView();
+            return exp.RedirectToRFPDetails(rfpDoc);
+        }
+
+        public bool RedirectToRFPDetails(string rfpDoc)
+        {
+            try
+            {
+                var rfp = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.RFP_DocNum == rfpDoc)
+                    .FirstOrDefault();
+
+                if (rfp != null)
+                {
+                    Session["passRFPID"] = rfp.ID;
+                }
+                return true;
+            }
+            catch (Exception ex) { return false; }
         }
 
         public bool SendEmailTo(int doc_id, string receiver_id, int Comp_id, string sender_fullname, string sender_email, string doc_no, string date_created, string document_purpose, string remarks, string status, string payMethod, string tranType, string status2)
@@ -1518,237 +1717,239 @@ namespace DX_WebTemplate
             }
         }
 
-        [WebMethod]
-        public static string SaveExpDetailsAJAX(
-            string dateAdd,
-            //string tin_no, 
-            string invoice_no,
-            //string cost_center,
-            string gross_amount,
-            string net_amount,
-            //string supp, 
-            string particu,
-            string acctCharge,
-            //string vat_amnt, 
-            //string ewt_amnt, 
-            string currency,
-            //string io, 
-            //string wbs,
-            string remarks,
-            string EWTTAmount,
-            string assign,
-            string allowance,
-            string EWTTType,
-            string EWTTCode,
-            string InvTCode,
-            string qty,
-            string unit_price,
-            string asset,
-            string subasset,
-            string altRecon,
-            string SLCode,
-            string SpecialGL
-            )
-        {
-            AccedeNonPOApprovalView exp = new AccedeNonPOApprovalView();
-            return exp.SaveExpDetails(
-                dateAdd,
-                //tin_no, 
-                invoice_no,
-                //cost_center,
-                gross_amount,
-                net_amount,
-                //supp, 
-                particu,
-                acctCharge,
-                //vat_amnt, 
-                //ewt_amnt, 
-                currency,
-                // io, 
-                // wbs, 
-                remarks,
-                EWTTAmount,
-                assign,
-                allowance,
-                EWTTType,
-                EWTTCode,
-                InvTCode,
-                qty,
-                unit_price,
-                asset,
-                subasset,
-                altRecon,
-                SLCode,
-                SpecialGL);
-        }
+        //[WebMethod]
+        //public static string SaveExpDetailsAJAX(
+        //    string dateAdd,
+        //    //string tin_no, 
+        //    string invoice_no,
+        //    //string cost_center,
+        //    string gross_amount,
+        //    string net_amount,
+        //    //string supp, 
+        //    string particu,
+        //    string acctCharge,
+        //    //string vat_amnt, 
+        //    //string ewt_amnt, 
+        //    string currency,
+        //    //string io, 
+        //    //string wbs,
+        //    string remarks,
+        //    string EWTTAmount,
+        //    string assign,
+        //    string allowance,
+        //    string EWTTType,
+        //    string EWTTCode,
+        //    string InvTCode,
+        //    string qty,
+        //    string unit_price,
+        //    string asset,
+        //    string subasset,
+        //    string altRecon,
+        //    string SLCode,
+        //    string SpecialGL
+        //    )
+        //{
+        //    AccedeNonPOApprovalView exp = new AccedeNonPOApprovalView();
+        //    return exp.SaveExpDetails(
+        //        dateAdd,
+        //        //tin_no, 
+        //        invoice_no,
+        //        //cost_center,
+        //        gross_amount,
+        //        net_amount,
+        //        //supp, 
+        //        particu,
+        //        acctCharge,
+        //        //vat_amnt, 
+        //        //ewt_amnt, 
+        //        currency,
+        //        // io, 
+        //        // wbs, 
+        //        remarks,
+        //        EWTTAmount,
+        //        assign,
+        //        allowance,
+        //        EWTTType,
+        //        EWTTCode,
+        //        InvTCode,
+        //        qty,
+        //        unit_price,
+        //        asset,
+        //        subasset,
+        //        altRecon,
+        //        SLCode,
+        //        SpecialGL);
+        //}
 
-        public string SaveExpDetails(
-            string dateAdd,
-            //string tin_no, 
-            string invoice_no,
-            //string cost_center,
-            string gross_amount,
-            string net_amount,
-            //string supp, 
-            string particu,
-            string acctCharge,
-            //string vat_amnt, 
-            //string ewt_amnt, 
-            string currency,
-            //string io, 
-            //string wbs,
-            string remarks,
-            string EWTTAmount,
-            string assign,
-            string allowance,
-            string EWTTType,
-            string EWTTCode,
-            string InvTCode,
-            string qty,
-            string unit_price,
-            string asset,
-            string subasset,
-            string altRecon,
-            string SLCode,
-            string SpecialGL
-            )
-        {
-            try
-            {
-                decimal totalNetAmnt = new decimal(0.00);
-                var invDtlMap = _DataContext.ACCEDE_T_InvoiceLineDetailsMaps
-                    .Where(x => x.InvoiceReportDetail_ID == Convert.ToInt32(Session["InvDetailsID"]));
+        //public string SaveExpDetails(
+        //    string dateAdd,
+        //    //string tin_no, 
+        //    string invoice_no,
+        //    //string cost_center,
+        //    string gross_amount,
+        //    string net_amount,
+        //    //string supp, 
+        //    string particu,
+        //    string acctCharge,
+        //    //string vat_amnt, 
+        //    //string ewt_amnt, 
+        //    string currency,
+        //    //string io, 
+        //    //string wbs,
+        //    string remarks,
+        //    string EWTTAmount,
+        //    string assign,
+        //    string allowance,
+        //    string EWTTType,
+        //    string EWTTCode,
+        //    string InvTCode,
+        //    string qty,
+        //    string unit_price,
+        //    string asset,
+        //    string subasset,
+        //    string altRecon,
+        //    string SLCode,
+        //    string SpecialGL
+        //    )
+        //{
+        //    try
+        //    {
+        //        decimal totalNetAmnt = new decimal(0.00);
+        //        var invDtlMap = _DataContext.ACCEDE_T_InvoiceLineDetailsMaps
+        //            .Where(x => x.InvoiceReportDetail_ID == Convert.ToInt32(Session["InvDetailsID"]));
 
-                foreach (var item in invDtlMap)
-                {
-                    totalNetAmnt += Convert.ToDecimal(item.NetAmount);
-                }
+        //        var expDetail = _DataContext.ACCEDE_T_InvoiceLineDetails
+        //                .Where(x => x.ID == Convert.ToInt32(Session["InvDetailsID"]))
+        //                .FirstOrDefault();
 
-                decimal gross = Convert.ToDecimal(Convert.ToString(gross_amount));
-                if (totalNetAmnt < gross && invDtlMap.Count() > 0)
-                {
-                    string error = "The total allocation amount is less than the gross amount of " + gross.ToString("#,#00.00") + ". Please check the allocation amounts.";
-                    return error;
-                }
-                else
-                {
-                    var expDetail = _DataContext.ACCEDE_T_InvoiceLineDetails
-                        .Where(x => x.ID == Convert.ToInt32(Session["InvDetailsID"]))
-                        .FirstOrDefault();
+        //        foreach (var item in invDtlMap)
+        //        {
+        //            totalNetAmnt += Convert.ToDecimal(item.NetAmount);
+        //        }
 
-                    if (expDetail != null)
-                    {
-                        expDetail.DateAdded = Convert.ToDateTime(dateAdd);
-                        //expDetail.TIN = string.IsNullOrEmpty(tin_no) ? (string)null : tin_no;
-                        //expDetail.InvoiceOR = string.IsNullOrEmpty(invoice_no) ? (string)null : invoice_no;
-                        //expDetail.CostCenterIOWBS = cost_center;
-                        expDetail.TotalAmount = Convert.ToDecimal(gross_amount);
-                        expDetail.NetAmount = Convert.ToDecimal(net_amount);
-                        //expDetail.Supplier = string.IsNullOrEmpty(supp) ? (string)null : supp;
-                        expDetail.Particulars = Convert.ToInt32(particu);
-                        expDetail.AcctToCharged = Convert.ToInt32(acctCharge);
-                        //expDetail.VAT = Convert.ToDecimal(vat_amnt);
-                        //expDetail.EWT = Convert.ToDecimal(ewt_amnt);
-                        //expDetail.ExpDtl_Currency = currency;
-                        //expDetail.ExpDtl_IO = string.IsNullOrEmpty(io) ? (string)null : io;
-                        //expDetail.ExpDtl_WBS = string.IsNullOrEmpty(wbs) ? (string)null : wbs;
-                        expDetail.LineDescription = remarks;
-                        expDetail.Qty = Convert.ToDecimal(qty);
-                        expDetail.UnitPrice = Convert.ToDecimal(unit_price);
-                    }
+        //        decimal gross = Convert.ToDecimal(Convert.ToString(gross_amount));
+        //        if (totalNetAmnt < gross && invDtlMap.Count() > 0)
+        //        {
+        //            string error = "The total allocation amount is less than the gross amount of " + gross.ToString("#,#00.00") + ". Please check the allocation amounts.";
+        //            return error;
+        //        }
+        //        else
+        //        {
+                    
 
-                    //var expDetailNonPO = _DataContext.ACCEDE_T_ExpenseDetailsInvNonPOs.Where(x => x.ExpDetailMain_ID == Convert.ToInt32(Session["InvDetailsID"])).FirstOrDefault();
-                    //if(expDetailNonPO != null)
-                    //{
-                    //    expDetailNonPO.EWTTaxAmount = Convert.ToDecimal(EWTTAmount);
-                    //    expDetailNonPO.EWTTaxType_Id = Convert.ToInt32(EWTTType);
-                    //    expDetailNonPO.EWTTaxCode = EWTTCode;
-                    //    expDetailNonPO.InvoiceTaxCode = InvTCode;
-                    //    expDetailNonPO.Asset = asset;
-                    //    expDetailNonPO.SubAssetCode = subasset;
-                    //    expDetailNonPO.AltRecon = altRecon;
-                    //    expDetailNonPO.SLCode = SLCode;
-                    //    expDetailNonPO.SpecialGL = SpecialGL;
-                    //}
-                    //else
-                    //{
-                    //    ACCEDE_T_ExpenseDetailsInvNonPO expNonPO = new ACCEDE_T_ExpenseDetailsInvNonPO();
-                    //    {
-                    //        expNonPO.EWTTaxAmount = Convert.ToDecimal(EWTTAmount);
-                    //        expNonPO.EWTTaxType_Id = Convert.ToInt32(EWTTType);
-                    //        expNonPO.EWTTaxCode = EWTTCode;
-                    //        expNonPO.InvoiceTaxCode = InvTCode;
-                    //        expNonPO.Asset = asset;
-                    //        expNonPO.SubAssetCode = subasset;
-                    //        expNonPO.AltRecon = altRecon;
-                    //        expNonPO.SLCode = SLCode;
-                    //        expNonPO.SpecialGL = SpecialGL;
-                    //    }
+        //            if (expDetail != null)
+        //            {
+        //                expDetail.DateAdded = Convert.ToDateTime(dateAdd);
+        //                //expDetail.TIN = string.IsNullOrEmpty(tin_no) ? (string)null : tin_no;
+        //                //expDetail.InvoiceOR = string.IsNullOrEmpty(invoice_no) ? (string)null : invoice_no;
+        //                //expDetail.CostCenterIOWBS = cost_center;
+        //                expDetail.TotalAmount = Convert.ToDecimal(gross_amount);
+        //                expDetail.NetAmount = Convert.ToDecimal(net_amount);
+        //                //expDetail.Supplier = string.IsNullOrEmpty(supp) ? (string)null : supp;
+        //                expDetail.Particulars = Convert.ToInt32(particu);
+        //                expDetail.AcctToCharged = Convert.ToInt32(acctCharge);
+        //                //expDetail.VAT = Convert.ToDecimal(vat_amnt);
+        //                //expDetail.EWT = Convert.ToDecimal(ewt_amnt);
+        //                //expDetail.ExpDtl_Currency = currency;
+        //                //expDetail.ExpDtl_IO = string.IsNullOrEmpty(io) ? (string)null : io;
+        //                //expDetail.ExpDtl_WBS = string.IsNullOrEmpty(wbs) ? (string)null : wbs;
+        //                expDetail.LineDescription = remarks;
+        //                expDetail.Qty = Convert.ToDecimal(qty);
+        //                expDetail.UnitPrice = Convert.ToDecimal(unit_price);
+        //            }
 
-                    //    _DataContext.ACCEDE_T_ExpenseDetailsInvNonPOs.InsertOnSubmit(expNonPO);
+        //            //var expDetailNonPO = _DataContext.ACCEDE_T_ExpenseDetailsInvNonPOs.Where(x => x.ExpDetailMain_ID == Convert.ToInt32(Session["InvDetailsID"])).FirstOrDefault();
+        //            //if(expDetailNonPO != null)
+        //            //{
+        //            //    expDetailNonPO.EWTTaxAmount = Convert.ToDecimal(EWTTAmount);
+        //            //    expDetailNonPO.EWTTaxType_Id = Convert.ToInt32(EWTTType);
+        //            //    expDetailNonPO.EWTTaxCode = EWTTCode;
+        //            //    expDetailNonPO.InvoiceTaxCode = InvTCode;
+        //            //    expDetailNonPO.Asset = asset;
+        //            //    expDetailNonPO.SubAssetCode = subasset;
+        //            //    expDetailNonPO.AltRecon = altRecon;
+        //            //    expDetailNonPO.SLCode = SLCode;
+        //            //    expDetailNonPO.SpecialGL = SpecialGL;
+        //            //}
+        //            //else
+        //            //{
+        //            //    ACCEDE_T_ExpenseDetailsInvNonPO expNonPO = new ACCEDE_T_ExpenseDetailsInvNonPO();
+        //            //    {
+        //            //        expNonPO.EWTTaxAmount = Convert.ToDecimal(EWTTAmount);
+        //            //        expNonPO.EWTTaxType_Id = Convert.ToInt32(EWTTType);
+        //            //        expNonPO.EWTTaxCode = EWTTCode;
+        //            //        expNonPO.InvoiceTaxCode = InvTCode;
+        //            //        expNonPO.Asset = asset;
+        //            //        expNonPO.SubAssetCode = subasset;
+        //            //        expNonPO.AltRecon = altRecon;
+        //            //        expNonPO.SLCode = SLCode;
+        //            //        expNonPO.SpecialGL = SpecialGL;
+        //            //    }
 
-                    //}
+        //            //    _DataContext.ACCEDE_T_ExpenseDetailsInvNonPOs.InsertOnSubmit(expNonPO);
+
+        //            //}
 
 
-                }
+        //        }
 
-                _DataContext.SubmitChanges();
+        //        _DataContext.SubmitChanges();
 
-                var ptvRFP = _DataContext.ACCEDE_T_RFPMains
-                    .Where(x => x.Exp_ID == Convert.ToInt32(Session["NonPOInvoiceId"]))
-                    .Where(x => x.isTravel != true)
-                    .Where(x => x.Status != 4)
-                    .Where(x => x.IsExpenseReim != true)
-                    .Where(x => x.IsExpenseCA != true);
+        //        var ptvRFP = _DataContext.ACCEDE_T_RFPMains
+        //            .Where(x => x.Exp_ID == Convert.ToInt32(expDetail.InvMain_ID))
+        //            .Where(x => x.isTravel != true)
+        //            .Where(x => x.Status != 4)
+        //            .Where(x => x.IsExpenseReim != true)
+        //            .Where(x => x.IsExpenseCA != true);
 
-                //var rfpReim = _DataContext.ACCEDE_T_RFPMains
-                //    .Where(x => x.Exp_ID == Convert.ToInt32(Session["NonPOInvoiceId"]))
-                //    .Where(x => x.Status != 4).Where(x => x.IsExpenseReim == true)
-                //    .Where(x => x.isTravel != true)
-                //    .FirstOrDefault();
+        //        //var rfpReim = _DataContext.ACCEDE_T_RFPMains
+        //        //    .Where(x => x.Exp_ID == Convert.ToInt32(Session["NonPOInvoiceId"]))
+        //        //    .Where(x => x.Status != 4).Where(x => x.IsExpenseReim == true)
+        //        //    .Where(x => x.isTravel != true)
+        //        //    .FirstOrDefault();
 
-                var expDetails = _DataContext.ACCEDE_T_InvoiceLineDetails
-                    .Where(x => x.InvMain_ID == Convert.ToInt32(Session["NonPOInvoiceId"]));
+        //        var expDetails = _DataContext.ACCEDE_T_InvoiceLineDetails
+        //            .Where(x => x.InvMain_ID == Convert.ToInt32(expDetail.InvMain_ID));
 
-                //decimal totalReim = new decimal(0);
-                //decimal totalCA = new decimal(0);
-                decimal totalExpense = new decimal(0);
+        //        //decimal totalReim = new decimal(0);
+        //        //decimal totalCA = new decimal(0);
+        //        decimal totalExpense = new decimal(0);
 
-                //foreach (var ca in rfpCA)
-                //{
-                //    totalCA += Convert.ToDecimal(ca.Amount);
-                //}
+        //        //foreach (var ca in rfpCA)
+        //        //{
+        //        //    totalCA += Convert.ToDecimal(ca.Amount);
+        //        //}
 
-                foreach (var exp in expDetails)
-                {
-                    totalExpense += Convert.ToDecimal(exp.NetAmount);
-                }
+        //        foreach (var exp in expDetails)
+        //        {
+        //            totalExpense += Convert.ToDecimal(exp.NetAmount);
+        //        }
 
-                //totalReim = totalCA - totalExpense;
-                //if (totalReim < 0)
-                //{
-                //    if (rfpReim != null)
-                //    {
-                //        rfpReim.Amount = Math.Abs(totalReim);
-                //    }
-                //}
-                //else
-                //{
-                //    if (rfpReim != null)
-                //    {
-                //        rfpReim.Status = 4;
-                //    }
+        //        //totalReim = totalCA - totalExpense;
+        //        //if (totalReim < 0)
+        //        //{
+        //        //    if (rfpReim != null)
+        //        //    {
+        //        //        rfpReim.Amount = Math.Abs(totalReim);
+        //        //    }
+        //        //}
+        //        //else
+        //        //{
+        //        //    if (rfpReim != null)
+        //        //    {
+        //        //        rfpReim.Status = 4;
+        //        //    }
 
-                //}
+        //        //}
 
-                _DataContext.SubmitChanges();
-                return "success";
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
-        }
+        //        _DataContext.SubmitChanges();
+        //        return "success";
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ex.Message;
+        //    }
+        //}
 
         protected void ExpAllocGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
         {
@@ -2322,6 +2523,55 @@ namespace DX_WebTemplate
             SqlExpDetailAttach.DataBind();
 
             DocuGrid1.DataBind();
+        }
+
+        [WebMethod]
+        public static InvDetailsNonPO DisplayExpDetailsAJAX(int expDetailID)
+        {
+            AccedeNonPOApprovalView exp = new AccedeNonPOApprovalView();
+            return exp.DisplayExpDetails(expDetailID);
+        }
+
+        public InvDetailsNonPO DisplayExpDetails(int invDetailID)
+        {
+            var invDetails = _DataContext.ACCEDE_T_InvoiceLineDetails.FirstOrDefault(x => x.ID == invDetailID);
+            if (invDetails == null) return new InvDetailsNonPO();
+
+            var particularsName = _DataContext.ACCEDE_S_Particulars
+                .Where(x => x.ID == invDetails.Particulars)
+                .Select(x => x.P_Name)
+                .FirstOrDefault();
+
+            decimal allocated = _DataContext.ACCEDE_T_InvoiceLineDetailsMaps
+                .Where(x => x.InvoiceReportDetail_ID == invDetailID)
+                .Select(x => (decimal?)x.NetAmount).Sum() ?? 0m;
+
+            decimal remaining = (invDetails.TotalAmount ?? 0m) - allocated;
+
+            var dto = new InvDetailsNonPO
+            {
+                dateAdded = invDetails.DateAdded.HasValue ? invDetails.DateAdded.Value.ToString("MM/dd/yyyy hh:mm:ss") : "",
+                particulars = particularsName ?? "",
+                acctCharge = Convert.ToInt32(invDetails.AcctToCharged),
+                InvoiceOR = invDetails.InvoiceNo ?? "",
+                grossAmnt = invDetails.TotalAmount ?? 0m,
+                netAmnt = invDetails.NetAmount ?? 0m,
+                expMainId = invDetails.InvMain_ID ?? 0,
+                preparerId = invDetails.Preparer_ID ?? "",
+                LineDesc = invDetails.LineDescription ?? "",
+                Qty = invDetails.Qty ?? 0m,
+                UnitPrice = invDetails.UnitPrice ?? 0m,
+                uom = invDetails.UOM ?? "",
+                ewt = invDetails.EWT ?? 0m,
+                vat = invDetails.VAT ?? 0m,
+                ewtperc = invDetails.EWTPerc ?? 0m,
+                netvat = invDetails.NOVAT ?? 0m,
+                isVatCompute = invDetails.isVatComputed ?? false,
+                totalAllocAmnt = remaining
+            };
+
+            Session["InvDetailsID"] = invDetailID.ToString();
+            return dto;
         }
     }
 

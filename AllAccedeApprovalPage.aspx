@@ -158,7 +158,7 @@
                                                 <dx:GridViewDataTextColumn ShowInCustomizationForm="True" VisibleIndex="1" FieldName="Document_Id" ReadOnly="True" Visible="False">
                                                     <EditFormSettings Visible="False" />
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn ShowInCustomizationForm="True" VisibleIndex="2" Caption="Document No.">
+                                                <dx:GridViewDataTextColumn ShowInCustomizationForm="True" VisibleIndex="2" Caption="Document No." FieldName="DocNo">
                                                     <CellStyle Font-Bold="False" HorizontalAlign="Left">
                                                     </CellStyle>
                                                     <Columns>
@@ -178,21 +178,19 @@
                                                 </dx:GridViewDataTextColumn>
                                                 <dx:GridViewDataTextColumn FieldName="CompanyId" ShowInCustomizationForm="True" Visible="False" VisibleIndex="13">
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataComboBoxColumn Caption="Document Type" FieldName="AppDocTypeId" ShowInCustomizationForm="True" VisibleIndex="6">
+                                                <dx:GridViewDataComboBoxColumn Caption="Document Type" FieldName="AppDocTypeId" ShowInCustomizationForm="True" VisibleIndex="5">
                                                     <PropertiesComboBox DataSourceID="SqlAppDocType" TextField="DCT_Description" ValueField="DCT_Id">
                                                     </PropertiesComboBox>
                                                     <CellStyle HorizontalAlign="Center">
                                                     </CellStyle>
                                                     <Columns>
-                                                        <dx:GridViewDataComboBoxColumn Caption="Transaction Type" FieldName="TranType" ShowInCustomizationForm="True" VisibleIndex="0">
-                                                            <PropertiesComboBox DataSourceID="SqlTranType" TextField="Description" ValueField="ExpenseType_ID">
-                                                            </PropertiesComboBox>
+                                                        <dx:GridViewDataTextColumn Caption="Transaction Type" FieldName="TranType" ShowInCustomizationForm="True" VisibleIndex="0">
                                                             <CellStyle Font-Bold="True" HorizontalAlign="Center">
                                                             </CellStyle>
-                                                        </dx:GridViewDataComboBoxColumn>
+                                                        </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:GridViewDataComboBoxColumn>
-                                                <dx:GridViewDataTextColumn Caption="Purpose" ShowInCustomizationForm="True" VisibleIndex="7">
+                                                <dx:GridViewDataTextColumn Caption="Purpose" ShowInCustomizationForm="True" VisibleIndex="6" FieldName="Purpose">
                                                     <Columns>
                                                         <dx:GridViewDataTextColumn Caption="Preparer" ShowInCustomizationForm="True" VisibleIndex="0">
                                                         </dx:GridViewDataTextColumn>
@@ -232,6 +230,10 @@
                                                         </dx:GridViewDataComboBoxColumn>
                                                     </Columns>
                                                 </dx:GridViewDataDateColumn>
+                                                <dx:GridViewDataTextColumn Caption="Amount" ShowInCustomizationForm="True" VisibleIndex="7">
+                                                    <CellStyle Font-Bold="True">
+                                                    </CellStyle>
+                                                </dx:GridViewDataTextColumn>
                                             </Columns>
                                             <Toolbars>
                                                 <dx:GridViewToolbar ItemAlign="Right" Visible="False">
@@ -321,7 +323,7 @@
     <asp:SqlDataSource ID="sqlName" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT [FullName], [EmpCode] FROM [ITP_S_UserMaster]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="sqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [CompanyMaster] WHERE ([WASSId] IS NOT NULL)"></asp:SqlDataSource>
     <asp:SqlDataSource ID="sqlStatus" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_Status]"></asp:SqlDataSource>
-    <asp:SqlDataSource ID="sqlAllApproval" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT Document_Id, Status, STS_Description, DateAssigned, DateAction, AppDocTypeId, AppId, 
+    <asp:SqlDataSource ID="sqlAllApproval" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT Document_Id, Status, STS_Description, DateAssigned, DateAction, AppDocTypeId, AppId, DocNo, Purpose,
        Remarks, UserId, CompanyId, TranType, WF_Id, WFD_Id, WFA_Id, 
        Travel_Id, NoTravel_Id, RFP_Id, Location, Inv_Id
 FROM vw_ACCEDE_I_AllAccedeForApproval

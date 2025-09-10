@@ -789,13 +789,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox expLine_UnitPrice;
 
         /// <summary>
-        /// expLine_ewt control.
+        /// expLine_Total control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox expLine_ewt;
+        protected global::DevExpress.Web.ASPxTextBox expLine_Total;
 
         /// <summary>
         /// expLine_vat control.
@@ -807,13 +807,31 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox expLine_vat;
 
         /// <summary>
-        /// expLine_Total control.
+        /// expLine_netvat control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox expLine_Total;
+        protected global::DevExpress.Web.ASPxTextBox expLine_netvat;
+
+        /// <summary>
+        /// expLine_ewtperc control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox expLine_ewtperc;
+
+        /// <summary>
+        /// expLine_ewt control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox expLine_ewt;
 
         /// <summary>
         /// expLine_NetAmnt control.
@@ -951,6 +969,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxButton ASPxButton13;
 
         /// <summary>
+        /// LineId_edit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox LineId_edit;
+
+        /// <summary>
         /// dateAdded_edit control.
         /// </summary>
         /// <remarks>
@@ -1086,13 +1113,22 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxSpinEdit total_edit;
 
         /// <summary>
-        /// ewt_edit control.
+        /// Panel4 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxSpinEdit ewt_edit;
+        protected global::System.Web.UI.WebControls.Panel Panel4;
+
+        /// <summary>
+        /// chk_Compute_edit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxCheckBox chk_Compute_edit;
 
         /// <summary>
         /// vat_edit control.
@@ -1102,6 +1138,42 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxSpinEdit vat_edit;
+
+        /// <summary>
+        /// Panel3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Panel3;
+
+        /// <summary>
+        /// net_vat_edit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxSpinEdit net_vat_edit;
+
+        /// <summary>
+        /// drpdown_ewtPerc_edit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxComboBox drpdown_ewtPerc_edit;
+
+        /// <summary>
+        /// ewt_edit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxSpinEdit ewt_edit;
 
         /// <summary>
         /// net_amount_edit control.

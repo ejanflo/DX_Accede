@@ -69,6 +69,23 @@ namespace DX_WebTemplate
                     return;
                 }
 
+                // Check if there is RFP generated
+                var ptvRFP = _DataContext.ACCEDE_T_RFPMains
+                    .Where(x => x.Exp_ID == Convert.ToInt32(Session["NonPOInvoiceId"]))
+                    .Where(x => x.isTravel != true)
+                    .Where(x => x.Status != 4)
+                    .Where(x => x.IsExpenseReim != true)
+                    .Where(x => x.IsExpenseCA != true)
+                    .FirstOrDefault();
+
+                // Set RFP Details visible
+                var ptvLayoutItem = ExpenseEditForm.FindItemOrGroupByName("ReimLayout") as LayoutGroup;
+                if (ptvRFP != null)
+                {
+                    ptvLayoutItem.ClientVisible = true; link_rfp.Value = ptvRFP.RFP_DocNum;
+                }
+                    
+
                 // Preload document type once
                 var appDocType = _DataContext.ITP_S_DocumentTypes
                     .FirstOrDefault(x => x.DCT_Name == "ACDE InvoiceNPO" && x.App_Id == 1032);
@@ -83,6 +100,8 @@ namespace DX_WebTemplate
                     .Sum() ?? 0m;
 
                 lbl_expenseTotal.Text = totalExp.ToString("#,##0.00") + "  " + mainInv.Exp_Currency;
+                if(Session["InvoiceNo"] != null)
+                    invoice_add.Value = Session["InvoiceNo"].ToString();
 
                 // UI caption update (cheap)
                 var layoutGroup = ExpenseEditForm.FindItemOrGroupByName("EditFormName") as LayoutGroup;
@@ -111,6 +130,8 @@ namespace DX_WebTemplate
                 // Persist frequently reused values
                 Session["DocNo"] = mainInv.DocNo;
                 Session["ExpMain_ID"] = mainInv.ID;
+
+
             }
             catch (Exception)
             {
@@ -163,34 +184,31 @@ namespace DX_WebTemplate
             drpdown_vendor.ValidationSettings.RequiredField.IsRequired = true;
         }
 
-        private List<VendorSet> GetVendorListCached(string compCode)
+        // (Optional) replace old GetVendorListCached calls with this wrapper; keep original method if still referenced elsewhere.
+        private List<SAPVendor.VendorSet> GetVendorListCached(string compCode)
         {
-            string cacheKey = "VENDOR_LIST_" + compCode;
-            if (_cache.Get(cacheKey) is List<VendorSet> cached && cached.Count > 0)
-                return cached;
-
-            // Minimized OData filter
-            string query = $"{SapClientParam}&$filter=VENDCOCODE eq '{compCode}'";
-            var list = SAPVendor.GetVendorData(query)
-                .GroupBy(v => new { v.VENDCODE, v.VENDNAME })
-                .Select(g => g.First())
-                .OrderBy(v => v.VENDNAME)
-                .ToList();
-
-            _cache.Set(cacheKey, list, DateTimeOffset.UtcNow.AddMinutes(15));
-            return list;
+            return GetOrRefreshVendorList(compCode, false);
         }
 
         private void SetupWorkflows(ACCEDE_T_InvoiceMain mainInv, string empCode, decimal totalExp)
         {
             // FAP Workflow (unchanged logic but consolidated + guard)
+            //var fapWf = _DataContext.ITP_S_WorkflowHeaders
+            //    .Where(x => x.Company_Id == Convert.ToInt32(mainInv.InvChargedTo_CompanyId)
+            //             && x.App_Id == 1032
+            //             && (x.With_DivHead == false || x.With_DivHead == null)
+            //             && x.IsRA != true
+            //             && x.Minimum <= Math.Abs(totalExp)
+            //             && x.Maximum >= Math.Abs(totalExp))
+            //    .FirstOrDefault();
+
             var fapWf = _DataContext.ITP_S_WorkflowHeaders
-                .Where(x => x.Company_Id == Convert.ToInt32(mainInv.InvChargedTo_CompanyId)
-                         && x.App_Id == 1032
-                         && (x.With_DivHead == false || x.With_DivHead == null)
-                         && x.IsRA != true
-                         && x.Minimum <= Math.Abs(totalExp)
-                         && x.Maximum >= Math.Abs(totalExp))
+                .Where(x => x.Company_Id == Convert.ToInt32(mainInv.InvChargedTo_CompanyId))
+                .Where(x => x.App_Id == 1032)
+                .Where(x => x.With_DivHead == false || x.With_DivHead == null)
+                .Where(x => x.IsRA == false || x.IsRA == null)
+                .Where(x => x.Minimum <= Math.Abs(totalExp))
+                .Where(x => x.Maximum >= Math.Abs(totalExp))
                 .FirstOrDefault();
 
             if (fapWf != null)
@@ -588,7 +606,10 @@ namespace DX_WebTemplate
             string invoiceTCode,
             string uom,
             string ewt,
-            string vat
+            string vat,
+            string ewtperc,
+            string netvat,
+            string isVatCompute
             )
         {
             AccedeNonPOEditPage exp = new AccedeNonPOEditPage();
@@ -616,8 +637,24 @@ namespace DX_WebTemplate
                 invoiceTCode,
                 uom,
                 ewt,
-                vat
+                vat,
+                ewtperc,
+                netvat,
+                isVatCompute
                 );
+        }
+
+        // Helper: clear temporary session datasets after successful persistence
+        private void ClearInvoiceTempDataSets()
+        {
+            try
+            {
+                Session.Remove("DataSetExpAlloc");
+                Session.Remove("DataSetDoc");
+                dsExpAlloc = null;
+                dsDoc = null;
+            }
+            catch { /* swallow – non‑critical */ }
         }
 
         public string AddExpDetails(
@@ -644,7 +681,10 @@ namespace DX_WebTemplate
             string invoiceTCode,
             string uom,
             string ewt,
-            string vat
+            string vat,
+            string ewtperc,
+            string netvat,
+            string isVatCompute
             )
         {
             try
@@ -656,13 +696,10 @@ namespace DX_WebTemplate
 
                 foreach (DataRow row in dataTableAlloc.Rows)
                 {
-                    ACCEDE_T_InvoiceLineDetailsMap map = new ACCEDE_T_InvoiceLineDetailsMap();
-                    {
-                        totalNetAmnt += Convert.ToDecimal(row["NetAmount"]);
-                    }
-
-
+                    // Only summing; object creation removed (it was unused)
+                    totalNetAmnt += Convert.ToDecimal(row["NetAmount"]);
                 }
+
                 decimal gross = Convert.ToDecimal(Convert.ToString(gross_amount));
                 if (totalNetAmnt < gross && dataTableAlloc.Rows.Count > 0)
                 {
@@ -685,101 +722,56 @@ namespace DX_WebTemplate
                         .Where(x => x.IsExpenseCA == true)
                         .Where(x => x.isTravel != true);
 
-                    var LastExpDetail = _DataContext.ACCEDE_T_InvoiceLineDetails.Where(x => x.InvMain_ID == Convert.ToInt32(Session["NonPOInvoiceId"])).OrderByDescending(x => x.LineNum).FirstOrDefault();
-
-                    //if (rfpCA.Count() > 0)
-                    //{
-                    //    expMain.ExpenseType_ID = 1;
-                    //}
-                    //else
-                    //{
-                    //    expMain.ExpenseType_ID = 2;
-                    //}
+                    var LastExpDetail = _DataContext.ACCEDE_T_InvoiceLineDetails
+                        .Where(x => x.InvMain_ID == Convert.ToInt32(Session["NonPOInvoiceId"]))
+                        .OrderByDescending(x => x.LineNum)
+                        .FirstOrDefault();
 
                     ACCEDE_T_InvoiceLineDetail inv = new ACCEDE_T_InvoiceLineDetail();
                     {
                         inv.DateAdded = Convert.ToDateTime(dateAdd);
 
-                        if (invoice_no != "")
-                        {
+                        if (!string.IsNullOrEmpty(invoice_no))
                             inv.InvoiceNo = invoice_no;
-                        }
 
-                        //exp.CostCenterIOWBS = cost_center;
                         inv.TotalAmount = Convert.ToDecimal(gross_amount);
                         inv.NetAmount = Convert.ToDecimal(net_amount);
-
                         inv.Particulars = Convert.ToInt32(particu);
-                        if(expCat != "0")
-                        {
+                        if (expCat != "0")
                             inv.AcctToCharged = Convert.ToInt32(expCat);
-                        }
                         inv.Qty = Convert.ToDecimal(qty);
                         inv.UnitPrice = Convert.ToDecimal(unit_price);
                         inv.InvMain_ID = Convert.ToInt32(Session["NonPOInvoiceId"]);
                         inv.Preparer_ID = Session["userID"].ToString();
-                        //inv.ExpDtl_Currency = currency;
                         inv.LineDescription = itemDesc;
                         inv.EWT = Convert.ToDecimal(ewt);
                         inv.VAT = Convert.ToDecimal(vat);
                         inv.UOM = uom;
-
-                        if (LastExpDetail != null)
-                        {
-                            inv.LineNum = LastExpDetail.LineNum + 1;
-                        }
-                        else
-                        {
-                            inv.LineNum = 1;
-                        }
+                        inv.EWTPerc = Convert.ToDecimal(ewtperc);
+                        inv.NOVAT = Convert.ToDecimal(netvat);
+                        inv.isVatComputed = Convert.ToBoolean(isVatCompute);
+                        inv.LineNum = (LastExpDetail != null ? LastExpDetail.LineNum + 1 : 1);
                     }
                     _DataContext.ACCEDE_T_InvoiceLineDetails.InsertOnSubmit(inv);
                     _DataContext.SubmitChanges();
                     var ExpDetail_ID = inv.ID;
 
-                    //ACCEDE_T_ExpenseDetailsInvNonPO exp2 = new ACCEDE_T_ExpenseDetailsInvNonPO();
-                    //{
-                    //    exp2.Assignment = assign;
-                    //    exp2.Asset = asset;
-                    //    exp2.EWTTaxType_Id = string.IsNullOrEmpty(EWTTaxType)
-                    //        ? (int?)null
-                    //        : Convert.ToInt32(EWTTaxType);
-                    //    exp2.EWTTaxAmount = string.IsNullOrEmpty(EWTTAmount)
-                    //        ? (decimal?)null
-                    //        : Convert.ToDecimal(EWTTAmount);
-                    //    exp2.EWTTaxCode = EWTTCode;
-                    //    exp2.Allowance = allowance;
-                    //    exp2.SubAssetCode = subasset;
-                    //    exp2.AltRecon = AltRecon;
-                    //    exp2.SLCode = SLCode;
-                    //    exp2.SpecialGL = SpecialGL;
-                    //    exp2.ExpDetailMain_ID = Convert.ToInt32(ExpDetail_ID);
-                    //    exp2.UserId = Session["userID"].ToString();
-                    //}
-                    //_DataContext.ACCEDE_T_ExpenseDetailsInvNonPOs.InsertOnSubmit(exp2);
-                    _DataContext.SubmitChanges();
-
-                    //Insert Expense Allocations
+                    // Insert allocation mappings
                     if (dataTableAlloc.Rows.Count > 0)
                     {
                         foreach (DataRow row in dataTableAlloc.Rows)
                         {
-                            ACCEDE_T_InvoiceLineDetailsMap map = new ACCEDE_T_InvoiceLineDetailsMap();
+                            var map = new ACCEDE_T_InvoiceLineDetailsMap
                             {
-                                map.CostCenterIOWBS = row["CostCenter"].ToString();
-                                map.NetAmount = Convert.ToDecimal(row["NetAmount"]);
-                                map.InvoiceReportDetail_ID = ExpDetail_ID;
-                                map.Preparer_ID = Session["userID"].ToString();
-                                map.EDM_Remarks = row["Remarks"].ToString();
-                            }
-
+                                CostCenterIOWBS = row["CostCenter"].ToString(),
+                                NetAmount = Convert.ToDecimal(row["NetAmount"]),
+                                InvoiceReportDetail_ID = ExpDetail_ID,
+                                Preparer_ID = Session["userID"].ToString(),
+                                EDM_Remarks = row["Remarks"].ToString()
+                            };
                             _DataContext.ACCEDE_T_InvoiceLineDetailsMaps.InsertOnSubmit(map);
-
                         }
-
-
                     }
-
                     _DataContext.SubmitChanges();
 
                     var app_docType = _DataContext.ITP_S_DocumentTypes
@@ -787,39 +779,38 @@ namespace DX_WebTemplate
                         .Where(x => x.App_Id == 1032)
                         .FirstOrDefault();
 
-                    //Insert Invoice Attachments
+                    // Insert file attachments mapped to this line
                     DataSet dsFile = (DataSet)Session["DataSetDoc"];
                     DataTable dataTable = dsFile.Tables[0];
-
-                    ITP_T_FileAttachment attach = new ITP_T_FileAttachment();
-                    ACCEDE_T_ExpenseDetailFileAttach attachMap = new ACCEDE_T_ExpenseDetailFileAttach();
 
                     if (dataTable.Rows.Count > 0)
                     {
                         foreach (DataRow row in dataTable.Rows)
                         {
-                            attach.FileName = row["FileName"].ToString();
-                            attach.FileAttachment = (byte[])row["FileByte"];
-                            attach.Description = row["FileDesc"].ToString();
-                            attach.DateUploaded = DateTime.Now;
-                            attach.App_ID = 1032;
-                            attach.User_ID = Session["userID"] != null ? Session["userID"].ToString() : "0";
-                            attach.FileExtension = row["FileExt"].ToString();
-                            attach.FileSize = row["FileSize"].ToString();
-                            attach.DocType_Id = app_docType != null ? app_docType.DCT_Id : 0;
-
+                            var attach = new ITP_T_FileAttachment
+                            {
+                                FileName = row["FileName"].ToString(),
+                                FileAttachment = (byte[])row["FileByte"],
+                                Description = row["FileDesc"].ToString(),
+                                DateUploaded = DateTime.Now,
+                                App_ID = 1032,
+                                User_ID = Session["userID"] != null ? Session["userID"].ToString() : "0",
+                                FileExtension = row["FileExt"].ToString(),
+                                FileSize = row["FileSize"].ToString(),
+                                DocType_Id = app_docType != null ? app_docType.DCT_Id : 0
+                            };
                             _DataContext.ITP_T_FileAttachments.InsertOnSubmit(attach);
                             _DataContext.SubmitChanges();
 
-                            attachMap.ExpDetail_Id = ExpDetail_ID;
-                            attachMap.FileAttach_Id = attach.ID;
-
+                            var attachMap = new ACCEDE_T_ExpenseDetailFileAttach
+                            {
+                                ExpDetail_Id = ExpDetail_ID,
+                                FileAttach_Id = attach.ID
+                            };
                             _DataContext.ACCEDE_T_ExpenseDetailFileAttaches.InsertOnSubmit(attachMap);
                             _DataContext.SubmitChanges();
                         }
-
                     }
-                    //Done inserting Invoice attachments
 
                     var rfpReim = _DataContext.ACCEDE_T_RFPMains
                         .Where(x => x.Exp_ID == Convert.ToInt32(Session["NonPOInvoiceId"]))
@@ -832,40 +823,23 @@ namespace DX_WebTemplate
                     var expDetails = _DataContext.ACCEDE_T_InvoiceLineDetails
                         .Where(x => x.InvMain_ID == Convert.ToInt32(Session["NonPOInvoiceId"]));
 
-                    decimal totalReim = new decimal(0);
-                    decimal totalCA = new decimal(0);
-                    decimal totalExpense = new decimal(0);
-
-                    foreach (var ca in rfpCA)
-                    {
-                        totalCA += Convert.ToDecimal(ca.Amount);
-                    }
-
+                    decimal totalExpense = 0m;
                     foreach (var expDtl in expDetails)
-                    {
                         totalExpense += Convert.ToDecimal(expDtl.NetAmount);
+
+                    if (totalExpense >= 0 && rfpReim != null)
+                    {
+                        rfpReim.Amount = totalExpense;
                     }
 
-                    //totalReim = totalCA - totalExpense;
-                    //if (totalReim < 0)
-                    //{
-                    //    if (rfpReim != null)
-                    //    {
-                    //        rfpReim.Amount = Math.Abs(totalReim);
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    if (rfpReim != null)
-                    //    {
-                    //        rfpReim.Status = 4;
-                    //    }
+                    _DataContext.SubmitChanges();
 
-                    //}
+                    // NEW: Clear session datasets after successful persistence
+                    ClearInvoiceTempDataSets();
                 }
 
+                Session["InvoiceNo"] = invoice_no;
 
-                _DataContext.SubmitChanges();
                 return "success";
             }
             catch (Exception ex)
@@ -1454,6 +1428,7 @@ namespace DX_WebTemplate
 
                 if (reim != null)
                 {
+                    reim.Payee = vendorCode;
                     reim.WF_Id = Convert.ToInt32(wf);
                     reim.FAPWF_Id = Convert.ToInt32(fapwf);
                     reim.Status = 13;
@@ -2079,6 +2054,9 @@ namespace DX_WebTemplate
                 inv_det_class.vat = inv_details.VAT ?? inv_det_class.vat;
                 inv_det_class.uom = inv_details.UOM ?? inv_det_class.uom;
                 inv_det_class.totalAllocAmnt = totalAmnt;
+                inv_det_class.ewtperc = inv_details.EWTPerc ?? inv_det_class.ewtperc;
+                inv_det_class.netvat = inv_details.NOVAT ?? inv_det_class.netvat;
+                inv_det_class.isVatCompute = inv_details.isVatComputed ?? inv_det_class.isVatCompute;
 
                 Session["InvDetailsID"] = invDetailID.ToString();
 
@@ -2219,7 +2197,10 @@ namespace DX_WebTemplate
             string SpecialGL,
             string uom,
             string ewt,
-            string vat
+            string vat,
+            string ewtperc,
+            string netvat,
+            string isVatCompute
             )
         {
             AccedeNonPOEditPage exp = new AccedeNonPOEditPage();
@@ -2254,7 +2235,10 @@ namespace DX_WebTemplate
                 SpecialGL,
                 uom,
                 ewt,
-                vat);
+                vat,
+                ewtperc,
+                netvat,
+                isVatCompute);
         }
 
         public string SaveExpDetails(
@@ -2288,14 +2272,17 @@ namespace DX_WebTemplate
             string SpecialGL,
             string uom,
             string ewt,
-            string vat
+            string vat,
+            string ewtperc,
+            string netvat,
+            string isVatCompute
             )
         {
             try
             {
                 decimal totalNetAmnt = new decimal(0.00);
                 var invDtlMap = _DataContext.ACCEDE_T_InvoiceLineDetailsMaps
-                    .Where(x => x.InvoiceReportDetail_ID == Convert.ToInt32(Session["ExpDetailsID"]));
+                    .Where(x => x.InvoiceReportDetail_ID == Convert.ToInt32(Session["InvDetailsID"]));
 
                 foreach (var item in invDtlMap)
                 {
@@ -2336,6 +2323,9 @@ namespace DX_WebTemplate
                         expDetail.EWT = Convert.ToDecimal(ewt);
                         expDetail.VAT = Convert.ToDecimal(vat);
                         expDetail.UOM = uom;
+                        expDetail.EWTPerc = Convert.ToDecimal(ewtperc);
+                        expDetail.NOVAT = Convert.ToDecimal(netvat);
+                        expDetail.isVatComputed = Convert.ToBoolean(isVatCompute);
                     }
 
                     //var expDetailNonPO = _DataContext.ACCEDE_T_ExpenseDetailsInvNonPOs.Where(x => x.ExpDetailMain_ID == Convert.ToInt32(Session["ExpDetailsID"])).FirstOrDefault();
@@ -2378,7 +2368,7 @@ namespace DX_WebTemplate
                 var ptvRFP = _DataContext.ACCEDE_T_RFPMains
                     .Where(x => x.Exp_ID == Convert.ToInt32(Session["NonPOInvoiceId"]))
                     .Where(x => x.isTravel != true)
-                    .Where(x=>x.Status != 4)
+                    .Where(x => x.Status != 4)
                     .Where(x => x.IsExpenseReim != true)
                     .Where(x => x.IsExpenseCA != true)
                     .FirstOrDefault();
@@ -2630,6 +2620,9 @@ namespace DX_WebTemplate
             public string uom { get; set; }
             public decimal ewt { get; set; }
             public decimal vat { get; set; }
+            public decimal ewtperc { get; set; }
+            public decimal netvat { get; set; }
+            public bool isVatCompute { get; set; }
         }
 
         protected void exp_Department_Callback(object sender, CallbackEventArgsBase e)
@@ -2757,7 +2750,7 @@ namespace DX_WebTemplate
                 ACCEDE_T_InvoiceLineDetailFileAttach docsMap = new ACCEDE_T_InvoiceLineDetailFileAttach();
                 {
                     docsMap.FileAttach_Id = docs.ID;
-                    docsMap.ExpDetail_Id = Convert.ToInt32(Session["ExpDetailsID"]);
+                    docsMap.ExpDetail_Id = Convert.ToInt32(Session["InvDetailsID"]);
                 }
                 _DataContext.ACCEDE_T_InvoiceLineDetailFileAttaches.InsertOnSubmit(docsMap);
                 _DataContext.SubmitChanges();
@@ -3258,70 +3251,92 @@ namespace DX_WebTemplate
         /// <summary>
         /// Centralized, cached vendor lookup.
         /// </summary>
-        internal static class VendorLookupService
-    {
-        private static readonly ObjectCache _cache = MemoryCache.Default;
-        private static readonly TimeSpan AbsoluteLifetime = TimeSpan.FromMinutes(10);
-        private static readonly TimeSpan SlidingLifetime = TimeSpan.FromMinutes(3);
-        private static readonly object _lockRoot = new object();
-        private const string SapClient = "sap-client=300";
-
-        public static VendorSet GetVendor(string vendorCode)
+        // REPLACE the previous VendorDataSetCache with this expanded version
+        internal static class VendorDataSetCache
         {
-            if (string.IsNullOrWhiteSpace(vendorCode))
-                return null;
+            private static readonly object _sync = new object();
+            private static readonly DataSet _ds = new DataSet("VendorCache");
+            private static readonly DataTable _table;
 
-            vendorCode = vendorCode.Trim().ToUpperInvariant();
-            string cacheKey = "VENDOR_" + vendorCode;
-
-            // Fast path
-            var cached = _cache.Get(cacheKey) as VendorSet;
-            if (cached != null) return cached;
-
-            lock (_lockRoot)
+            static VendorDataSetCache()
             {
-                // Double-check after acquiring lock
-                cached = _cache.Get(cacheKey) as VendorSet;
-                if (cached != null) return cached;
+                _table = new DataTable("Vendors");
+                _table.Columns.Add("VENDCODE", typeof(string));
+                _table.Columns.Add("VENDNAME", typeof(string));
+                _table.Columns.Add("VENDCOCODE", typeof(string));
+                _table.Columns.Add("VENDTIN", typeof(string));
+                _table.Columns.Add("VENDSTREET", typeof(string));
+                _table.Columns.Add("VENDCITY", typeof(string));
+                _table.Columns.Add("VENDPOSTAL", typeof(string));
+                // (Optional) Add VENDSTREET2, VENDCOUNTRY, etc., if also needed later
+                _table.PrimaryKey = new[] { _table.Columns["VENDCODE"] };
+                _ds.Tables.Add(_table);
+            }
 
-                VendorSet result = null;
-                try
+            public static void AddOrUpdate(IEnumerable<SAPVendor.VendorSet> vendors)
+            {
+                if (vendors == null) return;
+                lock (_sync)
                 {
-                    // Server-side filtering ($top=1 to limit payload)
-                    // Adjust field name if actual OData metadata differs.
-                    string query = $"{SapClient}&$filter=VENDCODE eq '{EscapeODataLiteral(vendorCode)}'&$top=1";
-
-                    // NOTE: SAPVendor.GetVendorData should return an IEnumerable<VendorSet>
-                    result = SAPVendor.GetVendorData(query)
-                                      .FirstOrDefault(v => string.Equals(v.VENDCODE, vendorCode, StringComparison.OrdinalIgnoreCase));
-
-                    if (result != null)
+                    foreach (var v in vendors)
                     {
-                        _cache.Set(
-                            cacheKey,
-                            result,
-                            new CacheItemPolicy
-                            {
-                                AbsoluteExpiration = DateTimeOffset.UtcNow.Add(AbsoluteLifetime),
-                                SlidingExpiration = SlidingLifetime
-                            });
+                        if (v == null || string.IsNullOrWhiteSpace(v.VENDCODE)) continue;
+                        var code = v.VENDCODE.Trim().ToUpperInvariant();
+                        var row = _table.Rows.Find(code);
+                        if (row == null)
+                        {
+                            row = _table.NewRow();
+                            row["VENDCODE"] = code;
+                            row["VENDNAME"] = v.VENDNAME;
+                            row["VENDCOCODE"] = v.VENDCOCODE;
+                            row["VENDTIN"] = v.VENDTIN;
+                            row["VENDSTREET"] = v.VENDSTREET;
+                            row["VENDCITY"] = v.VENDCITY;
+                            row["VENDPOSTAL"] = v.VENDPOSTAL;
+                            _table.Rows.Add(row);
+                        }
+                        else
+                        {
+                            row["VENDNAME"] = v.VENDNAME;
+                            row["VENDCOCODE"] = v.VENDCOCODE;
+                            row["VENDTIN"] = v.VENDTIN;
+                            row["VENDSTREET"] = v.VENDSTREET;
+                            row["VENDCITY"] = v.VENDCITY;
+                            row["VENDPOSTAL"] = v.VENDPOSTAL;
+                        }
                     }
                 }
-                catch
-                {
-                    // Optional: log exception (kept silent to avoid breaking caller)
-                    return result; // may be null
-                }
-
-                return result;
             }
+
+            public static SAPVendor.VendorSet Get(string vendorCode)
+            {
+                if (string.IsNullOrWhiteSpace(vendorCode)) return null;
+                var code = vendorCode.Trim().ToUpperInvariant();
+                lock (_sync)
+                {
+                    var row = _table.Rows.Find(code);
+                    if (row == null) return null;
+                    return new SAPVendor.VendorSet
+                    {
+                        VENDCODE = (string)row["VENDCODE"],
+                        VENDNAME = row["VENDNAME"] as string,
+                        VENDCOCODE = row["VENDCOCODE"] as string,
+                        VENDTIN = row["VENDTIN"] as string,
+                        VENDSTREET = row["VENDSTREET"] as string,
+                        VENDCITY = row["VENDCITY"] as string,
+                        VENDPOSTAL = row["VENDPOSTAL"] as string
+                    };
+                }
+            }
+
+            public static DataTable Table => _table;
         }
 
-        private static string EscapeODataLiteral(string value)
-        {
-            return value.Replace("'", "''");
-        }
-    }
+        // To resolve the CS0111 error, we need to ensure that there is only one definition of the method `GetVendorListCached` in the `AccedeNonPOEditPage` class.  
+        // After reviewing the provided code, it appears that there are two conflicting definitions of `GetVendorListCached`.  
+        // Below is the corrected version where we retain only one definition of the method.  
+
+        
 
         public class VendorDetails
         {
@@ -3330,31 +3345,200 @@ namespace DX_WebTemplate
             public bool isOneTime { get; set; }
             public string Name { get; set; }
         }
+        // MODIFY VendorLookupService to also return the new fields
+        internal static class VendorLookupService
+        {
+            private static readonly ObjectCache _cache = MemoryCache.Default;
+            private static readonly TimeSpan AbsoluteLifetime = TimeSpan.FromMinutes(10);
+            private static readonly TimeSpan SlidingLifetime = TimeSpan.FromMinutes(3);
+            private static readonly object _lockRoot = new object();
+            private const string SapClient = "sap-client=300";
+
+            public static SAPVendor.VendorSet GetVendor(string vendorCode)
+            {
+                if (string.IsNullOrWhiteSpace(vendorCode))
+                    return null;
+
+                // 1. DataSet
+                var dsHit = VendorDataSetCache.Get(vendorCode);
+                if (dsHit != null) return dsHit;
+
+                vendorCode = vendorCode.Trim().ToUpperInvariant();
+                string cacheKey = "VENDOR_" + vendorCode;
+
+                // 2. MemoryCache
+                var cached = _cache.Get(cacheKey) as SAPVendor.VendorSet;
+                if (cached != null) return cached;
+
+                lock (_lockRoot)
+                {
+                    cached = _cache.Get(cacheKey) as SAPVendor.VendorSet;
+                    if (cached != null) return cached;
+
+                    SAPVendor.VendorSet result = null;
+                    try
+                    {
+                        string query = $"{SapClient}&$filter=VENDCODE eq '{EscapeODataLiteral(vendorCode)}'&$top=1";
+                        result = SAPVendor.GetVendorData(query)
+                                          .FirstOrDefault(v => string.Equals(v.VENDCODE?.Trim(), vendorCode, StringComparison.OrdinalIgnoreCase));
+
+                        if (result != null)
+                        {
+                            _cache.Set(
+                                cacheKey,
+                                result,
+                                new CacheItemPolicy
+                                {
+                                    AbsoluteExpiration = DateTimeOffset.UtcNow.Add(AbsoluteLifetime),
+                                    SlidingExpiration = SlidingLifetime
+                                });
+
+                            VendorDataSetCache.AddOrUpdate(new[] { result });
+                        }
+                    }
+                    catch
+                    {
+                        return result;
+                    }
+
+                    return result;
+                }
+            }
+
+            private static string EscapeODataLiteral(string value) => value.Replace("'", "''");
+        }
+
+        // Add near other static fields
+        private static readonly object _vendorRefreshLock = new object();
+        private static readonly Dictionary<string, DateTime> _vendorLastRefreshUtc = new Dictionary<string, DateTime>(StringComparer.OrdinalIgnoreCase);
+        private static readonly TimeSpan VendorListMaxAge = TimeSpan.FromMinutes(30);
+
+        // Core fetch without age / cache logic (extracted from existing GetVendorListCached body)
+        private List<SAPVendor.VendorSet> FetchVendorListFromSap(string compCode)
+        {
+            if (string.IsNullOrWhiteSpace(compCode))
+                return new List<SAPVendor.VendorSet>();
+
+            string query = $"{SapClientParam}&$filter=VENDCOCODE eq '{compCode}'";
+            var list = SAPVendor.GetVendorData(query)
+                .GroupBy(v => v.VENDCODE?.Trim().ToUpperInvariant())
+                .Select(g => g.First())
+                .OrderBy(v => v.VENDNAME)
+                .ToList();
+
+            // Update dataset cache
+            VendorDataSetCache.AddOrUpdate(list);
+            return list;
+        }
+
+        // Unified access: returns cached list if fresh, else refreshes. Force overrides freshness.
+        private List<SAPVendor.VendorSet> GetOrRefreshVendorList(string compCode, bool force = false)
+        {
+            if (string.IsNullOrWhiteSpace(compCode))
+                return new List<SAPVendor.VendorSet>();
+
+            string memKey = "VENDOR_LIST_" + compCode;
+            var now = DateTime.UtcNow;
+
+            if (!force)
+            {
+                if (_cache.Get(memKey) is List<SAPVendor.VendorSet> cached &&
+                    _vendorLastRefreshUtc.TryGetValue(compCode, out var last) &&
+                    (now - last) < VendorListMaxAge &&
+                    cached.Count > 0)
+                {
+                    return cached;
+                }
+            }
+
+            lock (_vendorRefreshLock)
+            {
+                // Double check inside lock
+                if (!force)
+                {
+                    if (_cache.Get(memKey) is List<SAPVendor.VendorSet> cached2 &&
+                        _vendorLastRefreshUtc.TryGetValue(compCode, out var last2) &&
+                        (now - last2) < VendorListMaxAge &&
+                        cached2.Count > 0)
+                    {
+                        return cached2;
+                    }
+                }
+
+                var fresh = FetchVendorListFromSap(compCode);
+
+                // Store in MemoryCache (shorter lifetime OK; we manage staleness via _vendorLastRefreshUtc)
+                _cache.Set(memKey, fresh, DateTimeOffset.UtcNow.AddMinutes(15));
+                _vendorLastRefreshUtc[compCode] = now;
+
+                return fresh;
+            }
+        }
+
 
         protected void drpdown_vendor_Callback(object sender, CallbackEventArgsBase e)
         {
-            var comp = e.Parameter.ToString();
+            // Expected: "companyId" OR "companyId|force"
+            var raw = e.Parameter ?? "";
+            var parts = raw.Split('|');
+            var compIdStr = parts.Length > 0 ? parts[0] : "";
+            var forceFlag = parts.Length > 1 ? parts[1] : "";
 
-            var compCode = _DataContext.CompanyMasters.Where(x => x.WASSId == Convert.ToInt32(comp)).Select(x => x.SAP_Id).FirstOrDefault();
+            bool force = false;
+            if (!string.IsNullOrWhiteSpace(forceFlag))
+            {
+                var f = forceFlag.Trim().ToLowerInvariant();
+                force = f == "force" || f == "refresh" || f == "1" || f == "true";
+            }
 
-            // build SAP OData params
-            string matparams = $"sap-client=300&$filter=VENDCOCODE eq '{compCode}'";
+            if (!int.TryParse(compIdStr, out int compId))
+                return;
 
-            // ✅ bind directly from SAP OData
-            var vendors = GetVendorData(matparams);
+            var compCode = _DataContext.CompanyMasters
+                .Where(x => x.WASSId == compId)
+                .Select(x => x.SAP_Id)
+                .FirstOrDefault().ToString();
+
+            if (string.IsNullOrWhiteSpace(compCode))
+                return;
+
+            // Fetch (cached or refreshed)
+            var vendors = GetOrRefreshVendorList(compCode, force);
 
             drpdown_vendor.DataSource = vendors;
-
-            drpdown_vendor.ValueField = "VENDCODE"; // the unique key / value you want to use
-            drpdown_vendor.TextField = "VENDNAME";  // what the user sees in the dropdown
+            drpdown_vendor.ValueField = "VENDCODE";
+            drpdown_vendor.TextField = "VENDNAME";
             drpdown_vendor.Columns.Clear();
-
             drpdown_vendor.Columns.Add("VENDCODE");
             drpdown_vendor.Columns.Add("VENDNAME");
             drpdown_vendor.TextFormatString = "{0} - {1}";
             drpdown_vendor.DataBindItems();
-
             drpdown_vendor.ValidationSettings.RequiredField.IsRequired = true;
+
+            // (Optional) Expose metadata to client for diagnostics
+            if (drpdown_vendor is ASPxComboBox combo)
+            {
+                if (_vendorLastRefreshUtc.TryGetValue(compCode, out var lastUtc))
+                    combo.JSProperties["cpVendorLastRefresh"] = lastUtc.ToString("o");
+                combo.JSProperties["cpVendorCount"] = vendors.Count;
+                combo.JSProperties["cpVendorForced"] = force;
+            }
+        }
+
+        [WebMethod]
+        public static int RefreshVendorCacheAJAX(int companyId)
+        {
+            var page = new AccedeNonPOEditPage();
+            var compCode = page._DataContext.CompanyMasters
+                .Where(x => x.WASSId == companyId)
+                .Select(x => x.SAP_Id)
+                .FirstOrDefault().ToString();
+
+            if (string.IsNullOrWhiteSpace(compCode))
+                return 0;
+
+            var list = page.GetOrRefreshVendorList(compCode, true);
+            return list.Count;
         }
     }
 }

@@ -141,13 +141,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox drpdown_CostCenter;
 
         /// <summary>
-        /// txt_vendorTIN control.
+        /// txt_TIN control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox txt_vendorTIN;
+        protected global::DevExpress.Web.ASPxTextBox txt_TIN;
 
         /// <summary>
         /// drpdown_PayType control.
@@ -159,13 +159,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxComboBox drpdown_PayType;
 
         /// <summary>
-        /// memo_vendorAddress control.
+        /// memo_VendorAddress control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxMemo memo_vendorAddress;
+        protected global::DevExpress.Web.ASPxMemo memo_VendorAddress;
 
         /// <summary>
         /// txt_Currency control.

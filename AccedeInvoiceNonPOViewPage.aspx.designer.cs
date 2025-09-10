@@ -951,15 +951,6 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox expLine_Total;
 
         /// <summary>
-        /// expLine_ewt control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox expLine_ewt;
-
-        /// <summary>
         /// expLine_vat control.
         /// </summary>
         /// <remarks>
@@ -967,6 +958,33 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxTextBox expLine_vat;
+
+        /// <summary>
+        /// expLine_netvat control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox expLine_netvat;
+
+        /// <summary>
+        /// expLine_ewtperc control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox expLine_ewtperc;
+
+        /// <summary>
+        /// expLine_ewt control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox expLine_ewt;
 
         /// <summary>
         /// expLine_NetAmnt control.

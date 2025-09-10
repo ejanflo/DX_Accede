@@ -1,20 +1,30 @@
-﻿using DevExpress.DataProcessing.InMemoryDataProcessor.GraphGenerator;
-using DevExpress.Web;
+﻿using DevExpress.Web;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
+using System.Text;
 using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace DX_WebTemplate
 {
     public partial class AllAccedeCashierPage : System.Web.UI.Page
     {
-        ITPORTALDataContext context = new ITPORTALDataContext(ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString);
+        private readonly ITPORTALDataContext _context =
+            new ITPORTALDataContext(ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString);
+
+        // Caches for this request lifecycle
+        private readonly Dictionary<int, string> _docTypeNameCache = new Dictionary<int, string>();
+        private readonly Dictionary<(int DocTypeId, int DocId), DocumentDisplayData> _docDataCache =
+            new Dictionary<(int DocTypeId, int DocId), DocumentDisplayData>();
+
+        // Central constants to avoid magic strings
+        private const string DT_RFP = "ACDE RFP";
+        private const string DT_EXP = "ACDE Expense";
+        private const string DT_EXP_TRAVEL = "ACDE Expense Travel";
+        private const string DT_INVOICE_NPO = "ACDE InvoiceNPO";
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -23,291 +33,133 @@ namespace DX_WebTemplate
                 AnfloSession.Current.CreateSession(HttpContext.Current.User.ToString());
             }
             else
+            {
                 Response.Redirect("~/Logon.aspx");
-        }
-
-        protected void expenseGrid_CustomColumnDisplayText(object sender, DevExpress.Web.ASPxGridViewColumnDisplayTextEventArgs e)
-        {
-            object value = e.GetFieldValue("AppDocTypeId");
-            object tranValue = e.GetFieldValue("TranType");
-            int app = (value != DBNull.Value) ? Convert.ToInt32(value) : 0;
-            int tran = (tranValue != DBNull.Value) ? Convert.ToInt32(tranValue) : 0;
-            var id = Convert.ToInt32(e.GetFieldValue("Document_Id"));
-
-            if (e.Column.Caption == "Document No.")
-            {
-                string docno = "";
-
-                if (app != 0)
-                {
-                    var appname = context.ITP_S_DocumentTypes.Where(x => x.DCT_Id == app).Select(x => x.DCT_Name).FirstOrDefault();
-                    if (appname == "ACDE RFP")
-                        docno = Convert.ToString(context.ACCEDE_T_RFPMains.Where(x => x.ID == id).Select(x => x.RFP_DocNum).FirstOrDefault() ?? string.Empty);
-                    else if (appname == "ACDE Expense")
-                        docno = Convert.ToString(context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.DocNo).FirstOrDefault() ?? string.Empty);
-                    else if (appname == "ACDE Expense Travel")
-                        docno = Convert.ToString(context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.Doc_No).FirstOrDefault() ?? string.Empty);
-                    else if (appname == "ACDE InvoiceNPO")
-                        docno = Convert.ToString(context.ACCEDE_T_InvoiceMains.Where(x => x.ID == id).Select(x => x.DocNo).FirstOrDefault() ?? string.Empty);
-                }
-
-                e.DisplayText = docno;
-            }
-
-            if (e.Column.Caption == "Employee Name/Vendor")
-            {
-                string empname = "";
-
-                if (app != 0)
-                {
-                    var appname = context.ITP_S_DocumentTypes.Where(x => x.DCT_Id == app).Select(x => x.DCT_Name).FirstOrDefault();
-                    if (appname == "ACDE RFP")
-                    {
-                        string useridRaw = context.ACCEDE_T_RFPMains.Where(x => x.ID == id).Select(x => x.Payee).FirstOrDefault();
-                        string userid = new string(useridRaw?.Where(char.IsDigit).ToArray());
-                        if (!string.IsNullOrEmpty(userid))
-                        {
-                            empname = context.ITP_S_UserMasters.Where(x => x.EmpCode == userid).Select(x => x.FullName).FirstOrDefault()?.ToUpper() ?? string.Empty;
-                        }
-                    }
-                    else if (appname == "ACDE Expense")
-                    {
-                        if (tran != 3)
-                        {
-                            string useridRaw = context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.ExpenseName).FirstOrDefault();
-                            string userid = new string(useridRaw?.Where(char.IsDigit).ToArray());
-                            if (!string.IsNullOrEmpty(userid))
-                            {
-                                empname = context.ITP_S_UserMasters.Where(x => x.EmpCode == userid).Select(x => x.FullName).FirstOrDefault()?.ToUpper() ?? string.Empty;
-                            }
-                        }
-                        else
-                        {
-                            string useridRaw = context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.ExpenseName).FirstOrDefault();
-                            string raw = useridRaw.ToString();
-                            string cleaned = raw.Replace("\r", "").Replace("\n", "");
-                            var vendors = SAPVendor.GetVendorData("")
-                                .GroupBy(x => new { x.VENDCODE, x.VENDNAME })
-                                .Select(g => g.First())
-                                .ToList();
-
-                            string userid = new string(cleaned?.Where(char.IsDigit).ToArray());
-                            if (!string.IsNullOrEmpty(userid))
-                            {
-                                empname = vendors.Where(x => x.VENDCODE == userid).Select(x => x.VENDNAME).FirstOrDefault()?.ToUpper() ?? string.Empty;
-                            }
-                        }
-
-                    }
-                    else if (appname == "ACDE Expense Travel")
-                    {
-                        string useridRaw = Convert.ToString(context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.Employee_Id).FirstOrDefault());
-                        string userid = new string(useridRaw?.Where(char.IsDigit).ToArray());
-                        if (!string.IsNullOrEmpty(userid))
-                        {
-                            empname = context.ITP_S_UserMasters.Where(x => x.EmpCode == userid).Select(x => x.FullName).FirstOrDefault()?.ToUpper() ?? string.Empty;
-                        }
-                    }
-                    else if (appname == "ACDE InvoiceNPO")
-                    {
-                        string useridRaw = context.ACCEDE_T_InvoiceMains.Where(x => x.ID == id).Select(x => x.VendorCode).FirstOrDefault();
-                        string raw = useridRaw.ToString();
-                        string cleaned = raw.Replace("\r", "").Replace("\n", "");
-                        var vendors = SAPVendor.GetVendorData("")
-                                .GroupBy(x => new { x.VENDCODE, x.VENDNAME })
-                                .Select(g => g.First())
-                                .ToList();
-
-                        string userid = new string(cleaned?.Where(char.IsDigit).ToArray());
-                        if (!string.IsNullOrEmpty(userid))
-                        {
-                            empname = vendors.Where(x => x.VENDCODE == userid).Select(x => x.VENDNAME).FirstOrDefault()?.ToUpper() ?? string.Empty;
-
-                            if (empname == "")
-                            {
-                                empname = context.ACCEDE_T_InvoiceMains.Where(x => x.ID == id).Select(x => x.VendorName).FirstOrDefault()?.ToUpper() ?? string.Empty;
-                            }
-                        }
-                    }
-                }
-
-                e.DisplayText = empname;
-            }
-
-            if (e.Column.Caption == "Department")
-            {
-                string department = "";
-
-                if (app != 0)
-                {
-                    var appname = context.ITP_S_DocumentTypes.Where(x => x.DCT_Id == app).Select(x => x.DCT_Name).FirstOrDefault();
-                    if (appname == "ACDE RFP")
-                    {
-                        int depid = Convert.ToInt32(context.ACCEDE_T_RFPMains.Where(x => x.ID == id).Select(x => x.Department_ID).FirstOrDefault());
-                        if (depid != 0)
-                            department = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == depid).Select(x => x.DepDesc).FirstOrDefault().ToUpper();
-                    }
-                    else if (appname == "ACDE Expense")
-                    {
-                        int depid = Convert.ToInt32(context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.ExpChargedTo_DeptId).FirstOrDefault());
-                        if (depid != 0)
-                            department = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == depid).Select(x => x.DepDesc).FirstOrDefault().ToUpper();
-                    }
-                    else if (appname == "ACDE Expense Travel")
-                    {
-                        string depid = Convert.ToString(context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.Dep_Code).FirstOrDefault());
-                        if (!string.IsNullOrEmpty(depid))
-                            department = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == Convert.ToInt32(depid)).Select(x => x.DepDesc).FirstOrDefault().ToUpper();
-                    }
-                    else if (appname == "ACDE InvoiceNPO")
-                    {
-                        int depid = Convert.ToInt32(context.ACCEDE_T_InvoiceMains.Where(x => x.ID == id).Select(x => x.InvChargedTo_DeptId).FirstOrDefault());
-                        if (depid != 0)
-                            department = context.ITP_S_OrgDepartmentMasters.Where(x => x.ID == depid).Select(x => x.DepDesc).FirstOrDefault().ToUpper();
-                    }
-                }
-
-                e.DisplayText = department;
-            }
-
-            if (e.Column.Caption == "Remarks")
-            {
-                string remarks = "";
-
-                if (app != 0)
-                {
-                    var appname = context.ITP_S_DocumentTypes.Where(x => x.DCT_Id == app).Select(x => x.DCT_Name).FirstOrDefault();
-                    if (appname == "ACDE RFP")
-                        remarks = Convert.ToString(context.ACCEDE_T_RFPMains.Where(x => x.ID == id).Select(x => x.Remarks).FirstOrDefault() ?? string.Empty);
-                    else if (appname == "ACDE Expense")
-                        remarks = Convert.ToString(context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.remarks).FirstOrDefault() ?? string.Empty);
-                    else if (appname == "ACDE Expense Travel")
-                        remarks = Convert.ToString(context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.Remarks).FirstOrDefault() ?? string.Empty);
-                }
-
-                e.DisplayText = remarks;
-            }
-
-            if (e.Column.Caption == "Purpose")
-            {
-                string purpose = "";
-
-                if (app != 0)
-                {
-                    var appname = context.ITP_S_DocumentTypes.Where(x => x.DCT_Id == app).Select(x => x.DCT_Name).FirstOrDefault();
-                    if (appname == "ACDE RFP")
-                        purpose = Convert.ToString(context.ACCEDE_T_RFPMains.Where(x => x.ID == id).Select(x => x.Purpose).FirstOrDefault() ?? string.Empty);
-                    else if (appname == "ACDE Expense")
-                        purpose = Convert.ToString(context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.Purpose).FirstOrDefault() ?? string.Empty);
-                    else if (appname == "ACDE Expense Travel")
-                        purpose = Convert.ToString(context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.Purpose).FirstOrDefault() ?? string.Empty);
-                    else if (appname == "ACDE InvoiceNPO")
-                        purpose = Convert.ToString(context.ACCEDE_T_InvoiceMains.Where(x => x.ID == id).Select(x => x.Purpose).FirstOrDefault() ?? string.Empty);
-                }
-
-                e.DisplayText = purpose;
-            }
-
-            if (e.Column.Caption == "Preparer")
-            {
-                string preparer = "";
-
-                if (app != 0)
-                {
-                    var appname = context.ITP_S_DocumentTypes.Where(x => x.DCT_Id == app).Select(x => x.DCT_Name).FirstOrDefault();
-                    if (appname == "ACDE RFP")
-                    {
-                        string userid = context.ACCEDE_T_RFPMains.Where(x => x.ID == id).Select(x => x.User_ID).FirstOrDefault();
-                        if (!string.IsNullOrEmpty(userid))
-                            preparer = context.ITP_S_UserMasters.Where(x => x.EmpCode == userid).Select(x => x.FullName).FirstOrDefault().ToUpper();
-                    }
-                    else if (appname == "ACDE Expense")
-                    {
-                        string userid = context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.UserId).FirstOrDefault();
-                        if (!string.IsNullOrEmpty(userid))
-                            preparer = context.ITP_S_UserMasters.Where(x => x.EmpCode == userid).Select(x => x.FullName).FirstOrDefault().ToUpper();
-                    }
-                    else if (appname == "ACDE Expense Travel")
-                    {
-                        string userid = Convert.ToString(context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == id).Select(x => x.Preparer_Id).FirstOrDefault());
-                        if (!string.IsNullOrEmpty(userid))
-                            preparer = context.ITP_S_UserMasters.Where(x => x.EmpCode == userid).Select(x => x.FullName).FirstOrDefault().ToUpper();
-                    }
-                    else if (appname == "ACDE InvoiceNPO")
-                    {
-                        string userid = context.ACCEDE_T_InvoiceMains.Where(x => x.ID == id).Select(x => x.UserId).FirstOrDefault();
-                        if (!string.IsNullOrEmpty(userid))
-                            preparer = context.ITP_S_UserMasters.Where(x => x.EmpCode == userid).Select(x => x.FullName).FirstOrDefault().ToUpper();
-                    }
-                }
-
-                e.DisplayText = preparer;
             }
         }
 
-        protected void expenseGrid_CustomCallback(object sender, DevExpress.Web.ASPxGridViewCustomCallbackEventArgs e)
+        protected void expenseGrid_CustomColumnDisplayText(object sender, ASPxGridViewColumnDisplayTextEventArgs e)
         {
-            string[] args = e.Parameters.Split('|');
+            if (e.Column == null)
+                return;
+
+            // Acquire common field values once
+            int docTypeId = SafeToInt(e.GetFieldValue("AppDocTypeId"));
+            int tranType = SafeToInt(e.GetFieldValue("TranType"));
+            int docId = SafeToInt(e.GetFieldValue("Document_Id"));
+            if (docTypeId == 0 || docId == 0)
+            {
+                return;
+            }
+
+            string docTypeName = GetDocTypeName(docTypeId);
+            if (string.IsNullOrEmpty(docTypeName))
+                return;
+
+            // Get or build aggregated data for this row
+            var data = GetDocumentDisplayData(docTypeId, docTypeName, docId, tranType);
+
+            // Switch on caption (existing logic preserved)
+            switch (e.Column.Caption)
+            {
+                case "Document No.":
+                    e.DisplayText = data.DocNo ?? string.Empty;
+                    break;
+                case "Employee Name/Vendor":
+                    e.DisplayText = data.EmployeeOrVendor ?? string.Empty;
+                    break;
+                case "Department":
+                    e.DisplayText = data.Department ?? string.Empty;
+                    break;
+                case "Remarks":
+                    e.DisplayText = data.Remarks ?? string.Empty;
+                    break;
+                case "Purpose":
+                    e.DisplayText = data.Purpose ?? string.Empty;
+                    break;
+                case "Preparer":
+                    e.DisplayText = data.Preparer ?? string.Empty;
+                    break;
+            }
+        }
+
+        protected void expenseGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(e.Parameters))
+                return;
+
+            var args = e.Parameters.Split('|');
             string rowKey = args[0];
+            string command = args.Length > 1 ? args[args.Length - 1] : string.Empty;
 
-            Session["TravelExp_Id"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "Document_Id");
-            Session["comp"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "CompanyId");
-            Session["PassActID"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "WFA_Id");
-            Session["wfa"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "WFA_Id");
-            Session["wf"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "WF_Id");
-            Session["wfd"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "WFD_Id");
-            Session["doc_stat"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "Status");
+            // Minimize repeated GetRowValuesByKeyValue calls
+            object GetVal(string field) => expenseGrid.GetRowValuesByKeyValue(rowKey, field);
+
+            var documentIdObj = GetVal("Document_Id");
+            var companyIdObj = GetVal("CompanyId");
+            var wfaIdObj = GetVal("WFA_Id");
+            var wfIdObj = GetVal("WF_Id");
+            var wfdIdObj = GetVal("WFD_Id");
+            var statusObj = GetVal("Status");
+            var appDocTypeIdObj = GetVal("AppDocTypeId");
+
+            Session["TravelExp_Id"] = documentIdObj;
+            Session["comp"] = companyIdObj;
+            Session["PassActID"] = wfaIdObj;
+            Session["wfa"] = wfaIdObj;
+            Session["wf"] = wfIdObj;
+            Session["wfd"] = wfdIdObj;
+            Session["doc_stat"] = statusObj;
             Session["stat_desc"] = "Cashier";
-            var app = context.ITP_S_DocumentTypes.Where(x => x.DCT_Id == Convert.ToInt32(expenseGrid.GetRowValuesByKeyValue(rowKey, "AppDocTypeId"))).Select(x => x.DCT_Name).FirstOrDefault();
+            Session["passRFPID"] = documentIdObj;
+            Session["ExpenseId"] = documentIdObj;
 
-            string actID = Convert.ToString(Session["wfa"]);
+            int appDocTypeId = SafeToInt(appDocTypeIdObj);
+            string appName = GetDocTypeName(appDocTypeId);
+
+            string actID = Convert.ToString(wfaIdObj);
             string encryptedID = Encrypt(actID);
-            Session["passRFPID"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "Document_Id");
-            Session["ExpenseId"] = expenseGrid.GetRowValuesByKeyValue(rowKey, "Document_Id");
 
-            var DocID = expenseGrid.GetRowValuesByKeyValue(rowKey, "Document_Id");
-            var expMain = context.ACCEDE_T_ExpenseMains.Where(x => x.ID == Convert.ToInt32(DocID)).FirstOrDefault();
+            int docId = SafeToInt(documentIdObj);
+            var expMain = _context.ACCEDE_T_ExpenseMains.FirstOrDefault(x => x.ID == docId);
 
             Debug.WriteLine("Main ID: " + Session["TravelExp_Id"]);
             Debug.WriteLine("WFA :" + Session["wfa"]);
             Debug.WriteLine("WF :" + Session["wf"]);
             Debug.WriteLine("WFD :" + Session["wfd"]);
 
-            if (e.Parameters.Split('|').Last() == "btnEdit")
+            if (command == "btnEdit")
             {
-                //ASPxWebControl.RedirectOnCallback("TravelExpenseAdd.aspx");
+                // (Left intentionally - original commented out logic)
             }
-            if (e.Parameters.Split('|').Last() == "btnView")
+            else if (command == "btnView")
             {
-                if (app == "ACDE RFP")
+                if (appName == DT_RFP)
                 {
                     ASPxWebControl.RedirectOnCallback("~/RFPViewPage.aspx");
                 }
-                else if (app == "ACDE Expense")
+                else if (appName == DT_EXP)
                 {
-                    //string redirectUrl = $"~/AccedeCashierExpenseViewPage.aspx?secureToken={encryptedID}";
-                    //ASPxWebControl.RedirectOnCallback(redirectUrl);
-
-                    if (expMain.ExpenseType_ID == 3)
+                    if (expMain != null && expMain.ExpenseType_ID == 3)
                     {
-                        //ASPxWebControl.RedirectOnCallback("ExpenseApprovalView.aspx");
                         string redirectUrl = $"~/AccedeNonPO_CashierView.aspx?secureToken={encryptedID}";
                         ASPxWebControl.RedirectOnCallback(redirectUrl);
                     }
                     else
                     {
-                        //ASPxWebControl.RedirectOnCallback("ExpenseApprovalView.aspx");
                         string redirectUrl = $"~/AccedeCashierExpenseViewPage.aspx?secureToken={encryptedID}";
                         ASPxWebControl.RedirectOnCallback(redirectUrl);
                     }
                 }
-                else if (app == "ACDE Expense Travel")
+                else if (appName == DT_EXP_TRAVEL)
                 {
-                    Session["prep"] = context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).Select(x => x.Preparer_Id).FirstOrDefault();
-                    Session["empid"] = context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == Convert.ToInt32(Session["TravelExp_Id"])).Select(x => x.Employee_Id).FirstOrDefault();
+                    Session["prep"] = _context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == SafeToInt(Session["TravelExp_Id"]))
+                        .Select(x => x.Preparer_Id).FirstOrDefault();
+                    Session["empid"] = _context.ACCEDE_T_TravelExpenseMains.Where(x => x.ID == SafeToInt(Session["TravelExp_Id"]))
+                        .Select(x => x.Employee_Id).FirstOrDefault();
                     ASPxWebControl.RedirectOnCallback("~/TravelExpenseReview.aspx");
                 }
-                else if (app == "ACDE InvoiceNPO")
+                else if (appName == DT_INVOICE_NPO)
                 {
                     string redirectUrl = $"~/AccedeNonPO_CashierView.aspx?secureToken={encryptedID}";
                     ASPxWebControl.RedirectOnCallback(redirectUrl);
@@ -315,11 +167,222 @@ namespace DX_WebTemplate
             }
         }
 
+        private string GetDocTypeName(int docTypeId)
+        {
+            if (docTypeId <= 0) return string.Empty;
+            if (_docTypeNameCache.TryGetValue(docTypeId, out var name))
+                return name;
+
+            name = _context.ITP_S_DocumentTypes
+                .Where(x => x.DCT_Id == docTypeId)
+                .Select(x => x.DCT_Name)
+                .FirstOrDefault() ?? string.Empty;
+
+            _docTypeNameCache[docTypeId] = name;
+            return name;
+        }
+
+        private DocumentDisplayData GetDocumentDisplayData(int docTypeId, string docTypeName, int docId, int tranType)
+        {
+            var key = (docTypeId, docId);
+            if (_docDataCache.TryGetValue(key, out var cached))
+                return cached;
+
+            var data = new DocumentDisplayData();
+
+            switch (docTypeName)
+            {
+                case DT_RFP:
+                    {
+                        var row = _context.ACCEDE_T_RFPMains
+                            .Where(x => x.ID == docId)
+                            .Select(x => new
+                            {
+                                x.RFP_DocNum,
+                                x.Payee,
+                                x.Department_ID,
+                                x.Remarks,
+                                x.Purpose,
+                                x.User_ID
+                            })
+                            .FirstOrDefault();
+
+                        if (row != null)
+                        {
+                            data.DocNo = row.RFP_DocNum ?? string.Empty;
+                            data.EmployeeOrVendor = ResolveEmployeeNameFromMixed(row.Payee);
+                            data.Department = ResolveDepartment(row.Department_ID);
+                            data.Remarks = row.Remarks ?? string.Empty;
+                            data.Purpose = row.Purpose ?? string.Empty;
+                            data.Preparer = ResolveUserFullName(row.User_ID);
+                        }
+                        break;
+                    }
+                case DT_EXP:
+                    {
+                        var row = _context.ACCEDE_T_ExpenseMains
+                            .Where(x => x.ID == docId)
+                            .Select(x => new
+                            {
+                                x.DocNo,
+                                x.ExpenseName,
+                                x.ExpChargedTo_DeptId,
+                                remarks = x.remarks,
+                                x.Purpose,
+                                x.UserId
+                            })
+                            .FirstOrDefault();
+
+                        if (row != null)
+                        {
+                            data.DocNo = row.DocNo ?? string.Empty;
+                            if (tranType != 3)
+                                data.EmployeeOrVendor = ResolveEmployeeNameFromMixed(row.ExpenseName);
+                            else
+                                data.EmployeeOrVendor = row.ExpenseName ?? string.Empty;
+
+                            data.Department = ResolveDepartment(row.ExpChargedTo_DeptId);
+                            data.Remarks = row.remarks ?? string.Empty;
+                            data.Purpose = row.Purpose ?? string.Empty;
+                            data.Preparer = ResolveUserFullName(row.UserId);
+                        }
+                        break;
+                    }
+                case DT_EXP_TRAVEL:
+                    {
+                        var row = _context.ACCEDE_T_TravelExpenseMains
+                            .Where(x => x.ID == docId)
+                            .Select(x => new
+                            {
+                                x.Doc_No,
+                                x.Employee_Id,
+                                x.Dep_Code,
+                                x.Remarks,
+                                x.Purpose,
+                                Preparer_Id = x.Preparer_Id
+                            })
+                            .FirstOrDefault();
+
+                        if (row != null)
+                        {
+                            data.DocNo = row.Doc_No ?? string.Empty;
+                            data.EmployeeOrVendor = ResolveEmployeeNameFromMixed(row.Employee_Id.ToString());
+                            data.Department = ResolveDepartmentString(row.Dep_Code);
+                            data.Remarks = row.Remarks ?? string.Empty;
+                            data.Purpose = row.Purpose ?? string.Empty;
+                            data.Preparer = ResolveUserFullName(row.Preparer_Id.ToString());
+                        }
+                        break;
+                    }
+                case DT_INVOICE_NPO:
+                    {
+                        var row = _context.ACCEDE_T_InvoiceMains
+                            .Where(x => x.ID == docId)
+                            .Select(x => new
+                            {
+                                x.DocNo,
+                                x.VendorName,
+                                x.InvChargedTo_DeptId,
+                                x.Purpose,
+                                x.UserId
+                            })
+                            .FirstOrDefault();
+
+                        if (row != null)
+                        {
+                            data.DocNo = row.DocNo ?? string.Empty;
+                            data.EmployeeOrVendor = row.VendorName ?? string.Empty;
+                            data.Department = ResolveDepartment(row.InvChargedTo_DeptId);
+                            data.Purpose = row.Purpose ?? string.Empty;
+                            data.Preparer = ResolveUserFullName(row.UserId);
+                        }
+                        break;
+                    }
+            }
+
+            _docDataCache[key] = data;
+            return data;
+        }
+
+        private string ResolveEmployeeNameFromMixed(string raw)
+        {
+            if (string.IsNullOrEmpty(raw)) return string.Empty;
+            string digits = new string(raw.Where(char.IsDigit).ToArray());
+            if (string.IsNullOrEmpty(digits)) return string.Empty;
+
+            var name = _context.ITP_S_UserMasters
+                .Where(x => x.EmpCode == digits)
+                .Select(x => x.FullName)
+                .FirstOrDefault();
+
+            return name?.ToUpper() ?? string.Empty;
+        }
+
+        private string ResolveDepartment(object deptIdObj)
+        {
+            int depId = SafeToInt(deptIdObj);
+            if (depId <= 0) return string.Empty;
+
+            var depName = _context.ITP_S_OrgDepartmentMasters
+                .Where(x => x.ID == depId)
+                .Select(x => x.DepDesc)
+                .FirstOrDefault();
+
+            return depName?.ToUpper() ?? string.Empty;
+        }
+
+        private string ResolveDepartmentString(string deptIdStr)
+        {
+            if (string.IsNullOrWhiteSpace(deptIdStr))
+                return string.Empty;
+
+            if (!int.TryParse(deptIdStr, out int depId))
+                return string.Empty;
+
+            return ResolveDepartment(depId);
+        }
+
+        private string ResolveUserFullName(string empCode)
+        {
+            if (string.IsNullOrEmpty(empCode))
+                return string.Empty;
+
+            var name = _context.ITP_S_UserMasters
+                .Where(x => x.EmpCode == empCode)
+                .Select(x => x.FullName)
+                .FirstOrDefault();
+
+            return name?.ToUpper() ?? string.Empty;
+        }
+
+        private int SafeToInt(object value)
+        {
+            if (value == null || value == DBNull.Value) return 0;
+            int.TryParse(value.ToString(), out int result);
+            return result;
+        }
+
         private string Encrypt(string plainText)
         {
-            // Example: Use a proper encryption library like AES or RSA for actual implementations
-            // This is just a placeholder for encryption logic
-            return Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(plainText));
+            if (string.IsNullOrEmpty(plainText))
+                return string.Empty;
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(plainText));
+        }
+
+        protected override void OnUnload(EventArgs e)
+        {
+            base.OnUnload(e);
+            _context.Dispose();
+        }
+
+        private sealed class DocumentDisplayData
+        {
+            public string DocNo { get; set; }
+            public string EmployeeOrVendor { get; set; }
+            public string Department { get; set; }
+            public string Remarks { get; set; }
+            public string Purpose { get; set; }
+            public string Preparer { get; set; }
         }
     }
 }

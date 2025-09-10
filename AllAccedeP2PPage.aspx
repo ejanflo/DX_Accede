@@ -168,17 +168,17 @@
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataDateColumn FieldName="DateAction" ShowInCustomizationForm="True" VisibleIndex="10" Visible="False">
+                                                <dx:GridViewDataDateColumn FieldName="DateAction" ShowInCustomizationForm="True" VisibleIndex="9" Visible="False">
                                                 </dx:GridViewDataDateColumn>
-                                                <dx:GridViewDataTextColumn FieldName="AppId" ShowInCustomizationForm="True" VisibleIndex="11" Visible="False">
+                                                <dx:GridViewDataTextColumn FieldName="AppId" ShowInCustomizationForm="True" VisibleIndex="10" Visible="False">
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn ShowInCustomizationForm="True" VisibleIndex="12" FieldName="Remarks" Visible="False">
+                                                <dx:GridViewDataTextColumn ShowInCustomizationForm="True" VisibleIndex="11" FieldName="Remarks" Visible="False">
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn FieldName="UserId" ShowInCustomizationForm="True" Visible="False" VisibleIndex="13">
+                                                <dx:GridViewDataTextColumn FieldName="UserId" ShowInCustomizationForm="True" Visible="False" VisibleIndex="12">
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn FieldName="CompanyId" ShowInCustomizationForm="True" Visible="False" VisibleIndex="14">
+                                                <dx:GridViewDataTextColumn FieldName="CompanyId" ShowInCustomizationForm="True" Visible="False" VisibleIndex="13">
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn Caption="Purpose" ShowInCustomizationForm="True" VisibleIndex="7">
+                                                <dx:GridViewDataTextColumn Caption="Purpose" ShowInCustomizationForm="True" VisibleIndex="5">
                                                     <CellStyle HorizontalAlign="Left">
                                                     </CellStyle>
                                                     <Columns>
@@ -188,7 +188,7 @@
                                                         </dx:GridViewDataTextColumn>
                                                     </Columns>
                                                 </dx:GridViewDataTextColumn>
-                                                <dx:GridViewDataTextColumn Caption="Status" FieldName="STS_Description" ShowInCustomizationForm="True" VisibleIndex="9">
+                                                <dx:GridViewDataTextColumn Caption="Status" FieldName="STS_Description" ShowInCustomizationForm="True" VisibleIndex="8">
                                                     <CellStyle HorizontalAlign="Center">
                                                     </CellStyle>
                                                     <Columns>
@@ -212,7 +212,7 @@
                                                         </dx:GridViewDataComboBoxColumn>
                                                     </Columns>
                                                 </dx:GridViewDataDateColumn>
-                                                <dx:GridViewDataComboBoxColumn Caption="Document Type" FieldName="AppDocTypeId" ShowInCustomizationForm="True" VisibleIndex="8">
+                                                <dx:GridViewDataComboBoxColumn Caption="Document Type" FieldName="AppDocTypeId" ShowInCustomizationForm="True" VisibleIndex="6">
                                                     <PropertiesComboBox DataSourceID="SqlAppDocType" TextField="DCT_Description" ValueField="DCT_Id">
                                                     </PropertiesComboBox>
                                                     <CellStyle HorizontalAlign="Center">
@@ -226,7 +226,7 @@
                                                         </dx:GridViewDataComboBoxColumn>
                                                     </Columns>
                                                 </dx:GridViewDataComboBoxColumn>
-                                                <dx:GridViewDataTextColumn Caption="Department" ShowInCustomizationForm="True" VisibleIndex="5">
+                                                <dx:GridViewDataTextColumn Caption="Department" ShowInCustomizationForm="True" VisibleIndex="4">
                                                     <CellStyle HorizontalAlign="Left">
                                                     </CellStyle>
                                                     <Columns>
@@ -237,6 +237,8 @@
                                                             </CellStyle>
                                                         </dx:GridViewDataComboBoxColumn>
                                                     </Columns>
+                                                </dx:GridViewDataTextColumn>
+                                                <dx:GridViewDataTextColumn Caption="Amount" ShowInCustomizationForm="True" VisibleIndex="7">
                                                 </dx:GridViewDataTextColumn>
                                             </Columns>
                                             <Toolbars>
