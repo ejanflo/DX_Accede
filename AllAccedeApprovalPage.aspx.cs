@@ -114,8 +114,13 @@ namespace DX_WebTemplate
                         }
                     case "ACDE Expense":
                         {
-                            var expenseName = context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.ExpenseName).FirstOrDefault();
-                            return Upper(expenseName);
+                            var empRaw = context.ACCEDE_T_ExpenseMains.Where(x => x.ID == id).Select(x => x.ExpenseName).FirstOrDefault()?.ToString();
+                            var empDigits = new string((empRaw ?? string.Empty).Where(char.IsDigit).ToArray());
+                            if (!string.IsNullOrEmpty(empDigits))
+                            {
+                                return Upper(context.ITP_S_UserMasters.Where(x => x.EmpCode == empDigits).Select(x => x.FullName).FirstOrDefault());
+                            }
+                            return string.Empty;
                         }
                     case "ACDE Expense Travel":
                         {

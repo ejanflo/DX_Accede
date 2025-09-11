@@ -3115,7 +3115,7 @@ AddExpDetails();
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <asp:Panel ID="Panel2" runat="server" CssClass="exp-link-container">
-                                                    <dx:ASPxCheckBox ID="chk_Compute_add" runat="server" CheckState="Unchecked" Font-Size="Smaller" ToolTip="Mark this box to compute" ClientInstanceName="chk_Compute_add">
+                                                    <dx:ASPxCheckBox ID="chk_Compute_add" runat="server" CheckState="Checked" Font-Size="Smaller" ToolTip="Mark this box to compute" ClientInstanceName="chk_Compute_add" Checked="True">
                                                         <ClientSideEvents ValueChanged="function(s, e) {
 	computeNetAmount(&quot;add&quot;);
 }" />
