@@ -260,15 +260,6 @@ Ensure compliance with respective licenses in distributed environments.
 
 ---
 
-## Contact / Ownership
-
-- Core Modules: ACCEDE Finance Automation
-- Session / Security Integration: AnfloSession subsystem
-- Email Templates: Managed via `ITP_S_Texts`
-- For enhancements or issues: Submit via internal issue tracker / helpdesk.
-
----
-
 ## Appendix: Core JavaScript Viewer Functions (Summary)
 
 | Function | Purpose |
