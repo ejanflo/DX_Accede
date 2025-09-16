@@ -291,64 +291,66 @@
             if (signaturePad.isEmpty() && stats == 1) {
                 alert("Please provide a signature before submitting.");
                 return;
-            }
+            } else {
+                const signatureData = signaturePad.toDataURL('image/png');
 
-            const signatureData = signaturePad.toDataURL('image/png');
+                $.ajax({
+                    type: "POST",
+                    url: "RFPViewPage.aspx/SaveCashierChangesAJAX",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify({
+                        SAPDoc: SAPDoc,
+                        stats: stats,
+                        signatureData: signatureData,
+                        signee: signee
+                    }),
+                    success: function (response) {
+                        // Update the description text box with the response value
+                        var funcResult = response.d;
 
-            $.ajax({
-                type: "POST",
-                url: "RFPViewPage.aspx/SaveCashierChangesAJAX",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                data: JSON.stringify({
-                    SAPDoc: SAPDoc,
-                    stats: stats,
-                    signatureData: signatureData,
-                    signee: signee
-                }),
-                success: function (response) {
-                    // Update the description text box with the response value
-                    var funcResult = response.d;
+                        if (funcResult == "success") {
 
-                    if (funcResult == "success") {
-                        
 
-                        if (stats == 1) {
-                            LoadingPanel1.SetText('Payment disbursed! Printing report&hellip;');
-                            LoadingPanel1.Show();
-                            
-                            setTimeout(function () {
-                                window.open('RFPPrintPage.aspx', '_blank');
-                            }, 3000); // Adjust the time (in milliseconds) as needed
+                            if (stats == 1) {
+                                LoadingPanel1.SetText('Payment disbursed! Printing report&hellip;');
+                                LoadingPanel1.Show();
 
-                            // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
-                            LoadingPanel1.SetText('Printing successful! Redirecting&hellip;');
-                            LoadingPanel1.Show();
-                            setTimeout(function () {
-                                window.location.href = 'AllAccedeCashierPage.aspx';
-                            }, 3000); // Adjust the time (in milliseconds) as needed
+                                setTimeout(function () {
+                                    window.open('RFPPrintPage.aspx', '_blank');
+                                }, 3000); // Adjust the time (in milliseconds) as needed
+
+                                // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
+                                LoadingPanel1.SetText('Printing successful! Redirecting&hellip;');
+                                LoadingPanel1.Show();
+                                setTimeout(function () {
+                                    window.location.href = 'AllAccedeCashierPage.aspx';
+                                }, 3000); // Adjust the time (in milliseconds) as needed
+
+                            } else {
+                                LoadingPanel1.SetText('Changes saved successfully! Updating document&hellip;');
+                                LoadingPanel1.Show();
+                                // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
+                                setTimeout(function () {
+                                    window.location.href = 'AllAccedeCashierPage.aspx';
+                                }, 3000); // Adjust the time (in milliseconds) as needed
+                            }
 
                         } else {
-                            LoadingPanel1.SetText('Changes saved successfully! Updating document&hellip;');
-                            LoadingPanel1.Show();
-                            // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
-                            setTimeout(function () {
-                                window.location.href = 'AllAccedeCashierPage.aspx';
-                            }, 3000); // Adjust the time (in milliseconds) as needed
-                        }
-                        
-                    } else {
-                        alert(response.d);
-                        LoadingPanel1.SetText('Changes saving failed!&hellip;');
-                        LoadingPanel1.Hide();
+                            alert(response.d);
+                            LoadingPanel1.SetText('Changes saving failed!&hellip;');
+                            LoadingPanel1.Hide();
 
-                        window.location.href = 'RFPViewPage.aspx';
+                            window.location.href = 'RFPViewPage.aspx';
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("Error:", error);
                     }
-                },
-                error: function (xhr, status, error) {
-                    console.log("Error:", error);
-                }
-            });
+                });
+            }
+
+            
         }
 
         //PDF/IMAGE VIEWER

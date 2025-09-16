@@ -417,53 +417,54 @@
             if (signaturePad.isEmpty()) {
                 alert("Please provide a signature before submitting.");
                 return;
+            } else {
+                const signatureData = signaturePad.toDataURL('image/png');
+
+                $.ajax({
+                    type: "POST",
+                    url: "AccedeNonPO_CashierView.aspx/DisburseAJAX",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify({
+                        secureToken: secureToken,
+                        signatureData: signatureData,
+                        signee: signee
+                    }),
+                    success: function (response) {
+
+                        var funcResult = response.d;
+                        // Update the description text box with the response value
+                        if (funcResult == "success") {
+                            LoadingPanel.SetText('Payment to vendor successfully disbursed. Redirecting&hellip;');
+                            LoadingPanel.Show();
+
+                            setTimeout(function () {
+                                window.open('RFPPrintPage.aspx', '_blank');
+                            }, 3000); // Adjust the time (in milliseconds) as needed
+
+                            // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
+                            LoadingPanel.SetText('Printing report&hellip;');
+                            LoadingPanel.Show();
+                            setTimeout(function () {
+                                window.location.href = 'AllAccedeCashierPage.aspx';
+                            }, 3000); // Adjust the time (in milliseconds) as needed
+
+
+
+                        } else {
+                            alert(response.d);
+                            LoadingPanel.SetText('Disbursement failed!&hellip;');
+                            LoadingPanel.Hide();
+
+                            //window.location.href = 'AccedeCashierExpenseViewPage.aspx';
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("Error:", error);
+                    }
+                });
             }
 
-            const signatureData = signaturePad.toDataURL('image/png');
-
-            $.ajax({
-                type: "POST",
-                url: "AccedeNonPO_CashierView.aspx/DisburseAJAX",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                data: JSON.stringify({
-                    secureToken: secureToken,
-                    signatureData: signatureData,
-                    signee: signee
-                }),
-                success: function (response) {
-
-                    var funcResult = response.d;
-                    // Update the description text box with the response value
-                    if (funcResult == "success") {
-                        LoadingPanel.SetText('Payment to vendor successfully disbursed. Redirecting&hellip;');
-                        LoadingPanel.Show();
-
-                        setTimeout(function () {
-                            window.open('RFPPrintPage.aspx', '_blank');
-                        }, 3000); // Adjust the time (in milliseconds) as needed
-
-                        // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
-                        LoadingPanel.SetText('Printing report&hellip;');
-                        LoadingPanel.Show();
-                        setTimeout(function () {
-                            window.location.href = 'AllAccedeCashierPage.aspx';
-                        }, 3000); // Adjust the time (in milliseconds) as needed
-
-                    
-
-                    } else {
-                        alert(response.d);
-                        LoadingPanel.SetText('Disbursement failed!&hellip;');
-                        LoadingPanel.Hide();
-
-                        //window.location.href = 'AccedeCashierExpenseViewPage.aspx';
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.log("Error:", error);
-                }
-            });
         }
 
         //PDF/IMAGE VIEWER

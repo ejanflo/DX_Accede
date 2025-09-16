@@ -459,79 +459,80 @@
             if (signaturePad.isEmpty() && stats == 1) {
                 alert("Please provide a signature before submitting.");
                 return;
-            }
+            } else {
+                const signatureData = signaturePad.toDataURL('image/png');
 
-            const signatureData = signaturePad.toDataURL('image/png');
+                $.ajax({
+                    type: "POST",
+                    url: "AccedeCashierExpenseViewPage.aspx/SaveCashierChangesAJAX",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify({
+                        SAPDoc: SAPDoc,
+                        stats: stats,
+                        secureToken: secureToken,
+                        signee: signee,
+                        signatureData: signatureData
 
-            $.ajax({
-                type: "POST",
-                url: "AccedeCashierExpenseViewPage.aspx/SaveCashierChangesAJAX",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                data: JSON.stringify({
-                    SAPDoc: SAPDoc,
-                    stats: stats,
-                    secureToken: secureToken,
-                    signee: signee,
-                    signatureData: signatureData
+                    }),
+                    success: function (response) {
+                        // Update the description text box with the response value
+                        var funcResult = response.d;
 
-                }),
-                success: function (response) {
-                    // Update the description text box with the response value
-                    var funcResult = response.d;
-
-                    if (funcResult == "success") {
-                        LoadingPanel.SetText('You approved this request. Redirecting&hellip;');
-                        LoadingPanel.Show();
-
-                        //setTimeout(function () {
-                        //    window.open('RFPPrintPage.aspx', '_blank');
-                        //}, 3000); // Adjust the time (in milliseconds) as needed
-
-                        //// Delay the redirection by, for example, 3 seconds (3000 milliseconds)
-                        //LoadingPanel.SetText('Printing report&hellip;');
-                        //LoadingPanel.Show();
-                        setTimeout(function () {
-                            window.location.href = 'AllAccedeCashierPage.aspx';
-                        }, 3000); // Adjust the time (in milliseconds) as needed
-
-                    } else if (funcResult == "success with reim") {
-                        if (stats == 1) {
-                            LoadingPanel.SetText('Payment disbursed! Redirecting&hellip;');
+                        if (funcResult == "success") {
+                            LoadingPanel.SetText('You approved this request. Redirecting&hellip;');
                             LoadingPanel.Show();
-                            // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
-                            setTimeout(function () {
-                                window.open('RFPPrintPage.aspx', '_blank');
-                            }, 3000); // Adjust the time (in milliseconds) as needed
 
-                            // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
-                            LoadingPanel.SetText('Printing report&hellip;');
-                            LoadingPanel.Show();
+                            //setTimeout(function () {
+                            //    window.open('RFPPrintPage.aspx', '_blank');
+                            //}, 3000); // Adjust the time (in milliseconds) as needed
+
+                            //// Delay the redirection by, for example, 3 seconds (3000 milliseconds)
+                            //LoadingPanel.SetText('Printing report&hellip;');
+                            //LoadingPanel.Show();
                             setTimeout(function () {
                                 window.location.href = 'AllAccedeCashierPage.aspx';
                             }, 3000); // Adjust the time (in milliseconds) as needed
+
+                        } else if (funcResult == "success with reim") {
+                            if (stats == 1) {
+                                LoadingPanel.SetText('Payment disbursed! Redirecting&hellip;');
+                                LoadingPanel.Show();
+                                // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
+                                setTimeout(function () {
+                                    window.open('RFPPrintPage.aspx', '_blank');
+                                }, 3000); // Adjust the time (in milliseconds) as needed
+
+                                // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
+                                LoadingPanel.SetText('Printing report&hellip;');
+                                LoadingPanel.Show();
+                                setTimeout(function () {
+                                    window.location.href = 'AllAccedeCashierPage.aspx';
+                                }, 3000); // Adjust the time (in milliseconds) as needed
+                            } else {
+                                LoadingPanel.SetText('Changes saved successfully! Updating document&hellip;');
+                                LoadingPanel.Show();
+                                // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
+                                setTimeout(function () {
+                                    window.location.href = 'AllAccedeCashierPage.aspx';
+                                }, 3000); // Adjust the time (in milliseconds) as needed
+                            }
+
                         } else {
-                            LoadingPanel.SetText('Changes saved successfully! Updating document&hellip;');
-                            LoadingPanel.Show();
-                            // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
-                            setTimeout(function () {
-                                window.location.href = 'AllAccedeCashierPage.aspx';
-                            }, 3000); // Adjust the time (in milliseconds) as needed
+                            alert(response.d);
+                            LoadingPanel.SetText('Changes saving failed!&hellip;');
+                            LoadingPanel.Hide();
+
+                            //window.location.href = 'AccedeCashierExpenseViewPage.aspx';
                         }
 
-                    } else {
-                        alert(response.d);
-                        LoadingPanel.SetText('Changes saving failed!&hellip;');
-                        LoadingPanel.Hide();
-
-                        //window.location.href = 'AccedeCashierExpenseViewPage.aspx';
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("Error:", error);
                     }
+                });
+            }
 
-                },
-                error: function (xhr, status, error) {
-                    console.log("Error:", error);
-                }
-            });
         }
 
          function redirectToEditPage() {
