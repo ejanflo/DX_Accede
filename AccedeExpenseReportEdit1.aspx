@@ -1241,7 +1241,7 @@ if (ASPxClientEdit.ValidateGroup('ExpenseEdit')) {
                         </dx:EmptyLayoutItem>
                         <dx:LayoutGroup Caption="" ColSpan="2" GroupBoxDecoration="None" ColCount="2" ColumnCount="2" ColumnSpan="2" Width="100%">
                             <Items>
-                                <dx:TabbedLayoutGroup ColSpan="1" Width="60%">
+                                <dx:TabbedLayoutGroup ColSpan="1" Width="60%" VerticalAlign="Top">
                                     <Items>
                                         <dx:LayoutGroup Caption="REPORT HEADER DETAILS" ColSpan="1" GroupBoxDecoration="None" Width="100%">
                                             <Items>
@@ -1469,7 +1469,7 @@ io_edit.PerformCallback(s.GetValue());
                                         </dx:LayoutGroup>
                                     </Items>
                                 </dx:TabbedLayoutGroup>
-                                <dx:TabbedLayoutGroup ColSpan="1" HorizontalAlign="Right" TabSpacing="40%">
+                                <dx:TabbedLayoutGroup ColSpan="1" VerticalAlign="Top" Width="40%">
                                     <Items>
                                         <dx:LayoutGroup Caption="CASH ADVANCE DETAILS" ColSpan="1" GroupBoxDecoration="None" Width="100%">
                                             <Items>
