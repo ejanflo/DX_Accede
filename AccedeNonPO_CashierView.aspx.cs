@@ -14,420 +14,432 @@ namespace DX_WebTemplate
 {
     public partial class AccedeNonPO_CashierView : System.Web.UI.Page
     {
-        ITPORTALDataContext _DataContext = new ITPORTALDataContext(ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString);
+        private ITPORTALDataContext _DataContext = new ITPORTALDataContext(
+            ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString);
+
+        // Simple cache keys
+        private const string CacheKey_Statuses = "ACCEDE_CachedStatuses";
+        private const string CacheKey_DocTypes = "ACCEDE_CachedDocTypes";
 
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
-                if (AnfloSession.Current.ValidCookieUser())
-                {
-                    AnfloSession.Current.CreateSession(HttpContext.Current.User.ToString());
-                    if (!IsPostBack)
-                    {
-                        string encryptedID = Request.QueryString["secureToken"];
-                        if (!string.IsNullOrEmpty(encryptedID))
-                        {
-                            //Start ------------------ Page Security
-                            string empCode = Session["userID"].ToString();
-                            int appID = 26; //22-ITPORTAL; 13-CAR; 26-RS; 1027-RFP; 1028-UAR
-
-                            string url = Request.Url.AbsolutePath; // Get the current URL
-                            string pageName = Path.GetFileNameWithoutExtension(url); // Get the filename without extension
-                            //if (!AnfloSession.Current.hasPageAccess(empCode, appID, pageName))
-                            //{
-                            //    Session["appID"] = appID.ToString();
-                            //    Session["pageName"] = pageName.ToString();
-
-                            //    Response.Redirect("~/ErrorAccess.aspx");
-                            //}
-                            //End ------------------ Page Security
-
-                            int actID = Convert.ToInt32(Decrypt(encryptedID));
-
-                            var actDetails = _DataContext.ITP_T_WorkflowActivities
-                                .Where(x => x.WFA_Id == Convert.ToInt32(actID))
-                                .FirstOrDefault();
-
-                            var invDetails = _DataContext.ACCEDE_T_InvoiceMains
-                                .Where(x => x.ID == Convert.ToInt32(actDetails.Document_Id))
-                                .FirstOrDefault();
-
-                            var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE InvoiceNPO").Where(x => x.App_Id == 1032).FirstOrDefault();
-
-                            sqlMain.SelectParameters["ID"].DefaultValue = invDetails.ID.ToString();
-                            SqlDocs.SelectParameters["Doc_ID"].DefaultValue = actDetails.Document_Id.ToString();
-                            SqlDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType != null ? app_docType.DCT_Id.ToString() : null;
-                            SqlCA.SelectParameters["Exp_ID"].DefaultValue = invDetails.ID.ToString();
-                            SqlReimDetails.SelectParameters["Exp_ID"].DefaultValue = invDetails.ID.ToString();
-                            SqlExpDetails.SelectParameters["InvMain_ID"].DefaultValue = invDetails.ID.ToString();
-                            SqlWFActivity.SelectParameters["Document_Id"].DefaultValue = invDetails.ID.ToString();
-
-                            SqlDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType.DCT_Id.ToString();
-
-                            //var inv = _DataContext.ACCEDE_T_InvoiceMains
-                            //    .Where(x => x.ID == invDetails.ID)
-                            //    .FirstOrDefault();
-
-                            SqlWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(invDetails.WF_Id).ToString();
-                            SqlFAPWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(invDetails.FAPWF_Id).ToString();
-
-                            var status_id = invDetails.Status.ToString();
-                            var user_id = invDetails.UserId.ToString();
-
-                            var myLayoutGroup = FormExpApprovalView.FindItemOrGroupByName("ExpTitle") as LayoutGroup;
-                            var btnDisburse = FormExpApprovalView.FindItemOrGroupByName("disburseBtn") as LayoutItem;
-
-                            if (myLayoutGroup != null)
-                            {
-                                myLayoutGroup.Caption = "Invoice Document -" + invDetails.DocNo.ToString() + " (View)";
-                            }
-
-                            string raw = invDetails.VendorName.ToString();
-                            string cleaned = raw.Replace("\r", "").Replace("\n", "");
-                            var vendors = SAPVendor.GetVendorData("")
-                                .GroupBy(x => new { x.VENDCODE, x.VENDNAME })
-                                .Select(g => g.First())
-                                .ToList();
-
-                            var payee = vendors.Where(x => x.VENDCODE == cleaned).FirstOrDefault();
-                            //txt_Vendor.Text = payee.VendorName.ToString();
-
-                            var ExpDetails = _DataContext.ACCEDE_T_InvoiceLineDetails.Where(x => x.InvMain_ID == invDetails.ID);
-                            decimal totalExp = 0;
-                            foreach (var item in ExpDetails)
-                            {
-                                totalExp += Convert.ToDecimal(item.NetAmount);
-                            }
-                            expenseTotal.Text = totalExp.ToString("#,##0.00") + "  PHP ";
-
-                            txt_InvoiceNo.Text = invDetails.InvoiceNo?.ToString();
-
-                            //var vendorDetails = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == invDetails.VendorName).FirstOrDefault();
-                            //if (vendorDetails != null)
-                            //{
-                            //    string tin = vendorDetails.TaxID.ToString();
-
-                            //    if (tin.Length > 9)
-                            //    {
-                            //        string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6, 3)}-{tin.Substring(9)}";
-                            //        txt_TIN.Text = formattedTin;
-                            //    }
-                            //    else if (tin.Length > 6)
-                            //    {
-                            //        string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6)}";
-                            //        txt_TIN.Text = formattedTin;
-                            //    }
-                            //    else if (tin.Length > 3)
-                            //    {
-                            //        string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3)}";
-                            //        txt_TIN.Text = formattedTin;
-                            //    }
-                            //    else
-                            //    {
-                            //        txt_TIN.Text = tin; // less than 3 digits, no formatting
-                            //    }
-
-                            //    string Clean(string input)
-                            //    {
-                            //        if (string.IsNullOrWhiteSpace(input))
-                            //            return "";
-
-                            //        // remove line breaks and trim
-                            //        string cleanedVendorstr = input.Replace("\r", " ").Replace("\n", " ").Trim();
-
-                            //        return ", " + cleanedVendorstr;
-                            //    }
-
-                            //    memo_VendorAddress.Text =
-                            //        (vendorDetails.Address1 ?? "").Replace("\r", " ").Replace("\n", " ").Trim()
-                            //        + Clean(vendorDetails.City ?? "")
-                            //        + Clean(vendorDetails.State ?? "");
-
-
-                            //}
-
-                            var pendingCashierStats = _DataContext.ITP_S_Status
-                                .Where(x => x.STS_Name == "Pending at Cashier")
-                                .FirstOrDefault();
-
-                            if (status_id == pendingCashierStats.STS_Id.ToString())
-                            {
-                                btnDisburse.ClientVisible = true;
-                            }
-                            var PendingAuditStat = _DataContext.ITP_S_Status.Where(x => x.STS_Name == "Pending at Audit").FirstOrDefault();
-                            //if (status_id == PendingAuditStat.STS_Id.ToString())
-                            //{
-                            //    var print = FormExpApprovalView.FindItemOrGroupByName("PrintBtn") as LayoutItem;
-                            //    print.ClientVisible = true;
-                            //}
-
-                            //if (status_id == "1" && expDetails.UserId == empCode)
-                            //{
-                            //    btnRecall.ClientVisible = true;
-                            //}
-
-
-                            var ptvRFP = _DataContext.ACCEDE_T_RFPMains
-                                            .Where(x => x.IsExpenseReim != true)
-                                            .Where(x => x.IsExpenseCA != true)
-                                            .Where(x => x.Status != 4)
-                                            .Where(x => x.Exp_ID == Convert.ToInt32(invDetails.ID))
-                                            .Where(x => x.isTravel != true)
-                                            .FirstOrDefault();
-
-                            if (ptvRFP == null)
-                            {
-                                var reim = FormExpApprovalView.FindItemOrGroupByName("reimItem") as LayoutItem;
-                                if (reim != null)
-                                {
-                                    reim.ClientVisible = true;
-                                    //ReimburseGrid.Visible = false;
-                                }
-
-                            }
-                            else
-                            {
-                                var reim = FormExpApprovalView.FindItemOrGroupByName("ReimLayout") as LayoutGroup;
-                                if (reim != null)
-                                {
-                                    reim.ClientVisible = true;
-                                    link_rfp.Value = ptvRFP.RFP_DocNum;
-                                }
-
-                                txt_SAPDoc.Text = ptvRFP.SAPDocNo != null ? ptvRFP.SAPDocNo : "";
-                            }
-                        }
-                        else
-                        {
-                            Response.Redirect("~/AccedeInvoiceNonPODashboard.aspx");
-                        }
-                    }
-
-
-                }
-                else
+                if (!AnfloSession.Current.ValidCookieUser())
                 {
                     Response.Redirect("~/Logon.aspx");
+                    return;
                 }
+
+                AnfloSession.Current.CreateSession(HttpContext.Current.User.ToString());
+
+                if (IsPostBack) return;
+
+                var encryptedID = Request.QueryString["secureToken"];
+                if (string.IsNullOrEmpty(encryptedID))
+                {
+                    Response.Redirect("~/AccedeInvoiceNonPODashboard.aspx");
+                    return;
+                }
+
+                string decrypted = SafeDecrypt(encryptedID);
+                if (!int.TryParse(decrypted, out int actID))
+                {
+                    Response.Redirect("~/AccedeInvoiceNonPODashboard.aspx");
+                    return;
+                }
+
+                InitializePage(actID);
             }
-            catch (Exception ex)
+            catch
             {
-                //Session["MyRequestPath"] = Request.Url.AbsoluteUri;
                 Response.Redirect("~/Logon.aspx");
             }
         }
 
+        // OPTIMIZATION: Safe decrypt wrapper
+        private string SafeDecrypt(string encrypted)
+        {
+            try
+            {
+                return Decrypt(encrypted);
+            }
+            catch
+            {
+                return "";
+            }
+        }
+
+        private void InitializePage(int actID)
+        {
+            // Fix for CS1931: The range variable 'inv' conflicts with a previous declaration of 'inv'.
+            // The issue occurs because the variable name 'inv' is already used in the same scope.
+            // To resolve this, we rename the conflicting variable to a unique name.
+
+            var wfAndInv = (from w in _DataContext.ITP_T_WorkflowActivities
+                            join invoice in _DataContext.ACCEDE_T_InvoiceMains on w.Document_Id equals invoice.ID
+                            where w.WFA_Id == actID
+                            select new
+                            {
+                                Workflow = w,
+                                Invoice = invoice
+                            }).FirstOrDefault();
+
+            if (wfAndInv == null)
+            {
+                Response.Redirect("~/AccedeInvoiceNonPODashboard.aspx");
+                return;
+            }
+
+            var wf = wfAndInv.Workflow;
+            var inv = wfAndInv.Invoice;
+
+            // Cache + load needed Status names
+            var neededStatusNames = new[] { "Pending at Cashier", "Pending at Audit", "Complete" };
+            var statuses = GetCachedStatuses()
+                .Where(s => neededStatusNames.Contains(s.STS_Name))
+                .ToDictionary(s => s.STS_Name, s => s);
+
+            // Cache + load document types (RFP + InvoiceNPO)
+            var docTypes = GetCachedDocTypes()
+                .Where(d => d.App_Id == 1032 &&
+                            (d.DCT_Name == "ACDE InvoiceNPO" || d.DCT_Name == "ACDE RFP"))
+                .ToDictionary(d => d.DCT_Name, d => d);
+
+            ITP_S_DocumentType invDocType;
+            docTypes.TryGetValue("ACDE InvoiceNPO", out invDocType);
+
+            // Set all SqlDataSource parameters (only once)
+            string invIdStr = inv.ID.ToString();
+            string docTypeIdStr = (invDocType != null ? invDocType.DCT_Id.ToString() : null);
+
+            sqlMain.SelectParameters["ID"].DefaultValue = invIdStr;
+            SqlDocs.SelectParameters["Doc_ID"].DefaultValue = wf.Document_Id.ToString();
+            SqlDocs.SelectParameters["DocType_Id"].DefaultValue = docTypeIdStr;
+            SqlCA.SelectParameters["Exp_ID"].DefaultValue = invIdStr;
+            SqlReimDetails.SelectParameters["Exp_ID"].DefaultValue = invIdStr;
+            SqlExpDetails.SelectParameters["InvMain_ID"].DefaultValue = invIdStr;
+            SqlWFActivity.SelectParameters["Document_Id"].DefaultValue = invIdStr;
+            SqlWFSequence.SelectParameters["WF_Id"].DefaultValue = (inv.WF_Id ?? 0).ToString();
+            SqlFAPWFSequence.SelectParameters["WF_Id"].DefaultValue = (inv.FAPWF_Id ?? 0).ToString();
+
+            // UI: Layout caption
+            var layoutGroup = FormExpApprovalView.FindItemOrGroupByName("ExpTitle") as LayoutGroup;
+            if (layoutGroup != null)
+            {
+                layoutGroup.Caption = "Invoice Document - " + (inv.DocNo ?? "") + " (View)";
+            }
+
+            // Vendor handling (OPTIMIZATION: avoid loading all vendors)
+            string vendorCodeClean = (inv.VendorName ?? "").Replace("\r", "").Replace("\n", "").Trim();
+            //var payee = TryGetVendorByCode(vendorCodeClean);
+            // If needed later: assign UI field (kept commented because original was commented)
+            // txt_Vendor.Text = payee?.VendorName ?? "";
+
+            // Expense total via DB SUM
+            decimal totalExp = _DataContext.ACCEDE_T_InvoiceLineDetails
+                .Where(x => x.InvMain_ID == inv.ID)
+                .Select(x => (decimal?)x.NetAmount).Sum() ?? 0m;
+            expenseTotal.Text = totalExp.ToString("#,##0.00") + "  PHP ";
+
+            txt_InvoiceNo.Text = inv.InvoiceNo ?? "";
+
+            // Disburse button visibility
+            LayoutItem btnDisburse = FormExpApprovalView.FindItemOrGroupByName("disburseBtn") as LayoutItem;
+            if (btnDisburse != null &&
+                statuses.ContainsKey("Pending at Cashier") &&
+                inv.Status == statuses["Pending at Cashier"].STS_Id)
+            {
+                btnDisburse.ClientVisible = true;
+            }
+
+            // RFP main retrieval
+            var rfpMain = _DataContext.ACCEDE_T_RFPMains.FirstOrDefault(x =>
+                x.Exp_ID == inv.ID &&
+                x.Status != 4 &&
+                x.IsExpenseReim != true &&
+                x.IsExpenseCA != true &&
+                x.isTravel != true);
+
+            if (rfpMain == null)
+            {
+                var reimItem = FormExpApprovalView.FindItemOrGroupByName("reimItem") as LayoutItem;
+                if (reimItem != null) reimItem.ClientVisible = true;
+            }
+            else
+            {
+                var reimLayout = FormExpApprovalView.FindItemOrGroupByName("ReimLayout") as LayoutGroup;
+                if (reimLayout != null)
+                {
+                    reimLayout.ClientVisible = true;
+                    link_rfp.Value = rfpMain.RFP_DocNum;
+                }
+                txt_SAPDoc.Text = rfpMain.SAPDocNo ?? "";
+            }
+        }
+
+        // OPTIMIZATION: vendor lookup specialization (fallback to existing bulk call)
+        private dynamic TryGetVendorByCode(string vendorCode)
+        {
+            if (string.IsNullOrEmpty(vendorCode)) return null;
+
+            // If a specialized method exists, prefer it:
+            // return SAPVendor.GetVendorByCode(vendorCode);
+
+            // Fallback: still reduces memory by filtering before GroupBy if implementation supports predicate
+            var allVendors = SAPVendor.GetVendorData(vendorCode); // Suggest modifying this to accept filter
+            var result = allVendors
+                .Where(v => v.VENDCODE == vendorCode)
+                .GroupBy(v => new { v.VENDCODE, v.VENDNAME })
+                .Select(g => g.First())
+                .FirstOrDefault();
+            return result;
+        }
+
+        private IEnumerable<ITP_S_Status> GetCachedStatuses()
+        {
+            var cache = HttpRuntime.Cache[CacheKey_Statuses] as List<ITP_S_Status>;
+            if (cache == null)
+            {
+                cache = _DataContext.ITP_S_Status.ToList();
+                HttpRuntime.Cache.Insert(CacheKey_Statuses, cache, null, DateTime.Now.AddMinutes(10), TimeSpan.Zero);
+            }
+            return cache;
+        }
+
+        private IEnumerable<ITP_S_DocumentType> GetCachedDocTypes()
+        {
+            var cache = HttpRuntime.Cache[CacheKey_DocTypes] as List<ITP_S_DocumentType>;
+            if (cache == null)
+            {
+                cache = _DataContext.ITP_S_DocumentTypes.ToList();
+                HttpRuntime.Cache.Insert(CacheKey_DocTypes, cache, null, DateTime.Now.AddMinutes(30), TimeSpan.Zero);
+            }
+            return cache;
+        }
+
         private string Decrypt(string encryptedText)
         {
-            // Example: Use the corresponding decryption logic
             return System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(encryptedText));
         }
 
         [WebMethod]
-        public static string DisburseAJAX(string secureToken)
+        public static string DisburseAJAX(string secureToken, string signatureData, string signee)
         {
-            AccedeNonPO_CashierView page = new AccedeNonPO_CashierView();
-            return page.Disburse(secureToken);
+            // OPTIMIZATION: Do not instantiate Page; use a lightweight handler pattern
+            var ctx = new ITPORTALDataContext(
+                ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString);
+            return DisburseInternal(ctx, secureToken, signatureData, signee);
         }
 
-        public string Disburse(string secureToken)
+        private static string DisburseInternal(ITPORTALDataContext dc, string secureToken, string signatureData, string signee)
         {
             try
             {
-                if (!string.IsNullOrEmpty(secureToken))
+                if (string.IsNullOrEmpty(secureToken)) return "Secure token is empty.";
+
+                int actID = Convert.ToInt32(System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(secureToken)));
+
+                var wfDetails = dc.ITP_T_WorkflowActivities.FirstOrDefault(x => x.WFA_Id == actID);
+                if (wfDetails == null) return "Workflow not found.";
+
+                var rfp_main = dc.ACCEDE_T_RFPMains.FirstOrDefault(x =>
+                    x.Exp_ID == wfDetails.Document_Id &&
+                    x.Status != 4 &&
+                    x.IsExpenseReim != true &&
+                    x.IsExpenseCA != true &&
+                    x.isTravel != true);
+
+                var inv_main = dc.ACCEDE_T_InvoiceMains.FirstOrDefault(x => x.ID == wfDetails.Document_Id);
+                if (inv_main == null || rfp_main == null) return "Related document missing.";
+
+                var release_cash_status = dc.ITP_S_Status.FirstOrDefault(x => x.STS_Description == "Disbursed");
+                var completed_status = dc.ITP_S_Status.FirstOrDefault(x => x.STS_Name == "Complete");
+                var rfp_app_docType = dc.ITP_S_DocumentTypes.FirstOrDefault(x => x.DCT_Name == "ACDE RFP" && x.App_Id == 1032);
+
+                var reimActDetails = (rfp_app_docType != null)
+                    ? dc.ITP_T_WorkflowActivities.FirstOrDefault(x =>
+                        x.AppDocTypeId == rfp_app_docType.DCT_Id &&
+                        x.AppId == 1032 &&
+                        x.Document_Id == rfp_main.ID &&
+                        x.Status == wfDetails.Status)
+                    : null;
+
+                if (release_cash_status == null || completed_status == null)
+                    return "Status configuration missing.";
+
+                // Update workflow
+                wfDetails.DateAction = DateTime.Now;
+                wfDetails.Remarks = (HttpContext.Current != null && HttpContext.Current.Session != null
+                    ? (HttpContext.Current.Session["AuthUser"] + ": ;")
+                    : ";");
+                if (HttpContext.Current != null && HttpContext.Current.Session != null)
+                    wfDetails.ActedBy_User_Id = Convert.ToString(HttpContext.Current.Session["userID"]);
+                wfDetails.Status = release_cash_status.STS_Id;
+
+                if (reimActDetails != null)
                 {
-                    int actID = Convert.ToInt32(Decrypt(secureToken));
-                    var wfDetails = _DataContext.ITP_T_WorkflowActivities.Where(x => x.WFA_Id == Convert.ToInt32(actID)).FirstOrDefault();
-                    var rfp_main = _DataContext.ACCEDE_T_RFPMains
-                                .Where(x => x.IsExpenseReim != true)
-                                .Where(x => x.IsExpenseCA != true)
-                                .Where(x => x.Status != 4)
-                                .Where(x => x.Exp_ID == Convert.ToInt32(wfDetails.Document_Id))
-                                .Where(x => x.isTravel != true)
-                                .FirstOrDefault();
+                    reimActDetails.Status = release_cash_status.STS_Id;
+                    reimActDetails.DateAction = DateTime.Now;
+                    if (HttpContext.Current != null && HttpContext.Current.Session != null)
+                        reimActDetails.ActedBy_User_Id = Convert.ToString(HttpContext.Current.Session["userID"]);
+                }
 
-                    var inv_main = _DataContext.ACCEDE_T_InvoiceMains.Where(x => x.ID == Convert.ToInt32(wfDetails.Document_Id)).FirstOrDefault();
+                inv_main.Status = completed_status.STS_Id;
+                rfp_main.Status = release_cash_status.STS_Id;
 
-                    var release_cash_status = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Disbursed").FirstOrDefault();
-                    var completed_status = _DataContext.ITP_S_Status
-                        .Where(x => x.STS_Name == "Complete")
-                        .FirstOrDefault();
-
-                    var rfp_app_docType = _DataContext.ITP_S_DocumentTypes
-                        .Where(x => x.DCT_Name == "ACDE RFP")
-                        .Where(x => x.App_Id == 1032)
-                        .FirstOrDefault();
-
-                    var reimActDetails = _DataContext.ITP_T_WorkflowActivities
-                        .Where(x => x.AppDocTypeId == Convert.ToInt32(rfp_app_docType.DCT_Id))
-                        .Where(x => x.AppId == 1032)
-                        .Where(x => x.Document_Id == rfp_main.ID)
-                        .Where(x => x.Status == wfDetails.Status)
-                        .FirstOrDefault();
-
-                    //UPDATE EXP MAIN ACTIVITY
-                    wfDetails.DateAction = DateTime.Now;
-                    wfDetails.Remarks = Session["AuthUser"].ToString() + ": ;";
-                    wfDetails.ActedBy_User_Id = Session["userID"].ToString();
-                    wfDetails.Status = release_cash_status.STS_Id;
-
-                    //Update current reimburse Activity
-                    if (reimActDetails != null)
-                    {
-                        reimActDetails.Status = release_cash_status.STS_Id;
-                        reimActDetails.DateAction = DateTime.Now;
-                        reimActDetails.ActedBy_User_Id = Session["userID"].ToString();
-                    }
-
-                    inv_main.Status = completed_status.STS_Id;
-                    rfp_main.Status = release_cash_status.STS_Id;
-
-                    Session["passRFPID"] = rfp_main.ID.ToString();
-
-                    _DataContext.SubmitChanges();
-
-                    return "success";
+                byte[] signatureBytes = Base64ToBytes(signatureData);
+                var existRFPSignature = dc.ACCEDE_T_RFPSignatures.FirstOrDefault(x => x.RFPMain_Id == rfp_main.ID);
+                if(existRFPSignature != null)
+                {
+                    existRFPSignature.RFPMain_Id = rfp_main.ID;
+                    existRFPSignature.Signature = signatureBytes;
+                    existRFPSignature.Signee_Fullname = signee;
+                    existRFPSignature.Status_Id = release_cash_status.STS_Id;
+                    existRFPSignature.DateReceived = DateTime.Now;
                 }
                 else
                 {
-                    return "Secure token is empty.";
+                    ACCEDE_T_RFPSignature sig = new ACCEDE_T_RFPSignature
+                    {
+                        RFPMain_Id = rfp_main.ID,
+                        Signature = signatureBytes,
+                        Signee_Fullname = signee,
+                        Status_Id = release_cash_status.STS_Id,
+                        DateReceived = DateTime.Now
+                    };
+
+                    dc.ACCEDE_T_RFPSignatures.InsertOnSubmit(sig);
                 }
 
-                    
+                if (HttpContext.Current != null && HttpContext.Current.Session != null)
+                    HttpContext.Current.Session["passRFPID"] = rfp_main.ID.ToString();
+                
+                dc.SubmitChanges();
+                return "success";
             }
             catch (Exception ex)
             {
-
                 return ex.Message;
             }
+        }
+
+        public string Disburse(string secureToken, string signatureData, string signee)
+        {
+            // Preserve original instance method for backward compatibility
+            return DisburseInternal(_DataContext, secureToken, signatureData, signee);
         }
 
         protected void btnPrint_Click(object sender, EventArgs e)
         {
             string encryptedID = Request.QueryString["secureToken"];
-            if (!string.IsNullOrEmpty(encryptedID))
-            {
-                int actID = Convert.ToInt32(Decrypt(encryptedID));
+            if (string.IsNullOrEmpty(encryptedID)) return;
 
-                var actDetails = _DataContext.ITP_T_WorkflowActivities
-                    .Where(x => x.WFA_Id == Convert.ToInt32(actID))
-                    .FirstOrDefault();
+            string decrypted = SafeDecrypt(encryptedID);
+            int actID;
+            if (!int.TryParse(decrypted, out actID)) return;
 
-                var rfp_main = _DataContext.ACCEDE_T_RFPMains
-                            .Where(x => x.IsExpenseReim != true)
-                            .Where(x => x.IsExpenseCA != true)
-                            .Where(x => x.Status != 4)
-                            .Where(x => x.Exp_ID == Convert.ToInt32(actDetails.Document_Id))
-                            .Where(x => x.isTravel != true)
-                            .FirstOrDefault();
+            var actDetails = _DataContext.ITP_T_WorkflowActivities.FirstOrDefault(x => x.WFA_Id == actID);
+            if (actDetails == null) return;
 
-                Session["passRFPID"] = rfp_main.ID.ToString();
+            var rfp_main = _DataContext.ACCEDE_T_RFPMains.FirstOrDefault(x =>
+                x.Exp_ID == actDetails.Document_Id &&
+                x.Status != 4 &&
+                x.IsExpenseReim != true &&
+                x.IsExpenseCA != true &&
+                x.isTravel != true);
 
-                Response.Redirect("~/RFPPrintPage.aspx");
-            }
-                
+            if (rfp_main == null) return;
+
+            Session["passRFPID"] = rfp_main.ID.ToString();
+            Response.Redirect("~/RFPPrintPage.aspx");
         }
 
         protected void UploadController_FilesUploadComplete(object sender, FilesUploadCompleteEventArgs e)
         {
             string encryptedID = Request.QueryString["secureToken"];
-            if (!string.IsNullOrEmpty(encryptedID))
+            if (string.IsNullOrEmpty(encryptedID)) return;
+
+            string decrypted = SafeDecrypt(encryptedID);
+            int actID;
+            if (!int.TryParse(decrypted, out actID)) return;
+
+            var actDetails = _DataContext.ITP_T_WorkflowActivities.FirstOrDefault(x => x.WFA_Id == actID);
+            if (actDetails == null) return;
+
+            var invMain = _DataContext.ACCEDE_T_InvoiceMains.FirstOrDefault(x => x.ID == actDetails.Document_Id);
+            if (invMain == null) return;
+
+            var invDocType = _DataContext.ITP_S_DocumentTypes
+                .FirstOrDefault(x => x.DCT_Name == "ACDE InvoiceNPO" && x.App_Id == 1032);
+
+            foreach (var uploadedFile in UploadController.UploadedFiles) // Renamed 'file' to 'uploadedFile'
             {
+                string fileSizeStr;
+                long len = uploadedFile.ContentLength; // Changed type from int to long to match ContentLength property
+                if (len > 999999)
+                    fileSizeStr = (len / 1000000) + " MB";
+                else if (len > 999)
+                    fileSizeStr = (len / 1000) + " KB";
+                else
+                    fileSizeStr = len + " Bytes";
 
-                int actID = Convert.ToInt32(Decrypt(encryptedID));
-
-                var actDetails = _DataContext.ITP_T_WorkflowActivities
-                    .Where(x => x.WFA_Id == Convert.ToInt32(actID))
-                    .FirstOrDefault();
-
-                var invMain = _DataContext.ACCEDE_T_InvoiceMains.Where(x => x.ID == Convert.ToInt32(actDetails.Document_Id)).FirstOrDefault();
-
-                foreach (var file in UploadController.UploadedFiles)
+                var docs = new ITP_T_FileAttachment
                 {
-                    var filesize = 0.00;
-                    var filesizeStr = "";
-                    if (Convert.ToInt32(file.ContentLength) > 999999)
-                    {
-                        filesize = Convert.ToInt32(file.ContentLength) / 1000000;
-                        filesizeStr = filesize.ToString() + " MB";
-                    }
-                    else if (Convert.ToInt32(file.ContentLength) > 999)
-                    {
-                        filesize = Convert.ToInt32(file.ContentLength) / 1000;
-                        filesizeStr = filesize.ToString() + " KB";
-                    }
-                    else
-                    {
-                        filesize = Convert.ToInt32(file.ContentLength);
-                        filesizeStr = filesize.ToString() + " Bytes";
-                    }
-
-                    var app_docType = _DataContext.ITP_S_DocumentTypes
-                        .Where(x => x.DCT_Name == "ACDE InvoiceNPO")
-                        .Where(x => x.App_Id == 1032)
-                        .FirstOrDefault();
-
-                    ITP_T_FileAttachment docs = new ITP_T_FileAttachment();
-                    {
-                        docs.FileAttachment = file.FileBytes;
-                        docs.FileName = file.FileName;
-                        docs.Doc_ID = Convert.ToInt32(Session["NonPOExpenseId"]);
-                        docs.App_ID = 1032;
-                        docs.DocType_Id = 1016;
-                        docs.User_ID = Session["userID"].ToString();
-                        docs.FileExtension = file.FileName.Split('.').Last();
-                        docs.Description = file.FileName.Split('.').First();
-                        docs.FileSize = filesizeStr;
-                        docs.Doc_No = Session["DocNo"].ToString();
-                        docs.Company_ID = Convert.ToInt32(invMain.InvChargedTo_CompanyId);
-                        docs.DateUploaded = DateTime.Now;
-                        docs.DocType_Id = app_docType != null ? app_docType.DCT_Id : 0;
-                    }
-                    ;
-                    _DataContext.ITP_T_FileAttachments.InsertOnSubmit(docs);
-                }
-                _DataContext.SubmitChanges();
-                SqlDocs.DataBind();
-                DocumentGrid.DataBind();
+                    FileAttachment = uploadedFile.FileBytes,
+                    FileName = uploadedFile.FileName,
+                    Doc_ID = Convert.ToInt32(Session["NonPOExpenseId"]),
+                    App_ID = 1032,
+                    DocType_Id = invDocType != null ? invDocType.DCT_Id : 0,
+                    User_ID = Convert.ToString(Session["userID"]),
+                    FileExtension = uploadedFile.FileName.Contains(".") ? uploadedFile.FileName.Split('.').Last() : "",
+                    Description = uploadedFile.FileName.Contains(".") ? uploadedFile.FileName.Substring(0, uploadedFile.FileName.LastIndexOf('.')) : uploadedFile.FileName,
+                    FileSize = fileSizeStr,
+                    Doc_No = Convert.ToString(Session["DocNo"]),
+                    Company_ID = Convert.ToInt32(invMain.InvChargedTo_CompanyId),
+                    DateUploaded = DateTime.Now
+                };
+                _DataContext.ITP_T_FileAttachments.InsertOnSubmit(docs);
             }
 
+            _DataContext.SubmitChanges();
+            SqlDocs.DataBind();
+            DocumentGrid.DataBind();
         }
 
         protected void ExpAllocGrid_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
         {
-            SqlExpMap.SelectParameters["InvoiceReportDetail_ID"].DefaultValue = e.Parameters.ToString();
+            SqlExpMap.SelectParameters["InvoiceReportDetail_ID"].DefaultValue = e.Parameters;
             SqlExpMap.DataBind();
-
             ExpAllocGrid.DataBind();
         }
 
         protected void DocuGrid1_CustomCallback(object sender, ASPxGridViewCustomCallbackEventArgs e)
         {
-            SqlExpDetailAttach.SelectParameters["ExpDetail_Id"].DefaultValue = e.Parameters.ToString();
+            SqlExpDetailAttach.SelectParameters["ExpDetail_Id"].DefaultValue = e.Parameters;
             SqlExpDetailAttach.DataBind();
-
             DocuGrid1.DataBind();
         }
 
         [WebMethod]
         public static InvDetailsNonPO DisplayExpDetailsAJAX(int expDetailID)
         {
-            AccedeNonPO_CashierView exp = new AccedeNonPO_CashierView();
-            return exp.DisplayExpDetails(expDetailID);
+            var ctx = new ITPORTALDataContext(
+                ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString);
+            return DisplayExpDetailsInternal(ctx, expDetailID);
         }
 
-        public InvDetailsNonPO DisplayExpDetails(int invDetailID)
+        private static InvDetailsNonPO DisplayExpDetailsInternal(ITPORTALDataContext dc, int invDetailID)
         {
-            var invDetails = _DataContext.ACCEDE_T_InvoiceLineDetails.FirstOrDefault(x => x.ID == invDetailID);
+            var invDetails = dc.ACCEDE_T_InvoiceLineDetails.FirstOrDefault(x => x.ID == invDetailID);
             if (invDetails == null) return new InvDetailsNonPO();
 
-            var particularsName = _DataContext.ACCEDE_S_Particulars
+            var particularsName = dc.ACCEDE_S_Particulars
                 .Where(x => x.ID == invDetails.Particulars)
                 .Select(x => x.P_Name)
                 .FirstOrDefault();
 
-            decimal allocated = _DataContext.ACCEDE_T_InvoiceLineDetailsMaps
+            decimal allocated = dc.ACCEDE_T_InvoiceLineDetailsMaps
                 .Where(x => x.InvoiceReportDetail_ID == invDetailID)
                 .Select(x => (decimal?)x.NetAmount).Sum() ?? 0m;
 
@@ -455,8 +467,28 @@ namespace DX_WebTemplate
                 totalAllocAmnt = remaining
             };
 
-            Session["InvDetailsID"] = invDetailID.ToString();
+            if (HttpContext.Current != null && HttpContext.Current.Session != null)
+                HttpContext.Current.Session["InvDetailsID"] = invDetailID.ToString();
+
             return dto;
+        }
+
+        public InvDetailsNonPO DisplayExpDetails(int invDetailID)
+        {
+            return DisplayExpDetailsInternal(_DataContext, invDetailID);
+        }
+        // Add the following helper method to resolve the CS0103 error for 'Base64ToBytes'.
+
+
+        public static byte[] Base64ToBytes(string base64String)
+        {
+            // Remove the data URL prefix if present
+            if (base64String.Contains(","))
+            {
+                base64String = base64String.Substring(base64String.IndexOf(",") + 1);
+            }
+
+            return Convert.FromBase64String(base64String);
         }
     }
 }

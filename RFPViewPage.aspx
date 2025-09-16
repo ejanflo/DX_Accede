@@ -28,6 +28,35 @@
         //    }
         //}
 
+        var signaturePad;
+
+        function initSignaturePad() {
+            const canvas = document.getElementById('signature-pad');
+            signaturePad = new SignaturePad(canvas, {
+                backgroundColor: 'rgba(255, 255, 255, 0)',
+                penColor: 'rgb(0, 0, 0)'
+            });
+
+            function resizeCanvas() {
+                const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                canvas.width = canvas.offsetWidth * ratio;
+                canvas.height = canvas.offsetHeight * ratio;
+                canvas.getContext("2d").scale(ratio, ratio);
+                signaturePad.clear();
+            }
+
+            // Instead of calling resize immediately, wait until popup is visible
+            ASPxClientControl.Cast("DisbursePopup").Shown.AddHandler(function () {
+                resizeCanvas();
+            });
+
+            resetCanvas.addEventListener("click", () => {
+                signaturePad.clear();
+            });
+
+            DisbursePopup.Show();
+        }
+
         function RecallClick() {
             LoadingPanel.Show();
             var remarks = txtBox_recallRemarks.GetValue();
@@ -70,7 +99,8 @@
                     console.log(callback);
                     if (response.d === "clear") {
                         if (callback == 1) {
-                            SavePopup.Show();
+                            //SavePopup.Show();
+                            initSignaturePad();
                         }
 
                         if (callback == 2) {
@@ -257,6 +287,13 @@
             LoadingPanel1.Show();
 
             var SAPDoc = edit_SAPDocNo.GetValue() != null ? edit_SAPDocNo.GetValue() : "";
+            var signee = signeeVal.GetValue() != null ? signeeVal.GetValue() : "";
+            if (signaturePad.isEmpty() && stats == 1) {
+                alert("Please provide a signature before submitting.");
+                return;
+            }
+
+            const signatureData = signaturePad.toDataURL('image/png');
 
             $.ajax({
                 type: "POST",
@@ -265,7 +302,9 @@
                 dataType: "json",
                 data: JSON.stringify({
                     SAPDoc: SAPDoc,
-                    stats: stats
+                    stats: stats,
+                    signatureData: signatureData,
+                    signee: signee
                 }),
                 success: function (response) {
                     // Update the description text box with the response value
@@ -1427,6 +1466,91 @@ saveFinChanges(1); SavePopup.Hide();
             </dx:PopupControlContentControl>
 </ContentCollection>
     </dx:ASPxPopupControl>
+
+    <dx:ASPxPopupControl ID="DisbursePopup" runat="server" HeaderText="Disburse Payment?" Modal="True" AllowDragging="True" ClientInstanceName="DisbursePopup" CloseAction="CloseButton" EnableViewState="False" PopupAnimationType="None" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" MaxWidth="50%" Width="1500px">
+        <ContentCollection>
+        <dx:PopupControlContentControl runat="server">
+            <div class="scrollablecontainer2">
+                <dx:ASPxFormLayout ID="ASPxFormLayout3" runat="server" Width="100%">
+                <Items>
+                    <dx:LayoutItem ColSpan="1" ShowCaption="False" HorizontalAlign="Center" ClientVisible="False">
+                        <LayoutItemNestedControlCollection>
+                            <dx:LayoutItemNestedControlContainer runat="server">
+                                <dx:ASPxImage ID="ASPxImage2" runat="server" Height="50px" ImageAlign="Middle" ImageUrl="~/Content/Images/warning.png" Width="50px">
+                                </dx:ASPxImage>
+                            </dx:LayoutItemNestedControlContainer>
+                        </LayoutItemNestedControlCollection>
+                    </dx:LayoutItem>
+                    <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Center" ClientVisible="False">
+                        <LayoutItemNestedControlCollection>
+                            <dx:LayoutItemNestedControlContainer runat="server">
+                                <dx:ASPxLabel ID="ASPxLabel1" runat="server" Text="Are you sure you want to disburse payment to vendor?" Font-Size="Medium">
+                                </dx:ASPxLabel>
+                        
+                            </dx:LayoutItemNestedControlContainer>
+                        </LayoutItemNestedControlCollection>
+                    </dx:LayoutItem>
+                    <dx:LayoutItem Caption="Payee Name" ColSpan="1">
+                        <LayoutItemNestedControlCollection>
+                            <dx:LayoutItemNestedControlContainer runat="server">
+                                <dx:ASPxTextBox ID="signeeVal" runat="server" ClientInstanceName="signeeVal" Font-Size="Small" NullText="Enter Payee full name here..." Width="100%">
+                                    <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="DisburseGroup">
+                                        <RequiredField ErrorText="*Required" IsRequired="True" />
+                                    </ValidationSettings>
+                                </dx:ASPxTextBox>
+                            </dx:LayoutItemNestedControlContainer>
+                        </LayoutItemNestedControlCollection>
+                        <CaptionSettings HorizontalAlign="Left" Location="Top" />
+                    </dx:LayoutItem>
+                    <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Center" Width="100%">
+                        <LayoutItemNestedControlCollection>
+                            <dx:LayoutItemNestedControlContainer runat="server">
+                                <canvas style="border:1px solid #dadada; border-radius: 3px;" id="signature-pad" width="465" height="200" class="signature-pad" ></canvas>
+                                <p>Please sign in the box above</p><input type="button" value="Reset" id="resetCanvas" />
+                            </dx:LayoutItemNestedControlContainer>
+                        </LayoutItemNestedControlCollection>
+                    </dx:LayoutItem>
+                    <dx:LayoutGroup Caption="" ColCount="3" ColSpan="1" ColumnCount="3" GroupBoxDecoration="HeadingLine" HorizontalAlign="Right" Width="100%">
+                        <Items>
+                            <dx:LayoutItem Caption="" ColSpan="1" Width="20%">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxButton ID="ASPxButton1" runat="server" Text="Confirm Disburse" BackColor="#006838" AutoPostBack="False">
+                                            <ClientSideEvents Click="function(s, e) {
+        if (ASPxClientEdit.ValidateGroup('DisburseGroup')){
+        DisbursePopup.Hide();
+        saveFinChanges(1);
+
+        }
+	        }" />
+                                            <Border BorderColor="Gray" />
+                                        </dx:ASPxButton>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                            </dx:LayoutItem>
+                            <dx:LayoutItem Caption="" ColSpan="1" Width="20%">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxButton ID="ASPxButton3" runat="server" Text="Cancel" AutoPostBack="False" BackColor="White" ForeColor="Gray">
+                                            <ClientSideEvents Click="function(s, e) {
+	        DisbursePopup.Hide();
+        }" />
+                                            <Border BorderColor="Gray" />
+                                        </dx:ASPxButton>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                            </dx:LayoutItem>
+                        </Items>
+                    </dx:LayoutGroup>
+                </Items>
+            </dx:ASPxFormLayout>
+            </div>
+    
+                    </dx:PopupControlContentControl>
+        </ContentCollection>
+    </dx:ASPxPopupControl>
+
+
         <dx:ASPxPopupControl ID="RecallPopup" runat="server" HeaderText="Recall RFP?" Modal="True" AllowDragging="True" AutoUpdatePosition="True" ClientInstanceName="RecallPopup" CloseAction="CloseButton" CloseOnEscape="True" EnableViewState="False" PopupAnimationType="None" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter">
         <SettingsAdaptivity Mode="Always" VerticalAlign="WindowCenter" />
         <ContentCollection>

@@ -12,6 +12,7 @@ using System.Web;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using static DevExpress.Utils.Drawing.Helpers.NativeMethods;
 
 namespace DX_WebTemplate
 {
@@ -426,13 +427,13 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static string SaveCashierChangesAJAX(string SAPDoc, int stats)
+        public static string SaveCashierChangesAJAX(string SAPDoc, int stats, string signatureData, string signee)
         {
             RFPViewPage rfp = new RFPViewPage();
-            return rfp.SaveCashierChanges(SAPDoc, stats);
+            return rfp.SaveCashierChanges(SAPDoc, stats, signatureData, signee);
         }
 
-        public string SaveCashierChanges(string SAPDoc, int stats)
+        public string SaveCashierChanges(string SAPDoc, int stats, string signatureData, string signee)
         {
             try
             {
@@ -461,6 +462,30 @@ namespace DX_WebTemplate
                     wfDetails.Remarks = Session["AuthUser"].ToString() + ": ;";
                     wfDetails.ActedBy_User_Id = Session["userID"].ToString();
                     rfp_main.Status = release_cash_status.STS_Id;
+
+                    byte[] signatureBytes = Base64ToBytes(signatureData);
+                    var existRFPSignature = _DataContext.ACCEDE_T_RFPSignatures.FirstOrDefault(x => x.RFPMain_Id == rfp_main.ID);
+                    if (existRFPSignature != null)
+                    {
+                        existRFPSignature.RFPMain_Id = rfp_main.ID;
+                        existRFPSignature.Signature = signatureBytes;
+                        existRFPSignature.Signee_Fullname = signee;
+                        existRFPSignature.Status_Id = release_cash_status.STS_Id;
+                        existRFPSignature.DateReceived = DateTime.Now;
+                    }
+                    else
+                    {
+                        ACCEDE_T_RFPSignature sig = new ACCEDE_T_RFPSignature
+                        {
+                            RFPMain_Id = rfp_main.ID,
+                            Signature = signatureBytes,
+                            Signee_Fullname = signee,
+                            Status_Id = release_cash_status.STS_Id,
+                            DateReceived = DateTime.Now
+                        };
+
+                        _DataContext.ACCEDE_T_RFPSignatures.InsertOnSubmit(sig);
+                    }
                 }
 
                 if (pre_wfDetStatus == pending_SAPDoc_status.STS_Id.ToString())
@@ -482,6 +507,17 @@ namespace DX_WebTemplate
             {
                 return ex.Message;
             }
+        }
+
+        public static byte[] Base64ToBytes(string base64String)
+        {
+            // Remove the data URL prefix if present
+            if (base64String.Contains(","))
+            {
+                base64String = base64String.Substring(base64String.IndexOf(",") + 1);
+            }
+
+            return Convert.FromBase64String(base64String);
         }
 
         protected void UploadController_FilesUploadComplete(object sender, FilesUploadCompleteEventArgs e)

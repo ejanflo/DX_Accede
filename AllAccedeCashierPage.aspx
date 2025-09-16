@@ -246,11 +246,14 @@
                                                 </dx:GridViewToolbar>
                                                 <dx:GridViewToolbar>
                                                     <Items>
-                                                        <dx:GridViewToolbarItem Alignment="Left" Name="rfpDisbursedBtn" Text="View Disbursed RFPs" BeginGroup="True" Target="_blank" NavigateUrl="CashierInquiryPage.aspx?tab=rfpDisbursedTab">
+                                                        <dx:GridViewToolbarItem Alignment="Left" Name="rfpDisbursedBtn" Text="View Disbursed Documents" BeginGroup="True" Target="_blank" NavigateUrl="CashierInquiryPage.aspx">
+                                                            <Image IconID="pdfviewer_nextview_svg_white_16x16">
+                                                            </Image>
+                                                            <ItemStyle BackColor="#0D6943" ForeColor="White" />
                                                         </dx:GridViewToolbarItem>
-                                                        <dx:GridViewToolbarItem Alignment="Left" BeginGroup="True" Text="View Disbursed Expenses" Name="expenseDisbursedBtn" Target="_blank" NavigateUrl="CashierInquiryPage.aspx?tab=expenseDisbursedTab">
+                                                        <dx:GridViewToolbarItem Alignment="Left" BeginGroup="True" Text="View Disbursed Expenses" Name="expenseDisbursedBtn" Target="_blank" NavigateUrl="CashierInquiryPage.aspx?tab=expenseDisbursedTab" Visible="False">
                                                         </dx:GridViewToolbarItem>
-                                                        <dx:GridViewToolbarItem Alignment="Right" BeginGroup="True" Text="View Approval History" Name="approvalHistoryButton" Target="_blank">
+                                                        <dx:GridViewToolbarItem Alignment="Right" BeginGroup="True" Text="View Approval History" Name="approvalHistoryButton" Target="_blank" Visible="False">
                                                             <Image IconID="businessobjects_bo_audit_changehistory_svg_gray_16x16">
                                                             </Image>
                                                         </dx:GridViewToolbarItem>

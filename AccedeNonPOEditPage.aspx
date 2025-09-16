@@ -880,6 +880,12 @@
                 s.cpAllocationExceeded = null;  // Clear the custom property
             }
 
+            //var sum = 0;
+            //s.GetBatchEditorValues('NetAmount', function (vals) {
+            //    for (var k in vals) if (vals.hasOwnProperty(k))
+            //        sum += parseFloat(vals[k] || 0);
+            //});
+
 
             if (s.cpComputeUnalloc) {
 
@@ -1290,9 +1296,9 @@
                         net_amount_add.SetValue(net);
                         total_add.SetValue(total);
                     } else {
-                        //net_vat_add.SetValue(0);
-                        //vat_add.SetValue(0);
-                        //ewt_add.SetValue(0);
+                        net_vat_add.SetValue(total);
+                        vat_add.SetValue(0);
+                        ewt_add.SetValue(0);
                         net_amount_add.SetValue(net);
                         total_add.SetValue(total);
                     }
@@ -1327,9 +1333,9 @@
                         net_amount_edit.SetValue(net);
                         total_edit.SetValue(total);
                     } else {
-                        //net_vat_edit.SetValue(0);
-                        //vat_edit.SetValue(0);
-                       //ewt_edit.SetValue(0);
+                        net_vat_edit.SetValue(total);
+                        vat_edit.SetValue(0);
+                        ewt_edit.SetValue(0);
                         net_amount_edit.SetValue(net);
                         total_edit.SetValue(total);
                     }
@@ -3973,7 +3979,7 @@ ExpAllocGrid.PerformCallback();
                                                 <dx:LayoutItem ColSpan="1" Width="100%" ShowCaption="False">
                                                     <LayoutItemNestedControlCollection>
                                                         <dx:LayoutItemNestedControlContainer runat="server">
-                                                            <dx:ASPxGridView ID="ExpAllocGrid_edit" runat="server" AutoGenerateColumns="False" ClientInstanceName="ExpAllocGrid_edit" KeyFieldName="InvoiceDetailMap_ID" OnCustomCallback="ExpAllocGrid_edit_CustomCallback" OnRowDeleting="ExpAllocGrid_edit_RowDeleting" OnRowInserting="ExpAllocGrid_edit_RowInserting" Width="100%" OnRowUpdating="ExpAllocGrid_edit_RowUpdating" DataSourceID="SqlInvMap">
+                                                            <dx:ASPxGridView ID="ExpAllocGrid_edit" runat="server" AutoGenerateColumns="False" ClientInstanceName="ExpAllocGrid_edit" KeyFieldName="InvoiceDetailMap_ID" OnCustomCallback="ExpAllocGrid_edit_CustomCallback" OnRowDeleting="ExpAllocGrid_edit_RowDeleting" OnRowInserting="ExpAllocGrid_edit_RowInserting" Width="100%" OnRowUpdating="ExpAllocGrid_edit_RowUpdating" DataSourceID="SqlInvMap" OnBatchUpdate="ExpAllocGrid_edit_BatchUpdate">
                                                                 <ClientSideEvents EndCallback="onEndCallback" />
                                                                 <SettingsPager Mode="EndlessPaging">
                                                                 </SettingsPager>

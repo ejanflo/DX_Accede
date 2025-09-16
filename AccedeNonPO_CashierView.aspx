@@ -1,6 +1,13 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Main.master" AutoEventWireup="true" CodeBehind="AccedeNonPO_CashierView.aspx.cs" Inherits="DX_WebTemplate.AccedeNonPO_CashierView" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <%--End of View Line item PopupLayout--%>
+    <%--<asp:SqlDataSource ID="SqlWFActivity" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [vw_ACCEDE_I_ExpWFActivity] WHERE (([AppId] = @AppId) AND ([Document_Id] = @Document_Id) AND ([isTravel] &lt;&gt; @isTravel) AND ([DCT_Name] = @DCT_Name)) ORDER BY [DateAssigned]">
+        <SelectParameters>
+            <asp:Parameter DefaultValue="1032" Name="AppId" Type="Int32" />
+            <asp:Parameter DefaultValue="" Name="Document_Id" Type="Int32" />
+            <asp:Parameter DefaultValue="True" Name="isTravel" Type="Boolean" />
+            <asp:Parameter DefaultValue="ACDE Expense" Name="DCT_Name" Type="String" />
+        </SelectParameters>
+     </asp:SqlDataSource>--%>
     <%-- This is where the document is rendered and viewed --%>
     <div class="modal fade" id="viewModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-fullscreen modal-dialog-scrollable" id="modalDialog">
@@ -36,6 +43,19 @@
             border: 1px solid #ccc;
             padding: 10px;
         }
+
+        /*.scrollablecontainer2{
+            overflow: auto;
+            height: 50vh;*/ /* full viewport height */
+            /*width: 40vw;*/  /* full viewport width */
+            /*border: 1px solid #ccc;
+            padding: 10px;
+        }*/   
+
+        #signature-pad {
+          width: 400px;   /* desired width */
+          height: 200px;  /* desired height */
+        }
         .exp-link-container {
             display: flex;
             align-items: center; /* Vertically aligns items in the middle */
@@ -66,6 +86,46 @@
             if (e.actionName === "Cancel") {
                 history.back()
             }
+        }
+
+        var signaturePad;
+
+        function initSignaturePad() {
+            const canvas = document.getElementById('signature-pad');
+            signaturePad = new SignaturePad(canvas, {
+                backgroundColor: 'rgba(255, 255, 255, 0)',
+                penColor: 'rgb(0, 0, 0)'
+            });
+
+            function resizeCanvas() {
+                const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                canvas.width = canvas.offsetWidth * ratio;
+                canvas.height = canvas.offsetHeight * ratio;
+                canvas.getContext("2d").scale(ratio, ratio);
+                signaturePad.clear();
+            }
+
+            // Instead of calling resize immediately, wait until popup is visible
+            ASPxClientControl.Cast("DisbursePopup").Shown.AddHandler(function () {
+                resizeCanvas();
+            });
+
+            resetCanvas.addEventListener("click", () => {
+                signaturePad.clear();
+            });
+
+            DisbursePopup.Show();
+        }
+
+
+
+        function submitWithSignature() {
+            if (signaturePad.isEmpty()) {
+                alert("Please provide a signature before submitting.");
+                return;
+            }
+
+            const signatureData = signaturePad.toDataURL('image/png');
         }
 
         function redirectToEditPage() {
@@ -352,13 +412,24 @@
             LoadingPanel.SetText("Processing&hellip;");
             LoadingPanel.Show();
             var secureToken = new URLSearchParams(window.location.search).get('secureToken');
+            var signee = signeeVal.GetValue() != null ? signeeVal.GetValue() : "";
+
+            if (signaturePad.isEmpty()) {
+                alert("Please provide a signature before submitting.");
+                return;
+            }
+
+            const signatureData = signaturePad.toDataURL('image/png');
+
             $.ajax({
                 type: "POST",
                 url: "AccedeNonPO_CashierView.aspx/DisburseAJAX",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: JSON.stringify({
-                    secureToken: secureToken
+                    secureToken: secureToken,
+                    signatureData: signatureData,
+                    signee: signee
                 }),
                 success: function (response) {
 
@@ -639,8 +710,8 @@
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxButton ID="btnDisburse" runat="server" BackColor="#006838" Text="Disburse" AutoPostBack="False" ClientInstanceName="btnDisburse">
                                             <ClientSideEvents Click="function(s, e) {
-	DisbursePopup.Show();
-}" />
+initSignaturePad();
+	}" />
                                             <Border BorderColor="#006838" />
                                         </dx:ASPxButton>
                                     </dx:LayoutItemNestedControlContainer>
@@ -1276,13 +1347,13 @@ window.location = 'FileHandler.ashx?id=' + s.GetRowKey(e.visibleIndex) + '';
             </Items>
         </dx:ASPxFloatingActionButton>
 
-        <dx:ASPxPopupControl ID="DisbursePopup" runat="server" HeaderText="Disburse Payment?" Modal="True" AllowDragging="True" AutoUpdatePosition="True" ClientInstanceName="DisbursePopup" CloseAction="CloseButton" CloseOnEscape="True" EnableViewState="False" PopupAnimationType="None" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter">
-        <SettingsAdaptivity Mode="Always" VerticalAlign="WindowCenter" />
+        <dx:ASPxPopupControl ID="DisbursePopup" runat="server" HeaderText="Disburse Payment?" Modal="True" AllowDragging="True" ClientInstanceName="DisbursePopup" CloseAction="CloseButton" EnableViewState="False" PopupAnimationType="None" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" MaxWidth="50%" Width="1500px">
         <ContentCollection>
 <dx:PopupControlContentControl runat="server">
-    <dx:ASPxFormLayout ID="ASPxFormLayout4" runat="server">
+    <div class="scrollablecontainer2">
+        <dx:ASPxFormLayout ID="ASPxFormLayout4" runat="server" Width="100%">
         <Items>
-            <dx:LayoutItem ColSpan="1" ShowCaption="False" HorizontalAlign="Center">
+            <dx:LayoutItem ColSpan="1" ShowCaption="False" HorizontalAlign="Center" ClientVisible="False">
                 <LayoutItemNestedControlCollection>
                     <dx:LayoutItemNestedControlContainer runat="server">
                         <dx:ASPxImage ID="ASPxFormLayout1_E11" runat="server" Height="50px" ImageAlign="Middle" ImageUrl="~/Content/Images/warning.png" Width="50px">
@@ -1290,34 +1361,59 @@ window.location = 'FileHandler.ashx?id=' + s.GetRowKey(e.visibleIndex) + '';
                     </dx:LayoutItemNestedControlContainer>
                 </LayoutItemNestedControlCollection>
             </dx:LayoutItem>
-            <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Center">
+            <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Center" ClientVisible="False">
                 <LayoutItemNestedControlCollection>
                     <dx:LayoutItemNestedControlContainer runat="server">
                         <dx:ASPxLabel ID="ASPxFormLayout1_E12" runat="server" Text="Are you sure you want to disburse payment to vendor?" Font-Size="Medium">
                         </dx:ASPxLabel>
+                        
                     </dx:LayoutItemNestedControlContainer>
                 </LayoutItemNestedControlCollection>
             </dx:LayoutItem>
-            <dx:LayoutGroup Caption="" ColCount="2" ColSpan="1" ColumnCount="2" GroupBoxDecoration="HeadingLine">
+            <dx:LayoutItem Caption="Payee Name" ColSpan="1">
+                <LayoutItemNestedControlCollection>
+                    <dx:LayoutItemNestedControlContainer runat="server">
+                        <dx:ASPxTextBox ID="signeeVal" runat="server" ClientInstanceName="signeeVal" Font-Size="Small" NullText="Enter Payee full name here..." Width="100%">
+                            <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="DisburseGroup">
+                                <RequiredField ErrorText="*Required" IsRequired="True" />
+                            </ValidationSettings>
+                        </dx:ASPxTextBox>
+                    </dx:LayoutItemNestedControlContainer>
+                </LayoutItemNestedControlCollection>
+                <CaptionSettings HorizontalAlign="Left" Location="Top" />
+            </dx:LayoutItem>
+            <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Center" Width="100%">
+                <LayoutItemNestedControlCollection>
+                    <dx:LayoutItemNestedControlContainer runat="server">
+                        <canvas style="border:1px solid #dadada; border-radius: 3px;" id="signature-pad" width="465" height="200" class="signature-pad" ></canvas>
+                        <p>Please sign in the box above</p><input type="button" value="Reset" id="resetCanvas" />
+                    </dx:LayoutItemNestedControlContainer>
+                </LayoutItemNestedControlCollection>
+            </dx:LayoutItem>
+            <dx:LayoutGroup Caption="" ColCount="3" ColSpan="1" ColumnCount="3" GroupBoxDecoration="HeadingLine" HorizontalAlign="Right" Width="100%">
                 <Items>
-                    <dx:LayoutItem Caption="" ColSpan="1">
+                    <dx:LayoutItem Caption="" ColSpan="1" Width="20%">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
                                 <dx:ASPxButton ID="mdlBtnReject" runat="server" Text="Confirm Disburse" BackColor="#006838" AutoPostBack="False">
                                     <ClientSideEvents Click="function(s, e) {
-	Disburse();
-}" />
-                                    <Border BorderColor="#006838" />
+if (ASPxClientEdit.ValidateGroup('DisburseGroup')){
+DisbursePopup.Hide();
+Disburse();
+
+}
+	}" />
+                                    <Border BorderColor="Gray" />
                                 </dx:ASPxButton>
                             </dx:LayoutItemNestedControlContainer>
                         </LayoutItemNestedControlCollection>
                     </dx:LayoutItem>
-                    <dx:LayoutItem Caption="" ColSpan="1">
+                    <dx:LayoutItem Caption="" ColSpan="1" Width="20%">
                         <LayoutItemNestedControlCollection>
                             <dx:LayoutItemNestedControlContainer runat="server">
                                 <dx:ASPxButton ID="ASPxFormLayout1_E15" runat="server" Text="Cancel" AutoPostBack="False" BackColor="White" ForeColor="Gray">
                                     <ClientSideEvents Click="function(s, e) {
-	RejectPopup.Hide();
+	DisbursePopup.Hide();
 }" />
                                     <Border BorderColor="Gray" />
                                 </dx:ASPxButton>
@@ -1328,6 +1424,8 @@ window.location = 'FileHandler.ashx?id=' + s.GetRowKey(e.visibleIndex) + '';
             </dx:LayoutGroup>
         </Items>
     </dx:ASPxFormLayout>
+    </div>
+    
             </dx:PopupControlContentControl>
 </ContentCollection>
     </dx:ASPxPopupControl>

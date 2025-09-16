@@ -1073,7 +1073,7 @@
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Charged To Company" ColSpan="1" FieldName="CTCompName" Name="txt_CTComp">
+                                    <dx:LayoutItem Caption="Charged To Company" ColSpan="1" FieldName="ExpChargedTo_CompanyId" Name="txt_CTComp">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxComboBox ID="drpdown_CTComp" runat="server" ClientInstanceName="drpdown_CTComp" DataSourceID="SqlCompany" Font-Bold="True" Font-Size="Small" TextField="CompanyShortName" ValueField="CompanyId" Width="100%" ReadOnly="True">
@@ -1091,7 +1091,7 @@ exp_CompLocation.PerformCallback(s.GetValue());
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Location" ColSpan="1" FieldName="CompLocation">
+                                    <dx:LayoutItem Caption="Location" ColSpan="1" FieldName="ExpComp_Location_Id">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                                                                 <dx:ASPxComboBox ID="exp_CompLocation" runat="server" ClientInstanceName="exp_CompLocation" DataSourceID="SqlCompLocation" EnableTheming="True" Font-Bold="True" Font-Size="Small" TextField="Name" ValueField="ID" Width="100%" OnCallback="exp_CompLocation_Callback">
@@ -1111,7 +1111,7 @@ exp_CompLocation.PerformCallback(s.GetValue());
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Charged To Department" ColSpan="1" FieldName="CTDeptName" Name="txt_CTDept">
+                                    <dx:LayoutItem Caption="Charged To Department" ColSpan="1" FieldName="ExpChargedTo_DeptId" Name="txt_CTDept">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxComboBox ID="drpdown_CTDepartment" runat="server" ClientInstanceName="drpdown_CTDepartment" DataSourceID="SqlCTDepartment" DropDownWidth="500px" Font-Bold="True" Font-Size="Small" NullValueItemDisplayText="{1}" OnCallback="drpdown_CTDepartment_Callback" TextField="DepDesc" TextFormatString="{1}" ValueField="ID" Width="100%">
@@ -1172,7 +1172,7 @@ exp_CompLocation.PerformCallback(s.GetValue());
                                         </LayoutItemNestedControlCollection>
                                         <CaptionSettings HorizontalAlign="Right" />
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Classification" ColSpan="1" FieldName="ClassificationName" Name="txt_ClassType">
+                                    <dx:LayoutItem Caption="Classification" ColSpan="1" FieldName="ExpenseClassification" Name="txt_ClassType">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxComboBox ID="drpdown_classification" runat="server" ClientInstanceName="drpdown_classification" DataSourceID="SqlClassification" Font-Bold="True" Font-Size="Small" TextField="ClassificationName" ValueField="ID" Width="100%">

@@ -69,6 +69,7 @@ namespace DX_WebTemplate
                         SqlReimDetails.SelectParameters["Exp_ID"].DefaultValue = exp_details.ID.ToString();
                         SqlCompany.SelectParameters["UserId"].DefaultValue = exp_details.ExpenseName.ToString();
                         SqlCompLocation.SelectParameters["Comp_Id"].DefaultValue = exp_details.ExpChargedTo_CompanyId.ToString();
+                        SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = exp_details.ExpChargedTo_CompanyId.ToString();
 
                         SqlWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp_details.WF_Id).ToString();
                         SqlFAPWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp_details.FAPWF_Id).ToString();

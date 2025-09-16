@@ -261,6 +261,9 @@ namespace DX_WebTemplate
     partial void InsertACCEDE_T_InvoiceLineDetail(ACCEDE_T_InvoiceLineDetail instance);
     partial void UpdateACCEDE_T_InvoiceLineDetail(ACCEDE_T_InvoiceLineDetail instance);
     partial void DeleteACCEDE_T_InvoiceLineDetail(ACCEDE_T_InvoiceLineDetail instance);
+    partial void InsertACCEDE_T_RFPSignature(ACCEDE_T_RFPSignature instance);
+    partial void UpdateACCEDE_T_RFPSignature(ACCEDE_T_RFPSignature instance);
+    partial void DeleteACCEDE_T_RFPSignature(ACCEDE_T_RFPSignature instance);
     #endregion
 		
 		public ITPORTALDataContext(string connection) : 
@@ -996,6 +999,14 @@ namespace DX_WebTemplate
 			get
 			{
 				return this.GetTable<ACCEDE_T_InvoiceLineDetail>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ACCEDE_T_RFPSignature> ACCEDE_T_RFPSignatures
+		{
+			get
+			{
+				return this.GetTable<ACCEDE_T_RFPSignature>();
 			}
 		}
 	}
@@ -27793,6 +27804,188 @@ namespace DX_WebTemplate
 					this._isVatComputed = value;
 					this.SendPropertyChanged("isVatComputed");
 					this.OnisVatComputedChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ACCEDE_T_RFPSignature")]
+	public partial class ACCEDE_T_RFPSignature : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private System.Nullable<int> _RFPMain_Id;
+		
+		private System.Data.Linq.Binary _Signature;
+		
+		private System.Nullable<int> _Status_Id;
+		
+		private string _Signee_Fullname;
+		
+		private System.Nullable<System.DateTime> _DateReceived;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnRFPMain_IdChanging(System.Nullable<int> value);
+    partial void OnRFPMain_IdChanged();
+    partial void OnSignatureChanging(System.Data.Linq.Binary value);
+    partial void OnSignatureChanged();
+    partial void OnStatus_IdChanging(System.Nullable<int> value);
+    partial void OnStatus_IdChanged();
+    partial void OnSignee_FullnameChanging(string value);
+    partial void OnSignee_FullnameChanged();
+    partial void OnDateReceivedChanging(System.Nullable<System.DateTime> value);
+    partial void OnDateReceivedChanged();
+    #endregion
+		
+		public ACCEDE_T_RFPSignature()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RFPMain_Id", DbType="Int")]
+		public System.Nullable<int> RFPMain_Id
+		{
+			get
+			{
+				return this._RFPMain_Id;
+			}
+			set
+			{
+				if ((this._RFPMain_Id != value))
+				{
+					this.OnRFPMain_IdChanging(value);
+					this.SendPropertyChanging();
+					this._RFPMain_Id = value;
+					this.SendPropertyChanged("RFPMain_Id");
+					this.OnRFPMain_IdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Signature", DbType="VarBinary(MAX)", UpdateCheck=UpdateCheck.Never)]
+		public System.Data.Linq.Binary Signature
+		{
+			get
+			{
+				return this._Signature;
+			}
+			set
+			{
+				if ((this._Signature != value))
+				{
+					this.OnSignatureChanging(value);
+					this.SendPropertyChanging();
+					this._Signature = value;
+					this.SendPropertyChanged("Signature");
+					this.OnSignatureChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Status_Id", DbType="Int")]
+		public System.Nullable<int> Status_Id
+		{
+			get
+			{
+				return this._Status_Id;
+			}
+			set
+			{
+				if ((this._Status_Id != value))
+				{
+					this.OnStatus_IdChanging(value);
+					this.SendPropertyChanging();
+					this._Status_Id = value;
+					this.SendPropertyChanged("Status_Id");
+					this.OnStatus_IdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Signee_Fullname", DbType="VarChar(250)")]
+		public string Signee_Fullname
+		{
+			get
+			{
+				return this._Signee_Fullname;
+			}
+			set
+			{
+				if ((this._Signee_Fullname != value))
+				{
+					this.OnSignee_FullnameChanging(value);
+					this.SendPropertyChanging();
+					this._Signee_Fullname = value;
+					this.SendPropertyChanged("Signee_Fullname");
+					this.OnSignee_FullnameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DateReceived", DbType="Date")]
+		public System.Nullable<System.DateTime> DateReceived
+		{
+			get
+			{
+				return this._DateReceived;
+			}
+			set
+			{
+				if ((this._DateReceived != value))
+				{
+					this.OnDateReceivedChanging(value);
+					this.SendPropertyChanging();
+					this._DateReceived = value;
+					this.SendPropertyChanged("DateReceived");
+					this.OnDateReceivedChanged();
 				}
 			}
 		}

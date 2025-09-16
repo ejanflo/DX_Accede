@@ -2,6 +2,7 @@
 using System;
 using System.Configuration;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Web.Services;
 
@@ -93,7 +94,17 @@ namespace DX_WebTemplate
                             .Where(x => x.WASSId == Convert.ToInt32(rfp.Company_ID))
                             .Select(x => x.CompanyShortName)
                             .FirstOrDefault();
-                        if(rfp.TranType == 3)
+
+                        var rfpSig = context.ACCEDE_T_RFPSignatures
+                                    .FirstOrDefault(x => x.RFPMain_Id == Convert.ToInt32(rfp.ID));
+
+                        if (rfpSig != null)
+                        {
+                            byte[] imgBytes = rfpSig.Signature.ToArray(); // raw image bytes
+                            report.Tag = imgBytes; // store as byte[]
+                        }
+
+                        if (rfp.TranType == 3)
                         {
                             string raw = rfp.Payee.ToString();
                             string cleaned = raw.Replace("\r", "").Replace("\n", "");
@@ -423,6 +434,19 @@ namespace DX_WebTemplate
                             tranType = context.ACCEDE_S_RFPTranTypes.Where(x => x.ID == rfp.TranType).FirstOrDefault().RFPTranType_Name;
                         }
 
+                        var payeeSig = "";
+                        var dateReceived = DateTime.Now;
+
+                        if(rfpSig != null)
+                        {
+                            if (rfp.PayMethod == 3)
+                            {
+                                payeeSig = rfpSig.Signee_Fullname;
+                            }
+                            dateReceived = Convert.ToDateTime(rfpSig.DateReceived);
+                        }
+                        
+
                         //Account to be charged in text
                         var acctCharge = "";
                         if (rfp.AcctCharged != null)
@@ -526,6 +550,8 @@ namespace DX_WebTemplate
                         report.Parameters["AcctChargeStr"].Value = acctCharge != null ? acctCharge.ToString() : "";
                         report.Parameters["LastDayTranStr"].Value = lastDayTran != null ? lastDayTran.ToString() : "";
                         report.Parameters["PLDateStr"].Value = PLdate != null ? PLdate.ToString() : "";
+                        report.Parameters["payeeSig"].Value = payeeSig != null ? payeeSig.ToString() : "";
+                        report.Parameters["dateReceived"].Value = dateReceived != null ? dateReceived.ToString("MM/dd/yyyy") : DateTime.Now.ToString("MM/dd/yyyy");
                     }
 
                     // Create report and generate its document.

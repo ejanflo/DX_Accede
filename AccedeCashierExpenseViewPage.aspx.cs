@@ -76,6 +76,10 @@ namespace DX_WebTemplate
                             .Where(x => x.STS_Description == "Pending SAP Doc No.")
                             .FirstOrDefault();
 
+                        var disbursed_status = _DataContext.ITP_S_Status
+                            .Where(x => x.STS_Description == "Disbursed")
+                            .FirstOrDefault();
+
                         SqlIO.SelectParameters["CompanyId"].DefaultValue = exp.ExpChargedTo_CompanyId.ToString();
 
                         SqlWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp.WF_Id).ToString();
@@ -91,6 +95,7 @@ namespace DX_WebTemplate
                         var btnDisburse = FormExpApprovalView.FindItemOrGroupByName("CashSave") as LayoutItem;
                         var btnSave = FormExpApprovalView.FindItemOrGroupByName("BtnSaveDetails") as LayoutItem;
                         var upload = FormExpApprovalView.FindItemOrGroupByName("uploader_cashier") as LayoutItem;
+                        var print = FormExpApprovalView.FindItemOrGroupByName("printRFP") as LayoutItem;
                         upload.Visible = true;
 
                         if (myLayoutGroup != null)
@@ -159,8 +164,17 @@ namespace DX_WebTemplate
                                     }
                                     else
                                     {
-                                        btnDisburse.ClientVisible = true;
-                                        btnSave.ClientVisible = false;
+                                        if(wfDetails.Status.ToString() == disbursed_status.STS_Id.ToString())
+                                        {
+                                            btnDisburse.ClientVisible = false;
+                                            print.ClientVisible = true;
+                                        }
+                                        else
+                                        {
+                                            btnDisburse.ClientVisible = true;
+                                            btnSave.ClientVisible = false;
+                                        }
+                                            
                                     }
                                     edit_SAPDocNo.Value = reimRFP.SAPDocNo;
                                 }
@@ -211,6 +225,22 @@ namespace DX_WebTemplate
                 //Session["MyRequestPath"] = Request.Url.AbsoluteUri;
                 Response.Redirect("~/Logon.aspx");
             }
+        }
+
+        [WebMethod]
+        public static void PrintRFPAJAX(string rfpDoc)
+        {
+            AccedeCashierExpenseViewPage page = new AccedeCashierExpenseViewPage();
+            page.PrintRFP(rfpDoc);
+
+            return;
+
+        }
+
+        public void PrintRFP(string rfpDoc)
+        {
+            var doc = _DataContext.ACCEDE_T_RFPMains.FirstOrDefault(x => x.RFP_DocNum == rfpDoc);
+            Session["passRFPID"] = doc.ID;
         }
 
         protected void FormExpApprovalView_Init(object sender, EventArgs e)
@@ -301,14 +331,14 @@ namespace DX_WebTemplate
         }
 
         [WebMethod]
-        public static string SaveCashierChangesAJAX(string SAPDoc, int stats, string secureToken)
+        public static string SaveCashierChangesAJAX(string SAPDoc, int stats, string secureToken, string signee, string signatureData)
         {
             AccedeCashierExpenseViewPage rfp = new AccedeCashierExpenseViewPage();
 
-            return rfp.SaveCashierChanges(SAPDoc, stats, secureToken);
+            return rfp.SaveCashierChanges(SAPDoc, stats, secureToken, signee, signatureData);
         }
 
-        public string SaveCashierChanges(string SAPDoc, int stats, string secureToken)
+        public string SaveCashierChanges(string SAPDoc, int stats, string secureToken, string signee, string signatureData)
         {
             try
             {
@@ -442,6 +472,30 @@ namespace DX_WebTemplate
 
                                 rfp_main_reim.Status = release_cash_status.STS_Id;
 
+                                byte[] signatureBytes = Base64ToBytes(signatureData);
+                                var existRFPSignature = _DataContext.ACCEDE_T_RFPSignatures.FirstOrDefault(x => x.RFPMain_Id == rfp_main_reim.ID);
+                                if (existRFPSignature != null)
+                                {
+                                    existRFPSignature.RFPMain_Id = rfp_main_reim.ID;
+                                    existRFPSignature.Signature = signatureBytes;
+                                    existRFPSignature.Signee_Fullname = signee;
+                                    existRFPSignature.Status_Id = release_cash_status.STS_Id;
+                                    existRFPSignature.DateReceived = DateTime.Now;
+                                }
+                                else
+                                {
+                                    ACCEDE_T_RFPSignature sig = new ACCEDE_T_RFPSignature
+                                    {
+                                        RFPMain_Id = rfp_main_reim.ID,
+                                        Signature = signatureBytes,
+                                        Signee_Fullname = signee,
+                                        Status_Id = release_cash_status.STS_Id,
+                                        DateReceived = DateTime.Now
+                                    };
+
+                                    _DataContext.ACCEDE_T_RFPSignatures.InsertOnSubmit(sig);
+                                }
+
                             }
                             else
                             {
@@ -524,6 +578,17 @@ namespace DX_WebTemplate
                 return ex.Message;
             }
 
+        }
+
+        public static byte[] Base64ToBytes(string base64String)
+        {
+            // Remove the data URL prefix if present
+            if (base64String.Contains(","))
+            {
+                base64String = base64String.Substring(base64String.IndexOf(",") + 1);
+            }
+
+            return Convert.FromBase64String(base64String);
         }
 
         [WebMethod]

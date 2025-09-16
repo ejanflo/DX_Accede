@@ -3222,6 +3222,124 @@ namespace DX_WebTemplate
             grid.JSProperties["cpComputeUnalloc_edit"] = totalNetAmount;
         }
 
+        protected void ExpAllocGrid_edit_BatchUpdate(object sender, DevExpress.Web.Data.ASPxDataBatchUpdateEventArgs e)
+        {
+            var grid = (ASPxGridView)sender;
+
+            if (Session["InvDetailsID"] == null)
+            {
+                e.Handled = true;
+                return;
+            }
+
+            int detailId = Convert.ToInt32(Session["InvDetailsID"]);
+
+            // Base total before applying this batch
+            decimal baseTotal = _DataContext.ACCEDE_T_InvoiceLineDetailsMaps
+                .Where(m => m.InvoiceReportDetail_ID == detailId)
+                .Sum(m => (decimal?)m.NetAmount) ?? 0m;
+
+            decimal delta = 0m;
+
+            // Updates
+            foreach (var upd in e.UpdateValues)
+            {
+                decimal oldNet = Convert.ToDecimal(upd.OldValues["NetAmount"] ?? 0m);
+                decimal newNet = Convert.ToDecimal(upd.NewValues["NetAmount"] ?? 0m);
+                delta += (newNet - oldNet);
+            }
+
+            // Inserts
+            foreach (var ins in e.InsertValues)
+            {
+                decimal newNet = Convert.ToDecimal(ins.NewValues["NetAmount"] ?? 0m);
+                delta += newNet;
+            }
+
+            // Deletes
+            foreach (var del in e.DeleteValues)
+            {
+                // Fix: Use `Values` instead of `OldValues` for delete operations
+                decimal oldNet = Convert.ToDecimal(del.Values["NetAmount"] ?? 0m);
+                delta -= oldNet;
+            }
+
+            decimal finalTotal = baseTotal + delta;
+
+            decimal maxAllowed = 0m;
+            if (decimal.TryParse(total_edit.Value?.ToString(), out var tmp))
+                maxAllowed = tmp;
+
+            if (maxAllowed > 0 && finalTotal > maxAllowed)
+            {
+                grid.JSProperties["cpAllocationExceeded"] = true;
+                //grid.JSProperties["cpComputeUnalloc_edit"] = finalTotal;
+                e.Handled = true; // Abort persistence
+
+                SqlInvMap.SelectParameters["InvoiceReportDetail_ID"].DefaultValue = detailId.ToString();
+
+                // 🔑 Rebind your data (otherwise grid will show "no data to display")
+                grid.DataSourceID = null;
+                grid.DataSource = SqlInvMap;
+                grid.DataBind();
+
+                return;
+            }
+
+            // Persist updates
+            foreach (var upd in e.UpdateValues)
+            {
+                int key = Convert.ToInt32(upd.Keys["InvoiceDetailMap_ID"]);
+                var entity = _DataContext.ACCEDE_T_InvoiceLineDetailsMaps
+                    .Single(m => m.InvoiceDetailMap_ID == key);
+
+                entity.NetAmount = Convert.ToDecimal(upd.NewValues["NetAmount"] ?? 0m);
+                if (upd.NewValues.Contains("Remarks"))
+                    entity.EDM_Remarks = upd.NewValues["Remarks"]?.ToString();
+                if (upd.NewValues.Contains("CostCenterIOWBS"))
+                    entity.CostCenterIOWBS = upd.NewValues["CostCenterIOWBS"]?.ToString();
+            }
+
+            // Persist inserts
+            foreach (var ins in e.InsertValues)
+            {
+                var map = new ACCEDE_T_InvoiceLineDetailsMap
+                {
+                    InvoiceReportDetail_ID = detailId,
+                    NetAmount = Convert.ToDecimal(ins.NewValues["NetAmount"] ?? 0m),
+                    CostCenterIOWBS = (ins.NewValues.Contains("CostCenterIOWBS")
+                                      ? ins.NewValues["CostCenterIOWBS"]?.ToString()
+                                      : ins.NewValues.Contains("CostCenter")
+                                        ? ins.NewValues["CostCenter"]?.ToString()
+                                        : null),
+                    EDM_Remarks = ins.NewValues["Remarks"]?.ToString(),
+                    Preparer_ID = Session["userID"]?.ToString()
+                };
+                _DataContext.ACCEDE_T_InvoiceLineDetailsMaps.InsertOnSubmit(map);
+            }
+
+            // Persist deletes
+            foreach (var del in e.DeleteValues)
+            {
+                int key = Convert.ToInt32(del.Keys["InvoiceDetailMap_ID"]);
+                var entity = _DataContext.ACCEDE_T_InvoiceLineDetailsMaps
+                    .Single(m => m.InvoiceDetailMap_ID == key);
+                _DataContext.ACCEDE_T_InvoiceLineDetailsMaps.DeleteOnSubmit(entity);
+            }
+
+            _DataContext.SubmitChanges();
+
+            SqlInvMap.SelectParameters["InvoiceReportDetail_ID"].DefaultValue = detailId.ToString();
+
+            // 🔑 Rebind your data (otherwise grid will show "no data to display")
+            grid.DataSourceID = null;
+            grid.DataSource = SqlInvMap;
+            grid.DataBind();
+
+            grid.JSProperties["cpComputeUnalloc_edit"] = finalTotal;
+            e.Handled = true; // We applied everything manually
+        }
+
         // PERFORMANCE IMPROVEMENT: Efficient vendor lookup with server-side filtering + in‑memory caching.
         // -----------------------------------------------------------------------------
         // PSEUDOCODE

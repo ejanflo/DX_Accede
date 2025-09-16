@@ -384,6 +384,15 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxLabel ASPxFormLayout1_E12;
 
         /// <summary>
+        /// signeeVal control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox signeeVal;
+
+        /// <summary>
         /// mdlBtnReject control.
         /// </summary>
         /// <remarks>

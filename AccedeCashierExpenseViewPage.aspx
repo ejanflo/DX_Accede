@@ -66,6 +66,35 @@
             }
         }
 
+        var signaturePad;
+
+        function initSignaturePad() {
+            const canvas = document.getElementById('signature-pad');
+            signaturePad = new SignaturePad(canvas, {
+                backgroundColor: 'rgba(255, 255, 255, 0)',
+                penColor: 'rgb(0, 0, 0)'
+            });
+
+            function resizeCanvas() {
+                const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                canvas.width = canvas.offsetWidth * ratio;
+                canvas.height = canvas.offsetHeight * ratio;
+                canvas.getContext("2d").scale(ratio, ratio);
+                signaturePad.clear();
+            }
+
+            // Instead of calling resize immediately, wait until popup is visible
+            ASPxClientControl.Cast("DisbursePopup").Shown.AddHandler(function () {
+                resizeCanvas();
+            });
+
+            resetCanvas.addEventListener("click", () => {
+                signaturePad.clear();
+            });
+
+            DisbursePopup.Show();
+        }
+
         function onCustomButtonClick(s, e) {
             if (e.buttonID == 'btnView') {
                 var item_id = s.GetRowKey(e.visibleIndex);
@@ -137,7 +166,8 @@
                     console.log(callback);
                     if (response.d === "clear") {
                         if (callback == 1) {
-                            SavePopup.Show();
+                            //SavePopup.Show();
+                            initSignaturePad();
                         }
 
                         if (callback == 2) {
@@ -321,8 +351,33 @@
             });
         }
 
-        function EditReimDetails() {
+        function printRFP() {
+            LoadingPanel.SetText("Printing&hellip;")
+            LoadingPanel.Show();
+            var rfpDoc = link_rfp.GetValue() != null ? link_rfp.GetValue() : "";
+            if (rfpDoc != "") {
+                $.ajax({
+                    type: "POST",
+                    url: "AccedeCashierExpenseViewPage.aspx/PrintRFPAJAX",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify({
+                        rfpDoc: rfpDoc
 
+                    }),
+                    success: function (response) {
+                        window.location.href = 'RFPPrintPage.aspx';
+
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("Error:", error);
+                    }
+                });
+            }
+        }
+
+        function EditReimDetails() {
+            LoadingPanel.SetText("Processing&hellip;")
             LoadingPanel.Show();
             var payMethod = payMethod_drpdown_reim_edit.GetValue();
             var io = io_edit.GetValue() != null ? io_edit.GetValue() : "";
@@ -400,6 +455,13 @@
 
             var SAPDoc = edit_SAPDocNo.GetValue() != null ? edit_SAPDocNo.GetValue() : "";
             var secureToken = new URLSearchParams(window.location.search).get('secureToken');
+            var signee = signeeVal.GetValue() != null ? signeeVal.GetValue() : "";
+            if (signaturePad.isEmpty() && stats == 1) {
+                alert("Please provide a signature before submitting.");
+                return;
+            }
+
+            const signatureData = signaturePad.toDataURL('image/png');
 
             $.ajax({
                 type: "POST",
@@ -409,7 +471,10 @@
                 data: JSON.stringify({
                     SAPDoc: SAPDoc,
                     stats: stats,
-                    secureToken: secureToken
+                    secureToken: secureToken,
+                    signee: signee,
+                    signatureData: signatureData
+
                 }),
                 success: function (response) {
                     // Update the description text box with the response value
@@ -419,13 +484,13 @@
                         LoadingPanel.SetText('You approved this request. Redirecting&hellip;');
                         LoadingPanel.Show();
 
-                        setTimeout(function () {
-                            window.open('RFPPrintPage.aspx', '_blank');
-                        }, 3000); // Adjust the time (in milliseconds) as needed
+                        //setTimeout(function () {
+                        //    window.open('RFPPrintPage.aspx', '_blank');
+                        //}, 3000); // Adjust the time (in milliseconds) as needed
 
-                        // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
-                        LoadingPanel.SetText('Printing report&hellip;');
-                        LoadingPanel.Show();
+                        //// Delay the redirection by, for example, 3 seconds (3000 milliseconds)
+                        //LoadingPanel.SetText('Printing report&hellip;');
+                        //LoadingPanel.Show();
                         setTimeout(function () {
                             window.location.href = 'AllAccedeCashierPage.aspx';
                         }, 3000); // Adjust the time (in milliseconds) as needed
@@ -435,6 +500,13 @@
                             LoadingPanel.SetText('Payment disbursed! Redirecting&hellip;');
                             LoadingPanel.Show();
                             // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
+                            setTimeout(function () {
+                                window.open('RFPPrintPage.aspx', '_blank');
+                            }, 3000); // Adjust the time (in milliseconds) as needed
+
+                            // Delay the redirection by, for example, 3 seconds (3000 milliseconds)
+                            LoadingPanel.SetText('Printing report&hellip;');
+                            LoadingPanel.Show();
                             setTimeout(function () {
                                 window.location.href = 'AllAccedeCashierPage.aspx';
                             }, 3000); // Adjust the time (in milliseconds) as needed
@@ -697,7 +769,7 @@
 
                             <dx:EmptyLayoutItem ColSpan="3" ColumnSpan="3" Width="100%">
                             </dx:EmptyLayoutItem>
-                            <dx:LayoutItem Caption="" ColSpan="1" ClientVisible="False" Name="SaveAR">
+                            <dx:LayoutItem Caption="" ColSpan="1" ClientVisible="False" Name="SaveAR" Width="20%">
                                 <LayoutItemNestedControlCollection>
                                     <dx:LayoutItemNestedControlContainer runat="server">
                                         <dx:ASPxButton ID="FormExpApprovalView_E1" runat="server" Text="Save" AutoPostBack="False">
@@ -708,6 +780,21 @@
 }
 " />
                                             <Border BorderColor="#006838" />
+                                        </dx:ASPxButton>
+                                    </dx:LayoutItemNestedControlContainer>
+                                </LayoutItemNestedControlCollection>
+                            </dx:LayoutItem>
+                            <dx:LayoutItem Caption="" ColSpan="1" ClientVisible="False" Name="printRFP" Width="20%">
+                                <LayoutItemNestedControlCollection>
+                                    <dx:LayoutItemNestedControlContainer runat="server">
+                                        <dx:ASPxButton ID="btnPrintRFP" runat="server" Text="Print RFP" AutoPostBack="False" BackColor="#E67C03">
+                                            <ClientSideEvents Click="function(s, e) {
+	printRFP();
+}
+" />
+                                            <Image IconID="print_print_svg_white_16x16">
+                                            </Image>
+                                            <Border BorderColor="#E67C03" />
                                         </dx:ASPxButton>
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
@@ -788,6 +875,9 @@ CheckValidDocNo(edit_SAPDocNo.GetValue(), 1);
                                     </dx:LayoutItemNestedControlContainer>
                                 </LayoutItemNestedControlCollection>
                             </dx:LayoutItem>
+
+                            <dx:EmptyLayoutItem ColSpan="3" ColumnSpan="3" Width="100%">
+                            </dx:EmptyLayoutItem>
 
                         </Items>
                     </dx:LayoutGroup>
@@ -2894,6 +2984,92 @@ saveFinChanges(1); SavePopup.Hide();
             </dx:PopupControlContentControl>
 </ContentCollection>
     </dx:ASPxPopupControl>
+
+
+    <dx:ASPxPopupControl ID="DisbursePopup" runat="server" HeaderText="Disburse Payment?" Modal="True" AllowDragging="True" ClientInstanceName="DisbursePopup" CloseAction="CloseButton" EnableViewState="False" PopupAnimationType="None" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" MaxWidth="50%" Width="1500px">
+        <ContentCollection>
+            <dx:PopupControlContentControl runat="server">
+                <div class="scrollablecontainer2">
+                    <dx:ASPxFormLayout ID="ASPxFormLayout3" runat="server" Width="100%">
+                    <Items>
+                        <dx:LayoutItem ColSpan="1" ShowCaption="False" HorizontalAlign="Center" ClientVisible="False">
+                            <LayoutItemNestedControlCollection>
+                                <dx:LayoutItemNestedControlContainer runat="server">
+                                    <dx:ASPxImage ID="ASPxFormLayout1_E11" runat="server" Height="50px" ImageAlign="Middle" ImageUrl="~/Content/Images/warning.png" Width="50px">
+                                    </dx:ASPxImage>
+                                </dx:LayoutItemNestedControlContainer>
+                            </LayoutItemNestedControlCollection>
+                        </dx:LayoutItem>
+                        <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Center" ClientVisible="False">
+                            <LayoutItemNestedControlCollection>
+                                <dx:LayoutItemNestedControlContainer runat="server">
+                                    <dx:ASPxLabel ID="ASPxFormLayout1_E12" runat="server" Text="Are you sure you want to disburse payment to vendor?" Font-Size="Medium">
+                                    </dx:ASPxLabel>
+                        
+                                </dx:LayoutItemNestedControlContainer>
+                            </LayoutItemNestedControlCollection>
+                        </dx:LayoutItem>
+                        <dx:LayoutItem Caption="Payee Name" ColSpan="1">
+                            <LayoutItemNestedControlCollection>
+                                <dx:LayoutItemNestedControlContainer runat="server">
+                                    <dx:ASPxTextBox ID="signeeVal" runat="server" ClientInstanceName="signeeVal" Font-Size="Small" NullText="Enter Payee full name here..." Width="100%">
+                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="DisburseGroup">
+                                            <RequiredField ErrorText="*Required" IsRequired="True" />
+                                        </ValidationSettings>
+                                    </dx:ASPxTextBox>
+                                </dx:LayoutItemNestedControlContainer>
+                            </LayoutItemNestedControlCollection>
+                            <CaptionSettings HorizontalAlign="Left" Location="Top" />
+                        </dx:LayoutItem>
+                        <dx:LayoutItem Caption="" ColSpan="1" HorizontalAlign="Center" Width="100%">
+                            <LayoutItemNestedControlCollection>
+                                <dx:LayoutItemNestedControlContainer runat="server">
+                                    <canvas style="border:1px solid #dadada; border-radius: 3px;" id="signature-pad" width="465" height="200" class="signature-pad" ></canvas>
+                                    <p>Please sign in the box above</p><input type="button" value="Reset" id="resetCanvas" />
+                                </dx:LayoutItemNestedControlContainer>
+                            </LayoutItemNestedControlCollection>
+                        </dx:LayoutItem>
+                        <dx:LayoutGroup Caption="" ColCount="3" ColSpan="1" ColumnCount="3" GroupBoxDecoration="HeadingLine" HorizontalAlign="Right" Width="100%">
+                            <Items>
+                                <dx:LayoutItem Caption="" ColSpan="1" Width="20%">
+                                    <LayoutItemNestedControlCollection>
+                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                            <dx:ASPxButton ID="mdlBtnReject" runat="server" Text="Confirm Disburse" BackColor="#006838" AutoPostBack="False">
+                                                <ClientSideEvents Click="function(s, e) {
+            if (ASPxClientEdit.ValidateGroup('DisburseGroup')){
+            DisbursePopup.Hide();
+            saveFinChanges(1);
+
+            }
+	            }" />
+                                                <Border BorderColor="Gray" />
+                                            </dx:ASPxButton>
+                                        </dx:LayoutItemNestedControlContainer>
+                                    </LayoutItemNestedControlCollection>
+                                </dx:LayoutItem>
+                                <dx:LayoutItem Caption="" ColSpan="1" Width="20%">
+                                    <LayoutItemNestedControlCollection>
+                                        <dx:LayoutItemNestedControlContainer runat="server">
+                                            <dx:ASPxButton ID="ASPxFormLayout1_E15" runat="server" Text="Cancel" AutoPostBack="False" BackColor="White" ForeColor="Gray">
+                                                <ClientSideEvents Click="function(s, e) {
+	            DisbursePopup.Hide();
+            }" />
+                                                <Border BorderColor="Gray" />
+                                            </dx:ASPxButton>
+                                        </dx:LayoutItemNestedControlContainer>
+                                    </LayoutItemNestedControlCollection>
+                                </dx:LayoutItem>
+                            </Items>
+                        </dx:LayoutGroup>
+                    </Items>
+                </dx:ASPxFormLayout>
+                </div>
+    
+                        </dx:PopupControlContentControl>
+            </ContentCollection>
+        </dx:ASPxPopupControl>
+
+
         <dx:ASPxPopupControl ID="SaveARPopup" runat="server" HeaderText="Save Changes" Modal="True" AllowDragging="True" AutoUpdatePosition="True" ClientInstanceName="SaveARPopup" CloseAction="CloseButton" CloseOnEscape="True" EnableViewState="False" PopupAnimationType="None" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter">
         <SettingsAdaptivity Mode="Always" VerticalAlign="WindowCenter" />
         <ContentCollection>

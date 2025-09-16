@@ -16,264 +16,201 @@ namespace DX_WebTemplate
     {
         ITPORTALDataContext _DataContext = new ITPORTALDataContext(ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString);
         decimal dueComp = new decimal(0.00);
+
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
-                if (AnfloSession.Current.ValidCookieUser())
+                // Authentication check
+                if (!AnfloSession.Current.ValidCookieUser())
                 {
-                    AnfloSession.Current.CreateSession(HttpContext.Current.User.ToString());
-
-
-                    if (!IsPostBack)
-                    {
-                        string encryptedID = Request.QueryString["secureToken"];
-                        if (!string.IsNullOrEmpty(encryptedID))
-                        {
-                            //Start ------------------ Page Security
-                            string empCode = Session["userID"].ToString();
-                            int appID = 26; //22-ITPORTAL; 13-CAR; 26-RS; 1027-RFP; 1028-UAR
-
-                            string url = Request.Url.AbsolutePath; // Get the current URL
-                            string pageName = Path.GetFileNameWithoutExtension(url); // Get the filename without extension
-
-
-                            //if (!AnfloSession.Current.hasPageAccess(empCode, appID, pageName))
-                            //{
-                            //    Session["appID"] = appID.ToString();
-                            //    Session["pageName"] = pageName.ToString();
-
-                            //    Response.Redirect("~/ErrorAccess.aspx");
-                            //}
-                            //End ------------------ Page Security
-
-                            int actID = Convert.ToInt32(Decrypt(encryptedID));
-
-                            var actDetails = _DataContext.ITP_T_WorkflowActivities
-                                .Where(x => x.WFA_Id == Convert.ToInt32(actID))
-                                .FirstOrDefault();
-                            var app_docType = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE InvoiceNPO").Where(x => x.App_Id == 1032).FirstOrDefault();
-
-                            Session["ExpId"] = actDetails.Document_Id;
-                            sqlMain.SelectParameters["ID"].DefaultValue = actDetails.Document_Id.ToString();
-                            SqlDocs.SelectParameters["Doc_ID"].DefaultValue = actDetails.Document_Id.ToString();
-                            SqlDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType != null ? app_docType.DCT_Id.ToString() : null;
-                            SqlCADetails.SelectParameters["Exp_ID"].DefaultValue = actDetails.Document_Id.ToString();
-                            SqlReimDetails.SelectParameters["Exp_ID"].DefaultValue = actDetails.Document_Id.ToString();
-                            SqlExpDetails.SelectParameters["InvMain_ID"].DefaultValue = actDetails.Document_Id.ToString();
-                            SqlWFActivity.SelectParameters["Document_Id"].DefaultValue = actDetails.Document_Id.ToString();
-
-                            var exp = _DataContext.ACCEDE_T_InvoiceMains
-                                .Where(x => x.ID == Convert.ToInt32(actDetails.Document_Id))
-                                .FirstOrDefault();
-
-                            SqlDocs.SelectParameters["DocType_Id"].DefaultValue = app_docType.DCT_Id.ToString();
-
-                            //var vendor = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == exp.VendorName.ToString().Trim()).FirstOrDefault();
-                            //if (vendor != null)
-                            //{
-                            //    txt_vendor.Text = vendor.VendorName.ToString();
-                            //}
-
-                            //txt_InvoiceNo.Text = exp.InvoiceNo?.ToString();
-
-                            //var vendorDetails = _DataContext.ACCEDE_S_Vendors.Where(x => x.VendorCode == exp.VendorName).FirstOrDefault();
-                            //if (vendorDetails != null)
-                            //{
-                            //    string tin = vendorDetails.TaxID.ToString();
-
-                            //    if (tin.Length > 9)
-                            //    {
-                            //        string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6, 3)}-{tin.Substring(9)}";
-                            //        txt_TIN.Text = formattedTin;
-                            //    }
-                            //    else if (tin.Length > 6)
-                            //    {
-                            //        string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3, 3)}-{tin.Substring(6)}";
-                            //        txt_TIN.Text = formattedTin;
-                            //    }
-                            //    else if (tin.Length > 3)
-                            //    {
-                            //        string formattedTin = $"{tin.Substring(0, 3)}-{tin.Substring(3)}";
-                            //        txt_TIN.Text = formattedTin;
-                            //    }
-                            //    else
-                            //    {
-                            //        txt_TIN.Text = tin; // less than 3 digits, no formatting
-                            //    }
-
-                            //    string Clean(string input)
-                            //    {
-                            //        if (string.IsNullOrWhiteSpace(input))
-                            //            return "";
-
-                            //        // remove line breaks and trim
-                            //        string cleanedVendorstr = input.Replace("\r", " ").Replace("\n", " ").Trim();
-
-                            //        return ", " + cleanedVendorstr;
-                            //    }
-
-                            //    memo_VendorAddress.Text =
-                            //        (vendorDetails.Address1 ?? "").Replace("\r", " ").Replace("\n", " ").Trim()
-                            //        + Clean(vendorDetails.City ?? "")
-                            //        + Clean(vendorDetails.State ?? "");
-
-
-                            //}
-
-                            SqlIO.SelectParameters["CompanyId"].DefaultValue = exp.InvChargedTo_CompanyId.ToString();
-
-                            SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = exp.InvChargedTo_CompanyId.ToString();
-                            SqlCompany.SelectParameters["WASSId"].DefaultValue = exp.InvChargedTo_CompanyId.ToString();
-                            SqlCompLocation.SelectParameters["Comp_Id"].DefaultValue = exp.InvChargedTo_CompanyId.ToString();
-
-                            SqlWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp.WF_Id).ToString();
-                            SqlFAPWFSequence.SelectParameters["WF_Id"].DefaultValue = Convert.ToInt32(exp.FAPWF_Id).ToString();
-
-                            SqlCostCenterCT.SelectParameters["Company_ID"].DefaultValue = Convert.ToInt32(exp.InvChargedTo_CompanyId).ToString();
-
-                            var expType = _DataContext.ACCEDE_S_ExpenseTypes
-                                .Where(x => x.ExpenseType_ID == Convert.ToInt32(exp.InvoiceType_ID))
-                                .FirstOrDefault();
-
-                            txt_ExpType.Text = expType.Description;
-
-                            txt_ReportDate.Text = Convert.ToDateTime(exp.ReportDate).ToString("MMMM dd, yyyy");
-                            var myLayoutGroup = FormExpApprovalView.FindItemOrGroupByName("ExpTitle") as LayoutGroup;
-
-                            if (myLayoutGroup != null)
-                            {
-                                myLayoutGroup.Caption = "Invoice Document -" + exp.DocNo.ToString() + " (View)";
-                            }
-
-                            var RFPCA = _DataContext.ACCEDE_T_RFPMains
-                                .Where(x => x.Exp_ID == Convert.ToInt32(actDetails.Document_Id))
-                                .Where(x => x.isTravel != true)
-                                .Where(x => x.IsExpenseCA == true);
-
-                            var ExpDetails = _DataContext.ACCEDE_T_InvoiceLineDetails
-                                .Where(x => x.InvMain_ID == Convert.ToInt32(actDetails.Document_Id));
-
-                            decimal totalExp = 0;
-                            foreach (var item in ExpDetails)
-                            {
-                                totalExp += Convert.ToDecimal(item.NetAmount);
-                            }
-                            expenseTotal.Text = totalExp.ToString("#,##0.00") + "  " + exp.Exp_Currency + " ";
-
-                            var ptvRFP = _DataContext.ACCEDE_T_RFPMains
-                                    .Where(x => x.IsExpenseReim != true)
-                                    .Where(x => x.IsExpenseCA != true)
-                                    .Where(x => x.Status != 4)
-                                    .Where(x => x.Exp_ID == Convert.ToInt32(exp.ID))
-                                    .Where(x => x.isTravel != true)
-                                    .FirstOrDefault();
-
-                            if (ptvRFP == null)
-                            {
-                                var reim = FormExpApprovalView.FindItemOrGroupByName("reimItem") as LayoutItem;
-                                if (reim != null)
-                                {
-                                    reim.ClientVisible = true;
-                                    //ReimburseGrid.Visible = false;
-                                }
-
-                            }
-                            else
-                            {
-                                var reim = FormExpApprovalView.FindItemOrGroupByName("ReimLayout") as LayoutGroup;
-                                if (reim != null)
-                                {
-                                    reim.ClientVisible = true;
-                                    link_rfp.Value = ptvRFP.RFP_DocNum;
-                                }
-
-                                txt_SAPDoc.Text = ptvRFP.SAPDocNo != null ? ptvRFP.SAPDocNo : "";
-                            }
-
-                            //APPROVE AND FORWARD BUTTON AND GENERATE AAF WF
-                            //var wfDetails = _DataContext.ITP_S_WorkflowDetails
-                            //    .Where(x => x.WF_Id == actDetails.WF_Id)
-                            //    .Where(x => x.WFD_Id == actDetails.WFD_Id)
-                            //    .FirstOrDefault();
-
-                            //if (wfDetails != null)
-                            //{
-                            //    var nxWFDetails = _DataContext.ITP_S_WorkflowDetails
-                            //    .Where(x => x.WF_Id == actDetails.WF_Id)
-                            //    .Where(x => x.Sequence == (Convert.ToInt32(wfDetails.Sequence) + 1))
-                            //    .FirstOrDefault();
-
-
-                            //    var if_WF_isRA = _DataContext.ITP_S_WorkflowHeaders
-                            //        .Where(x => x.WF_Id == wfDetails.WF_Id)
-                            //        .FirstOrDefault();
-
-
-                            //    var aaf = FormExpApprovalView.FindItemOrGroupByName("AAF") as LayoutItem;
-
-                            //    if (nxWFDetails == null && if_WF_isRA.IsRA != true)
-                            //    {
-                            //        aaf.ClientVisible = true;
-                            //    }
-
-                            //}
-
-                        }
-                        else
-                        {
-                            Response.Redirect("~/AllAccedeApprovalPage.aspx");
-                        }
-                    }
-
-                }
-                else
-                {
-                    Response.Redirect("~/Logon.aspx");
+                    Response.Redirect("~/Logon.aspx", false);
+                    return;
                 }
 
+                // Ensure session context (idempotent if already created)
+                AnfloSession.Current.CreateSession(HttpContext.Current.User.ToString());
+
+                if (IsPostBack)
+                    return; // Only heavy work on first load
+
+                var secureToken = Request.QueryString["secureToken"];
+                if (string.IsNullOrEmpty(secureToken))
+                {
+                    Response.Redirect("~/AllAccedeApprovalPage.aspx", false);
+                    return;
+                }
+
+                int actID;
+                try
+                {
+                    actID = Convert.ToInt32(Decrypt(secureToken));
+                }
+                catch
+                {
+                    // Bad token -> redirect to safe page
+                    Response.Redirect("~/AllAccedeApprovalPage.aspx", false);
+                    return;
+                }
+
+                InitializeFirstLoad(actID);
             }
             catch (Exception)
             {
                 if (!IsPostBack)
                 {
-                    Response.Redirect("~/Logon.aspx");
+                    Response.Redirect("~/Logon.aspx", false);
                 }
-                //Response.Redirect("~/AllAccedeApprovalPage.aspx");
+            }
+        }
+
+        /// <summary>
+        /// Performs all first-load initialization previously embedded inside Page_Load.
+        /// </summary>
+        private void InitializeFirstLoad(int actID)
+        {
+            // Fetch workflow activity
+            var actDetails = _DataContext.ITP_T_WorkflowActivities
+                .FirstOrDefault(x => x.WFA_Id == actID);
+
+            if (actDetails == null)
+            {
+                Response.Redirect("~/AllAccedeApprovalPage.aspx", false);
+                return;
             }
 
+            var documentId = actDetails.Document_Id;
 
+            // Pre-load related data in as few calls as feasible
+            var docType = _DataContext.ITP_S_DocumentTypes
+                .FirstOrDefault(x => x.DCT_Name == "ACDE InvoiceNPO" && x.App_Id == 1032);
+
+            var exp = _DataContext.ACCEDE_T_InvoiceMains
+                .FirstOrDefault(x => x.ID == documentId);
+
+            if (exp == null)
+            {
+                Response.Redirect("~/AllAccedeApprovalPage.aspx", false);
+                return;
+            }
+
+            var expType = (exp.InvoiceType_ID != null)
+                ? _DataContext.ACCEDE_S_ExpenseTypes.FirstOrDefault(x => x.ExpenseType_ID == exp.InvoiceType_ID)
+                : null;
+
+            // Compute expense total (NetAmount) efficiently
+            decimal totalExp = _DataContext.ACCEDE_T_InvoiceLineDetails
+                .Where(d => d.InvMain_ID == documentId)
+                .Select(d => (decimal?)d.NetAmount).Sum() ?? 0m;
+
+            // Possible linked RFP (ptvRFP)
+            var ptvRFP = _DataContext.ACCEDE_T_RFPMains
+                .FirstOrDefault(x =>
+                    x.IsExpenseReim != true &&
+                    x.IsExpenseCA != true &&
+                    x.Status != 4 &&
+                    x.Exp_ID == exp.ID &&
+                    x.isTravel != true);
+
+            // Store frequently used values in Session (as original logic did)
+            Session["ExpId"] = documentId;
+
+            // Set SqlDataSource parameters (guarded)
+            string docIdStr = documentId.ToString();
+            if (sqlMain.SelectParameters["ID"] != null) sqlMain.SelectParameters["ID"].DefaultValue = docIdStr;
+            if (SqlDocs.SelectParameters["Doc_ID"] != null) SqlDocs.SelectParameters["Doc_ID"].DefaultValue = docIdStr;
+            if (SqlDocs.SelectParameters["DocType_Id"] != null) SqlDocs.SelectParameters["DocType_Id"].DefaultValue = (docType?.DCT_Id.ToString() ?? string.Empty);
+            if (SqlCADetails.SelectParameters["Exp_ID"] != null) SqlCADetails.SelectParameters["Exp_ID"].DefaultValue = docIdStr;
+            if (SqlReimDetails.SelectParameters["Exp_ID"] != null) SqlReimDetails.SelectParameters["Exp_ID"].DefaultValue = docIdStr;
+            if (SqlExpDetails.SelectParameters["InvMain_ID"] != null) SqlExpDetails.SelectParameters["InvMain_ID"].DefaultValue = docIdStr;
+            if (SqlWFActivity.SelectParameters["Document_Id"] != null) SqlWFActivity.SelectParameters["Document_Id"].DefaultValue = docIdStr;
+
+            // Company / workflow related parameters
+            string compIdStr = exp.InvChargedTo_CompanyId?.ToString();
+            if (!string.IsNullOrEmpty(compIdStr))
+            {
+                if (SqlIO.SelectParameters["CompanyId"] != null) SqlIO.SelectParameters["CompanyId"].DefaultValue = compIdStr;
+                if (SqlCTDepartment.SelectParameters["Company_ID"] != null) SqlCTDepartment.SelectParameters["Company_ID"].DefaultValue = compIdStr;
+                if (SqlCompany.SelectParameters["WASSId"] != null) SqlCompany.SelectParameters["WASSId"].DefaultValue = compIdStr;
+                if (SqlCompLocation.SelectParameters["Comp_Id"] != null) SqlCompLocation.SelectParameters["Comp_Id"].DefaultValue = compIdStr;
+                if (SqlCostCenterCT.SelectParameters["Company_ID"] != null) SqlCostCenterCT.SelectParameters["Company_ID"].DefaultValue = compIdStr;
+            }
+
+            if (exp.WF_Id.HasValue && SqlWFSequence.SelectParameters["WF_Id"] != null)
+                SqlWFSequence.SelectParameters["WF_Id"].DefaultValue = exp.WF_Id.Value.ToString();
+            if (exp.FAPWF_Id.HasValue && SqlFAPWFSequence.SelectParameters["WF_Id"] != null)
+                SqlFAPWFSequence.SelectParameters["WF_Id"].DefaultValue = exp.FAPWF_Id.Value.ToString();
+
+            // UI population
+            if (expType != null)
+                txt_ExpType.Text = expType.Description;
+
+            if (exp.ReportDate.HasValue)
+                txt_ReportDate.Text = exp.ReportDate.Value.ToString("MMMM dd, yyyy");
+
+            var myLayoutGroup = FormExpApprovalView.FindItemOrGroupByName("ExpTitle") as LayoutGroup;
+            if (myLayoutGroup != null)
+            {
+                myLayoutGroup.Caption = "Invoice Document -" + (exp.DocNo ?? string.Empty) + " (View)";
+            }
+
+            // Expense total label
+            expenseTotal.Text = totalExp.ToString("#,##0.00") + "  " + (exp.Exp_Currency ?? "") + " ";
+
+            // RFP-related UI logic
+            if (ptvRFP == null)
+            {
+                var reimItem = FormExpApprovalView.FindItemOrGroupByName("reimItem") as LayoutItem;
+                if (reimItem != null)
+                {
+                    reimItem.ClientVisible = true;
+                }
+            }
+            else
+            {
+                var reimLayout = FormExpApprovalView.FindItemOrGroupByName("ReimLayout") as LayoutGroup;
+                if (reimLayout != null)
+                {
+                    reimLayout.ClientVisible = true;
+                    link_rfp.Value = ptvRFP.RFP_DocNum;
+                }
+                txt_SAPDoc.Text = ptvRFP.SAPDocNo ?? string.Empty;
+            }
+
+            // (Security check code left commented as in original for traceability)
+            /*
+            string empCode = Session["userID"].ToString();
+            int appID = 26;
+            string url = Request.Url.AbsolutePath;
+            string pageName = Path.GetFileNameWithoutExtension(url);
+            if (!AnfloSession.Current.hasPageAccess(empCode, appID, pageName)) { ... }
+            */
         }
 
         private string Decrypt(string encryptedText)
         {
-            // Example: Use the corresponding decryption logic
             return System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(encryptedText));
         }
 
         protected void ExpGrid_CustomButtonInitialize(object sender, ASPxGridViewCustomButtonEventArgs e)
         {
-            if (e.VisibleIndex >= 0 && e.ButtonID == "btnEdit") // Ensure it's a data row and the button is the desired one
+            if (e.VisibleIndex >= 0 && e.ButtonID == "btnEdit")
             {
                 e.Visible = DevExpress.Utils.DefaultBoolean.True;
-
             }
         }
 
+        // ... (rest of the class unchanged below)
         protected void UploadController_FilesUploadComplete(object sender, FilesUploadCompleteEventArgs e)
         {
             string encryptedID = Request.QueryString["secureToken"];
             if (!string.IsNullOrEmpty(encryptedID))
             {
-
                 int actID = Convert.ToInt32(Decrypt(encryptedID));
-
                 var actDetails = _DataContext.ITP_T_WorkflowActivities
                     .Where(x => x.WFA_Id == Convert.ToInt32(actID))
                     .FirstOrDefault();
-
                 var expMain = _DataContext.ACCEDE_T_InvoiceMains.Where(x => x.ID == Convert.ToInt32(actDetails.Document_Id)).FirstOrDefault();
-
                 foreach (var file in UploadController.UploadedFiles)
                 {
                     var filesize = 0.00;
@@ -293,12 +230,10 @@ namespace DX_WebTemplate
                         filesize = Convert.ToInt32(file.ContentLength);
                         filesizeStr = filesize.ToString() + " Bytes";
                     }
-
                     var app_docType = _DataContext.ITP_S_DocumentTypes
                         .Where(x => x.DCT_Name == "ACDE InvoiceNPO")
                         .Where(x => x.App_Id == 1032)
                         .FirstOrDefault();
-
                     ITP_T_FileAttachment docs = new ITP_T_FileAttachment();
                     {
                         docs.FileAttachment = file.FileBytes;
@@ -322,8 +257,8 @@ namespace DX_WebTemplate
                 SqlDocs.DataBind();
                 DocumentGrid.DataBind();
             }
-
         }
+
 
         protected void drpdown_CostCenter_Callback(object sender, CallbackEventArgsBase e)
         {
@@ -1477,6 +1412,124 @@ namespace DX_WebTemplate
 
             Session["InvDetailsID"] = invDetailID.ToString();
             return dto;
+        }
+
+        protected void ExpAllocGrid_edit_BatchUpdate(object sender, DevExpress.Web.Data.ASPxDataBatchUpdateEventArgs e)
+        {
+            var grid = (ASPxGridView)sender;
+
+            if (Session["InvDetailsID"] == null)
+            {
+                e.Handled = true;
+                return;
+            }
+
+            int detailId = Convert.ToInt32(Session["InvDetailsID"]);
+
+            // Base total before applying this batch
+            decimal baseTotal = _DataContext.ACCEDE_T_InvoiceLineDetailsMaps
+                .Where(m => m.InvoiceReportDetail_ID == detailId)
+                .Sum(m => (decimal?)m.NetAmount) ?? 0m;
+
+            decimal delta = 0m;
+
+            // Updates
+            foreach (var upd in e.UpdateValues)
+            {
+                decimal oldNet = Convert.ToDecimal(upd.OldValues["NetAmount"] ?? 0m);
+                decimal newNet = Convert.ToDecimal(upd.NewValues["NetAmount"] ?? 0m);
+                delta += (newNet - oldNet);
+            }
+
+            // Inserts
+            foreach (var ins in e.InsertValues)
+            {
+                decimal newNet = Convert.ToDecimal(ins.NewValues["NetAmount"] ?? 0m);
+                delta += newNet;
+            }
+
+            // Deletes
+            foreach (var del in e.DeleteValues)
+            {
+                // Fix: Use `Values` instead of `OldValues` for delete operations
+                decimal oldNet = Convert.ToDecimal(del.Values["NetAmount"] ?? 0m);
+                delta -= oldNet;
+            }
+
+            decimal finalTotal = baseTotal + delta;
+
+            decimal maxAllowed = 0m;
+            if (decimal.TryParse(total_edit.Value?.ToString(), out var tmp))
+                maxAllowed = tmp;
+
+            if (maxAllowed > 0 && finalTotal > maxAllowed)
+            {
+                grid.JSProperties["cpAllocationExceeded"] = true;
+                //grid.JSProperties["cpComputeUnalloc_edit"] = finalTotal;
+                e.Handled = true; // Abort persistence
+
+                SqlExpMap.SelectParameters["InvoiceReportDetail_ID"].DefaultValue = detailId.ToString();
+
+                // 🔑 Rebind your data (otherwise grid will show "no data to display")
+                grid.DataSourceID = null;
+                grid.DataSource = SqlExpMap;
+                grid.DataBind();
+
+                return;
+            }
+
+            // Persist updates
+            foreach (var upd in e.UpdateValues)
+            {
+                int key = Convert.ToInt32(upd.Keys["InvoiceDetailMap_ID"]);
+                var entity = _DataContext.ACCEDE_T_InvoiceLineDetailsMaps
+                    .Single(m => m.InvoiceDetailMap_ID == key);
+
+                entity.NetAmount = Convert.ToDecimal(upd.NewValues["NetAmount"] ?? 0m);
+                if (upd.NewValues.Contains("Remarks"))
+                    entity.EDM_Remarks = upd.NewValues["Remarks"]?.ToString();
+                if (upd.NewValues.Contains("CostCenterIOWBS"))
+                    entity.CostCenterIOWBS = upd.NewValues["CostCenterIOWBS"]?.ToString();
+            }
+
+            // Persist inserts
+            foreach (var ins in e.InsertValues)
+            {
+                var map = new ACCEDE_T_InvoiceLineDetailsMap
+                {
+                    InvoiceReportDetail_ID = detailId,
+                    NetAmount = Convert.ToDecimal(ins.NewValues["NetAmount"] ?? 0m),
+                    CostCenterIOWBS = (ins.NewValues.Contains("CostCenterIOWBS")
+                                      ? ins.NewValues["CostCenterIOWBS"]?.ToString()
+                                      : ins.NewValues.Contains("CostCenter")
+                                        ? ins.NewValues["CostCenter"]?.ToString()
+                                        : null),
+                    EDM_Remarks = ins.NewValues["Remarks"]?.ToString(),
+                    Preparer_ID = Session["userID"]?.ToString()
+                };
+                _DataContext.ACCEDE_T_InvoiceLineDetailsMaps.InsertOnSubmit(map);
+            }
+
+            // Persist deletes
+            foreach (var del in e.DeleteValues)
+            {
+                int key = Convert.ToInt32(del.Keys["InvoiceDetailMap_ID"]);
+                var entity = _DataContext.ACCEDE_T_InvoiceLineDetailsMaps
+                    .Single(m => m.InvoiceDetailMap_ID == key);
+                _DataContext.ACCEDE_T_InvoiceLineDetailsMaps.DeleteOnSubmit(entity);
+            }
+
+            _DataContext.SubmitChanges();
+
+            SqlExpMap.SelectParameters["InvoiceReportDetail_ID"].DefaultValue = detailId.ToString();
+
+            // 🔑 Rebind your data (otherwise grid will show "no data to display")
+            grid.DataSourceID = null;
+            grid.DataSource = SqlExpMap;
+            grid.DataBind();
+
+            grid.JSProperties["cpComputeUnalloc_edit"] = finalTotal;
+            e.Handled = true; // We applied everything manually
         }
     }
 }
