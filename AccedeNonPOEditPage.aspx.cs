@@ -120,6 +120,8 @@ namespace DX_WebTemplate
                     RebindSessionData();
                 }
 
+
+
                 // Bind vendors & workflows only on initial load (heavy operations)
                 if (!IsPostBack && !IsCallback)
                 {
@@ -140,7 +142,33 @@ namespace DX_WebTemplate
             }
         }
 
+
+
         // --- HELPERS (NEW / REFACTORED) --------------------------------------------------
+
+        private void EnsureExpenseAllocDataSet()
+        {
+            if (!IsPostBack || (Session["DataSetInvAlloc"] == null))
+            {
+                dsExpAlloc = new DataSet();
+                DataTable masterTable = new DataTable();
+                masterTable.Columns.Add("ID", typeof(int));
+                masterTable.Columns.Add("CostCenter", typeof(string));
+                masterTable.Columns.Add("NetAmount", typeof(decimal));
+                masterTable.Columns.Add("Remarks", typeof(string));
+                masterTable.PrimaryKey = new DataColumn[] { masterTable.Columns["ID"] };
+
+                dsExpAlloc.Tables.AddRange(new DataTable[] { masterTable/*, detailTable*/ });
+                Session["DataSetInvAlloc"] = dsExpAlloc;
+
+            }
+            else
+            {
+                dsExpAlloc = (DataSet)Session["DataSetInvAlloc"];
+                ExpAllocGrid.DataSource = dsExpAlloc.Tables[0];
+                ExpAllocGrid.DataBind();
+            }
+        }
 
         private void SetSqlParameters(ACCEDE_T_InvoiceMain mainInv, ITP_S_DocumentType appDocType, string empCode)
         {
@@ -254,31 +282,11 @@ namespace DX_WebTemplate
             }
         }
 
-        private void EnsureExpenseAllocDataSet()
-        {
-            if (Session["DataSetExpAlloc"] == null)
-            {
-                var ds = new DataSet();
-                DataTable master = new DataTable();
-                master.Columns.Add("ID", typeof(int));
-                master.Columns.Add("CostCenter", typeof(string));
-                master.Columns.Add("NetAmount", typeof(decimal));
-                master.Columns.Add("Remarks", typeof(string));
-                master.PrimaryKey = new[] { master.Columns["ID"] };
-                ds.Tables.Add(master);
-                Session["DataSetExpAlloc"] = ds;
-            }
-            else
-            {
-                dsExpAlloc = (DataSet)Session["DataSetExpAlloc"];
-                ExpAllocGrid.DataSource = dsExpAlloc.Tables[0];
-                ExpAllocGrid.DataBind();
-            }
-        }
+        
 
         private void EnsureDocumentDataSet()
         {
-            if (Session["DataSetDoc"] == null)
+            if (Session["DataSetInvDoc"] == null)
             {
                 var ds = new DataSet();
                 DataTable master = new DataTable();
@@ -290,11 +298,11 @@ namespace DX_WebTemplate
                 master.Columns.Add("FileDesc", typeof(string));
                 master.PrimaryKey = new[] { master.Columns["ID"] };
                 ds.Tables.Add(master);
-                Session["DataSetDoc"] = ds;
+                Session["DataSetInvDoc"] = ds;
             }
             else
             {
-                dsDoc = (DataSet)Session["DataSetDoc"];
+                dsDoc = (DataSet)Session["DataSetInvDoc"];
                 DocuGrid.DataSource = dsDoc.Tables[0];
                 DocuGrid.DataBind();
             }
@@ -302,13 +310,13 @@ namespace DX_WebTemplate
 
         private void RebindSessionData()
         {
-            if (Session["DataSetExpAlloc"] is DataSet allocDs)
+            if (Session["DataSetInvAlloc"] is DataSet allocDs)
             {
                 dsExpAlloc = allocDs;
                 ExpAllocGrid.DataSource = dsExpAlloc.Tables[0];
                 ExpAllocGrid.DataBind();
             }
-            if (Session["DataSetDoc"] is DataSet docDs)
+            if (Session["DataSetInvDoc"] is DataSet docDs)
             {
                 dsDoc = docDs;
                 DocuGrid.DataSource = dsDoc.Tables[0];
@@ -321,7 +329,7 @@ namespace DX_WebTemplate
         DataSet dsExpAlloc = null;
         private int GetNewId()
         {
-            dsExpAlloc = (DataSet)Session["DataSetExpAlloc"];
+            dsExpAlloc = (DataSet)Session["DataSetInvAlloc"];
             DataTable table = dsExpAlloc.Tables[0];
             if (table.Rows.Count == 0) return 0;
             int max = Convert.ToInt32(table.Rows[0]["ID"]);
@@ -335,7 +343,7 @@ namespace DX_WebTemplate
 
         private int GetDocNewId()
         {
-            dsDoc = (DataSet)Session["DataSetDoc"];
+            dsDoc = (DataSet)Session["DataSetInvDoc"];
             DataTable table = dsDoc.Tables[0];
             if (table.Rows.Count == 0) return 0;
             int max = Convert.ToInt32(table.Rows[0]["ID"]);
@@ -649,8 +657,8 @@ namespace DX_WebTemplate
         {
             try
             {
-                Session.Remove("DataSetExpAlloc");
-                Session.Remove("DataSetDoc");
+                Session.Remove("DataSetInvAlloc");
+                Session.Remove("DataSetInvDoc");
                 dsExpAlloc = null;
                 dsDoc = null;
             }
@@ -691,7 +699,7 @@ namespace DX_WebTemplate
             {
 
                 decimal totalNetAmnt = new decimal(0.00);
-                DataSet dsAlloc = (DataSet)Session["DataSetExpAlloc"];
+                DataSet dsAlloc = (DataSet)Session["DataSetInvAlloc"];
                 DataTable dataTableAlloc = dsAlloc.Tables[0];
 
                 foreach (DataRow row in dataTableAlloc.Rows)
@@ -780,7 +788,7 @@ namespace DX_WebTemplate
                         .FirstOrDefault();
 
                     // Insert file attachments mapped to this line
-                    DataSet dsFile = (DataSet)Session["DataSetDoc"];
+                    DataSet dsFile = (DataSet)Session["DataSetInvDoc"];
                     DataTable dataTable = dsFile.Tables[0];
 
                     if (dataTable.Rows.Count > 0)
@@ -1903,7 +1911,7 @@ namespace DX_WebTemplate
             }
             else
             {
-                dsExpAlloc = (DataSet)Session["DataSetExpAlloc"];
+                dsExpAlloc = (DataSet)Session["DataSetInvAlloc"];
                 ASPxGridView gridView = (ASPxGridView)sender;
                 DataTable dataTable = gridView.GetMasterRowKeyValue() != null ? dsExpAlloc.Tables[1] : dsExpAlloc.Tables[0];
                 DataRow row = dataTable.NewRow();
@@ -1934,7 +1942,7 @@ namespace DX_WebTemplate
 
             //Delete row
             e.Cancel = true;
-            dsExpAlloc = (DataSet)Session["DataSetExpAlloc"];
+            dsExpAlloc = (DataSet)Session["DataSetInvAlloc"];
             dsExpAlloc.Tables[0].Rows.Remove(dsExpAlloc.Tables[0].Rows.Find(e.Keys[ExpAllocGrid.KeyFieldName]));
 
             decimal totalNetAmount = 0;
@@ -2640,7 +2648,7 @@ namespace DX_WebTemplate
         protected void UploadControllerExpD_FilesUploadComplete(object sender, FilesUploadCompleteEventArgs e)
         {
             // Create a new data table if it doesn't exist in the data set
-            DataSet ImgDS = (DataSet)Session["DataSetDoc"];
+            DataSet ImgDS = (DataSet)Session["DataSetInvDoc"];
             foreach (var file in UploadControllerExpD.UploadedFiles)
             {
 
@@ -2686,13 +2694,13 @@ namespace DX_WebTemplate
             int i = DocuGrid.FindVisibleIndexByKeyValue(e.Keys[DocuGrid.KeyFieldName]);
             //Control c = DocuGrid.FindDetailRowTemplateControl(i, "ASPxGridView2");
             e.Cancel = true;
-            dsDoc = (DataSet)Session["DataSetDoc"];
+            dsDoc = (DataSet)Session["DataSetInvDoc"];
             dsDoc.Tables[0].Rows.Remove(dsDoc.Tables[0].Rows.Find(e.Keys[DocuGrid.KeyFieldName]));
         }
 
         protected void DocuGrid_RowUpdating1(object sender, DevExpress.Web.Data.ASPxDataUpdatingEventArgs e)
         {
-            dsDoc = (DataSet)Session["DataSetDoc"];
+            dsDoc = (DataSet)Session["DataSetInvDoc"];
             ASPxGridView gridView = (ASPxGridView)sender;
             DataTable dataTable = gridView.GetMasterRowKeyValue() != null ? dsDoc.Tables[1] : dsDoc.Tables[0];
             DataRow row = dataTable.Rows.Find(e.Keys[0]);
@@ -3127,7 +3135,7 @@ namespace DX_WebTemplate
             //}
 
             // Get session and data table
-            dsExpAlloc = (DataSet)Session["DataSetExpAlloc"];
+            dsExpAlloc = (DataSet)Session["DataSetInvAlloc"];
             ASPxGridView gridView = (ASPxGridView)ExpAllocGrid;
             DataTable dataTable = gridView.GetMasterRowKeyValue() != null ? dsExpAlloc.Tables[1] : dsExpAlloc.Tables[0];
 
@@ -3144,7 +3152,7 @@ namespace DX_WebTemplate
 
         protected void ExpAllocGrid_RowUpdating(object sender, DevExpress.Web.Data.ASPxDataUpdatingEventArgs e)
         {
-            dsExpAlloc = (DataSet)Session["DataSetExpAlloc"];
+            dsExpAlloc = (DataSet)Session["DataSetInvAlloc"];
             ASPxGridView gridView = (ASPxGridView)sender;
             DataTable dataTable = gridView.GetMasterRowKeyValue() != null ? dsExpAlloc.Tables[1] : dsExpAlloc.Tables[0];
             DataRow row = dataTable.Rows.Find(e.Keys[0]);

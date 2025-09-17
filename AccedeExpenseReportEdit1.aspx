@@ -3918,7 +3918,11 @@ computeNetAmount(&quot;edit&quot;);
             <asp:Parameter DefaultValue="" Name="UserId" Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlTranType" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_ExpenseType]"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlTranType" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_ExpenseType] WHERE ([ExpenseType_ID] &lt;&gt; @ExpenseType_ID)">
+        <SelectParameters>
+            <asp:Parameter DefaultValue="3" Name="ExpenseType_ID" Type="Int32" />
+        </SelectParameters>
+    </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlExpCat" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACDE_T_MasterCodes] WHERE ([Code] = @Code)">
         <SelectParameters>
             <asp:Parameter DefaultValue="ExpCat" Name="Code" Type="String" />
