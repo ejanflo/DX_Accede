@@ -1,5 +1,6 @@
 ﻿using DevExpress.ClipboardSource.SpreadsheetML;
 using DevExpress.CodeParser;
+using DevExpress.Pdf.Native.BouncyCastle.Crypto;
 using DevExpress.Pdf.Native.DocumentSigning;
 using DevExpress.Pdf.Xmp;
 using DevExpress.Utils;
@@ -1235,6 +1236,15 @@ namespace DX_WebTemplate
             return result;
         }
 
+        [WebMethod]
+        public static string AJAXDisburseDocument(string sapDoc, string signee, string signatureData, int chargedComp, int chargedDept)
+        {
+            TravelExpenseReview rev = new TravelExpenseReview();
+            var result = rev.DisburseDocument(sapDoc, signee, signatureData, chargedComp, chargedDept);
+
+            return result;
+        }
+
         public void updateTravelRFP(int docID, int reim_docID, string remarks, int chargedcomp, int chargeddept, string arNo, string sapDoc)
         {
             // Update Travel Main
@@ -1313,6 +1323,131 @@ namespace DX_WebTemplate
                     r.Status = liqStatus;
                 }
                 _DataContext.SubmitChanges();
+            }
+        }
+
+        public static byte[] Base64ToBytes(string base64String)
+        {
+            // Remove the data URL prefix if present
+            if (base64String.Contains(","))
+            {
+                base64String = base64String.Substring(base64String.IndexOf(",") + 1);
+            }
+
+            return Convert.FromBase64String(base64String);
+        }
+
+        public string DisburseDocument(string sapDoc, string signee, string signatureData, int chargedComp, int chargedDept)
+        {
+            try
+            {
+                string stat = "";
+                // Travel Main ID
+                int docID = Convert.ToInt32(Session["TravelExp_Id"]);
+
+                // RFP Main ID
+                int reim_docID = _DataContext.ACCEDE_T_RFPMains.Where(x => x.Exp_ID == docID && x.IsExpenseReim == true).Where(x => x.isTravel == true && x.Status != 4).Select(x => x.ID).FirstOrDefault();
+
+                // App DocType ID
+                var doctype_id = _DataContext.ITP_S_DocumentTypes.Where(x => x.DCT_Name == "ACDE Expense Travel").Where(x => x.App_Id == 1032).Select(x => x.DCT_Id).FirstOrDefault();
+
+                // Payment Method
+                var pmid = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == reim_docID).Select(x => x.PayMethod).FirstOrDefault();
+                var reimPayMethod = _DataContext.ACCEDE_S_PayMethods.Where(x => x.ID == pmid).Select(x => x.PMethod_name).FirstOrDefault();
+
+                // User ID and Comp ID
+                string userID = Convert.ToString(Session["userID"]);
+                int usercompanyID = Convert.ToInt32(Session["userCompanyID"]);
+
+                // Doc Preparer ID
+                int preparerID = Convert.ToInt32(Session["prep"]);
+
+                // Employee ID for Email CC
+                var cc = _DataContext.ITP_S_UserMasters.Where(x => x.EmpCode == Convert.ToString(Session["empid"])).Select(x => x.Email).FirstOrDefault();
+
+                // Employee Comp ID
+                int companyID = int.Parse(Session["comp"].ToString());
+
+                // GET WORKFLOW ID 
+                var wfID = Convert.ToInt32(Session["wf"]);
+
+                // GET WORKFLOWACTIVITY ID 
+                var wfaID = Convert.ToInt32(Session["wfa"]);
+
+                var completeStat = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Completed").Select(x => x.STS_Id).FirstOrDefault();
+                var disburseStat = _DataContext.ITP_S_Status.Where(x => x.STS_Description == "Disbursed").Select(x => x.STS_Id).FirstOrDefault();
+
+                updateTravelRFP(docID, reim_docID, string.Empty, chargedComp, chargedDept, string.Empty, sapDoc);
+
+                byte[] signatureBytes = Base64ToBytes(signatureData);
+
+                var sig = new ACCEDE_T_RFPSignature()
+                {
+                    RFPMain_Id = reim_docID,
+                    Signature = signatureBytes,
+                    Status_Id = disburseStat,
+                    Signee_Fullname = signee.ToUpper(),
+                    DateReceived = DateTime.Now
+                };
+                _DataContext.ACCEDE_T_RFPSignatures.InsertOnSubmit(sig);
+                _DataContext.SubmitChanges();
+
+                // Approval logic for Cashier Workflow
+                if (Convert.ToString(Session["doc_stat2"]) == "Pending at Cashier")
+                {
+                    // UPDATE WORKFLOWACTIVITY
+                    if (!string.IsNullOrEmpty(sapDoc))
+                    {
+                        updateWA(docID, wfID, wfaID, 7, string.Empty, string.Empty, userID, DateTime.Now, reim_docID);
+                    }
+                    else
+                    {
+                        updateSAPDocWA(docID, wfID, wfaID, 7, string.Empty, string.Empty, userID, DateTime.Now, reim_docID, sapDoc);
+                    }
+
+                    bool hasNextSequence = checkNextSequence(docID, companyID, string.Empty, userID, reim_docID, sapDoc);
+
+                    if (!hasNextSequence)
+                    {
+                        if (Convert.ToDecimal(Session["totalCA"]) > Convert.ToDecimal(Session["totalEXP"]))
+                        {
+                            var FAPwflow = _DataContext.ACCEDE_T_TravelExpenseMains.Where(w => w.ID == docID).Select(x => x.FAPWF_Id).FirstOrDefault();
+                            var FAPwfd = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == FAPwflow && w.Sequence == 1).Select(w => w.WFD_Id).FirstOrDefault();
+                            var FAPorID = _DataContext.ITP_S_WorkflowDetails.Where(w => w.WF_Id == FAPwflow && w.Sequence == 1).Select(w => w.OrgRole_Id).FirstOrDefault() ?? 0;
+                            var FAPstatus = _DataContext.ITP_S_Status.Where(s => s.STS_Description == "Pending at Finance").Select(s => s.STS_Id).FirstOrDefault();
+
+                            stat = "Pending at Cashier";
+
+                            insertWA((int)FAPwflow, FAPwfd, (int)FAPorID, docID, companyID, FAPstatus, reim_docID, string.Empty);
+                        }
+                        else
+                        {
+                            var travel = _DataContext.ACCEDE_T_TravelExpenseMains.Where(w => w.ID == docID);
+                            foreach (ACCEDE_T_TravelExpenseMain t in travel)
+                            {
+                                t.Status = completeStat;
+                            }
+                            _DataContext.SubmitChanges();
+
+                            var updateReim = _DataContext.ACCEDE_T_RFPMains.Where(x => x.ID == reim_docID);
+                            foreach (ACCEDE_T_RFPMain r in updateReim)
+                            {
+                                r.Status = disburseStat;
+                            }
+                            _DataContext.SubmitChanges();
+
+                            stat = "Pending at Cashier, Disbursed";
+
+                            SendEmailComplete(docID, completeStat, Convert.ToInt32(Session["prep"]), string.Empty, Convert.ToInt32(Session["userID"]));
+                        }
+                    }
+                }
+                return stat;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+                throw;
             }
         }
 

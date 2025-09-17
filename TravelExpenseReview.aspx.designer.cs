@@ -807,6 +807,69 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxButton ASPxFormLayout1_E4;
 
         /// <summary>
+        /// DisbursePopup control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxPopupControl DisbursePopup;
+
+        /// <summary>
+        /// ASPxFormLayout18 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxFormLayout ASPxFormLayout18;
+
+        /// <summary>
+        /// ASPxFormLayout1_E17 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxImage ASPxFormLayout1_E17;
+
+        /// <summary>
+        /// ASPxFormLayout1_E18 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxLabel ASPxFormLayout1_E18;
+
+        /// <summary>
+        /// signeeVal control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxTextBox signeeVal;
+
+        /// <summary>
+        /// disbursePopBtn control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton disbursePopBtn;
+
+        /// <summary>
+        /// ASPxFormLayout1_E19 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxButton ASPxFormLayout1_E19;
+
+        /// <summary>
         /// ForwardPopup control.
         /// </summary>
         /// <remarks>
