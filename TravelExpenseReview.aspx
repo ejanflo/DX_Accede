@@ -377,7 +377,7 @@
                         if (response.d == "Pending at Cashier") {
                             window.open('AllAccedeCashierPage.aspx', '_self');
                         } else if (response.d == "Pending at Cashier, Disbursed") {
-                            window.open('TravelExpensePrint.aspx', '_blank');
+                            window.open('RFPPrintPage.aspx', '_blank');
                             window.open('AllAccedeCashierPage.aspx', '_self');
                         }
                     },

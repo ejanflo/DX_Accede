@@ -1442,6 +1442,8 @@ namespace DX_WebTemplate
                         }
                     }
                 }
+
+                Session["passRFPID"] = reim_docID.ToString();
                 return stat;
             }
             catch (Exception)
