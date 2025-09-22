@@ -792,7 +792,11 @@ drpdown_CompLocation.PerformCallback(s.GetValue());
     <dx:ASPxLoadingPanel ID="loadPanel" runat="server" Text="Redirecting&amp;hellip;" Theme="MaterialCompact" ClientInstanceName="loadPanel" Modal="True">
     </dx:ASPxLoadingPanel>
         <asp:SqlDataSource ID="sqlName" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT [FullName], [EmpCode] FROM [ITP_S_UserMaster]"></asp:SqlDataSource>
-        <asp:SqlDataSource ID="sqlExpenseType" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_ExpenseType] ORDER BY [Description]"></asp:SqlDataSource>
+        <asp:SqlDataSource ID="sqlExpenseType" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_ExpenseType] WHERE ([ExpenseType_ID] &lt;&gt; @ExpenseType_ID)">
+            <SelectParameters>
+                <asp:Parameter DefaultValue="3" Name="ExpenseType_ID" Type="Int32" />
+            </SelectParameters>
+        </asp:SqlDataSource>
         <asp:SqlDataSource ID="sqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT [WASSId], [CompanyDesc], [CompanyShortName] FROM [CompanyMaster] WHERE ([WASSId] IS NOT NULL) ORDER BY [CompanyDesc]"></asp:SqlDataSource>
         <asp:SqlDataSource ID="sqlExpense" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_T_ExpenseMain] WHERE (([UserId] = @UserId) AND ([ExpenseType_ID] &lt;&gt; @ExpenseType_ID)) ORDER BY [ID] DESC">
             <SelectParameters>
