@@ -157,7 +157,7 @@ namespace DX_WebTemplate
                 if (!string.IsNullOrEmpty(code))
                 {
                     // Attempt direct vendor fetch (preferred)
-                    var vendor = SAPVendor.GetVendorData(code).FirstOrDefault();
+                    var vendor = SAPConnector.GetVendorData(code).FirstOrDefault();
                     if (vendor != null)
                     {
                         txt_vendor.Text = vendor.VENDNAME;

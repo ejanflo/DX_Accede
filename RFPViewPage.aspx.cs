@@ -182,7 +182,7 @@ namespace DX_WebTemplate
             {
                 // Original code fetched all vendors then filtered; keep behavior
                 string cleaned = (rfp.Payee ?? "").Replace("\r", "").Replace("\n", "");
-                var vendors = SAPVendor.GetVendorData("")
+                var vendors = SAPConnector.GetVendorData("")
                     .GroupBy(x => new { x.VENDCODE, x.VENDNAME })
                     .Select(g => g.First())
                     .ToList();

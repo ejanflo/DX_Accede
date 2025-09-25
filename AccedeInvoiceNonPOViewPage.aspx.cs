@@ -11,6 +11,7 @@ using System.Web;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using static DX_WebTemplate.AccedeModels;
 using static DX_WebTemplate.AccedeNonPOEditPage;
 
 namespace DX_WebTemplate
@@ -25,7 +26,7 @@ namespace DX_WebTemplate
         private const int AppIdAccede = 1032;
 
         // Vendor cache (left as in original – re‑enable if necessary)
-        private static Dictionary<string, SAPVendor.VendorSet> _vendorCache;
+        private static Dictionary<string, VendorSet> _vendorCache;
         private static readonly object _vendorLock = new object();
 
         // Lookup caching

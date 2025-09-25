@@ -476,6 +476,7 @@
     <Compile Include="AccedeInvoiceNonPOViewPage.aspx.designer.cs">
       <DependentUpon>AccedeInvoiceNonPOViewPage.aspx</DependentUpon>
     </Compile>
+    <Compile Include="AccedeModels.cs" />
     <Compile Include="AccedeNonPOApprovalView.aspx.cs">
       <DependentUpon>AccedeNonPOApprovalView.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -730,6 +731,7 @@
     <Compile Include="RFPViewPage.aspx.designer.cs">
       <DependentUpon>RFPViewPage.aspx</DependentUpon>
     </Compile>
+    <Compile Include="SAPConnector.cs" />
     <Compile Include="SAPVendor.cs" />
     <Compile Include="Security\EmulateUser.aspx.cs">
       <DependentUpon>EmulateUser.aspx</DependentUpon>

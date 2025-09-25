@@ -183,7 +183,7 @@ namespace DX_WebTemplate
             }
 
             // Assumes GetVendorData can accept a filter. If not, consider adding a dedicated method.
-            var vendor = SAPVendor.GetVendorData(vendorCode)
+            var vendor = SAPConnector.GetVendorData(vendorCode)
                 .FirstOrDefault(x => x.VENDCODE == vendorCode);
 
             if (vendor != null)

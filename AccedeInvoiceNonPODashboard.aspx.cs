@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using static DX_WebTemplate.AccedeModels;
 using static DX_WebTemplate.SAPVendor;
 
 namespace DX_WebTemplate
@@ -131,7 +132,7 @@ namespace DX_WebTemplate
                     try
                     {
                         string query = $"{SapClientParam}&$filter=VENDCODE eq '{normalized.Replace("'", "''")}'&$top=1";
-                        result = SAPVendor.GetVendorData(query)
+                        result = SAPConnector.GetVendorData(query)
                                           .FirstOrDefault(v => string.Equals(v.VENDCODE?.Trim(), normalized, StringComparison.OrdinalIgnoreCase));
                         if (result != null)
                         {
@@ -161,7 +162,7 @@ namespace DX_WebTemplate
                 return new List<VendorSet>();
 
             string query = $"{SapClientParam}&$filter=VENDCOCODE eq '{compCode}'";
-            var list = SAPVendor.GetVendorData(query)
+            var list = SAPConnector.GetVendorData(query)
                 .GroupBy(v => v.VENDCODE?.Trim().ToUpperInvariant())
                 .Select(g => g.First())
                 .OrderBy(v => v.VENDNAME)
@@ -217,6 +218,75 @@ namespace DX_WebTemplate
             return null;
         }
         // ---------------- END VENDOR CACHE ----------------
+
+        // ---------------- VENDOR CACHE (same pattern as AccedeNonPOEditPage) ----------------
+
+        // continue the code here same as the Vendor cache but for EWT
+        internal static class EwtDataSetCache
+        {
+            private static readonly object _sync = new object();
+            private static readonly DataTable _table;
+            static EwtDataSetCache()
+            {
+                _table = new DataTable("EWTs");
+                _table.Columns.Add("EWTTYPE", typeof(string));
+                _table.Columns.Add("EWTCODE", typeof(string));
+                _table.Columns.Add("EWTRATE", typeof(decimal));
+                _table.Columns.Add("EWTDESC", typeof(string));
+                _table.PrimaryKey = new[] { _table.Columns["EWTTYPE"], _table.Columns["EWTCODE"] };
+            }
+            public static void AddOrUpdate(IEnumerable<EwtSet> ewts)
+            {
+                if (ewts == null) return;
+                lock (_sync)
+                {
+                    foreach (var e in ewts)
+                    {
+                        if (e == null || string.IsNullOrWhiteSpace(e.EWTTYPE) || string.IsNullOrWhiteSpace(e.EWTCODE)) continue;
+                        var typeKey = e.EWTTYPE.Trim().ToUpperInvariant();
+                        var codeKey = e.EWTCODE.Trim().ToUpperInvariant();
+                        var row = _table.Rows.Find(new object[] { typeKey, codeKey });
+                        if (row == null)
+                        {
+                            row = _table.NewRow();
+                            row["EWTTYPE"] = typeKey;
+                            row["EWTCODE"] = codeKey;
+                            row["EWTRATE"] = decimal.TryParse(e.EWTRATE, out var rate) ? rate : 0m;
+                            row["EWTDESC"] = e.EWTDESC;
+                            _table.Rows.Add(row);
+                        }
+                        else
+                        {
+                            row["EWTRATE"] = decimal.TryParse(e.EWTRATE, out var rate) ? rate : 0m;
+                            row["EWTDESC"] = e.EWTDESC;
+                        }
+                    }
+                }
+            }
+            public static EwtSet Get(string ewtType, string ewtCode)
+            {
+                if (string.IsNullOrWhiteSpace(ewtType) || string.IsNullOrWhiteSpace(ewtCode)) return null;
+                var typeKey = ewtType.Trim().ToUpperInvariant();
+                var codeKey = ewtCode.Trim().ToUpperInvariant();
+                lock (_sync)
+                {
+                    var row = _table.Rows.Find(new object[] { typeKey, codeKey });
+                    if (row == null) return null;
+                    return new EwtSet
+                    {
+                        EWTTYPE = (string)row["EWTTYPE"],
+                        EWTCODE = (string)row["EWTCODE"],
+                        EWTRATE = row["EWTRATE"]?.ToString(),
+                        EWTDESC = row["EWTDESC"] as string
+                    };
+                }
+            }
+
+        }
+
+
+
+        // ---------------- END EWT CACHE ----------------
 
         protected void Page_Load(object sender, EventArgs e)
         {

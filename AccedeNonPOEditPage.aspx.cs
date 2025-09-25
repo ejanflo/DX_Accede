@@ -18,6 +18,7 @@ using System.Web;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using static DX_WebTemplate.AccedeModels;
 using static DX_WebTemplate.SAPVendor;
 
 namespace DX_WebTemplate
@@ -213,7 +214,7 @@ namespace DX_WebTemplate
         }
 
         // (Optional) replace old GetVendorListCached calls with this wrapper; keep original method if still referenced elsewhere.
-        private List<SAPVendor.VendorSet> GetVendorListCached(string compCode)
+        private List<VendorSet> GetVendorListCached(string compCode)
         {
             return GetOrRefreshVendorList(compCode, false);
         }
@@ -2597,42 +2598,7 @@ namespace DX_WebTemplate
             catch (Exception ex) { return false; }
         }
 
-        public class InvDetailsNonPO
-        {
-            public int id { get; set; }
-            public string dateAdded { get; set; }
-            public string particulars { get; set; }
-            public string InvoiceOR { get; set; }
-            public int acctCharge { get; set; }
-            public decimal grossAmnt { get; set; }
-            public decimal netAmnt { get; set; }
-            public int expMainId { get; set; }
-            public string preparerId { get; set; }
-            public decimal totalAllocAmnt { get; set; }
-            public string LineDesc { get; set; }
-            public string Assignment { get; set; }
-            public string UserId { get; set; }
-            public string Allowance { get; set; }
-            public string SLCode { get; set; }
-            public int EWTTaxType_Id { get; set; }
-            public decimal EWTTaxAmount { get; set; }
-            public string EWTTaxCode { get; set; }
-            public string InvoiceTaxCode { get; set; }
-            public string Asset { get; set; }
-            public string SubAssetCode { get; set; }
-            public string TransactionType { get; set; }
-            public string AltRecon { get; set; }
-            public string SpecialGL { get; set; }
-            public decimal Qty { get; set; }
-            public decimal UnitPrice { get; set; }
-            public string uom { get; set; }
-            public decimal ewt { get; set; }
-            public decimal vat { get; set; }
-            public decimal ewtperc { get; set; }
-            public decimal netvat { get; set; }
-            public bool isVatCompute { get; set; }
-        }
-
+        
         protected void exp_Department_Callback(object sender, CallbackEventArgsBase e)
         {
             var comp_id = e.Parameter.ToString();
@@ -3399,7 +3365,7 @@ namespace DX_WebTemplate
                 _ds.Tables.Add(_table);
             }
 
-            public static void AddOrUpdate(IEnumerable<SAPVendor.VendorSet> vendors)
+            public static void AddOrUpdate(IEnumerable<VendorSet> vendors)
             {
                 if (vendors == null) return;
                 lock (_sync)
@@ -3434,7 +3400,7 @@ namespace DX_WebTemplate
                 }
             }
 
-            public static SAPVendor.VendorSet Get(string vendorCode)
+            public static VendorSet Get(string vendorCode)
             {
                 if (string.IsNullOrWhiteSpace(vendorCode)) return null;
                 var code = vendorCode.Trim().ToUpperInvariant();
@@ -3442,7 +3408,7 @@ namespace DX_WebTemplate
                 {
                     var row = _table.Rows.Find(code);
                     if (row == null) return null;
-                    return new SAPVendor.VendorSet
+                    return new VendorSet
                     {
                         VENDCODE = (string)row["VENDCODE"],
                         VENDNAME = row["VENDNAME"] as string,
@@ -3463,14 +3429,6 @@ namespace DX_WebTemplate
         // Below is the corrected version where we retain only one definition of the method.  
 
         
-
-        public class VendorDetails
-        {
-            public string TIN { get; set; }
-            public string Address { get; set; }
-            public bool isOneTime { get; set; }
-            public string Name { get; set; }
-        }
         // MODIFY VendorLookupService to also return the new fields
         internal static class VendorLookupService
         {
@@ -3480,7 +3438,7 @@ namespace DX_WebTemplate
             private static readonly object _lockRoot = new object();
             private const string SapClient = "sap-client=300";
 
-            public static SAPVendor.VendorSet GetVendor(string vendorCode)
+            public static VendorSet GetVendor(string vendorCode)
             {
                 if (string.IsNullOrWhiteSpace(vendorCode))
                     return null;
@@ -3493,19 +3451,19 @@ namespace DX_WebTemplate
                 string cacheKey = "VENDOR_" + vendorCode;
 
                 // 2. MemoryCache
-                var cached = _cache.Get(cacheKey) as SAPVendor.VendorSet;
+                var cached = _cache.Get(cacheKey) as VendorSet;
                 if (cached != null) return cached;
 
                 lock (_lockRoot)
                 {
-                    cached = _cache.Get(cacheKey) as SAPVendor.VendorSet;
+                    cached = _cache.Get(cacheKey) as VendorSet;
                     if (cached != null) return cached;
 
-                    SAPVendor.VendorSet result = null;
+                    VendorSet result = null;
                     try
                     {
                         string query = $"{SapClient}&$filter=VENDCODE eq '{EscapeODataLiteral(vendorCode)}'&$top=1";
-                        result = SAPVendor.GetVendorData(query)
+                        result = SAPConnector.GetVendorData(query)
                                           .FirstOrDefault(v => string.Equals(v.VENDCODE?.Trim(), vendorCode, StringComparison.OrdinalIgnoreCase));
 
                         if (result != null)
@@ -3540,13 +3498,13 @@ namespace DX_WebTemplate
         private static readonly TimeSpan VendorListMaxAge = TimeSpan.FromMinutes(30);
 
         // Core fetch without age / cache logic (extracted from existing GetVendorListCached body)
-        private List<SAPVendor.VendorSet> FetchVendorListFromSap(string compCode)
+        private List<VendorSet> FetchVendorListFromSap(string compCode)
         {
             if (string.IsNullOrWhiteSpace(compCode))
-                return new List<SAPVendor.VendorSet>();
+                return new List<VendorSet>();
 
             string query = $"{SapClientParam}&$filter=VENDCOCODE eq '{compCode}'";
-            var list = SAPVendor.GetVendorData(query)
+            var list = SAPConnector.GetVendorData(query)
                 .GroupBy(v => v.VENDCODE?.Trim().ToUpperInvariant())
                 .Select(g => g.First())
                 .OrderBy(v => v.VENDNAME)
@@ -3558,17 +3516,17 @@ namespace DX_WebTemplate
         }
 
         // Unified access: returns cached list if fresh, else refreshes. Force overrides freshness.
-        private List<SAPVendor.VendorSet> GetOrRefreshVendorList(string compCode, bool force = false)
+        private List<VendorSet> GetOrRefreshVendorList(string compCode, bool force = false)
         {
             if (string.IsNullOrWhiteSpace(compCode))
-                return new List<SAPVendor.VendorSet>();
+                return new List<VendorSet>();
 
             string memKey = "VENDOR_LIST_" + compCode;
             var now = DateTime.UtcNow;
 
             if (!force)
             {
-                if (_cache.Get(memKey) is List<SAPVendor.VendorSet> cached &&
+                if (_cache.Get(memKey) is List<VendorSet> cached &&
                     _vendorLastRefreshUtc.TryGetValue(compCode, out var last) &&
                     (now - last) < VendorListMaxAge &&
                     cached.Count > 0)
@@ -3582,7 +3540,7 @@ namespace DX_WebTemplate
                 // Double check inside lock
                 if (!force)
                 {
-                    if (_cache.Get(memKey) is List<SAPVendor.VendorSet> cached2 &&
+                    if (_cache.Get(memKey) is List<VendorSet> cached2 &&
                         _vendorLastRefreshUtc.TryGetValue(compCode, out var last2) &&
                         (now - last2) < VendorListMaxAge &&
                         cached2.Count > 0)

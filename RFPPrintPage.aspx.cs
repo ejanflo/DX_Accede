@@ -108,7 +108,7 @@ namespace DX_WebTemplate
                         {
                             string raw = rfp.Payee.ToString();
                             string cleaned = raw.Replace("\r", "").Replace("\n", "");
-                            var vendors = SAPVendor.GetVendorData("")
+                            var vendors = SAPConnector.GetVendorData("")
                                 .GroupBy(x => new { x.VENDCODE, x.VENDNAME })
                                 .Select(g => g.First())
                                 .ToList();

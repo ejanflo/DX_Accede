@@ -187,7 +187,7 @@ namespace DX_WebTemplate
             // return SAPVendor.GetVendorByCode(vendorCode);
 
             // Fallback: still reduces memory by filtering before GroupBy if implementation supports predicate
-            var allVendors = SAPVendor.GetVendorData(vendorCode); // Suggest modifying this to accept filter
+            var allVendors = SAPConnector.GetVendorData(vendorCode); // Suggest modifying this to accept filter
             var result = allVendors
                 .Where(v => v.VENDCODE == vendorCode)
                 .GroupBy(v => new { v.VENDCODE, v.VENDNAME })
