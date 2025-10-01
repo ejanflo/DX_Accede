@@ -107,6 +107,14 @@ namespace DX_WebTemplate
             private static readonly TimeSpan SlidingLifetime = TimeSpan.FromMinutes(3);
             private static readonly object _lockRoot = new object();
 
+            // Block vendors whose name contains "DO NOT USE"
+            private static bool IsBlocked(VendorSet v)
+            {
+                var name = v?.VENDNAME;
+                return !string.IsNullOrEmpty(name) &&
+                       name.IndexOf("DO NOT USE", StringComparison.OrdinalIgnoreCase) >= 0;
+            }
+
             public static VendorSet GetVendor(string vendorCode)
             {
                 if (string.IsNullOrWhiteSpace(vendorCode))
@@ -114,29 +122,53 @@ namespace DX_WebTemplate
 
                 // 1. DataSet
                 var dsHit = VendorDataSetCache.Get(vendorCode);
-                if (dsHit != null) return dsHit;
+                if (dsHit != null)
+                {
+                    if (IsBlocked(dsHit))
+                        return null;
+                    return dsHit;
+                }
 
                 var normalized = vendorCode.Trim().ToUpperInvariant();
                 string cacheKey = "VENDOR_SINGLE_" + normalized;
 
                 // 2. MemoryCache
                 var cached = _localCache.Get(cacheKey) as VendorSet;
-                if (cached != null) return cached;
+                if (cached != null)
+                {
+                    if (IsBlocked(cached))
+                    {
+                        _localCache.Remove(cacheKey);
+                        return null;
+                    }
+                    return cached;
+                }
 
                 lock (_lockRoot)
                 {
                     cached = _localCache.Get(cacheKey) as VendorSet;
-                    if (cached != null) return cached;
+                    if (cached != null)
+                    {
+                        if (IsBlocked(cached))
+                        {
+                            _localCache.Remove(cacheKey);
+                            return null;
+                        }
+                        return cached;
+                    }
 
                     VendorSet result = null;
                     try
                     {
                         string query = $"{SapClientParam}&$filter=VENDCODE eq '{normalized.Replace("'", "''")}'&$top=1";
                         result = SAPConnector.GetVendorData(query)
-                                          .FirstOrDefault(v => string.Equals(v.VENDCODE?.Trim(), normalized, StringComparison.OrdinalIgnoreCase));
+                            .FirstOrDefault(v =>
+                                string.Equals(v.VENDCODE?.Trim(), normalized, StringComparison.OrdinalIgnoreCase) &&
+                                !IsBlocked(v));
+
                         if (result != null)
                         {
-                            VendorDataSetCache.AddOrUpdate(new[] { result });
+                            VendorDataSetCache.AddOrUpdate(new[] { result }); // safe, already filtered
                             _localCache.Set(
                                 cacheKey,
                                 result,
@@ -149,7 +181,7 @@ namespace DX_WebTemplate
                     }
                     catch
                     {
-                        return result;
+                        return result; // null or partially assigned
                     }
                     return result;
                 }
@@ -477,12 +509,19 @@ namespace DX_WebTemplate
             var compCode = context.CompanyMasters
                 .Where(x => x.WASSId == companyId)
                 .Select(x => x.SAP_Id)
-                .FirstOrDefault().ToString();
+                .FirstOrDefault()?.ToString();
 
             if (string.IsNullOrWhiteSpace(compCode))
                 return;
 
             var vendors = GetOrRefreshVendorList(compCode, force);
+
+            // Exclude vendors whose names contain "DO NOT USE" (case-insensitive)
+            vendors = vendors
+                .Where(v => v == null ||
+                            string.IsNullOrEmpty(v.VENDNAME) ||
+                            v.VENDNAME.IndexOf("DO NOT USE", StringComparison.OrdinalIgnoreCase) < 0)
+                .ToList();
 
             drpdown_vendor.DataSource = vendors;
             drpdown_vendor.ValueField = "VENDCODE";
@@ -499,7 +538,7 @@ namespace DX_WebTemplate
                 var last = GetLastVendorRefresh(compCode);
                 if (last.HasValue)
                     combo.JSProperties["cpVendorLastRefresh"] = last.Value.ToString("o");
-                combo.JSProperties["cpVendorCount"] = vendors.Count;
+                combo.JSProperties["cpVendorCount"] = vendors.Count; // filtered count
                 combo.JSProperties["cpVendorForced"] = force;
             }
         }
