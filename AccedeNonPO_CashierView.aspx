@@ -282,7 +282,7 @@
                     expLine_Invoice.SetValue(response.d.InvoiceOR);
                     expLine_Total.SetValue(response.d.grossAmnt);
                     //dateAdded_edit.SetDate(new Date(response.d.dateAdded));
-                    console.log(response.d.dateAdded);
+                    //console.log(response.d.dateAdded);
                     //accountCharged_edit.SetValue(response.d.acctCharge);
                     //costCenter_edit.SetValue(response.d.costCenter);
                     expLine_NetAmnt.SetValue(response.d.netAmnt);
@@ -294,10 +294,10 @@
                     expLine_ExpCat.SetValue(response.d.acctCharge);
                     //txt_assign_edit.SetValue(response.d.Assignment);
                     //txt_allowance_edit.SetValue(response.d.Allowance);
-                    //drpdown_EWTTaxType_edit.SetValue(response.d.EWTTaxType_Id);
+                    expLine_EWTTCode.SetValue(response.d.EWTTaxType_Id);
                     //spin_EWTTAmount_edit.SetValue(response.d.EWTTaxAmount);
                     //txt_EWTTCode_edit.SetValue(response.d.EWTTaxCode);
-                    //txt_InvTCode_edit.SetValue(response.d.InvoiceTaxCode);
+                    expLine_InvTaxCode.SetValue(response.d.InvoiceTaxCode);
                     expLine_Qty.SetValue(response.d.Qty);
                     expLine_UnitPrice.SetValue(response.d.UnitPrice);
                     expLine_UOM.SetValue(response.d.uom);
@@ -1941,7 +1941,7 @@ Disburse();
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                         </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="EWT Tax Type" ColSpan="1" ClientVisible="False">
+                                        <dx:LayoutItem Caption="EWT Tax Type" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
                                                     <dx:ASPxTextBox ID="expLine_EWTTCode" runat="server" ClientInstanceName="expLine_EWTTCode" Font-Bold="False" Font-Size="Small" Width="100%" ReadOnly="True">
@@ -1980,7 +1980,7 @@ Disburse();
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                         </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Invoice Tax Code" ColSpan="1" ClientVisible="False">
+                                        <dx:LayoutItem Caption="Invoice Tax Code" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
                                                     <dx:ASPxTextBox ID="expLine_InvTaxCode" runat="server" ClientInstanceName="expLine_InvTaxCode" Font-Bold="False" Font-Size="Small" Width="100%" ReadOnly="True">
@@ -2007,7 +2007,6 @@ Disburse();
                                                     </dx:ASPxMemo>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
-                                            <CaptionSettings HorizontalAlign="Left" Location="Top" />
                                         </dx:LayoutItem>
                                     </Items>
                                 </dx:LayoutGroup>
@@ -2435,4 +2434,13 @@ Disburse();
     <asp:SqlDataSource ID="SqlCompany" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [CompanyMaster]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlDepartment" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ITP_S_OrgDepartmentMaster]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlPaymethod" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_PayMethod]"></asp:SqlDataSource>
+    <asp:ObjectDataSource ID="OdsSAPEWT"
+        runat="server"
+        TypeName="DX_WebTemplate.SAPDataProvider"
+        SelectMethod="GetEWT" />
+    <asp:ObjectDataSource ID="OdsSAPVAT"
+        runat="server"
+        TypeName="DX_WebTemplate.SAPDataProvider"
+        SelectMethod="GetVAT" />
+
 </asp:Content>

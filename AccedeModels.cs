@@ -94,7 +94,7 @@ namespace DX_WebTemplate
             public string UserId { get; set; }
             public string Allowance { get; set; }
             public string SLCode { get; set; }
-            public int EWTTaxType_Id { get; set; }
+            public string EWTTaxType_Id { get; set; }
             public decimal EWTTaxAmount { get; set; }
             public string EWTTaxCode { get; set; }
             public string InvoiceTaxCode { get; set; }

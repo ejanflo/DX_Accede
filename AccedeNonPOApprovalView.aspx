@@ -374,10 +374,10 @@
                     expLine_ExpCat.SetValue(response.d.acctCharge);
                     //txt_assign_edit.SetValue(response.d.Assignment);
                     //txt_allowance_edit.SetValue(response.d.Allowance);
-                    //drpdown_EWTTaxType_edit.SetValue(response.d.EWTTaxType_Id);
+                    expLine_EWTTCode.SetValue(response.d.EWTTaxType_Id);
                     //spin_EWTTAmount_edit.SetValue(response.d.EWTTaxAmount);
                     //txt_EWTTCode_edit.SetValue(response.d.EWTTaxCode);
-                    //txt_InvTCode_edit.SetValue(response.d.InvoiceTaxCode);
+                    expLine_InvTaxCode.SetValue(response.d.InvoiceTaxCode);
                     expLine_Qty.SetValue(response.d.Qty);
                     expLine_UnitPrice.SetValue(response.d.UnitPrice);
                     expLine_UOM.SetValue(response.d.uom);
@@ -430,16 +430,16 @@
                     exp_category_edit.SetValue(response.d.acctCharge);
                     //txt_assign_edit.SetValue(response.d.Assignment);
                     //txt_allowance_edit.SetValue(response.d.Allowance);
-                    //drpdown_EWTTaxType_edit.SetValue(response.d.EWTTaxType_Id);
+                    drpdown_EWTTaxType_edit.SetValue(response.d.EWTTaxCode);
                     //spin_EWTTAmount_edit.SetValue(response.d.EWTTaxAmount);
                     //txt_EWTTCode_edit.SetValue(response.d.EWTTaxCode);
-                    //txt_InvTCode_edit.SetValue(response.d.InvoiceTaxCode);
+                    drpdown_invTCode_edit.SetValue(response.d.InvoiceTaxCode);
                     qty_edit.SetValue(response.d.Qty);
                     unit_price_edit.SetValue(response.d.UnitPrice);
                     exp_UOM_edit.SetValue(response.d.uom);
                     ewt_edit.SetValue(response.d.ewt);
                     vat_edit.SetValue(response.d.vat);
-                    drpdown_ewtPerc_edit.SetValue(response.d.ewtperc);
+                    ewtPerc_edit.SetValue(response.d.ewtperc);
                     net_vat_edit.SetValue(response.d.netvat);
                     chk_Compute_edit.SetValue(response.d.isVatCompute);
                     //txt_Asset_edit.SetValue(response.d.Asset);
@@ -666,41 +666,84 @@
         }
 
         function computeNetAmount(stat) {
-            var gross = total_edit.GetValue() != null ? total_edit.GetValue() : 0;
-            var qty = qty_edit.GetValue() != null ? qty_edit.GetValue() : 0;
-            var unit = unit_price_edit.GetValue() != null ? unit_price_edit.GetValue() : 0;
-            var ewt = ewt_edit.GetValue() != null ? ewt_edit.GetValue() : 0;
-            var ewtperc = drpdown_ewtPerc_edit.GetValue() != null ? drpdown_ewtPerc_edit.GetValue() : 0;
+            if (stat == "add" || stat == "add2") {
+                var qty = qty_add.GetValue() != null ? qty_add.GetValue() : 0;
+                var unit_price = unit_price_add.GetValue() != null ? unit_price_add.GetValue() : 0;
+                var ewt = ewt_add.GetValue() != null ? ewt_add.GetValue() : 0;
+                var ewtperc = ewtPerc_add.GetValue() != null ? ewtPerc_add.GetValue() : 0;
+                //var vat_amnt = vat.GetValue() != null ? vat.GetValue() : 0;
+                var vatRate = vat_rate_add.GetValue() != 0 ? vat_rate_add.GetValue() : 1;
 
-            var total = qty * unit.toFixed(2);
-            var net = total.toFixed(2) - ewt;
+                var total = qty * unit_price.toFixed(2);
+                var net = total.toFixed(2) - ewt;
 
-            if (chk_Compute_edit.GetValue() == true) {
-                var netvat = total.toFixed(2) / 1.12;
-                var vat = total.toFixed(2) - netvat;
-                ewt = netvat.toFixed(2) * (ewtperc / 100);
-                net = total.toFixed(2) - ewt.toFixed(2);
+                if (chk_Compute_add.GetValue() == true) {
 
-                net_vat_edit.SetValue(netvat.toFixed(2));
-                vat_edit.SetValue(vat.toFixed(2));
-                ewt_edit.SetValue(ewt.toFixed(2));
-                net_amount_edit.SetValue(net.toFixed(2));
-                total_edit.SetValue(total);
-            } else {
+                    var netvat = total.toFixed(2) / 1.12;
+                    var vat = total.toFixed(2) - netvat;
+                    ewt = netvat.toFixed(2) * (ewtperc / 100);
+                    net = total.toFixed(2) - ewt.toFixed(2);
 
-                if (stat == "edit2") {
-                    net_amount_edit.SetValue(net);
-                    total_edit.SetValue(total);
+                    net_vat_add.SetValue(netvat.toFixed(2));
+                    vat_add.SetValue(vat.toFixed(2));
+                    ewt_add.SetValue(ewt.toFixed(2));
+                    net_amount_add.SetValue(net.toFixed(2));
+                    total_add.SetValue(total);
                 } else {
-                    net_vat_edit.SetValue(total);
-                    vat_edit.SetValue(0);
-                    ewt_edit.SetValue(0);
-                    net_amount_edit.SetValue(net);
-                    total_edit.SetValue(total);
+
+                    if (stat == "add2") {
+                        net_amount_add.SetValue(net);
+                        total_add.SetValue(total);
+                    } else {
+                        net_vat_add.SetValue(total);
+                        vat_add.SetValue(0);
+                        ewt_add.SetValue(0);
+                        net_amount_add.SetValue(net);
+                        total_add.SetValue(total);
+                    }
+
                 }
 
+                ExpAllocGrid.PerformCallback();
+            } else {
+                var gross = total_edit.GetValue() != null ? total_edit.GetValue() : 0;
+                var qty = qty_edit.GetValue() != null ? qty_edit.GetValue() : 0;
+                var unit = unit_price_edit.GetValue() != null ? unit_price_edit.GetValue() : 0;
+                var ewt = ewt_edit.GetValue() != null ? ewt_edit.GetValue() : 0;
+                var ewtperc = ewtPerc_edit.GetValue() != null ? ewtPerc_edit.GetValue() : 0;
+
+                var total = qty * unit.toFixed(2);
+                var net = total.toFixed(2) - ewt;
+
+                if (chk_Compute_edit.GetValue() == true) {
+                    var netvat = total.toFixed(2) / 1.12;
+                    var vat = total.toFixed(2) - netvat;
+                    ewt = netvat.toFixed(2) * (ewtperc / 100);
+                    net = total.toFixed(2) - ewt.toFixed(2);
+
+                    net_vat_edit.SetValue(netvat.toFixed(2));
+                    vat_edit.SetValue(vat.toFixed(2));
+                    ewt_edit.SetValue(ewt.toFixed(2));
+                    net_amount_edit.SetValue(net.toFixed(2));
+                    total_edit.SetValue(total);
+                } else {
+
+                    if (stat == "edit2") {
+                        net_amount_edit.SetValue(net);
+                        total_edit.SetValue(total);
+                    } else {
+                        net_vat_edit.SetValue(total);
+                        vat_edit.SetValue(0);
+                        ewt_edit.SetValue(0);
+                        net_amount_edit.SetValue(net);
+                        total_edit.SetValue(total);
+                    }
+
+                }
+
+                ExpAllocGrid_edit.PerformCallback(LineId_edit.GetValue());
+
             }
-            ExpAllocGrid_edit.PerformCallback();
         }
 
         var EditisExpanded = false;
@@ -861,7 +904,7 @@
                 var allowance = txt_allowance_edit.GetValue() != null ? txt_allowance_edit.GetValue() : "";
                 var EWTTType = drpdown_EWTTaxType_edit.GetValue() != null ? drpdown_EWTTaxType_edit.GetValue() : "";
                 var EWTTCode = txt_EWTTCode_edit.GetValue() != null ? txt_EWTTCode_edit.GetValue() : "";
-                var InvTCode = txt_InvTCode_edit.GetValue() != null ? txt_InvTCode_edit.GetValue() : "";
+                var InvTCode = drpdown_invTCode_edit.GetValue() != null ? drpdown_invTCode_edit.GetValue() : "";
                 var qty = qty_edit.GetValue() != 0.00 ? qty_edit.GetValue() : "0";
                 var unit_price = unit_price_edit.GetValue() != 0.00 ? unit_price_edit.GetValue() : "0";
                 var asset = txt_Asset_edit.GetValue() != null ? txt_Asset_edit.GetValue() : "";
@@ -872,7 +915,7 @@
                 var uom = exp_UOM_edit.GetValue() != null ? exp_UOM_edit.GetValue() : "";
                 var ewt = ewt_edit.GetValue() != null ? ewt_edit.GetValue() : "0";
                 var vat = vat_edit.GetValue() != null ? vat_edit.GetValue() : "0";
-                var ewtperc = drpdown_ewtPerc_edit.GetValue() != null ? drpdown_ewtPerc_edit.GetValue() : "0";
+                var ewtperc = ewtPerc_edit.GetValue() != null ? ewtPerc_edit.GetValue() : "0";
                 var netvat = net_vat_edit.GetValue() != null ? net_vat_edit.GetValue() : "0";
                 var isVatCompute = chk_Compute_edit.GetValue() == true ? true : false;
 
@@ -1225,7 +1268,55 @@
                 page.render(renderContext);
             });
         };
-    </script><div class="conta" id="demoFabContent">
+
+        function OnEWTTypeChanged(ewtType, stat) {
+            $.ajax({
+                type: "POST",
+                url: "AccedeNonPOEditPage.aspx/GetEWTDetailsAJAX",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({
+                    ewtType: ewtType
+                }),
+                success: function (response) {
+                    var ewtRate = response.d;
+                    if (stat == "add") {
+                        ewtPerc_add.SetValue(ewtRate);
+                        computeNetAmount("add");
+                    } else {
+                        ewtPerc_edit.SetValue(ewtRate);
+                        computeNetAmount("edit");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert("Error generating Excel file.");
+                }
+            });
+        }
+
+        function OnVATTypeChanged(vatType, stat) {
+            $.ajax({
+                type: "POST",
+                url: "AccedeNonPOEditPage.aspx/GetVATDetailsAJAX",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({
+                    vatType: vatType
+                }),
+                success: function (response) {
+                    var vatRate = response.d;
+                    if (stat == "add") {
+                        //vat_rate_add.SetValue(vatRate);
+                        computeNetAmount("add");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert("Error generating Excel file.");
+                }
+            });
+        }
+    </script>
+    <div class="conta" id="demoFabContent">
     <dx:ASPxFormLayout ID="FormExpApprovalView" runat="server" DataSourceID="sqlMain" Width="90%" SettingsAdaptivity-AdaptivityMode="SingleColumnWindowLimit" ColCount="2" ColumnCount="2" Theme="iOS" ClientInstanceName="FormExpApprovalView">
         <SettingsAdaptivity SwitchToSingleColumnAtWindowInnerWidth="900" AdaptivityMode="SingleColumnWindowLimit">
         </SettingsAdaptivity>
@@ -3637,7 +3728,7 @@ DisapproveClick(); DisapprovePopup.Hide();
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="EWT Tax Type" ColSpan="1" ClientVisible="False">
+                                    <dx:LayoutItem Caption="EWT Tax Type" ColSpan="1">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxTextBox ID="expLine_EWTTCode" runat="server" ClientInstanceName="expLine_EWTTCode" Font-Bold="False" Font-Size="Small" Width="100%" ReadOnly="True">
@@ -3676,7 +3767,7 @@ DisapproveClick(); DisapprovePopup.Hide();
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
                                     </dx:LayoutItem>
-                                    <dx:LayoutItem Caption="Invoice Tax Code" ColSpan="1" ClientVisible="False">
+                                    <dx:LayoutItem Caption="Invoice Tax Code" ColSpan="1">
                                         <LayoutItemNestedControlCollection>
                                             <dx:LayoutItemNestedControlContainer runat="server">
                                                 <dx:ASPxTextBox ID="expLine_InvTaxCode" runat="server" ClientInstanceName="expLine_InvTaxCode" Font-Bold="False" Font-Size="Small" Width="100%" ReadOnly="True">
@@ -3701,7 +3792,6 @@ DisapproveClick(); DisapprovePopup.Hide();
                                                 </dx:ASPxMemo>
                                             </dx:LayoutItemNestedControlContainer>
                                         </LayoutItemNestedControlCollection>
-                                        <CaptionSettings HorizontalAlign="Left" Location="Top" />
                                     </dx:LayoutItem>
                                 </Items>
                             </dx:LayoutGroup>
@@ -4026,7 +4116,7 @@ DisapproveClick(); DisapprovePopup.Hide();
     <%--End of Line Item NON PO View Details--%>
 
     <%--Start of Line item NON PO Edit--%>
-    <dx:ASPxPopupControl ID="expensePopup_edit" runat="server" FooterText="" HeaderText="Edit Line Item" Width="1500px" ClientInstanceName="expensePopup_edit" Modal="True" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" AllowDragging="True" CloseAction="CloseButton" CssClass="rounded" PopupAnimationType="None" Font-Size="Small" MaxWidth="80%">
+                <dx:ASPxPopupControl ID="expensePopup_edit" runat="server" FooterText="" HeaderText="Edit Line Item" Width="1500px" ClientInstanceName="expensePopup_edit" Modal="True" PopupHorizontalAlign="WindowCenter" PopupVerticalAlign="WindowCenter" AllowDragging="True" CloseAction="CloseButton" CssClass="rounded" PopupAnimationType="None" Font-Size="Small" MaxWidth="80%">
             <CloseButtonImage IconID="outlookinspired_close_svg_white_16x16">
             </CloseButtonImage>
             <ClientSideEvents CloseButtonClick="function(s, e) {
@@ -4181,10 +4271,21 @@ DisapproveClick(); DisapprovePopup.Hide();
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                         </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="EWT Tax Type" ColSpan="1" ClientVisible="False">
+                                        <dx:LayoutItem Caption="EWT Tax Type" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="drpdown_EWTTaxType_edit" runat="server" ClientInstanceName="drpdown_EWTTaxType_edit" DataSourceID="SqlExpCat" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{1}" TextField="Description" TextFormatString="{0} - {1}" ValueField="ID" Width="100%">
+                                                    <dx:ASPxComboBox ID="drpdown_EWTTaxType_edit" runat="server" ClientInstanceName="drpdown_EWTTaxType_edit" DataSourceID="OdsSAPEWT" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{1}" TextField="EWTDESC" TextFormatString="{0} - {1}" ValueField="EWTCODE" Width="100%">
+                                                        <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	OnEWTTypeChanged(s.GetValue(),&quot;edit&quot;);
+}" />
+                                                        <Columns>
+                                                            <dx:ListBoxColumn Caption="Code" FieldName="EWTCODE" Width="20%">
+                                                            </dx:ListBoxColumn>
+                                                            <dx:ListBoxColumn Caption="Description" FieldName="EWTDESC">
+                                                            </dx:ListBoxColumn>
+                                                        </Columns>
+                                                        <ClearButton DisplayMode="Always">
+                                                        </ClearButton>
                                                         <ValidationSettings SetFocusOnError="True" ValidationGroup="PopupSubmit">
                                                             <RequiredField ErrorText="*Required" />
                                                         </ValidationSettings>
@@ -4225,16 +4326,27 @@ DisapproveClick(); DisapprovePopup.Hide();
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                         </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Invoice Tax Code" ColSpan="1" ClientVisible="False">
+                                        <dx:LayoutItem Caption="Invoice Tax Code" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxTextBox ID="txt_InvTCode_edit" runat="server" ClientInstanceName="txt_InvTCode_edit" Font-Bold="False" Font-Size="Small" Width="100%">
-                                                        <ValidationSettings SetFocusOnError="True" ValidationGroup="PopupSubmit">
+                                                    <dx:ASPxComboBox ID="drpdown_invTCode_edit" runat="server" ClientInstanceName="drpdown_invTCode_edit" DataSourceID="OdsSAPVAT" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{1}" TextField="VATDESC" TextFormatString="{0} - {1}" ValueField="VATCODE" Width="100%">
+                                                        <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	OnVATTypeChanged(s.GetValue(), &quot;edit&quot;);
+}" />
+                                                        <Columns>
+                                                            <dx:ListBoxColumn Caption="Code" FieldName="VATCODE" Width="20%">
+                                                            </dx:ListBoxColumn>
+                                                            <dx:ListBoxColumn Caption="Description" FieldName="VATDESC">
+                                                            </dx:ListBoxColumn>
+                                                        </Columns>
+                                                        <ClearButton DisplayMode="Always">
+                                                        </ClearButton>
+                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
                                                             <RequiredField ErrorText="*Required" />
                                                         </ValidationSettings>
                                                         <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
-                                                    </dx:ASPxTextBox>
+                                                    </dx:ASPxComboBox>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                         </dx:LayoutItem>
@@ -4391,21 +4503,20 @@ DisapproveClick(); DisapprovePopup.Hide();
                                         <dx:LayoutItem ColSpan="1" Caption="EWT %">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="drpdown_ewtPerc_edit" runat="server" ClientInstanceName="drpdown_ewtPerc_edit" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{1}" Width="100%" HorizontalAlign="Right" SelectedIndex="0">
-                                                        <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	computeNetAmount(&quot;edit&quot;);
-}" />
-                                                        <Items>
-                                                            <dx:ListEditItem Text="0%" Value="0" Selected="True" />
-                                                            <dx:ListEditItem Text="1%" Value="1" />
-                                                            <dx:ListEditItem Text="2%" Value="2" />
-                                                        </Items>
+                                                    <dx:ASPxSpinEdit ID="ewtPerc_edit" runat="server" AllowNull="False" ClientInstanceName="ewtPerc_edit" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="False" Font-Size="Small" HorizontalAlign="Right" Increment="100" MaxValue="100" Number="0.00" Width="100%">
+                                                        <SpinButtons ClientVisible="False">
+                                                        </SpinButtons>
+                                                        <ClientSideEvents ValueChanged="function(s, e) {
+	    //netAmount.SetValue(s.GetValue());
+	    //ExpAllocGrid.PerformCallback();
+	    computeNetAmount(&quot;edit&quot;);
+    }" />
                                                         <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
-                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                            <RequiredField ErrorText="*Required" />
                                                         </ValidationSettings>
                                                         <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
-                                                    </dx:ASPxComboBox>
+                                                    </dx:ASPxSpinEdit>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                         </dx:LayoutItem>
@@ -4808,4 +4919,13 @@ DisapproveClick(); DisapprovePopup.Hide();
         </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlCurrency" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACDE_T_Currency]"></asp:SqlDataSource>
+    <asp:ObjectDataSource ID="OdsSAPEWT"
+        runat="server"
+        TypeName="DX_WebTemplate.SAPDataProvider"
+        SelectMethod="GetEWT" />
+    <asp:ObjectDataSource ID="OdsSAPVAT"
+        runat="server"
+        TypeName="DX_WebTemplate.SAPDataProvider"
+        SelectMethod="GetVAT" />
+
 </asp:Content>

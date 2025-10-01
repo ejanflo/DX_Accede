@@ -753,6 +753,8 @@ namespace DX_WebTemplate
                         inv.InvMain_ID = Convert.ToInt32(Session["NonPOInvoiceId"]);
                         inv.Preparer_ID = Session["userID"].ToString();
                         inv.LineDescription = itemDesc;
+                        inv.EWTTaxType_Id = EWTTaxType;
+                        inv.InvoiceTaxCode = invoiceTCode;
                         inv.EWT = Convert.ToDecimal(ewt);
                         inv.VAT = Convert.ToDecimal(vat);
                         inv.UOM = uom;
@@ -2048,10 +2050,10 @@ namespace DX_WebTemplate
                 //exp_det_class.UserId = exp_details_nonpo.UserId ?? exp_det_class.UserId;
                 //exp_det_class.Allowance = exp_details_nonpo.Allowance ?? exp_det_class.Allowance;
                 //exp_det_class.SLCode = exp_details_nonpo.SLCode ?? exp_det_class.SLCode;
-                //exp_det_class.EWTTaxType_Id = exp_details_nonpo.EWTTaxType_Id != null ? Convert.ToInt32(exp_details_nonpo.EWTTaxType_Id) : exp_det_class.EWTTaxType_Id;
+                inv_det_class.EWTTaxType_Id = inv_details.EWTTaxType_Id != null ? inv_details.EWTTaxType_Id : inv_det_class.EWTTaxType_Id;
                 //exp_det_class.EWTTaxAmount = exp_details_nonpo.EWTTaxAmount != null ? Convert.ToDecimal(exp_details_nonpo.EWTTaxAmount) : exp_det_class.EWTTaxAmount;
                 //exp_det_class.EWTTaxCode = exp_details_nonpo.EWTTaxCode ?? exp_det_class.EWTTaxCode;
-                //exp_det_class.InvoiceTaxCode = exp_details_nonpo.InvoiceTaxCode ?? exp_det_class.InvoiceTaxCode;
+                inv_det_class.InvoiceTaxCode = inv_details.InvoiceTaxCode ?? inv_det_class.InvoiceTaxCode;
                 //exp_det_class.Asset = exp_details_nonpo.Asset ?? exp_det_class.Asset;
                 //exp_det_class.SubAssetCode = exp_details_nonpo.SubAssetCode ?? exp_det_class.SubAssetCode;
                 //exp_det_class.TransactionType = exp_details_nonpo.TransactionType ?? exp_det_class.TransactionType;
@@ -2329,6 +2331,8 @@ namespace DX_WebTemplate
                         expDetail.LineDescription = remarks;
                         expDetail.Qty = Convert.ToDecimal(qty);
                         expDetail.UnitPrice = Convert.ToDecimal(unit_price);
+                        expDetail.EWTTaxType_Id = EWTTType;
+                        expDetail.InvoiceTaxCode = InvTCode;
                         expDetail.EWT = Convert.ToDecimal(ewt);
                         expDetail.VAT = Convert.ToDecimal(vat);
                         expDetail.UOM = uom;
@@ -3623,6 +3627,69 @@ namespace DX_WebTemplate
 
             var list = page.GetOrRefreshVendorList(compCode, true);
             return list.Count;
+        }
+
+        [WebMethod]
+        public static decimal GetEWTDetailsAJAX(string ewtType)
+        {
+            AccedeNonPOEditPage page = new AccedeNonPOEditPage();
+            return page.GetEWTDetails(ewtType);
+        }
+
+        public decimal GetEWTDetails(string ewtType)
+        {
+            if (string.IsNullOrWhiteSpace(ewtType))
+                return 0m;
+
+            var target = ewtType.Trim();
+
+            var list = SAPDataProvider.GetEWT();
+
+            // Primary match: by code (case-insensitive, trimmed)
+            var match = list.FirstOrDefault(x =>
+                string.Equals(x.EWTCODE?.Trim(), target, StringComparison.OrdinalIgnoreCase));
+
+            // Optional fallback: try description if code not found
+            if (match == null)
+            {
+                match = list.FirstOrDefault(x =>
+                    string.Equals(x.EWTDESC?.Trim(), target, StringComparison.OrdinalIgnoreCase));
+            }
+
+            // Safely return rate (handle nullable if model uses nullable decimal)
+            return decimal.TryParse(match?.EWTRATE, out var rate) ? rate : 0m;
+        }
+
+
+        [WebMethod]
+        public static decimal GetVATDetailsAJAX(string vatType)
+        {
+            AccedeNonPOEditPage page = new AccedeNonPOEditPage();
+            return page.GetVATDetails(vatType);
+        }
+
+        public decimal GetVATDetails(string vatType)
+        {
+            if (string.IsNullOrWhiteSpace(vatType))
+                return 0m;
+
+            var target = vatType.Trim();
+
+            var list = SAPDataProvider.GetVAT();
+
+            // Primary match: by code (case-insensitive, trimmed)
+            var match = list.FirstOrDefault(x =>
+                string.Equals(x.VATCODE?.Trim(), target, StringComparison.OrdinalIgnoreCase));
+
+            // Optional fallback: try description if code not found
+            if (match == null)
+            {
+                match = list.FirstOrDefault(x =>
+                    string.Equals(x.VATDESC?.Trim(), target, StringComparison.OrdinalIgnoreCase));
+            }
+
+            // Safely return rate (handle nullable if model uses nullable decimal)
+            return decimal.TryParse(match?.VATRATE, out var rate) ? rate : 0m;
         }
     }
 }

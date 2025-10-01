@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using static DX_WebTemplate.AccedeModels;
 using static DX_WebTemplate.AccedeNonPOEditPage;
 
 namespace DX_WebTemplate
@@ -424,13 +425,17 @@ namespace DX_WebTemplate
         [WebMethod]
         public static InvDetailsNonPO DisplayExpDetailsAJAX(int expDetailID)
         {
-            var ctx = new ITPORTALDataContext(
-                ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString);
-            return DisplayExpDetailsInternal(ctx, expDetailID);
+            // Create a new instance of the data context for static method usage
+            using (var ctx = new ITPORTALDataContext(
+                ConfigurationManager.ConnectionStrings["ITPORTALConnectionString"].ConnectionString))
+            {
+                return DisplayExpDetailsInternal(ctx, expDetailID);
+            }
         }
 
         private static InvDetailsNonPO DisplayExpDetailsInternal(ITPORTALDataContext dc, int invDetailID)
         {
+            // Use the provided data context instance instead of the non-static field
             var invDetails = dc.ACCEDE_T_InvoiceLineDetails.FirstOrDefault(x => x.ID == invDetailID);
             if (invDetails == null) return new InvDetailsNonPO();
 
@@ -444,6 +449,36 @@ namespace DX_WebTemplate
                 .Select(x => (decimal?)x.NetAmount).Sum() ?? 0m;
 
             decimal remaining = (invDetails.TotalAmount ?? 0m) - allocated;
+
+            var ewttarget = invDetails.EWTTaxType_Id?.Trim();
+
+            var ewtlist = SAPDataProvider.GetEWT();
+
+            // Primary match: by code (case-insensitive, trimmed)
+            var ewtmatch = ewtlist.FirstOrDefault(x =>
+                string.Equals(x.EWTCODE?.Trim(), ewttarget, StringComparison.OrdinalIgnoreCase));
+
+            // Optional fallback: try description if code not found
+            if (ewtmatch == null)
+            {
+                ewtmatch = ewtlist.FirstOrDefault(x =>
+                    string.Equals(x.EWTDESC?.Trim(), ewttarget, StringComparison.OrdinalIgnoreCase));
+            }
+
+            var vattarget = invDetails.InvoiceTaxCode?.Trim();
+
+            var vatlist = SAPDataProvider.GetVAT();
+
+            // Primary match: by code (case-insensitive, trimmed)
+            var vatmatch = vatlist.FirstOrDefault(x =>
+                string.Equals(x.VATCODE?.Trim(), vattarget, StringComparison.OrdinalIgnoreCase));
+
+            // Optional fallback: try description if code not found
+            if (vatmatch == null)
+            {
+                vatmatch = vatlist.FirstOrDefault(x =>
+                    string.Equals(x.VATDESC?.Trim(), vattarget, StringComparison.OrdinalIgnoreCase));
+            }
 
             var dto = new InvDetailsNonPO
             {
@@ -459,6 +494,8 @@ namespace DX_WebTemplate
                 Qty = invDetails.Qty ?? 0m,
                 UnitPrice = invDetails.UnitPrice ?? 0m,
                 uom = invDetails.UOM ?? "",
+                EWTTaxType_Id = ewtmatch?.EWTDESC,
+                InvoiceTaxCode = vatmatch?.VATDESC,
                 ewt = invDetails.EWT ?? 0m,
                 vat = invDetails.VAT ?? 0m,
                 ewtperc = invDetails.EWTPerc ?? 0m,
@@ -467,9 +504,7 @@ namespace DX_WebTemplate
                 totalAllocAmnt = remaining
             };
 
-            if (HttpContext.Current != null && HttpContext.Current.Session != null)
-                HttpContext.Current.Session["InvDetailsID"] = invDetailID.ToString();
-
+            HttpContext.Current.Session["InvDetailsID"] = invDetailID.ToString();
             return dto;
         }
 

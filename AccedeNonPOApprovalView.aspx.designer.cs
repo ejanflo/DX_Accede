@@ -1752,13 +1752,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxTextBox txt_EWTTCode_edit;
 
         /// <summary>
-        /// txt_InvTCode_edit control.
+        /// drpdown_invTCode_edit control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox txt_InvTCode_edit;
+        protected global::DevExpress.Web.ASPxComboBox drpdown_invTCode_edit;
 
         /// <summary>
         /// expItem_desc_edit control.
@@ -1851,13 +1851,13 @@ namespace DX_WebTemplate
         protected global::DevExpress.Web.ASPxSpinEdit net_vat_edit;
 
         /// <summary>
-        /// drpdown_ewtPerc_edit control.
+        /// ewtPerc_edit control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxComboBox drpdown_ewtPerc_edit;
+        protected global::DevExpress.Web.ASPxSpinEdit ewtPerc_edit;
 
         /// <summary>
         /// ewt_edit control.
@@ -2209,5 +2209,23 @@ namespace DX_WebTemplate
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.SqlDataSource SqlCurrency;
+
+        /// <summary>
+        /// OdsSAPEWT control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ObjectDataSource OdsSAPEWT;
+
+        /// <summary>
+        /// OdsSAPVAT control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ObjectDataSource OdsSAPVAT;
     }
 }

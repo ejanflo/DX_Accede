@@ -1336,6 +1336,16 @@
       <Column Name="DCT_Name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
     </Type>
   </Table>
+  <Table Name="dbo.ACCEDE_T_RFPSignature" Member="ACCEDE_T_RFPSignatures">
+    <Type Name="ACCEDE_T_RFPSignature">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="RFPMain_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Signature" Type="System.Data.Linq.Binary" DbType="VarBinary(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="Status_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Signee_Fullname" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
+      <Column Name="DateReceived" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+    </Type>
+  </Table>
   <Table Name="dbo.ACCEDE_T_InvoiceLineDetails" Member="ACCEDE_T_InvoiceLineDetails">
     <Type Name="ACCEDE_T_InvoiceLineDetail">
       <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -1359,10 +1369,10 @@
       <Column Name="Assignment" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
       <Column Name="Allowance" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
       <Column Name="SLCode" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="EWTTaxType_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="EWTTaxType_Id" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
       <Column Name="EWTTaxAmount" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
       <Column Name="EWTTaxCode" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
-      <Column Name="InvoiceTaxCode" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
+      <Column Name="InvoiceTaxCode" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
       <Column Name="Asset" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
       <Column Name="SubAssetCode" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
       <Column Name="TransactionType" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
@@ -1371,16 +1381,6 @@
       <Column Name="NOVAT" Type="System.Decimal" DbType="Decimal(11,2)" CanBeNull="true" />
       <Column Name="EWTPerc" Type="System.Decimal" DbType="Decimal(5,2)" CanBeNull="true" />
       <Column Name="isVatComputed" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.ACCEDE_T_RFPSignature" Member="ACCEDE_T_RFPSignatures">
-    <Type Name="ACCEDE_T_RFPSignature">
-      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="RFPMain_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Signature" Type="System.Data.Linq.Binary" DbType="VarBinary(MAX)" CanBeNull="true" UpdateCheck="Never" />
-      <Column Name="Status_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Signee_Fullname" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
-      <Column Name="DateReceived" Type="System.DateTime" DbType="Date" CanBeNull="true" />
     </Type>
   </Table>
 </Database>

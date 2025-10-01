@@ -236,11 +236,11 @@
                 var AltRecon = txt_AltRecon.GetValue() != null ? txt_AltRecon.GetValue() : "";
                 var SLCode = txt_SLCode.GetValue() != null ? txt_SLCode.GetValue() : "";
                 var SpecialGL = txt_SpecialGL.GetValue() != null ? txt_SpecialGL.GetValue() : "";
-                var invoiceTCode = txt_InvTCode.GetValue() != null ? txt_InvTCode.GetValue() : "";
+                var invoiceTCode = drpdown_invTCode.GetValue() != null ? drpdown_invTCode.GetValue() : "";
                 var uom = exp_UOM_add.GetValue() != null ? exp_UOM_add.GetValue() : "";
                 var ewt = ewt_add.GetValue() != null ? ewt_add.GetValue() : "0";
                 var vat = vat_add.GetValue() != null ? vat_add.GetValue() : "0";
-                var ewtperc = drpdown_ewtPerc_add.GetValue() != null ? drpdown_ewtPerc_add.GetValue() : "0";
+                var ewtperc = ewtPerc_add.GetValue() != null ? ewtPerc_add.GetValue() : "0";
                 var netvat = net_vat_add.GetValue() != null ? net_vat_add.GetValue() : "0";
                 var isVatCompute = chk_Compute_add.GetValue() == true ? true : false;
 
@@ -830,7 +830,7 @@
                     invoice_edit.SetValue(response.d.InvoiceOR);
                     total_edit.SetValue(response.d.grossAmnt);
                     dateAdded_edit.SetDate(new Date(response.d.dateAdded));
-                    console.log(response.d.dateAdded);
+                    console.log(response.d.InvoiceTaxCode);
                     //accountCharged_edit.SetValue(response.d.acctCharge);
                     //costCenter_edit.SetValue(response.d.costCenter);
                     net_amount_edit.SetValue(response.d.netAmnt);
@@ -842,16 +842,16 @@
                     //exp_category_edit.SetValue(response.d.acctCharge);
                     //txt_assign_edit.SetValue(response.d.Assignment);
                     //txt_allowance_edit.SetValue(response.d.Allowance);
-                    //drpdown_EWTTaxType_edit.SetValue(response.d.EWTTaxType_Id);
+                    drpdown_EWTTaxType_edit.SetValue(response.d.EWTTaxType_Id);
                     //spin_EWTTAmount_edit.SetValue(response.d.EWTTaxAmount);
                     //txt_EWTTCode_edit.SetValue(response.d.EWTTaxCode);
-                    //txt_InvTCode_edit.SetValue(response.d.InvoiceTaxCode);
+                    drpdown_invTCode_edit.SetValue(response.d.InvoiceTaxCode);
                     qty_edit.SetValue(response.d.Qty);
                     unit_price_edit.SetValue(response.d.UnitPrice);
                     exp_UOM_edit.SetValue(response.d.uom);
                     ewt_edit.SetValue(response.d.ewt);
                     vat_edit.SetValue(response.d.vat);
-                    drpdown_ewtPerc_edit.SetValue(response.d.ewtperc);
+                    ewtPerc_edit.SetValue(response.d.ewtperc);
                     net_vat_edit.SetValue(response.d.netvat);
                     chk_Compute_edit.SetValue(response.d.isVatCompute);
                     //txt_Asset_edit.SetValue(response.d.Asset);
@@ -978,7 +978,7 @@
                 var allowance = txt_allowance_edit.GetValue() != null ? txt_allowance_edit.GetValue() : "";
                 var EWTTType = drpdown_EWTTaxType_edit.GetValue() != null ? drpdown_EWTTaxType_edit.GetValue() : "";
                 var EWTTCode = txt_EWTTCode_edit.GetValue() != null ? txt_EWTTCode_edit.GetValue() : "";
-                var InvTCode = txt_InvTCode_edit.GetValue() != null ? txt_InvTCode_edit.GetValue() : "";
+                var InvTCode = drpdown_invTCode_edit.GetValue() != null ? drpdown_invTCode_edit.GetValue() : "";
                 var qty = qty_edit.GetValue() != 0.00 ? qty_edit.GetValue() : "0";
                 var unit_price = unit_price_edit.GetValue() != 0.00 ? unit_price_edit.GetValue() : "0";
                 var asset = txt_Asset_edit.GetValue() != null ? txt_Asset_edit.GetValue() : "";
@@ -989,7 +989,7 @@
                 var uom = exp_UOM_edit.GetValue() != null ? exp_UOM_edit.GetValue() : "";
                 var ewt = ewt_edit.GetValue() != null ? ewt_edit.GetValue() : "0";
                 var vat = vat_edit.GetValue() != null ? vat_edit.GetValue() : "0";
-                var ewtperc = drpdown_ewtPerc_edit.GetValue() != null ? drpdown_ewtPerc_edit.GetValue() : "0";
+                var ewtperc = ewtPerc_edit.GetValue() != null ? ewtPerc_edit.GetValue() : "0";
                 var netvat = net_vat_edit.GetValue() != null ? net_vat_edit.GetValue() : "0";
                 var isVatCompute = chk_Compute_edit.GetValue() == true ? true : false;
 
@@ -1272,15 +1272,16 @@
                 var qty = qty_add.GetValue() != null ? qty_add.GetValue() : 0;
                 var unit_price = unit_price_add.GetValue() != null ? unit_price_add.GetValue() : 0;
                 var ewt = ewt_add.GetValue() != null ? ewt_add.GetValue() : 0;
-                var ewtperc = drpdown_ewtPerc_add.GetValue() != null ? drpdown_ewtPerc_add.GetValue() : 0;
+                var ewtperc = ewtPerc_add.GetValue() != null ? ewtPerc_add.GetValue() : 0;
                 //var vat_amnt = vat.GetValue() != null ? vat.GetValue() : 0;
+                var vatRate = vat_rate_add.GetValue() != 0 ? vat_rate_add.GetValue() : 1;
 
                 var total = qty * unit_price.toFixed(2);
                 var net = total.toFixed(2) - ewt;
 
                 if (chk_Compute_add.GetValue() == true) {
                     
-                    var netvat = total.toFixed(2) / 1.12;
+                    var netvat = total.toFixed(2) / 1.12 ;
                     var vat = total.toFixed(2) - netvat;
                     ewt = netvat.toFixed(2) * (ewtperc / 100);
                     net = total.toFixed(2) - ewt.toFixed(2);
@@ -1311,7 +1312,7 @@
                 var qty = qty_edit.GetValue() != null ? qty_edit.GetValue() : 0;
                 var unit = unit_price_edit.GetValue() != null ? unit_price_edit.GetValue() : 0;
                 var ewt = ewt_edit.GetValue() != null ? ewt_edit.GetValue() : 0;
-                var ewtperc = drpdown_ewtPerc_edit.GetValue() != null ? drpdown_ewtPerc_edit.GetValue() : 0;
+                var ewtperc = ewtPerc_edit.GetValue() != null ? ewtPerc_edit.GetValue() : 0;
 
                 var total = qty * unit.toFixed(2);
                 var net = total.toFixed(2) - ewt;
@@ -1487,6 +1488,54 @@
                     });
                 };
             }
+        }
+
+
+        function OnEWTTypeChanged(ewtType, stat) {
+            $.ajax({
+                type: "POST",
+                url: "AccedeNonPOEditPage.aspx/GetEWTDetailsAJAX",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({
+                    ewtType: ewtType
+                }),
+                success: function (response) {
+                    var ewtRate = response.d;
+                    if (stat == "add") {
+                        ewtPerc_add.SetValue(ewtRate);
+                        computeNetAmount("add");
+                    } else {
+                        ewtPerc_edit.SetValue(ewtRate);
+                        computeNetAmount("edit");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert("Error generating Excel file.");
+                }
+            });
+        }
+
+        function OnVATTypeChanged(vatType, stat) {
+            $.ajax({
+                type: "POST",
+                url: "AccedeNonPOEditPage.aspx/GetVATDetailsAJAX",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({
+                    vatType: vatType
+                }),
+                success: function (response) {
+                    var vatRate = response.d;
+                    if (stat == "add") {
+                        //vat_rate_add.SetValue(vatRate);
+                        computeNetAmount("add");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert("Error generating Excel file.");
+                }
+            });
         }
 
     </script>
@@ -2467,13 +2516,13 @@ var emp = &quot;&quot;;//exp_EmpId.GetValue() != null ? exp_EmpId.GetValue() : &
         <dx:ASPxLoadingPanel ID="LoadingPanel" runat="server" Theme="MaterialCompact" ClientInstanceName="LoadingPanel" ShowImage="true" ShowText="true" Text="     Processing..." Modal="True">
         </dx:ASPxLoadingPanel>
 
-        <%-- This is where the document is rendered and viewed --%>
-
-       <%-- <asp:SqlDataSource ID="sqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_CostCenter] WHERE (([CompanyId] = @CompanyId) AND ([DepartmentId] = @DepartmentId))">
+        <%-- <asp:SqlDataSource ID="sqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_CostCenter] WHERE (([CompanyId] = @CompanyId) AND ([DepartmentId] = @DepartmentId))">
             <SelectParameters>
                 <asp:Parameter Name="CompanyId" Type="Int32" />
                 <asp:Parameter Name="DepartmentId" Type="Int32" />
             </SelectParameters>
+    </asp:SqlDataSource>--%>
+       <%--<asp:SqlDataSource ID="sqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_CostCenter] ORDER BY [CostCenter]">
     </asp:SqlDataSource>--%><%--<asp:SqlDataSource ID="sqlCostCenter" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_CostCenter] ORDER BY [CostCenter]">
     </asp:SqlDataSource>--%>
 
@@ -2961,10 +3010,21 @@ AddExpDetails();
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                         </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="EWT Tax Type" ColSpan="1" ClientVisible="False">
+                                        <dx:LayoutItem Caption="EWT Tax Type" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="drpdown_EWTTaxType" runat="server" ClientInstanceName="drpdown_EWTTaxType" DataSourceID="SqlExpCat" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{1}" TextField="Description" TextFormatString="{0} - {1}" ValueField="ID" Width="100%">
+                                                    <dx:ASPxComboBox ID="drpdown_EWTTaxType" runat="server" ClientInstanceName="drpdown_EWTTaxType" DataSourceID="OdsSAPEWT" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{1}" TextField="EWTDESC" TextFormatString="{0} - {1}" ValueField="EWTCODE" Width="100%">
+                                                        <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	OnEWTTypeChanged(s.GetValue(),&quot;add&quot;);
+}" />
+                                                        <Columns>
+                                                            <dx:ListBoxColumn Caption="Code" FieldName="EWTCODE" Width="20%">
+                                                            </dx:ListBoxColumn>
+                                                            <dx:ListBoxColumn Caption="Description" FieldName="EWTDESC">
+                                                            </dx:ListBoxColumn>
+                                                        </Columns>
+                                                        <ClearButton DisplayMode="Always">
+                                                        </ClearButton>
                                                         <ValidationSettings SetFocusOnError="True" ValidationGroup="PopupSubmit">
                                                             <RequiredField ErrorText="*Required" />
                                                         </ValidationSettings>
@@ -3005,16 +3065,27 @@ AddExpDetails();
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                         </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Invoice Tax Code" ColSpan="1" ClientVisible="False">
+                                        <dx:LayoutItem Caption="Input TAX Code" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxTextBox ID="txt_InvTCode" runat="server" ClientInstanceName="txt_InvTCode" Font-Bold="False" Font-Size="Small" Width="100%">
-                                                        <ValidationSettings SetFocusOnError="True" ValidationGroup="PopupSubmit">
+                                                    <dx:ASPxComboBox ID="drpdown_invTCode" runat="server" ClientInstanceName="drpdown_invTCode" DataSourceID="OdsSAPVAT" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{1}" TextField="VATDESC" TextFormatString="{0} - {1}" ValueField="VATCODE" Width="100%">
+                                                        <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	OnVATTypeChanged(s.GetValue(), &quot;add&quot;);
+}" />
+                                                        <Columns>
+                                                            <dx:ListBoxColumn Caption="Code" FieldName="VATCODE" Width="20%">
+                                                            </dx:ListBoxColumn>
+                                                            <dx:ListBoxColumn Caption="Description" FieldName="VATDESC">
+                                                            </dx:ListBoxColumn>
+                                                        </Columns>
+                                                        <ClearButton DisplayMode="Always">
+                                                        </ClearButton>
+                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
                                                             <RequiredField ErrorText="*Required" />
                                                         </ValidationSettings>
                                                         <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
-                                                    </dx:ASPxTextBox>
+                                                    </dx:ASPxComboBox>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                         </dx:LayoutItem>
@@ -3146,7 +3217,27 @@ AddExpDetails();
                                         </LayoutItemNestedControlCollection>
                                     </dx:LayoutItem>
                                         
-                                        <dx:LayoutItem ColSpan="2" Caption="Net Of VAT" ColumnSpan="2">
+                                        <dx:LayoutItem ColSpan="1" Caption="VAT Rate" ClientVisible="False">
+                                            <LayoutItemNestedControlCollection>
+                                                <dx:LayoutItemNestedControlContainer runat="server">
+                                                    <dx:ASPxSpinEdit ID="vat_rate_add" runat="server" AllowNull="False" ClientInstanceName="vat_rate_add" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="False" Font-Size="Small" HorizontalAlign="Right" Increment="100" MaxValue="99999999999999" Number="0.00" Width="100%">
+                                                        <SpinButtons ClientVisible="False">
+                                                        </SpinButtons>
+                                                        <ClientSideEvents ValueChanged="function(s, e) {
+	    //netAmount.SetValue(s.GetValue());
+	    //ExpAllocGrid.PerformCallback();
+	    //computeNetAmount(&quot;add&quot;);
+    }" />
+                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
+                                                            <RequiredField ErrorText="*Required" />
+                                                        </ValidationSettings>
+                                                        <Border BorderStyle="None" />
+                                                        <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
+                                                    </dx:ASPxSpinEdit>
+                                                </dx:LayoutItemNestedControlContainer>
+                                            </LayoutItemNestedControlCollection>
+                                        </dx:LayoutItem>
+                                        <dx:LayoutItem Caption="Net Of VAT" ColSpan="2" ColumnSpan="2">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
                                                     <asp:Panel ID="Panel1" runat="server" CssClass="exp-link-container">
@@ -3171,21 +3262,20 @@ AddExpDetails();
                                         <dx:LayoutItem ColSpan="1" Caption="EWT %">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="drpdown_ewtPerc_add" runat="server" ClientInstanceName="drpdown_ewtPerc_add" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{1}" Width="100%" HorizontalAlign="Right" SelectedIndex="0">
-                                                        <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	computeNetAmount(&quot;add&quot;);
-}" />
-                                                        <Items>
-                                                            <dx:ListEditItem Text="0%" Value="0" Selected="True" />
-                                                            <dx:ListEditItem Text="1%" Value="1" />
-                                                            <dx:ListEditItem Text="2%" Value="2" />
-                                                        </Items>
+                                                    <dx:ASPxSpinEdit ID="ewtPerc_add" runat="server" AllowNull="False" ClientInstanceName="ewtPerc_add" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="False" Font-Size="Small" HorizontalAlign="Right" Increment="100" MaxValue="100" Number="0.00" Width="100%">
+                                                        <SpinButtons ClientVisible="False">
+                                                        </SpinButtons>
+                                                        <ClientSideEvents ValueChanged="function(s, e) {
+	    //netAmount.SetValue(s.GetValue());
+	    //ExpAllocGrid.PerformCallback();
+	    //computeNetAmount(&quot;add&quot;);
+    }" />
                                                         <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
-                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                            <RequiredField ErrorText="*Required" />
                                                         </ValidationSettings>
                                                         <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
-                                                    </dx:ASPxComboBox>
+                                                    </dx:ASPxSpinEdit>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                         </dx:LayoutItem>
@@ -3619,10 +3709,21 @@ ExpAllocGrid.PerformCallback();
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                         </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="EWT Tax Type" ColSpan="1" ClientVisible="False">
+                                        <dx:LayoutItem Caption="EWT Tax Type" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="drpdown_EWTTaxType_edit" runat="server" ClientInstanceName="drpdown_EWTTaxType_edit" DataSourceID="SqlExpCat" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{1}" TextField="Description" TextFormatString="{0} - {1}" ValueField="ID" Width="100%">
+                                                    <dx:ASPxComboBox ID="drpdown_EWTTaxType_edit" runat="server" ClientInstanceName="drpdown_EWTTaxType_edit" DataSourceID="OdsSAPEWT" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{1}" TextField="EWTDESC" TextFormatString="{0} - {1}" ValueField="EWTCODE" Width="100%">
+                                                        <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	OnEWTTypeChanged(s.GetValue(),&quot;edit&quot;);
+}" />
+                                                        <Columns>
+                                                            <dx:ListBoxColumn Caption="Code" FieldName="EWTCODE" Width="20%">
+                                                            </dx:ListBoxColumn>
+                                                            <dx:ListBoxColumn Caption="Description" FieldName="EWTDESC">
+                                                            </dx:ListBoxColumn>
+                                                        </Columns>
+                                                        <ClearButton DisplayMode="Always">
+                                                        </ClearButton>
                                                         <ValidationSettings SetFocusOnError="True" ValidationGroup="PopupSubmit">
                                                             <RequiredField ErrorText="*Required" />
                                                         </ValidationSettings>
@@ -3663,16 +3764,27 @@ ExpAllocGrid.PerformCallback();
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                         </dx:LayoutItem>
-                                        <dx:LayoutItem Caption="Invoice Tax Code" ColSpan="1" ClientVisible="False">
+                                        <dx:LayoutItem Caption="Invoice Tax Code" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxTextBox ID="txt_InvTCode_edit" runat="server" ClientInstanceName="txt_InvTCode_edit" Font-Bold="False" Font-Size="Small" Width="100%">
-                                                        <ValidationSettings SetFocusOnError="True" ValidationGroup="PopupSubmit">
+                                                    <dx:ASPxComboBox ID="drpdown_invTCode_edit" runat="server" ClientInstanceName="drpdown_invTCode_edit" DataSourceID="OdsSAPVAT" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{1}" TextField="VATDESC" TextFormatString="{0} - {1}" ValueField="VATCODE" Width="100%">
+                                                        <ClientSideEvents SelectedIndexChanged="function(s, e) {
+	OnVATTypeChanged(s.GetValue(), &quot;edit&quot;);
+}" />
+                                                        <Columns>
+                                                            <dx:ListBoxColumn Caption="Code" FieldName="VATCODE" Width="20%">
+                                                            </dx:ListBoxColumn>
+                                                            <dx:ListBoxColumn Caption="Description" FieldName="VATDESC">
+                                                            </dx:ListBoxColumn>
+                                                        </Columns>
+                                                        <ClearButton DisplayMode="Always">
+                                                        </ClearButton>
+                                                        <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
                                                             <RequiredField ErrorText="*Required" />
                                                         </ValidationSettings>
                                                         <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
-                                                    </dx:ASPxTextBox>
+                                                    </dx:ASPxComboBox>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                         </dx:LayoutItem>
@@ -3829,21 +3941,20 @@ ExpAllocGrid.PerformCallback();
                                         <dx:LayoutItem ColSpan="1" Caption="EWT %">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="drpdown_ewtPerc_edit" runat="server" ClientInstanceName="drpdown_ewtPerc_edit" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{1}" Width="100%" HorizontalAlign="Right" SelectedIndex="0">
-                                                        <ClientSideEvents SelectedIndexChanged="function(s, e) {
-	computeNetAmount(&quot;edit&quot;);
-}" />
-                                                        <Items>
-                                                            <dx:ListEditItem Text="0%" Value="0" Selected="True" />
-                                                            <dx:ListEditItem Text="1%" Value="1" />
-                                                            <dx:ListEditItem Text="2%" Value="2" />
-                                                        </Items>
+                                                    <dx:ASPxSpinEdit ID="ewtPerc_edit" runat="server" AllowNull="False" ClientInstanceName="ewtPerc_edit" DecimalPlaces="2" DisplayFormatString="N" Font-Bold="False" Font-Size="Small" HorizontalAlign="Right" Increment="100" MaxValue="100" Number="0.00" Width="100%">
+                                                        <SpinButtons ClientVisible="False">
+                                                        </SpinButtons>
+                                                        <ClientSideEvents ValueChanged="function(s, e) {
+	    //netAmount.SetValue(s.GetValue());
+	    //ExpAllocGrid.PerformCallback();
+	    computeNetAmount(&quot;edit&quot;);
+    }" />
                                                         <ValidationSettings Display="Dynamic" SetFocusOnError="True" ValidationGroup="PopupSubmit">
-                                                            <RequiredField ErrorText="*Required" IsRequired="True" />
+                                                            <RequiredField ErrorText="*Required" />
                                                         </ValidationSettings>
                                                         <Border BorderStyle="None" />
                                                         <BorderBottom BorderColor="#666666" BorderStyle="Solid" BorderWidth="1px" />
-                                                    </dx:ASPxComboBox>
+                                                    </dx:ASPxSpinEdit>
                                                 </dx:LayoutItemNestedControlContainer>
                                             </LayoutItemNestedControlCollection>
                                         </dx:LayoutItem>
@@ -4784,4 +4895,12 @@ computeNetAmount(&quot;edit&quot;);
         </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlVendor" runat="server" ConnectionString="<%$ ConnectionStrings:ITPORTALConnectionString %>" SelectCommand="SELECT * FROM [ACCEDE_S_Vendor] ORDER BY [VendorName]"></asp:SqlDataSource>
+    <asp:ObjectDataSource ID="OdsSAPEWT"
+        runat="server"
+        TypeName="DX_WebTemplate.SAPDataProvider"
+        SelectMethod="GetEWT" />
+    <asp:ObjectDataSource ID="OdsSAPVAT"
+        runat="server"
+        TypeName="DX_WebTemplate.SAPDataProvider"
+        SelectMethod="GetVAT" />
 </asp:Content>

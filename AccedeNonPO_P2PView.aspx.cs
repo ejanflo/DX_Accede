@@ -12,6 +12,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using static DX_WebTemplate.AccedeNonPOEditPage;
 using System.Data.Linq;
+using static DX_WebTemplate.AccedeModels;
 
 namespace DX_WebTemplate
 {
@@ -1064,8 +1065,8 @@ namespace DX_WebTemplate
                 //exp_det_class.SLCode = exp_details_nonpo.SLCode ?? exp_det_class.SLCode;
                 //exp_det_class.EWTTaxType_Id = exp_details_nonpo.EWTTaxType_Id != null ? Convert.ToInt32(exp_details_nonpo.EWTTaxType_Id) : exp_det_class.EWTTaxType_Id;
                 //exp_det_class.EWTTaxAmount = exp_details_nonpo.EWTTaxAmount != null ? Convert.ToDecimal(exp_details_nonpo.EWTTaxAmount) : exp_det_class.EWTTaxAmount;
-                //exp_det_class.EWTTaxCode = exp_details_nonpo.EWTTaxCode ?? exp_det_class.EWTTaxCode;
-                //exp_det_class.InvoiceTaxCode = exp_details_nonpo.InvoiceTaxCode ?? exp_det_class.InvoiceTaxCode;
+                exp_det_class.EWTTaxCode = exp_details.EWTTaxType_Id ?? exp_det_class.EWTTaxCode;
+                exp_det_class.InvoiceTaxCode = exp_details.InvoiceTaxCode ?? exp_det_class.InvoiceTaxCode;
                 //exp_det_class.Asset = exp_details_nonpo.Asset ?? exp_det_class.Asset;
                 //exp_det_class.SubAssetCode = exp_details_nonpo.SubAssetCode ?? exp_det_class.SubAssetCode;
                 //exp_det_class.TransactionType = exp_details_nonpo.TransactionType ?? exp_det_class.TransactionType;
@@ -1246,6 +1247,8 @@ namespace DX_WebTemplate
                         expDetail.LineDescription = remarks;
                         expDetail.Qty = Convert.ToDecimal(qty);
                         expDetail.UnitPrice = Convert.ToDecimal(unit_price);
+                        expDetail.EWTTaxType_Id = EWTTType;
+                        expDetail.InvoiceTaxCode = InvTCode;
                         expDetail.EWT = Convert.ToDecimal(ewt);
                         expDetail.VAT = Convert.ToDecimal(vat);
                         expDetail.UOM = uom;
@@ -1410,6 +1413,36 @@ namespace DX_WebTemplate
 
             decimal remaining = (invDetails.TotalAmount ?? 0m) - allocated;
 
+            var ewttarget = invDetails.EWTTaxType_Id?.Trim();
+
+            var ewtlist = SAPDataProvider.GetEWT();
+
+            // Primary match: by code (case-insensitive, trimmed)
+            var ewtmatch = ewtlist.FirstOrDefault(x =>
+                string.Equals(x.EWTCODE?.Trim(), ewttarget, StringComparison.OrdinalIgnoreCase));
+
+            // Optional fallback: try description if code not found
+            if (ewtmatch == null)
+            {
+                ewtmatch = ewtlist.FirstOrDefault(x =>
+                    string.Equals(x.EWTDESC?.Trim(), ewttarget, StringComparison.OrdinalIgnoreCase));
+            }
+
+            var vattarget = invDetails.InvoiceTaxCode?.Trim();
+
+            var vatlist = SAPDataProvider.GetVAT();
+
+            // Primary match: by code (case-insensitive, trimmed)
+            var vatmatch = vatlist.FirstOrDefault(x =>
+                string.Equals(x.VATCODE?.Trim(), vattarget, StringComparison.OrdinalIgnoreCase));
+
+            // Optional fallback: try description if code not found
+            if (vatmatch == null)
+            {
+                vatmatch = vatlist.FirstOrDefault(x =>
+                    string.Equals(x.VATDESC?.Trim(), vattarget, StringComparison.OrdinalIgnoreCase));
+            }
+
             var dto = new InvDetailsNonPO
             {
                 dateAdded = invDetails.DateAdded.HasValue ? invDetails.DateAdded.Value.ToString("MM/dd/yyyy hh:mm:ss") : "",
@@ -1424,6 +1457,8 @@ namespace DX_WebTemplate
                 Qty = invDetails.Qty ?? 0m,
                 UnitPrice = invDetails.UnitPrice ?? 0m,
                 uom = invDetails.UOM ?? "",
+                EWTTaxType_Id = ewtmatch?.EWTDESC,
+                InvoiceTaxCode = vatmatch?.VATDESC,
                 ewt = invDetails.EWT ?? 0m,
                 vat = invDetails.VAT ?? 0m,
                 ewtperc = invDetails.EWTPerc ?? 0m,

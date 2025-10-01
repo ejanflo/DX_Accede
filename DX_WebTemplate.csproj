@@ -732,6 +732,7 @@
       <DependentUpon>RFPViewPage.aspx</DependentUpon>
     </Compile>
     <Compile Include="SAPConnector.cs" />
+    <Compile Include="SAPDataProvider.cs" />
     <Compile Include="SAPVendor.cs" />
     <Compile Include="Security\EmulateUser.aspx.cs">
       <DependentUpon>EmulateUser.aspx</DependentUpon>
