@@ -1521,8 +1521,8 @@ namespace DX_WebTemplate
                     .Single(m => m.InvoiceDetailMap_ID == key);
 
                 entity.NetAmount = Convert.ToDecimal(upd.NewValues["NetAmount"] ?? 0m);
-                if (upd.NewValues.Contains("Remarks"))
-                    entity.EDM_Remarks = upd.NewValues["Remarks"]?.ToString();
+                if (upd.NewValues.Contains("EDM_Remarks"))
+                    entity.EDM_Remarks = upd.NewValues["EDM_Remarks"]?.ToString();
                 if (upd.NewValues.Contains("CostCenterIOWBS"))
                     entity.CostCenterIOWBS = upd.NewValues["CostCenterIOWBS"]?.ToString();
             }
@@ -1539,7 +1539,7 @@ namespace DX_WebTemplate
                                       : ins.NewValues.Contains("CostCenter")
                                         ? ins.NewValues["CostCenter"]?.ToString()
                                         : null),
-                    EDM_Remarks = ins.NewValues["Remarks"]?.ToString(),
+                    EDM_Remarks = ins.NewValues["EDM_Remarks"]?.ToString(),
                     Preparer_ID = Session["userID"]?.ToString()
                 };
                 _DataContext.ACCEDE_T_InvoiceLineDetailsMaps.InsertOnSubmit(map);

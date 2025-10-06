@@ -1459,7 +1459,7 @@ namespace DX_WebTemplate
                 string emailSender = sender_email;
                 string emailSite = "https://apps.anflocor.com";
                 string sendEmailTo = user_email.Email;
-                string emailSubject = doc_no + ": " + emailSubTitle;
+                string emailSubject = "ACCEDE Invoice Non-PO Document No. " + doc_no + ": " + emailSubTitle;
                 string requestorName = requestor_detail.FullName;
 
 

@@ -827,7 +827,7 @@ namespace DX_WebTemplate
                 string emailSender = creator_email;
                 string emailSite = "https://apps.anflocor.com";
                 string sendEmailTo = user_email.Email;
-                string emailSubject = doc_no + ": " + emailSubjectText3;
+                string emailSubject = "ACCEDE Invoice Non-PO Document No. "+doc_no + ": " + emailSubjectText3;
 
                 ANFLO anflo = new ANFLO();
 
