@@ -3147,7 +3147,7 @@ var emp = exp_EmpId.GetValue() != null ? exp_EmpId.GetValue() : &quot;&quot;;
                                         <dx:LayoutItem Caption="IO" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="IO" runat="server" ClientInstanceName="IO" DataSourceID="SqlIO" DropDownWidth="300px" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" OnCallback="IO_Callback" TextField="IO_Num" TextFormatString="{0}" ValueField="IO_Num" Width="100%">
+                                                    <dx:ASPxComboBox ID="IO" runat="server" ClientInstanceName="IO" DataSourceID="SqlIO" DropDownWidth="500px" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" OnCallback="IO_Callback" TextField="IO_Num" TextFormatString="{0}" ValueField="IO_Num" Width="100%">
                                                         <Columns>
                                                             <dx:ListBoxColumn Caption="IO Number" FieldName="IO_Num" Name="IO Number">
                                                             </dx:ListBoxColumn>
@@ -3634,7 +3634,7 @@ ExpAllocGrid.PerformCallback();
                                         <dx:LayoutItem Caption="IO" ColSpan="1">
                                             <LayoutItemNestedControlCollection>
                                                 <dx:LayoutItemNestedControlContainer runat="server">
-                                                    <dx:ASPxComboBox ID="io_edit" runat="server" ClientInstanceName="io_edit" DataSourceID="SqlIO" DropDownWidth="300px" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" OnCallback="io_edit_Callback" TextField="IO_Num" TextFormatString="{0}" ValueField="IO_Num" Width="100%">
+                                                    <dx:ASPxComboBox ID="io_edit" runat="server" ClientInstanceName="io_edit" DataSourceID="SqlIO" DropDownWidth="500px" Font-Bold="False" Font-Size="Small" NullValueItemDisplayText="{0} - {1}" OnCallback="io_edit_Callback" TextField="IO_Num" TextFormatString="{0}" ValueField="IO_Num" Width="100%">
                                                         <Columns>
                                                             <dx:ListBoxColumn Caption="IO Number" FieldName="IO_Num" Name="IO Number">
                                                             </dx:ListBoxColumn>

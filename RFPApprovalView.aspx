@@ -45,7 +45,7 @@
             var forwardWF = drpdown_ForwardWF.GetValue() != null ? drpdown_ForwardWF.GetValue() : "";
             var remarks = txt_forward_remarks.GetValue() != null ? txt_forward_remarks.GetValue() : "";
             var pMethod = edit_PayMethod.GetValue();
-            var io = edit_IO.GetValue() != null ? edit_IO.GetValue() : "";
+            var io = /*edit_IO.GetValue() != null ? edit_IO.GetValue() :*/ "";
             var acctCharge = edit_AcctCharged.GetValue();
             var cCenter = drpdown_CostCenter.GetValue();
             var CTComp_id = edit_Company.GetValue() != null ? edit_Company.GetValue() : "";
@@ -110,7 +110,7 @@
             LoadingPanel.Show();
             var approve_remarks = txt_approve_remarks.GetValue();
             var pMethod = edit_PayMethod.GetValue();
-            var io = edit_IO.GetValue() != null ? edit_IO.GetValue() : "";
+            var io = /*edit_IO.GetValue() != null ? edit_IO.GetValue() : */"";
             var acctCharge = edit_AcctCharged.GetValue();
             var cCenter = drpdown_CostCenter.GetValue();
             var secureToken = new URLSearchParams(window.location.search).get('secureToken');
@@ -196,7 +196,7 @@
             LoadingPanel.Show();
             var return_remarks = txt_return_remarks.GetValue();
             var pMethod = edit_PayMethod.GetValue();
-            var io = edit_IO.GetValue() != null ? edit_IO.GetValue() : "";
+            var io = /*edit_IO.GetValue() != null ? edit_IO.GetValue() :*/ "";
             var acctCharge = edit_AcctCharged.GetValue();
             var cCenter = drpdown_CostCenter.GetValue();
             var secureToken = new URLSearchParams(window.location.search).get('secureToken');
@@ -279,7 +279,7 @@
             LoadingPanel.Show();
             var disapprove_remarks = txt_disapprove_remarks.GetValue();
             var pMethod = edit_PayMethod.GetValue();
-            var io = edit_IO.GetValue() != null ? edit_IO.GetValue() : "";
+            var io = /*edit_IO.GetValue() != null ? edit_IO.GetValue() :*/ "";
             var acctCharge = edit_AcctCharged.GetValue();
             var cCenter = drpdown_CostCenter.GetValue();
             var secureToken = new URLSearchParams(window.location.search).get('secureToken');
