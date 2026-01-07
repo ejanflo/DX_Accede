@@ -43,8 +43,8 @@ namespace DX_WebTemplate
 
             public UserToken()
             {
-                Username = "SVCANFLOVERS";
-                Password = "NaKrnyeArWZhdMjaYyGohtbTMpwNgl&CM4tNewjR";
+                Username = "YOUR_USERNAME";
+                Password = "YOUR_PASSWORD";
             }
         }
 
